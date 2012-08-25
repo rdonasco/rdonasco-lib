@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.baligya.datamanager.services;
+package com.rdonasco.datamanager.services;
 
 import java.util.List;
-import net.baligya.common.exceptions.DataAccessException;
+import com.rdonasco.common.exceptions.DataAccessException;
 
 /**
  *
