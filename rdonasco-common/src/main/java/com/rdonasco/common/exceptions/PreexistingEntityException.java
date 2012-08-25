@@ -14,28 +14,14 @@
  *  limitations under the License.
  *  under the License.
  */
-package net.baligya.common.exceptions;
 
-public class WidgetException extends Exception
-{
+package com.rdonasco.common.exceptions;
 
-    public WidgetException()
-    {
-        super();
-    }
-
-    public WidgetException(Throwable cause)
-    {
-        super(cause);
-    }
-
-    public WidgetException(String message, Throwable cause)
-    {
+public class PreexistingEntityException extends Exception {
+    public PreexistingEntityException(String message, Throwable cause) {
         super(message, cause);
     }
-
-    public WidgetException(String message)
-    {
+    public PreexistingEntityException(String message) {
         super(message);
     }
 }

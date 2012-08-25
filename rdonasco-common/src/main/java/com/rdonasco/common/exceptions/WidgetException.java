@@ -14,27 +14,27 @@
  *  limitations under the License.
  *  under the License.
  */
-package net.baligya.common.exceptions;
+package com.rdonasco.common.exceptions;
 
-public class DataAccessException extends Exception
+public class WidgetException extends Exception
 {
 
-    public DataAccessException()
+    public WidgetException()
     {
         super();
     }
 
-    public DataAccessException(Throwable cause)
+    public WidgetException(Throwable cause)
     {
         super(cause);
     }
 
-    public DataAccessException(String message, Throwable cause)
+    public WidgetException(String message, Throwable cause)
     {
         super(message, cause);
     }
 
-    public DataAccessException(String message)
+    public WidgetException(String message)
     {
         super(message);
     }

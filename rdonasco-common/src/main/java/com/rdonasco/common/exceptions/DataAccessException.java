@@ -14,14 +14,28 @@
  *  limitations under the License.
  *  under the License.
  */
+package com.rdonasco.common.exceptions;
 
-package net.baligya.common.exceptions;
+public class DataAccessException extends Exception
+{
 
-public class PreexistingEntityException extends Exception {
-    public PreexistingEntityException(String message, Throwable cause) {
+    public DataAccessException()
+    {
+        super();
+    }
+
+    public DataAccessException(Throwable cause)
+    {
+        super(cause);
+    }
+
+    public DataAccessException(String message, Throwable cause)
+    {
         super(message, cause);
     }
-    public PreexistingEntityException(String message) {
+
+    public DataAccessException(String message)
+    {
         super(message);
     }
 }

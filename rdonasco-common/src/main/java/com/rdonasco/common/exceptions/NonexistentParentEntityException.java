@@ -15,7 +15,7 @@
  *  under the License.
  */
 
-package net.baligya.common.exceptions;
+package com.rdonasco.common.exceptions;
 
 public class NonexistentParentEntityException extends NonexistentEntityException
 {

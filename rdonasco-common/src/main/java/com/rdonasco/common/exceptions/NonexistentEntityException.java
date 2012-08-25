@@ -14,7 +14,7 @@
  *  limitations under the License.
  *  under the License.
  */
-package net.baligya.common.exceptions;
+package com.rdonasco.common.exceptions;
 
 public class NonexistentEntityException extends Exception
 {
