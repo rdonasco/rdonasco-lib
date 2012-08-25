@@ -10,5 +10,6 @@
     <module>rdonasco-common-i18</module>
     <module>rdonasco-datamanager</module>
     <module>rdonasco-common</module>
+    <module>rdonasco-common-vaadin</module>
   </modules>
 </project>
