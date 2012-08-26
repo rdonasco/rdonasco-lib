@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package net.baligya.common.dao.utils;
+package com.rdonasco.common.dao.utils;
 
 /**
  *

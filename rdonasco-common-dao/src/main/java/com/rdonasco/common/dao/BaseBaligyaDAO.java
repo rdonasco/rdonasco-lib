@@ -14,7 +14,7 @@
  *  limitations under the License.
  *  under the License.
  */
-package net.baligya.common.dao;
+package com.rdonasco.common.dao;
 
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.IllegalOrphanException;
@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaQuery;
-import net.baligya.common.dao.utils.DAOCommonConstants;
+import com.rdonasco.common.dao.utils.DAOCommonConstants;
 
 /**
  *
