@@ -11,5 +11,6 @@
     <module>rdonasco-datamanager</module>
     <module>rdonasco-common</module>
     <module>rdonasco-common-vaadin</module>
+    <module>rdonasco-common-dao</module>
   </modules>
 </project>
