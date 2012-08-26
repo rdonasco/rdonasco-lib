@@ -16,7 +16,7 @@
  */
 
 
-package net.baligya.common.data.utils;
+package com.rdonasco.common.data.utils;
 
 import java.io.Serializable;
 import javax.persistence.Column;

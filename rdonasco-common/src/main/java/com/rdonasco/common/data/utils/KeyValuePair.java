@@ -15,7 +15,7 @@
  *  under the License.
  */
 
-package net.baligya.common.data.utils;
+package com.rdonasco.common.data.utils;
 
 /**
  *
