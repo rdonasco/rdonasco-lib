@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.baligya.common.controller;
+package com.rdonasco.common.vaadin.controller;
 
 import com.rdonasco.common.exceptions.WidgetException;
-import net.baligya.common.view.ControlledView;
+import com.rdonasco.common.vaadin.view.ControlledView;
 
 /**
  *

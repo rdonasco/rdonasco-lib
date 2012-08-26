@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.baligya.common.view;
+
+package com.rdonasco.common.vaadin.view.utils;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public interface ControlledView extends BaligyaWidget
+public final class CommonFormConstants 
 {
-	
+	public static final String PLEASE_ENTER_VALUE_FOR = "Please enter value for _";
 }

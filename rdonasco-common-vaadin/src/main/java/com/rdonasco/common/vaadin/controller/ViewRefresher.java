@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Roy F. Donasco.
+ * Copyright 2012 Roy F. Donasco.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.baligya.common.view;
+package com.rdonasco.common.vaadin.controller;
 
-import com.rdonasco.common.exceptions.WidgetInitalizeException;
+import com.rdonasco.common.exceptions.WidgetException;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public interface BaligyaWidget
+public interface ViewRefresher
 {
-
-   void initWidget() throws WidgetInitalizeException;
+	void refreshView() throws WidgetException;
 }

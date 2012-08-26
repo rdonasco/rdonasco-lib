@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.baligya.common.view;
+package com.rdonasco.common.vaadin.view;
 
 import com.vaadin.ui.Window.Notification;
 import com.rdonasco.common.i18.I18NResource;

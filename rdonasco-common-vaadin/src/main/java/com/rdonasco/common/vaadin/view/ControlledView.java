@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.baligya.common.view;
-
-import com.rdonasco.common.exceptions.WidgetException;
+package com.rdonasco.common.vaadin.view;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public interface WidgetRefresherOnEdit
+public interface ControlledView extends BaligyaWidget
 {
-	void refresh() throws WidgetException;
+	
 }

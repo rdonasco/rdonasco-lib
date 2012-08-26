@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package net.baligya.common.view.utils;
+package com.rdonasco.common.vaadin.view.utils;
 
 import com.vaadin.Application;
 import javax.inject.Inject;
-import net.baligya.common.view.NotificationFactory;
+import com.rdonasco.common.vaadin.view.NotificationFactory;
 
 /**
  *

@@ -3,7 +3,7 @@
  *
  * Created on August 15, 2011, 12:50 PM
  */
-package net.baligya.common.data.utils;
+package com.rdonasco.common.vaadin.data.utils;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;

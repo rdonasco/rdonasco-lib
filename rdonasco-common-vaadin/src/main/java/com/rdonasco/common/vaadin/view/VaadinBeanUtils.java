@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.baligya.common.view;
+package com.rdonasco.common.vaadin.view;
 
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;

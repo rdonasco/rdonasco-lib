@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.rdonasco.common.vaadin.view;
 
-package net.baligya.common.view.utils;
+import com.rdonasco.common.exceptions.WidgetException;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public final class CommonFormConstants 
+public interface WidgetRefresherOnEdit
 {
-	public static final String PLEASE_ENTER_VALUE_FOR = "Please enter value for _";
+	void refresh() throws WidgetException;
 }

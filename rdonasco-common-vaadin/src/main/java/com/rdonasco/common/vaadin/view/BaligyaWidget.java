@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Roy F. Donasco.
+ * Copyright 2011 Roy F. Donasco.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.rdonasco.common.vaadin.view;
 
-package net.baligya.common.view;
+import com.rdonasco.common.exceptions.WidgetInitalizeException;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public interface SandboxWindow 
+public interface BaligyaWidget
 {
+
+   void initWidget() throws WidgetInitalizeException;
 }
