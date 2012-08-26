@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 rdonasco.
+ * Copyright 2011 rdonasco.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.baligya.datamanager.view;
+package com.rdonasco.datamanager.view;
 
+import java.util.List;
+import com.rdonasco.datamanager.services.DataManager;
 import com.rdonasco.common.exceptions.DataAccessException;
 
 /**
  *
  * @author rdonasco
  */
-public interface DataFormCommitStrategy<T>
+public interface DataRetrievalStrategy<T>
 {
-    T commit(T data) throws DataAccessException;
+    public List<T> retrieveDataUsing(DataManager<T> dataManager) throws DataAccessException;
 }

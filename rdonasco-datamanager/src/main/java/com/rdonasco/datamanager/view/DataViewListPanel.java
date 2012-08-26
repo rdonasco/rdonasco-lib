@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.baligya.datamanager.view;
+package com.rdonasco.datamanager.view;
 
 import com.vaadin.data.Item;
 import com.vaadin.terminal.ThemeResource;
@@ -21,9 +21,9 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.VerticalLayout;
 import javax.annotation.PostConstruct;
-import net.baligya.common.view.BaligyaWidget;
+import com.rdonasco.common.vaadin.view.BaligyaWidget;
 import com.rdonasco.common.i18.I18NResource;
-import net.baligya.datamanager.theme.DataManagerTheme;
+import com.rdonasco.datamanager.theme.DataManagerTheme;
 
 
 /**

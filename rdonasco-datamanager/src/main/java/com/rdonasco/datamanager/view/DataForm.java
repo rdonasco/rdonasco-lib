@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.baligya.datamanager.view;
+package com.rdonasco.datamanager.view;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItem;
@@ -27,14 +27,14 @@ import com.vaadin.ui.Window.Notification;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.rdonasco.datamanager.services.DataManager;
-import net.baligya.datamanager.utils.CommonConstants;
+import com.rdonasco.datamanager.utils.CommonConstants;
 import com.rdonasco.common.exceptions.DataAccessException;
-import net.baligya.common.view.BaligyaWidget;
-import net.baligya.common.view.ButtonUtil;
-import net.baligya.common.view.NotificationFactory;
-import net.baligya.common.view.VaadinBeanUtils;
+import com.rdonasco.common.vaadin.view.BaligyaWidget;
+import com.rdonasco.common.vaadin.view.ButtonUtil;
+import com.rdonasco.common.vaadin.view.NotificationFactory;
+import com.rdonasco.common.vaadin.view.VaadinBeanUtils;
 import com.rdonasco.common.i18.I18NResource;
-import net.baligya.datamanager.theme.DataManagerTheme;
+import com.rdonasco.datamanager.theme.DataManagerTheme;
 
 /**
  *

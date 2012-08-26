@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.baligya.datamanager.controller;
+package com.rdonasco.datamanager.controller;
 
 import com.vaadin.Application;
-import net.baligya.common.controller.ViewController;
-import net.baligya.datamanager.view.DataManagerView;
+import com.rdonasco.common.vaadin.controller.ViewController;
+import com.rdonasco.datamanager.view.DataManagerView;
 
 /**
  *

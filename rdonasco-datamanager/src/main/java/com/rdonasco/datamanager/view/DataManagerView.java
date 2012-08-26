@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.baligya.datamanager.view;
+package com.rdonasco.datamanager.view;
 
-import net.baligya.datamanager.controller.DataManagerViewController;
+import com.rdonasco.datamanager.controller.DataManagerViewController;
 import com.vaadin.data.Property.ValueChangeEvent;
 import com.vaadin.data.Property.ValueChangeListener;
 import com.vaadin.data.util.BeanItem;
@@ -23,7 +23,7 @@ import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.VerticalLayout;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.datamanager.services.DataManager;
-import net.baligya.common.view.ControlledView;
+import com.rdonasco.common.vaadin.view.ControlledView;
 
 /**
  *

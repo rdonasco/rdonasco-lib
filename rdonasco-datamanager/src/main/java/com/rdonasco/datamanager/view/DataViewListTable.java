@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.baligya.datamanager.view;
+package com.rdonasco.datamanager.view;
 
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.i18.I18NResource;
@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
-import net.baligya.common.view.BaligyaWidget;
-import net.baligya.common.view.NotificationFactory;
-import net.baligya.datamanager.theme.DataManagerTheme;
+import com.rdonasco.common.vaadin.view.BaligyaWidget;
+import com.rdonasco.common.vaadin.view.NotificationFactory;
+import com.rdonasco.datamanager.theme.DataManagerTheme;
 
 /**
  *
