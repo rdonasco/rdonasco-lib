@@ -25,7 +25,6 @@ public class CommonConstants
     public static final String UNABLE_TO_SAVE_RECORD__ = "Unable to save record _";
     public static final String UNABLE_TO_UPDATE_RECORD__ = "Unable to update record _";
     public static final String UNABLE_TO_DELETE_RECORD__ = "Unable to delete record _";
-	public static final String ID_NO_LONGER_EXIST = "The _ with id _ no longer exists";
     public static final String UNABLE_TO_LOAD_RECORD_WITH_ID__ = "Unable to load record with id _";
     public static final String UNABLE_TO_LOAD_RECORDS = "Unable to load records from database";
     public static final String UNABLE_TO_MOVE_RECORD = "Unable to move record";
