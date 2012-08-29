@@ -15,9 +15,9 @@
  */
 package com.rdonasco.datamanager.controller;
 
-import com.vaadin.Application;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.datamanager.view.DataManagerView;
+import com.vaadin.Application;
 
 /**
  *
