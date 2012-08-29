@@ -21,7 +21,7 @@ import com.rdonasco.common.exceptions.WidgetInitalizeException;
  *
  * @author Roy F. Donasco
  */
-public interface BaligyaWidget
+public interface ViewWidget
 {
 
    void initWidget() throws WidgetInitalizeException;

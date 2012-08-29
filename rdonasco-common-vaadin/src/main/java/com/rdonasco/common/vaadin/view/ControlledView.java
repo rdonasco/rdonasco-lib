@@ -19,7 +19,7 @@ package com.rdonasco.common.vaadin.view;
  *
  * @author Roy F. Donasco
  */
-public interface ControlledView extends BaligyaWidget
+public interface ControlledView extends ViewWidget
 {
 	
 }
