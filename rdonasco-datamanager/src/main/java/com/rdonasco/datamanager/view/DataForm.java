@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 import com.rdonasco.datamanager.services.DataManager;
 import com.rdonasco.datamanager.utils.CommonConstants;
 import com.rdonasco.common.exceptions.DataAccessException;
-import com.rdonasco.common.vaadin.view.BaligyaWidget;
+import com.rdonasco.common.vaadin.view.ViewWidget;
 import com.rdonasco.common.vaadin.view.ButtonUtil;
 import com.rdonasco.common.vaadin.view.NotificationFactory;
 import com.rdonasco.common.vaadin.view.VaadinBeanUtils;
@@ -40,7 +40,7 @@ import com.rdonasco.datamanager.theme.DataManagerTheme;
  *
  * @author Roy F. Donasco
  */
-public abstract class DataForm<T> extends Form implements BaligyaWidget
+public abstract class DataForm<T> extends Form implements ViewWidget
 {
 
 	public DataForm()

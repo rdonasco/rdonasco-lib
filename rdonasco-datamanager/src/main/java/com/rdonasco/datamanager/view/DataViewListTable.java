@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
-import com.rdonasco.common.vaadin.view.BaligyaWidget;
+import com.rdonasco.common.vaadin.view.ViewWidget;
 import com.rdonasco.common.vaadin.view.NotificationFactory;
 import com.rdonasco.datamanager.theme.DataManagerTheme;
 
@@ -31,7 +31,7 @@ import com.rdonasco.datamanager.theme.DataManagerTheme;
  *
  * @author Roy F. Donasco
  */
-public class DataViewListTable extends Table implements BaligyaWidget
+public class DataViewListTable extends Table implements ViewWidget
 {
 
     private DataRetrievalStrategy dataViewListTableRefreshStrategy;

@@ -21,7 +21,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.VerticalLayout;
 import javax.annotation.PostConstruct;
-import com.rdonasco.common.vaadin.view.BaligyaWidget;
+import com.rdonasco.common.vaadin.view.ViewWidget;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.datamanager.theme.DataManagerTheme;
 
@@ -30,7 +30,7 @@ import com.rdonasco.datamanager.theme.DataManagerTheme;
  *
  * @author Roy F. Donasco
  */
-public class DataViewListPanel extends VerticalLayout implements BaligyaWidget
+public class DataViewListPanel extends VerticalLayout implements ViewWidget
 {
 
     private Button refreshButton = new Button(I18NResource.localize("Refresh List"), new Button.ClickListener()
