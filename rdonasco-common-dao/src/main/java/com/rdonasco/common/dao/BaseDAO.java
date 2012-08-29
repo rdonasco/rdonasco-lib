@@ -32,13 +32,13 @@ import com.rdonasco.common.dao.utils.DAOCommonConstants;
  *
  * @author Roy F. Donasco
  */
-public abstract class BaseBaligyaDAO<T> implements DataAccess<T>
+public abstract class BaseDAO<T> implements DataAccess<T>
 {
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public BaseBaligyaDAO()
+    public BaseDAO()
     {
     }
 
