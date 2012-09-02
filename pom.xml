@@ -9,9 +9,8 @@
   <modules>
     <module>rdonasco-common-i18</module>
     <module>rdonasco-datamanager</module>
-    <module>rdonasco-common</module>
     <module>rdonasco-common-vaadin</module>
     <module>rdonasco-common-dao</module>
-    <module>rdonasco-validator</module>
+    <module>rdonasco-common-validator</module>
   </modules>
 </project>
