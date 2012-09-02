@@ -12,5 +12,6 @@
     <module>rdonasco-common</module>
     <module>rdonasco-common-vaadin</module>
     <module>rdonasco-common-dao</module>
+    <module>rdonasco-validator</module>
   </modules>
 </project>
