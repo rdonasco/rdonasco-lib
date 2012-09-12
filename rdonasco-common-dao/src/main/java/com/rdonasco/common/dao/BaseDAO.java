@@ -18,7 +18,7 @@ package com.rdonasco.common.dao;
 
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.IllegalOrphanException;
-import com.rdonasco.common.exceptions.NonexistentEntityException;
+import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.common.exceptions.PreexistingEntityException;
 import com.rdonasco.common.i18.I18NResource;
 import java.lang.reflect.Field;
@@ -88,7 +88,7 @@ public abstract class BaseDAO<T> implements DataAccess<T>
 
     @Override
     public void delete(Class<T> classObject, Long id) throws
-            IllegalOrphanException, NonexistentEntityException
+            IllegalOrphanException, NonExistentEntityException
     {
         EntityManager em = getEntityManager();
         T data;
@@ -98,7 +98,7 @@ public abstract class BaseDAO<T> implements DataAccess<T>
         }
         catch (EntityNotFoundException enfe)
         {
-			throw new NonexistentEntityException(I18NResource
+			throw new NonExistentEntityException(I18NResource
 					.localizeWithParameter(DAOCommonConstants.ID_NO_LONGER_EXIST
 					,classObject.getCanonicalName(),id), enfe);
         }
@@ -108,7 +108,7 @@ public abstract class BaseDAO<T> implements DataAccess<T>
 
     @Override
     public void update(T data) throws IllegalOrphanException,
-            NonexistentEntityException, Exception
+            NonExistentEntityException, Exception
     {     
         try
         {
@@ -123,7 +123,7 @@ public abstract class BaseDAO<T> implements DataAccess<T>
                 Long id = (Long) extractIdentifier(data);
                 if (findData((Class<T>) data.getClass(), id) == null)
                 {                    
-					throw new NonexistentEntityException(I18NResource
+					throw new NonExistentEntityException(I18NResource
 					.localizeWithParameter(DAOCommonConstants.ID_NO_LONGER_EXIST
 					,data.getClass().getCanonicalName(),id), ex);					
                 }
@@ -224,7 +224,7 @@ public abstract class BaseDAO<T> implements DataAccess<T>
 
     @Override
     public T findUniqueDataUsingNamedQuery(String namedQuery, Map<String, Object> parameters)
-            throws DataAccessException
+            throws DataAccessException, NonExistentEntityException
     {
         T foundData = null;
         try
@@ -241,6 +241,10 @@ public abstract class BaseDAO<T> implements DataAccess<T>
 
             foundData = query.getSingleResult();
         }
+		catch (NoResultException e)
+		{
+			throw new NonExistentEntityException(e);
+		}
         catch (Exception e)
         {
             throw new DataAccessException(e);

@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.IllegalOrphanException;
-import com.rdonasco.common.exceptions.NonexistentEntityException;
+import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.common.exceptions.PreexistingEntityException;
 
 /**
@@ -32,10 +32,10 @@ public interface DataAccess<T>
     void create(T data) throws PreexistingEntityException, Exception;
 
     void delete(Class<T> objectClass, Long id) throws IllegalOrphanException,
-            NonexistentEntityException;
+            NonExistentEntityException;
 
     void update(T data) throws IllegalOrphanException,
-            NonexistentEntityException, Exception;
+            NonExistentEntityException, Exception;
 
     T findData(Class<T> objectClass, Long id);
     
@@ -50,5 +50,5 @@ public interface DataAccess<T>
     List<T> findAllDataUsingNamedQuery(String namedQuery, Map<String, Object> parameters)
             throws DataAccessException;
     T findUniqueDataUsingNamedQuery(String namedQuery, Map<String, Object> parameters)
-            throws DataAccessException;
+            throws DataAccessException, NonExistentEntityException;
 }
