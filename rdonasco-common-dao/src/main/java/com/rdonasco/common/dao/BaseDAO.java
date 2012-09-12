@@ -16,6 +16,7 @@
  */
 package com.rdonasco.common.dao;
 
+import com.rdonasco.common.dao.utils.DAOCommonConstants;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.IllegalOrphanException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
@@ -26,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaQuery;
-import com.rdonasco.common.dao.utils.DAOCommonConstants;
 
 /**
  *
