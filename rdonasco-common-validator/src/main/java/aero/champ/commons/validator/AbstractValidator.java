@@ -27,7 +27,7 @@ public abstract class AbstractValidator<T> implements Validator<T>
 
 	public void validate(T valueToValidate) throws InvalidValueException
 	{
-		setInvalidValueMessage("Invalid value {0}".replace("{0}", invalidValueMessage));
+		setInvalidValueMessage("Invalid value {0}".replace("{0}", String.valueOf(valueToValidate)));
 		if(!isValid(valueToValidate))
 		{
 			throw new InvalidValueException(getInvalidValueMessage());
