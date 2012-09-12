@@ -16,28 +16,28 @@
  */
 package com.rdonasco.common.exceptions;
 
-public class XNonExistentEntityException extends Exception
+public class NonExistentEntityException extends Exception
 {
 
     private Object entity;
 
-    public XNonExistentEntityException(Throwable thrwbl)
+    public NonExistentEntityException(Throwable thrwbl)
     {
         super(thrwbl);
     }
 
-    public XNonExistentEntityException(String message, Throwable cause)
+    public NonExistentEntityException(String message, Throwable cause)
     {
         super(message, cause);
     }
 
-    public XNonExistentEntityException(String message, Throwable cause, Object entity)
+    public NonExistentEntityException(String message, Throwable cause, Object entity)
     {
         super(message, cause);
         setEntity(entity);
     }
 
-    public XNonExistentEntityException(String message)
+    public NonExistentEntityException(String message)
     {
         super(message);
     }

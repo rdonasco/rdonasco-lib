@@ -17,20 +17,20 @@
 
 package com.rdonasco.common.exceptions;
 
-public class XNonExistentParentEntityException extends XNonExistentEntityException
+public class NonExistentParentEntityException extends NonExistentEntityException
 {
 
-	public XNonExistentParentEntityException(String message, Throwable cause)
+	public NonExistentParentEntityException(String message, Throwable cause)
 	{
 		super(message, cause);
 	}
 
-	public XNonExistentParentEntityException(String message)
+	public NonExistentParentEntityException(String message)
 	{
 		super(message);
 	}
 
-	public XNonExistentParentEntityException(String message, Throwable cause, Object data)
+	public NonExistentParentEntityException(String message, Throwable cause, Object data)
 	{
 		super(message,cause, data);
 	}
