@@ -228,50 +228,6 @@ public class CollectionTableEditor<T> extends CustomField implements
 		return dataElement;
 	}
 
-	private void configureTableFieldFactory()
-	{
-		table.setTableFieldFactory(new DefaultFieldFactory()
-		{
-			@Override
-			public Field createField(final Item item, Object propertyId,
-					Component uiContext)
-			{
-				Field field = super.createField(item, propertyId, uiContext);
-				if (TextField.class.isAssignableFrom(field.getClass()))
-				{
-					((TextField) field).addListener(new FieldEvents.FocusListener()
-					{
-						@Override
-						public void focus(FocusEvent event)
-						{
-							table.select(item);
-						}
-					});
-				}
-				return field;
-			}
-
-			@Override
-			public Field createField(Container container, final Object itemId,
-					Object propertyId, Component uiContext)
-			{
-				Field field = super.createField(container, itemId, propertyId, uiContext);
-				if (TextField.class.isAssignableFrom(field.getClass()))
-				{
-					((TextField) field).addListener(new FieldEvents.FocusListener()
-					{
-						@Override
-						public void focus(FocusEvent event)
-						{
-							table.select(itemId);
-						}
-					});
-				}
-				return field;
-			}
-		});
-	}
-
 	public void setTableFieldFactory(TableFieldFactory fieldFactory)
 	{
 		this.tableFieldFactory = fieldFactory;
@@ -319,4 +275,60 @@ public class CollectionTableEditor<T> extends CustomField implements
 	{
 		setTableFieldFactory(DefaultFieldFactory.get());
 	}
+
+	@Override
+	public float getHeight()
+	{
+		return table.getHeight();
+	}
+
+	@Override
+	public int getHeightUnits()
+	{
+		return table.getHeightUnits();
+	}
+
+	@Override
+	public float getWidth()
+	{
+		return table.getWidth();
+	}
+
+	@Override
+	public int getWidthUnits()
+	{
+		return table.getWidthUnits();
+	}
+
+	@Override
+	public void setHeight(float height, int unit)
+	{
+		table.setHeight(height, unit);
+	}
+
+	@Override
+	public void setSizeUndefined()
+	{
+		table.setSizeUndefined();
+	}
+
+	@Override
+	public void setWidth(float width, int unit)
+	{
+		table.setWidth(width, unit);
+	}
+
+	@Override
+	public void setWidth(String width)
+	{
+		table.setWidth(width);
+	}
+
+	@Override
+	public void setHeight(String height)
+	{
+		table.setHeight(height);
+	}
+	
+	
 }
