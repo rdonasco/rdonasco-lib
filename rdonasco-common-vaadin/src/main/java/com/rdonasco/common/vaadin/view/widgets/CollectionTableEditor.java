@@ -171,9 +171,9 @@ public class CollectionTableEditor<T> extends CustomField implements
 		}
 	}
 
-	private Collection instantiateCollection()
+	private Collection<T> instantiateCollection()
 	{
-		Collection collection = null;
+		Collection<T> collection = null;
 		try
 		{
 			collection = collectionType.newInstance();
@@ -209,7 +209,7 @@ public class CollectionTableEditor<T> extends CustomField implements
 		Collection<T> values = (Collection<T>) propertyDataSource.getValue();
 		if (values == null)
 		{
-			values = new ArrayList<T>();
+			values = instantiateCollection();
 		}
 		containerDataSource.removeAllItems();
 		containerDataSource.addAll(values);
