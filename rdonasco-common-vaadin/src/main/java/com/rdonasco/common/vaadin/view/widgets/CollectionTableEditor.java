@@ -17,23 +17,21 @@ package com.rdonasco.common.vaadin.view.widgets;
 
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ButtonUtil;
-import com.vaadin.data.Container;
-import com.vaadin.data.Item;
+import com.vaadin.data.Buffered;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.FieldEvents;
 import com.vaadin.event.FieldEvents.FocusEvent;
 import com.vaadin.event.FieldEvents.FocusNotifier;
+import com.vaadin.terminal.Resource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.DefaultFieldFactory;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TableFieldFactory;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -46,7 +44,14 @@ import java.util.logging.Logger;
 import org.vaadin.addon.customfield.CustomField;
 
 /**
- *
+ * This class can be used to edit a collection containing a pojo or bean.
+ * Sample usage
+ * {code}
+ * Collection<Dummy> collection = new ArrayList<Dummy>();
+ * final CollectionTableEditor<Dummy> tableEditor = new CollectionTableEditor(Dummy.class, collection.getClass());
+ * tableEditor.setPropertyDataSource(item.getItemProperty(propertyId));
+ * Field field = tableEditor; // return this as your field
+ * {code}
  * @author Roy F. Donasco
  */
 @SuppressWarnings("serial")
@@ -116,8 +121,8 @@ public class CollectionTableEditor<T> extends CustomField implements
 	}
 
 	@Override
-	public void setValue(Object newValue) throws ReadOnlyException,
-			ConversionException
+	public void setValue(Object newValue) throws Property.ReadOnlyException,
+			Property.ConversionException
 	{
 		table.setValue(newValue);
 	}
@@ -145,7 +150,7 @@ public class CollectionTableEditor<T> extends CustomField implements
 	}
 
 	@Override
-	public void discard() throws SourceException
+	public void discard() throws Buffered.SourceException
 	{
 		resetValues();
 	}		
@@ -328,6 +333,76 @@ public class CollectionTableEditor<T> extends CustomField implements
 	public void setHeight(String height)
 	{
 		table.setHeight(height);
+	}
+
+	public void setVisibleColumns(Object[] visibleColumns)
+	{
+		table.setVisibleColumns(visibleColumns);
+	}
+
+	public String[] getColumnHeaders()
+	{
+		return table.getColumnHeaders();
+	}
+
+	public void setColumnHeaders(String[] columnHeaders)
+	{
+		table.setColumnHeaders(columnHeaders);
+	}
+
+	public Resource[] getColumnIcons()
+	{
+		return table.getColumnIcons();
+	}
+
+	public void setColumnIcons(Resource[] columnIcons)
+	{
+		table.setColumnIcons(columnIcons);
+	}
+
+	public void setColumnWidth(Object propertyId, int width)
+	{
+		table.setColumnWidth(propertyId, width);
+	}
+
+	public int getColumnWidth(Object propertyId)
+	{
+		return table.getColumnWidth(propertyId);
+	}
+
+	public Resource getColumnIcon(Object propertyId)
+	{
+		return table.getColumnIcon(propertyId);
+	}
+
+	public void setColumnIcon(Object propertyId, Resource icon)
+	{
+		table.setColumnIcon(propertyId, icon);
+	}
+
+	public String getColumnHeader(Object propertyId)
+	{
+		return table.getColumnHeader(propertyId);
+	}
+
+	public Object[] getVisibleColumns()
+	{
+		return table.getVisibleColumns();
+	}
+
+	public void setColumnExpandRatio(Object propertyId, float expandRatio)
+	{
+		table.setColumnExpandRatio(propertyId, expandRatio);
+	}
+
+	public void setColumnHeader(Object propertyId, String header)
+	{
+		table.setColumnHeader(propertyId, header);
+	}
+
+	public void setColumnFooter(Object propertyId, String footer)
+	{
+		table.setColumnFooter(propertyId, footer);
 	}
 	
 	
