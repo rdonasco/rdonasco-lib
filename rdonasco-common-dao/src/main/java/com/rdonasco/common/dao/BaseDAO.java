@@ -19,6 +19,7 @@ package com.rdonasco.common.dao;
 import com.rdonasco.common.dao.utils.DAOCommonConstants;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.IllegalOrphanException;
+import com.rdonasco.common.exceptions.MultipleEntityFoundException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.common.exceptions.PreexistingEntityException;
 import com.rdonasco.common.i18.I18NResource;
@@ -224,7 +225,7 @@ public abstract class BaseDAO<T> implements DataAccess<T>
 
     @Override
     public T findUniqueDataUsingNamedQuery(String namedQuery, Map<String, Object> parameters)
-            throws DataAccessException, NonExistentEntityException
+            throws DataAccessException, NonExistentEntityException, MultipleEntityFoundException
     {
         T foundData = null;
         try
