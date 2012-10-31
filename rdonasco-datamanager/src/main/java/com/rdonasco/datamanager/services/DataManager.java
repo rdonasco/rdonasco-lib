@@ -15,8 +15,8 @@
  */
 package com.rdonasco.datamanager.services;
 
-import java.util.List;
 import com.rdonasco.common.exceptions.DataAccessException;
+import java.util.List;
 
 /**
  *
