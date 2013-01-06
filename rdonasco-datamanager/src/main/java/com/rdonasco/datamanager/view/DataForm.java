@@ -35,6 +35,8 @@ import com.rdonasco.common.vaadin.view.NotificationFactory;
 import com.rdonasco.common.vaadin.view.VaadinBeanUtils;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.datamanager.theme.DataManagerTheme;
+import de.steinwedel.vaadin.MessageBox;
+import de.steinwedel.vaadin.MessageBox.ButtonType;
 
 /**
  *
@@ -50,7 +52,6 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 	private Button saveButton = new Button(I18NResource.localize(CommonConstants.SAVE),
 			new Button.ClickListener()
 			{
-
 				@Override
 				public void buttonClick(ClickEvent event)
 				{
@@ -71,7 +72,7 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 
 					}
 					catch (Exception ex)
-					{	
+					{
 						saveButton.setEnabled(true);
 						getApplication().getMainWindow().showNotification(
 								NotificationFactory.createFromException(
@@ -119,7 +120,6 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 	private Button cancelButton = new Button(I18NResource.localize("Cancel"),
 			new Button.ClickListener()
 			{
-
 				@Override
 				public void buttonClick(ClickEvent event)
 				{
@@ -138,7 +138,6 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 	private Button editButton = new Button(I18NResource.localize("Edit"),
 			new Button.ClickListener()
 			{
-
 				@Override
 				public void buttonClick(ClickEvent event)
 				{
@@ -148,16 +147,30 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 	private Button deleteButton = new Button(I18NResource.localize(CommonConstants.DELETE),
 			new Button.ClickListener()
 			{
-
 				@Override
 				public void buttonClick(ClickEvent event)
 				{
-					deleteCurrentRecord();
-					getApplication().getMainWindow().showNotification(
-							NotificationFactory.createWarningNotification(I18NResource.
-							localize(CommonConstants.DELETED),
-							I18NResource.localize(CommonConstants.DATA_NO_LONGER_EXIST)));
-					changeModeToView();
+					MessageBox messageBox = new MessageBox(getWindow(),
+							I18NResource.localize("Are you sure?"),
+							MessageBox.Icon.QUESTION,
+							I18NResource.localize("Do you really want to delete this?"),
+							new MessageBox.ButtonConfig(MessageBox.ButtonType.YES, I18NResource.localize("Yes")),
+							new MessageBox.ButtonConfig(MessageBox.ButtonType.NO, I18NResource.localize("No")));
+					messageBox.show(new MessageBox.EventListener()
+					{
+						public void buttonClicked(ButtonType buttonType)
+						{
+							if (ButtonType.YES.equals(buttonType))
+							{
+								deleteCurrentRecord();
+								getApplication().getMainWindow().showNotification(
+										NotificationFactory.createWarningNotification(I18NResource.
+										localize(CommonConstants.DELETED),
+										I18NResource.localize(CommonConstants.DATA_NO_LONGER_EXIST)));
+								changeModeToView();
+							}
+						}
+					});
 				}
 
 				public void deleteCurrentRecord()
@@ -194,7 +207,6 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 	private Button createNewButton = new Button(I18NResource.localize(
 			"Create New"), new Button.ClickListener()
 	{
-
 		@Override
 		public void buttonClick(ClickEvent event)
 		{
@@ -208,7 +220,6 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 	private DataManager<T> dataManager;
 	private DataFormCommitStrategy<T> deleteCommitStrategy = new DataFormCommitStrategy<T>()
 	{
-
 		@Override
 		public T commit(T dataOnScreen) throws DataAccessException
 		{
@@ -219,7 +230,6 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 	};
 	private DataFormCommitStrategy<T> newDataCommitStrategy = new DataFormCommitStrategy<T>()
 	{
-
 		@Override
 		public T commit(T newData) throws DataAccessException
 		{
@@ -232,7 +242,6 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 	};
 	private DataFormCommitStrategy<T> updatedDataCommitStrategy = new DataFormCommitStrategy<T>()
 	{
-
 		@Override
 		public T commit(T existingData) throws DataAccessException
 		{
@@ -327,7 +336,7 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 		ButtonUtil.showButtons(saveButton, cancelButton);
 		ButtonUtil.hideButtons(createNewButton, deleteButton, editButton);
 		setCaption(I18NResource.localize(CommonConstants.NEW_RECORD));
-		clearErrors();		
+		clearErrors();
 		focus();
 	}
 
@@ -365,7 +374,7 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 	}
 
 	public void clearErrors()
-	{		
+	{
 		setComponentError(null);
 		saveButton.setComponentError(null);
 		cancelButton.setComponentError(null);
@@ -485,7 +494,7 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 			Logger.getLogger(DataForm.class.getName()).log(Level.WARNING, ex.
 					getMessage(), ex);
 			getApplication().getMainWindow().showNotification(NotificationFactory.createWarningNotification(I18NResource.localize(CommonConstants.SYSTEM_WARNING),
-					I18NResource.localize(CommonConstants.EDITING_OF_RECORD_FAILED)));			
+					I18NResource.localize(CommonConstants.EDITING_OF_RECORD_FAILED)));
 			throw new RuntimeException(ex);
 		}
 	}
