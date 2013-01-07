@@ -24,7 +24,5 @@ import java.util.List;
  */
 public interface SimpleDataRetrievalStrategy<T>
 {
-	List<T> retrieveListCache() throws DataAccessException;	
 	List<T> retrieveList() throws DataAccessException;	
-	boolean isDataChanged();
 }
