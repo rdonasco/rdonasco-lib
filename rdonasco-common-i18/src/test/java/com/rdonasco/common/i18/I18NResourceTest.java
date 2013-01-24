@@ -65,6 +65,7 @@ public class I18NResourceTest
 	@Test(expected=NullPointerException.class)
 	public void testBundleNotSet() throws Exception
 	{
+		I18NResource.setBundle(null);
 		I18NResource.localize("string to localize");
 	}
 	
