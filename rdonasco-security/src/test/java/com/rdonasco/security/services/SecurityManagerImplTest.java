@@ -125,6 +125,25 @@ public class SecurityManagerImplTest
 
 		instance.checkAccessRights(accessRights);
 	}
+	
+	public void testCheckEditAccessRights() throws Exception
+	{
+		System.out.println("checkInvalidAccessRights");
+		AccessRightsVO accessRights = new AccessRightsVOBuilder()
+				.setActionAsString("Edit")
+				.setActionID(Long.MIN_VALUE + 1L)
+				.setResourceAsString("User")
+				.setResourceID(Long.MIN_VALUE)
+				.setUserProfile(userSecurityProfile)
+				.createAccessRightsVO();
+
+		SecurityManager instance = new SecurityManagerImpl();
+		instance.setSecurityDAO(securityDAOMock);
+
+		when(securityDAOMock.loadCapabilitiesOf(userSecurityProfile)).thenReturn(getCapabilityOnEditingUser());
+
+		instance.checkAccessRights(accessRights);
+	}	
 
 	private List<Capability> getCapabilityOnAddingUser()
 	{
@@ -145,4 +164,24 @@ public class SecurityManagerImplTest
 		capabilities.add(capability);
 		return capabilities;
 	}
+	
+	private List<Capability> getCapabilityOnEditingUser()
+	{
+		Capability capability = new Capability();
+		capability.setId(Long.MIN_VALUE);
+		capability.setTitle("Manage Users");
+		SecuredResource resource = new SecuredResource();
+		resource.setName("User");
+		resource.setId(Long.MIN_VALUE);
+		capability.setResource(resource);
+		List<SecuredAction> actions = new ArrayList<SecuredAction>();
+		SecuredAction addAction = new SecuredAction();
+		addAction.setName("Edit");
+		addAction.setId(Long.MAX_VALUE);
+		actions.add(addAction);
+		capability.setActions(actions);
+		List<Capability> capabilities = new ArrayList<Capability>();
+		capabilities.add(capability);
+		return capabilities;
+	}	
 }
