@@ -8,7 +8,7 @@ package com.rdonasco.security.exceptions;
  *
  * @author Roy F. Donasco
  */
-public class SecurityManagerException extends Exception
+public class NotSecuredResourceException extends SecurityManagerException
 {
 	private static final long serialVersionUID = 1L;
 
@@ -16,7 +16,7 @@ public class SecurityManagerException extends Exception
 	 * Creates a new instance of
 	 * <code>SecurityManagerException</code> without detail message.
 	 */
-	public SecurityManagerException()
+	public NotSecuredResourceException()
 	{
 	}
 
@@ -26,17 +26,17 @@ public class SecurityManagerException extends Exception
 	 *
 	 * @param msg the detail message.
 	 */
-	public SecurityManagerException(String msg)
+	public NotSecuredResourceException(String msg)
 	{
 		super(msg);
 	}
 
-	public SecurityManagerException(String message, Throwable cause)
+	public NotSecuredResourceException(String message, Throwable cause)
 	{
 		super(message, cause);
 	}
 
-	public SecurityManagerException(Throwable cause)
+	public NotSecuredResourceException(Throwable cause)
 	{
 		super(cause);
 	}

@@ -19,7 +19,7 @@ package com.rdonasco.security.services;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.security.dao.CapabilityDAO;
 import com.rdonasco.security.dao.ResourceDAO;
-import com.rdonasco.security.exceptions.SecurityManagerException;
+import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.model.Resource;
@@ -35,6 +35,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.mockito.Mockito;
 import static org.mockito.Mockito.*;
 
 /**
@@ -164,6 +165,28 @@ public class SecurityManagerImplTest
 		instance.checkAccessRights(accessRights);
 	}
 
+	@Test(expected=NotSecuredResourceException.class)
+	public void testNonRestrictedResource() throws Exception
+	{
+		System.out.println("nonRestrictedResource");
+		SecurityManagerImpl instance = new SecurityManagerImpl();
+		instance.setCapabilityDAO(capabilityDAOMock);
+		instance.setResourceDAO(resourceDAOMock);
+		AccessRightsVO accessRights = new AccessRightsVOBuilder()
+				.setActionAsString("Edit")
+				.setActionID(Long.MIN_VALUE + 1L)
+				.setResourceAsString("User")
+				.setResourceID(Long.MIN_VALUE)
+				.setUserProfile(userSecurityProfileMock)
+				.createAccessRightsVO();
+		List<Capability> emptyCapability = new ArrayList<Capability>();
+		when(capabilityDAOMock.loadCapabilitiesOf(userSecurityProfileMock)).thenReturn(emptyCapability);
+		when(resourceDAOMock.findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class)))
+				.thenThrow(NonExistentEntityException.class);		
+		instance.checkAccessRights(accessRights);
+		verify(resourceDAOMock,times(1)).create(accessRights.getResource());
+	}
+
 	@Test
 	public void testCheckEditAccessRights() throws Exception
 	{
@@ -198,8 +221,8 @@ public class SecurityManagerImplTest
 		Resource foundResource = instance.findResourceNamedAs(returnedResource.getName());
 		assertNotNull(foundResource);
 	}
-	
-	@Test(expected=SecurityManagerException.class)
+
+	@Test(expected = NonExistentEntityException.class)
 	public void testNoRecordFoundInFindResourceNamed() throws Exception
 	{
 		System.out.println("noRecordFoundInFindResourceNamed");
@@ -211,8 +234,8 @@ public class SecurityManagerImplTest
 		when(resourceDAOMock.findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class)))
 				.thenThrow(NonExistentEntityException.class);
 		instance.findResourceNamedAs(returnedResource.getName());
-	}	
-	
+	}
+
 	@Test
 	public void testSuccessfulFindSecuredResourceNamed() throws Exception
 	{
@@ -225,12 +248,12 @@ public class SecurityManagerImplTest
 		List<Capability> capabilities = getCapabilityOnAddingUser();
 		when(capabilityDAOMock.findAllDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class)))
 				.thenReturn(capabilities);
-				
-		Resource foundResource = instance.findSecuredResourceNamedAs(returnedResource.getName());
+
+		Resource foundResource = instance.findOrAddSecuredResourceNamedAs(returnedResource.getName());
 		assertNotNull(foundResource);
 	}
-	
-	@Test(expected=SecurityManagerException.class)
+
+	@Test(expected = NotSecuredResourceException.class)
 	public void testNotFoundSecuredResourceNamed() throws Exception
 	{
 		System.out.println("notFoundSecuredResourceNamed");
@@ -239,9 +262,12 @@ public class SecurityManagerImplTest
 		returnedResource.setId(Long.MIN_VALUE);
 		returnedResource.setName("anyResource");
 		instance.setCapabilityDAO(capabilityDAOMock);
-		List<Capability> capabilities = getCapabilityOnAddingUser();
+		instance.setResourceDAO(resourceDAOMock);
 		when(capabilityDAOMock.findAllDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class)))
-				.thenReturn(null);				
-		instance.findSecuredResourceNamedAs(returnedResource.getName());
-	}	
+				.thenReturn(null);
+		when(resourceDAOMock.findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class)))
+				.thenThrow(NonExistentEntityException.class);
+		instance.findOrAddSecuredResourceNamedAs(returnedResource.getName());
+		verify(resourceDAOMock,times(1)).create(returnedResource);
+	}
 }

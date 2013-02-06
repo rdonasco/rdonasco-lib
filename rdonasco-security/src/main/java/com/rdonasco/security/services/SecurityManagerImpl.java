@@ -20,6 +20,7 @@ import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.security.dao.CapabilityDAO;
 import com.rdonasco.security.dao.ResourceDAO;
+import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.Action;
@@ -52,7 +53,7 @@ public class SecurityManagerImpl implements SecurityManager
 
 	@Override
 	public void checkAccessRights(AccessRightsVO accessRights) throws
-			SecurityException
+			SecurityException, NotSecuredResourceException
 	{
 		if (null == accessRights)
 		{
@@ -62,21 +63,35 @@ public class SecurityManagerImpl implements SecurityManager
 		{
 			List<Capability> capabilities = retrieveCapabilitiesOfUser(accessRights);
 			Set<AccessRightsVO> accessRightsSet = new HashSet<AccessRightsVO>();
-			for (Capability capability : capabilities)
+			boolean capabilitiesNotFound = (capabilities == null || capabilities.isEmpty());
+			if (capabilitiesNotFound)
 			{
-				for (Action action : capability.getActions())
+				findOrAddSecuredResourceNamedAs(accessRights.getResource().getName());
+
+			}
+			else
+			{
+				for (Capability capability : capabilities)
 				{
-					AccessRightsVO rights = new AccessRightsVOBuilder()
-							.setAction(action)
-							.setResource(capability.getResource())
-							.setUserProfile(accessRights.getUserProfile()).createAccessRightsVO();
-					accessRightsSet.add(rights);			
-				}
-				if(!accessRightsSet.contains(accessRights))
-				{
-					throw new SecurityException("Access Denied!");
+					for (Action action : capability.getActions())
+					{
+						AccessRightsVO rights = new AccessRightsVOBuilder()
+								.setAction(action)
+								.setResource(capability.getResource())
+								.setUserProfile(accessRights.getUserProfile()).createAccessRightsVO();
+						accessRightsSet.add(rights);
+					}
+					if (!accessRightsSet.contains(accessRights))
+					{
+						throw new SecurityException("Access Denied!");
+					}
 				}
 			}
+
+		}
+		catch(NotSecuredResourceException e)
+		{
+			throw e;
 		}
 		catch (Exception e)
 		{
@@ -99,13 +114,14 @@ public class SecurityManagerImpl implements SecurityManager
 	}
 
 	@Override
-	public Resource addResource(Resource resource) throws SecurityManagerException
+	public Resource addResource(Resource resource) throws
+			SecurityManagerException
 	{
 		try
 		{
 			resourceDAO.create(resource);
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			throw new SecurityManagerException(e);
 		}
@@ -113,29 +129,35 @@ public class SecurityManagerImpl implements SecurityManager
 	}
 
 	@Override
-	public void removeResource(Resource resource) throws SecurityManagerException
+	public void removeResource(Resource resource) throws
+			SecurityManagerException
 	{
 		try
 		{
 			resourceDAO.delete(Resource.class, resource.getId());
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			throw new SecurityManagerException(e);
 		}
 	}
 
 	@Override
-	public Resource findResourceNamedAs(String resourceName) throws SecurityManagerException
+	public Resource findResourceNamedAs(String resourceName) throws
+			SecurityManagerException, NonExistentEntityException
 	{
 		Resource resource = null;
 		try
 		{
-			Map<String,Object> parameters = new HashMap<String, Object>();
+			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put(Resource.QUERY_PARAM_RESOURCE_NAME, resourceName);
 			resource = resourceDAO.findUniqueDataUsingNamedQuery(Resource.NAMED_QUERY_FIND_RESOURCE_BY_NAME, parameters);
 		}
-		catch(Exception e)
+		catch (NonExistentEntityException e)
+		{
+			throw e;
+		}
+		catch (Exception e)
 		{
 			throw new SecurityManagerException(e);
 		}
@@ -143,24 +165,43 @@ public class SecurityManagerImpl implements SecurityManager
 	}
 
 	@Override
-	public Resource findSecuredResourceNamedAs(String resourceName) throws SecurityManagerException
+	public Resource findOrAddSecuredResourceNamedAs(String resourceName) throws
+			SecurityManagerException
 	{
 		Resource securedResource = null;
 		try
 		{
-			Map<String,Object> parameters = new HashMap<String, Object>();
-			parameters.put(Capability.QUERY_PARAM_RESOURCE,resourceName);
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put(Capability.QUERY_PARAM_RESOURCE, resourceName);
 			List<Capability> capabilities = capabilityDAO.findAllDataUsingNamedQuery(Capability.NAMED_QUERY_FIND_BY_RESOURCE_NAME, parameters);
-			if(null != capabilities && !capabilities.isEmpty())
+			if (null != capabilities && !capabilities.isEmpty())
 			{
 				securedResource = capabilities.get(0).getResource();
 			}
 			else
 			{
-				throw new NonExistentEntityException("Resource not found or is not secured");
+				try
+				{
+					findResourceNamedAs(resourceName);
+				}
+				catch (NonExistentEntityException e)
+				{
+					Resource resourceToAdd = new Resource();
+					resourceToAdd.setDescription(resourceName);
+					resourceToAdd.setName(resourceName);
+					addResource(resourceToAdd);
+				}
+			}
+			if (null == securedResource)
+			{
+				throw new NotSecuredResourceException("Not Secured Resource. Can be accessed by anyone.");
 			}
 		}
-		catch(Exception e)
+		catch(NotSecuredResourceException e)
+		{
+			throw e;
+		}
+		catch (Exception e)
 		{
 			throw new SecurityManagerException(e);
 		}
@@ -171,8 +212,4 @@ public class SecurityManagerImpl implements SecurityManager
 	{
 		this.resourceDAO = resourceDAO;
 	}
-	
-	
-	
-	
 }

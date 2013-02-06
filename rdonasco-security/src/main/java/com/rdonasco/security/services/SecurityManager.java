@@ -16,6 +16,8 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.common.exceptions.NonExistentEntityException;
+import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.vo.AccessRightsVO;
@@ -28,9 +30,9 @@ import javax.ejb.Remote;
 @Remote
 public interface SecurityManager
 {
-	void checkAccessRights(AccessRightsVO accessRights) throws SecurityException;
+	void checkAccessRights(AccessRightsVO accessRights) throws SecurityException,NotSecuredResourceException;
 	Resource addResource(Resource resource) throws SecurityManagerException;
 	void removeResource(Resource resource) throws SecurityManagerException;
-	Resource findResourceNamedAs(String resourceName) throws SecurityManagerException;
-	Resource findSecuredResourceNamedAs(String resourceName) throws SecurityManagerException;
+	Resource findResourceNamedAs(String resourceName) throws SecurityManagerException, NonExistentEntityException;
+	Resource findOrAddSecuredResourceNamedAs(String resourceName) throws SecurityManagerException, NonExistentEntityException;
 }
