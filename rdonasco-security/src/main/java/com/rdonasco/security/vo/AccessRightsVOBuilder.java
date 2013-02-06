@@ -17,8 +17,8 @@
 
 package com.rdonasco.security.vo;
 
-import com.rdonasco.security.model.SecuredAction;
-import com.rdonasco.security.model.SecuredResource;
+import com.rdonasco.security.model.Action;
+import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.model.UserSecurityProfile;
 import java.util.logging.Logger;
 
@@ -28,15 +28,15 @@ public class AccessRightsVOBuilder
 	private static final Logger LOG = Logger.getLogger(AccessRightsVOBuilder.class.getName());
 	
 	
-	private SecuredResource resource;
+	private Resource resource;
 	private UserSecurityProfile userProfile;
-	private SecuredAction action;
+	private Action action;
 
 	public AccessRightsVOBuilder()
 	{
 	}
 
-	public AccessRightsVOBuilder setResource(SecuredResource resource)
+	public AccessRightsVOBuilder setResource(Resource resource)
 	{
 		this.resource = resource;
 		return this;
@@ -44,7 +44,7 @@ public class AccessRightsVOBuilder
 	
 	public AccessRightsVOBuilder setResourceAsString(String stringResource)
 	{
-		SecuredResource securedResource = new SecuredResource();
+		Resource securedResource = new Resource();
 		securedResource.setName(stringResource);
 		this.resource = securedResource;
 		return this;
@@ -69,7 +69,7 @@ public class AccessRightsVOBuilder
 		return this;
 	}
 
-	public AccessRightsVOBuilder setAction(SecuredAction action)
+	public AccessRightsVOBuilder setAction(Action action)
 	{
 		this.action = action;
 		return this;
@@ -77,7 +77,7 @@ public class AccessRightsVOBuilder
 	
 	public AccessRightsVOBuilder setActionAsString(String action)
 	{
-		SecuredAction newAction = SecuredAction.createWithName(action);
+		Action newAction = Action.createWithName(action);
 		newAction.setName(action);
 		this.action = newAction;
 		return this;

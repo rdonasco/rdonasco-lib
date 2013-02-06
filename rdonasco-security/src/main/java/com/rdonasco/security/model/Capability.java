@@ -29,6 +29,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 /**
@@ -36,12 +37,15 @@ import javax.persistence.TableGenerator;
  * @author Roy F. Donasco
  */
 @Entity
+@Table(name="capability")
 public class Capability implements Serializable
 {
 	public static final String NAMED_QUERY_FIND_ALL_CAPABILITY_OF_USER = "findAllCapabilityOfUser";
+	public static final String NAMED_QUERY_FIND_BY_RESOURCE_NAME = "findCapabilityByResourceName";
 	public static final String QUERY_PARAM_USER = "user";
 	public static final String QUERY_PARAM_RESOURCE = "resource";
-	public static final String QUERY_PARAM_ACTION = "resource";
+	public static final String QUERY_PARAM_ACTION = "action";
+	public static final String QUERY_PARAM_RESOURCE_NAME = "resourceName";
 	
 	private static final long serialVersionUID = 1L;
 	private static final String GENERATOR_KEY = "CAPABILITY_IDGEN";
@@ -60,9 +64,9 @@ public class Capability implements Serializable
 	private String description;
 	@JoinColumn(name = "resource_id", referencedColumnName = "id", nullable = false)
 	@ManyToOne(optional = false, fetch = FetchType.EAGER)
-	private SecuredResource resource;
+	private Resource resource;
 	@OneToMany(cascade = CascadeType.REFRESH, mappedBy = "capability", fetch = FetchType.EAGER)
-	private Collection<SecuredAction> actions;
+	private Collection<Action> actions;
 
 	public Long getId()
 	{
@@ -94,22 +98,22 @@ public class Capability implements Serializable
 		this.description = description;
 	}
 
-	public SecuredResource getResource()
+	public Resource getResource()
 	{
 		return resource;
 	}
 
-	public void setResource(SecuredResource resource)
+	public void setResource(Resource resource)
 	{
 		this.resource = resource;
 	}
 
-	public Collection<SecuredAction> getActions()
+	public Collection<Action> getActions()
 	{
 		return actions;
 	}
 
-	public void setActions(Collection<SecuredAction> actions)
+	public void setActions(Collection<Action> actions)
 	{
 		this.actions = actions;
 	}

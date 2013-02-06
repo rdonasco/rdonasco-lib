@@ -16,8 +16,8 @@
  */
 package com.rdonasco.security.vo;
 
-import com.rdonasco.security.model.SecuredAction;
-import com.rdonasco.security.model.SecuredResource;
+import com.rdonasco.security.model.Action;
+import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.model.UserSecurityProfile;
 import java.io.Serializable;
 
@@ -29,19 +29,19 @@ public class AccessRightsVO implements Serializable
 {
 
 	private static final long serialVersionUID = 1L;
-	private SecuredResource resource;
+	private Resource resource;
 	private UserSecurityProfile userProfile;
-	private SecuredAction action;
+	private Action action;
 
-	AccessRightsVO(SecuredResource resource,
-			UserSecurityProfile userProfile, SecuredAction action)
+	AccessRightsVO(Resource resource,
+			UserSecurityProfile userProfile, Action action)
 	{
 		this.resource = resource;
 		this.userProfile = userProfile;
 		this.action = action;
 	}
 
-	void setResource(SecuredResource resource)
+	void setResource(Resource resource)
 	{
 		this.resource = resource;
 	}
@@ -51,12 +51,12 @@ public class AccessRightsVO implements Serializable
 		this.userProfile = userProfile;
 	}
 
-	void setAction(SecuredAction action)
+	void setAction(Action action)
 	{
 		this.action = action;
 	}
 
-	public SecuredResource getResource()
+	public Resource getResource()
 	{
 		return resource;
 	}
@@ -71,7 +71,7 @@ public class AccessRightsVO implements Serializable
 		return userProfile;
 	}
 
-	public SecuredAction getAction()
+	public Action getAction()
 	{
 		return action;
 	}

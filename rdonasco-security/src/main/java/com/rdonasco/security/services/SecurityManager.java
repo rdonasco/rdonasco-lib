@@ -16,7 +16,8 @@
  */
 package com.rdonasco.security.services;
 
-import com.rdonasco.security.dao.CapabilityDAO;
+import com.rdonasco.security.exceptions.SecurityManagerException;
+import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.vo.AccessRightsVO;
 import javax.ejb.Remote;
 
@@ -27,6 +28,9 @@ import javax.ejb.Remote;
 @Remote
 public interface SecurityManager
 {
-	void setSecurityDAO(CapabilityDAO securityDAO);
 	void checkAccessRights(AccessRightsVO accessRights) throws SecurityException;
+	Resource addResource(Resource resource) throws SecurityManagerException;
+	void removeResource(Resource resource) throws SecurityManagerException;
+	Resource findResourceNamedAs(String resourceName) throws SecurityManagerException;
+	Resource findSecuredResourceNamedAs(String resourceName) throws SecurityManagerException;
 }

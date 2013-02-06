@@ -30,8 +30,10 @@ import javax.persistence.TableGenerator;
  * @author Roy F. Donasco
  */
 @Entity
-public class SecuredResource implements Serializable
+public class Resource implements Serializable
 {
+	public static final String NAMED_QUERY_FIND_RESOURCE_BY_NAME = "findResourceByName";
+	public static final String QUERY_PARAM_RESOURCE_NAME = "resourceName";
 
 	private static final long serialVersionUID = 1L;
 	private static final String GENERATOR_KEY = "RESOURCE_IDGEN";
@@ -70,11 +72,11 @@ public class SecuredResource implements Serializable
 	public boolean equals(Object object)
 	{
 		// TODO: Warning - this method won't work in the case the id fields are not set
-		if (!(object instanceof SecuredResource))
+		if (!(object instanceof Resource))
 		{
 			return false;
 		}
-		SecuredResource other = (SecuredResource) object;
+		Resource other = (Resource) object;
 		if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
 		{
 			return false;

@@ -42,7 +42,7 @@ import javax.persistence.UniqueConstraint;
 		"capability_id", "action_name"
 	},name="capability_action")
 })
-public class SecuredAction implements Serializable
+public class Action implements Serializable
 {
 
 	private static final long serialVersionUID = 1L;
@@ -65,9 +65,9 @@ public class SecuredAction implements Serializable
 	@ManyToOne(optional = true, fetch = FetchType.EAGER)	
 	private Capability capability;
 		
-	public static SecuredAction createWithName(String name)
+	public static Action createWithName(String name)
 	{
-		SecuredAction action = new SecuredAction();
+		Action action = new Action();
 		action.setName(name);
 		return action;
 	}
@@ -106,11 +106,11 @@ public class SecuredAction implements Serializable
 	public boolean equals(Object object)
 	{
 		// TODO: Warning - this method won't work in the case the id fields are not set
-		if (!(object instanceof SecuredAction))
+		if (!(object instanceof Action))
 		{
 			return false;
 		}
-		SecuredAction other = (SecuredAction) object;
+		Action other = (Action) object;
 		if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
 		{
 			return false;

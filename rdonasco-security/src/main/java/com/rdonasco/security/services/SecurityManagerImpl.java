@@ -17,9 +17,13 @@
 package com.rdonasco.security.services;
 
 import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.security.dao.CapabilityDAO;
+import com.rdonasco.security.dao.ResourceDAO;
+import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.model.Capability;
-import com.rdonasco.security.model.SecuredAction;
+import com.rdonasco.security.model.Action;
+import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
 import java.util.HashMap;
@@ -43,6 +47,8 @@ public class SecurityManagerImpl implements SecurityManager
 	private static final Logger LOG = Logger.getLogger(SecurityManagerImpl.class.getName());
 	@Inject
 	private CapabilityDAO capabilityDAO;
+	@Inject
+	private ResourceDAO resourceDAO;
 
 	@Override
 	public void checkAccessRights(AccessRightsVO accessRights) throws
@@ -58,7 +64,7 @@ public class SecurityManagerImpl implements SecurityManager
 			Set<AccessRightsVO> accessRightsSet = new HashSet<AccessRightsVO>();
 			for (Capability capability : capabilities)
 			{
-				for (SecuredAction action : capability.getActions())
+				for (Action action : capability.getActions())
 				{
 					AccessRightsVO rights = new AccessRightsVOBuilder()
 							.setAction(action)
@@ -79,10 +85,9 @@ public class SecurityManagerImpl implements SecurityManager
 		}
 	}
 
-	@Override
-	public void setSecurityDAO(CapabilityDAO securityDAO)
+	public void setCapabilityDAO(CapabilityDAO capabilityDAO)
 	{
-		this.capabilityDAO = securityDAO;
+		this.capabilityDAO = capabilityDAO;
 	}
 
 	private List<Capability> retrieveCapabilitiesOfUser(
@@ -92,4 +97,82 @@ public class SecurityManagerImpl implements SecurityManager
 		return capabilityDAO
 				.loadCapabilitiesOf(accessRights.getUserProfile());
 	}
+
+	@Override
+	public Resource addResource(Resource resource) throws SecurityManagerException
+	{
+		try
+		{
+			resourceDAO.create(resource);
+		}
+		catch(Exception e)
+		{
+			throw new SecurityManagerException(e);
+		}
+		return resource;
+	}
+
+	@Override
+	public void removeResource(Resource resource) throws SecurityManagerException
+	{
+		try
+		{
+			resourceDAO.delete(Resource.class, resource.getId());
+		}
+		catch(Exception e)
+		{
+			throw new SecurityManagerException(e);
+		}
+	}
+
+	@Override
+	public Resource findResourceNamedAs(String resourceName) throws SecurityManagerException
+	{
+		Resource resource = null;
+		try
+		{
+			Map<String,Object> parameters = new HashMap<String, Object>();
+			parameters.put(Resource.QUERY_PARAM_RESOURCE_NAME, resourceName);
+			resource = resourceDAO.findUniqueDataUsingNamedQuery(Resource.NAMED_QUERY_FIND_RESOURCE_BY_NAME, parameters);
+		}
+		catch(Exception e)
+		{
+			throw new SecurityManagerException(e);
+		}
+		return resource;
+	}
+
+	@Override
+	public Resource findSecuredResourceNamedAs(String resourceName) throws SecurityManagerException
+	{
+		Resource securedResource = null;
+		try
+		{
+			Map<String,Object> parameters = new HashMap<String, Object>();
+			parameters.put(Capability.QUERY_PARAM_RESOURCE,resourceName);
+			List<Capability> capabilities = capabilityDAO.findAllDataUsingNamedQuery(Capability.NAMED_QUERY_FIND_BY_RESOURCE_NAME, parameters);
+			if(null != capabilities && !capabilities.isEmpty())
+			{
+				securedResource = capabilities.get(0).getResource();
+			}
+			else
+			{
+				throw new NonExistentEntityException("Resource not found or is not secured");
+			}
+		}
+		catch(Exception e)
+		{
+			throw new SecurityManagerException(e);
+		}
+		return securedResource;
+	}
+
+	public void setResourceDAO(ResourceDAO resourceDAO)
+	{
+		this.resourceDAO = resourceDAO;
+	}
+	
+	
+	
+	
 }
