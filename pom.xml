@@ -13,5 +13,7 @@
     <module>rdonasco-common-dao</module>
     <module>rdonasco-common-validator</module>
     <module>rdonasco-common</module>
+    <module>rdonasco-security</module>
+    <module>rdonasco-security-client</module>
   </modules>
 </project>
