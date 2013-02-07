@@ -23,10 +23,14 @@ import com.rdonasco.security.dao.ResourceDAO;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.model.Capability;
-import com.rdonasco.security.model.Action;
 import com.rdonasco.security.model.Resource;
+import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
+import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.CapabilityVO;
+import com.rdonasco.security.vo.ResourceVO;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -61,7 +65,7 @@ public class SecurityManagerImpl implements SecurityManager
 		}
 		try
 		{
-			List<Capability> capabilities = retrieveCapabilitiesOfUser(accessRights);
+			List<CapabilityVO> capabilities = retrieveCapabilitiesOfUser(accessRights);
 			Set<AccessRightsVO> accessRightsSet = new HashSet<AccessRightsVO>();
 			boolean capabilitiesNotFound = (capabilities == null || capabilities.isEmpty());
 			if (capabilitiesNotFound)
@@ -71,14 +75,14 @@ public class SecurityManagerImpl implements SecurityManager
 			}
 			else
 			{
-				for (Capability capability : capabilities)
+				for (CapabilityVO capability : capabilities)
 				{
-					for (Action action : capability.getActions())
+					for (ActionVO action : capability.getActions())
 					{
 						AccessRightsVO rights = new AccessRightsVOBuilder()
-								.setAction(action)
-								.setResource(capability.getResource())
-								.setUserProfile(accessRights.getUserProfile()).createAccessRightsVO();
+								.setActionVO(action)
+								.setResourceVO(capability.getResource())
+								.setUserProfileVO(accessRights.getUserProfile()).createAccessRightsVO();
 						accessRightsSet.add(rights);
 					}
 					if (!accessRightsSet.contains(accessRights))
@@ -105,31 +109,51 @@ public class SecurityManagerImpl implements SecurityManager
 		this.capabilityDAO = capabilityDAO;
 	}
 
-	private List<Capability> retrieveCapabilitiesOfUser(
+	private List<CapabilityVO> retrieveCapabilitiesOfUser(
 			AccessRightsVO accessRights)
 			throws DataAccessException
 	{
-		return capabilityDAO
-				.loadCapabilitiesOf(accessRights.getUserProfile());
+		List<CapabilityVO> capabilityVOList = null;		
+		try
+		{
+				
+			UserSecurityProfile userProfile = SecurityEntityValueObjectConverter.toUserProfile(accessRights.getUserProfile());
+			List<Capability> capabilities = capabilityDAO
+					.loadCapabilitiesOf(userProfile);
+			capabilityVOList = new ArrayList<CapabilityVO>(capabilities.size());
+			CapabilityVO capabilityVO = null;
+			for(Capability capability : capabilities)
+			{
+				capabilityVO = SecurityEntityValueObjectConverter.toCapabilityVO(capability);
+			}
+			
+		}
+		catch (Exception ex)
+		{
+			throw new DataAccessException(ex);
+		}
+		return capabilityVOList;
 	}
 
 	@Override
-	public Resource addResource(Resource resource) throws
+	public ResourceVO addResource(ResourceVO resourceVO) throws
 			SecurityManagerException
 	{
 		try
 		{
+			Resource resource = SecurityEntityValueObjectConverter.toResource(resourceVO);
 			resourceDAO.create(resource);
+			resourceVO = SecurityEntityValueObjectConverter.toResourceVO(resource);
 		}
 		catch (Exception e)
 		{
 			throw new SecurityManagerException(e);
 		}
-		return resource;
+		return resourceVO;
 	}
 
 	@Override
-	public void removeResource(Resource resource) throws
+	public void removeResource(ResourceVO resource) throws
 			SecurityManagerException
 	{
 		try
@@ -143,15 +167,16 @@ public class SecurityManagerImpl implements SecurityManager
 	}
 
 	@Override
-	public Resource findResourceNamedAs(String resourceName) throws
+	public ResourceVO findResourceNamedAs(String resourceName) throws
 			SecurityManagerException, NonExistentEntityException
 	{
-		Resource resource = null;
+		ResourceVO resourceVO = null;
 		try
 		{
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put(Resource.QUERY_PARAM_RESOURCE_NAME, resourceName);
-			resource = resourceDAO.findUniqueDataUsingNamedQuery(Resource.NAMED_QUERY_FIND_RESOURCE_BY_NAME, parameters);
+			Resource resource = resourceDAO.findUniqueDataUsingNamedQuery(Resource.NAMED_QUERY_FIND_RESOURCE_BY_NAME, parameters);
+			resourceVO = SecurityEntityValueObjectConverter.toResourceVO(resource);
 		}
 		catch (NonExistentEntityException e)
 		{
@@ -161,14 +186,15 @@ public class SecurityManagerImpl implements SecurityManager
 		{
 			throw new SecurityManagerException(e);
 		}
-		return resource;
+		return resourceVO;
 	}
 
 	@Override
-	public Resource findOrAddSecuredResourceNamedAs(String resourceName) throws
+	public ResourceVO findOrAddSecuredResourceNamedAs(String resourceName) throws
 			SecurityManagerException
 	{
 		Resource securedResource = null;
+		ResourceVO securedResourceVO = null;
 		try
 		{
 			Map<String, Object> parameters = new HashMap<String, Object>();
@@ -186,7 +212,7 @@ public class SecurityManagerImpl implements SecurityManager
 				}
 				catch (NonExistentEntityException e)
 				{
-					Resource resourceToAdd = new Resource();
+					ResourceVO resourceToAdd = new ResourceVO();
 					resourceToAdd.setDescription(resourceName);
 					resourceToAdd.setName(resourceName);
 					addResource(resourceToAdd);
@@ -196,6 +222,7 @@ public class SecurityManagerImpl implements SecurityManager
 			{
 				throw new NotSecuredResourceException("Not Secured Resource. Can be accessed by anyone.");
 			}
+			securedResourceVO = SecurityEntityValueObjectConverter.toResourceVO(securedResource);
 		}
 		catch(NotSecuredResourceException e)
 		{
@@ -205,7 +232,8 @@ public class SecurityManagerImpl implements SecurityManager
 		{
 			throw new SecurityManagerException(e);
 		}
-		return securedResource;
+		
+		return securedResourceVO;
 	}
 
 	public void setResourceDAO(ResourceDAO resourceDAO)

@@ -26,6 +26,8 @@ import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
+import com.rdonasco.security.vo.ResourceVO;
+import com.rdonasco.security.vo.UserSecurityProfileVO;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -35,7 +37,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.mockito.Mockito;
 import static org.mockito.Mockito.*;
 
 /**
@@ -48,10 +49,41 @@ public class SecurityManagerImplTest
 
 	private static final Logger LOG = Logger.getLogger(SecurityManagerImplTest.class.getName());
 	private static CapabilityDAO capabilityDAOMock;
+	private static UserSecurityProfileVO userSecurityProfileVOMock;
 	private static UserSecurityProfile userSecurityProfileMock;
 	private static ResourceDAO resourceDAOMock;
 
 	public SecurityManagerImplTest()
+	{
+	}
+
+
+
+	@BeforeClass
+	public static void setUpClass()
+	{
+		capabilityDAOMock = mock(CapabilityDAO.class);
+		userSecurityProfileVOMock = mock(UserSecurityProfileVO.class);
+		resourceDAOMock = mock(ResourceDAO.class);
+		userSecurityProfileMock = mock(UserSecurityProfile.class);
+	}
+
+	@AfterClass
+	public static void tearDownClass()
+	{
+	}
+
+	@Before
+	public void setUp()
+	{
+		reset(capabilityDAOMock);
+		reset(userSecurityProfileVOMock);
+		reset(resourceDAOMock);
+		reset(userSecurityProfileMock);
+	}
+
+	@After
+	public void tearDown()
 	{
 	}
 
@@ -93,34 +125,7 @@ public class SecurityManagerImplTest
 		List<Capability> capabilities = new ArrayList<Capability>();
 		capabilities.add(capability);
 		return capabilities;
-	}
-
-	@BeforeClass
-	public static void setUpClass()
-	{
-		capabilityDAOMock = mock(CapabilityDAO.class);
-		userSecurityProfileMock = mock(UserSecurityProfile.class);
-		resourceDAOMock = mock(ResourceDAO.class);
-	}
-
-	@AfterClass
-	public static void tearDownClass()
-	{
-	}
-
-	@Before
-	public void setUp()
-	{
-		reset(capabilityDAOMock);
-		reset(userSecurityProfileMock);
-		reset(resourceDAOMock);
-	}
-
-	@After
-	public void tearDown()
-	{
-	}
-
+	}	
 	/**
 	 * Test of checkAccessRights method, of class SecurityManagerImpl.
 	 */
@@ -134,7 +139,7 @@ public class SecurityManagerImplTest
 				.setActionID(Long.MIN_VALUE)
 				.setResourceAsString("User")
 				.setResourceID(Long.MIN_VALUE)
-				.setUserProfile(userSecurityProfileMock)
+				.setUserProfileVO(userSecurityProfileVOMock)
 				.createAccessRightsVO();
 
 		SecurityManagerImpl instance = new SecurityManagerImpl();
@@ -154,7 +159,7 @@ public class SecurityManagerImplTest
 				.setActionID(Long.MIN_VALUE + 1L)
 				.setResourceAsString("User")
 				.setResourceID(Long.MIN_VALUE)
-				.setUserProfile(userSecurityProfileMock)
+				.setUserProfileVO(userSecurityProfileVOMock)
 				.createAccessRightsVO();
 
 		SecurityManagerImpl instance = new SecurityManagerImpl();
@@ -177,14 +182,15 @@ public class SecurityManagerImplTest
 				.setActionID(Long.MIN_VALUE + 1L)
 				.setResourceAsString("User")
 				.setResourceID(Long.MIN_VALUE)
-				.setUserProfile(userSecurityProfileMock)
+				.setUserProfileVO(userSecurityProfileVOMock)
 				.createAccessRightsVO();
 		List<Capability> emptyCapability = new ArrayList<Capability>();
+		Resource resource = SecurityEntityValueObjectConverter.toResource(accessRights.getResource());
 		when(capabilityDAOMock.loadCapabilitiesOf(userSecurityProfileMock)).thenReturn(emptyCapability);
 		when(resourceDAOMock.findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class)))
 				.thenThrow(NonExistentEntityException.class);		
-		instance.checkAccessRights(accessRights);
-		verify(resourceDAOMock,times(1)).create(accessRights.getResource());
+		instance.checkAccessRights(accessRights);		
+		verify(resourceDAOMock,times(1)).create(resource);
 	}
 
 	@Test
@@ -196,7 +202,7 @@ public class SecurityManagerImplTest
 				.setActionID(Long.MIN_VALUE + 1L)
 				.setResourceAsString("User")
 				.setResourceID(Long.MIN_VALUE)
-				.setUserProfile(userSecurityProfileMock)
+				.setUserProfileVO(userSecurityProfileVOMock)
 				.createAccessRightsVO();
 
 		SecurityManagerImpl instance = new SecurityManagerImpl();
@@ -218,7 +224,7 @@ public class SecurityManagerImplTest
 		returnedResource.setName("anyResource");
 		when(resourceDAOMock.findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class)))
 				.thenReturn(returnedResource);
-		Resource foundResource = instance.findResourceNamedAs(returnedResource.getName());
+		ResourceVO foundResource = instance.findResourceNamedAs(returnedResource.getName());
 		assertNotNull(foundResource);
 	}
 
@@ -249,7 +255,7 @@ public class SecurityManagerImplTest
 		when(capabilityDAOMock.findAllDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class)))
 				.thenReturn(capabilities);
 
-		Resource foundResource = instance.findOrAddSecuredResourceNamedAs(returnedResource.getName());
+		ResourceVO foundResource = instance.findOrAddSecuredResourceNamedAs(returnedResource.getName());
 		assertNotNull(foundResource);
 	}
 

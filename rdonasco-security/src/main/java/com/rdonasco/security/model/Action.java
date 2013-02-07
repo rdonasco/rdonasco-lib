@@ -60,10 +60,6 @@ public class Action implements Serializable
 	@Basic(optional = true)
 	@Column(name = "action_description", nullable = false, length = 256)
 	private String description;
-	
-	@JoinColumn(name = "capability_id", referencedColumnName = "id", nullable = true)
-	@ManyToOne(optional = true, fetch = FetchType.EAGER)	
-	private Capability capability;
 		
 	public static Action createWithName(String name)
 	{
@@ -81,18 +77,6 @@ public class Action implements Serializable
 	{
 		this.id = id;
 	}		
-
-	public Capability getCapability()
-	{
-		return capability;
-	}
-
-	public void setCapability(Capability capability)
-	{
-		this.capability = capability;
-	}
-	
-	
 
 	@Override
 	public int hashCode()
