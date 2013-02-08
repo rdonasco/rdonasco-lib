@@ -57,7 +57,7 @@ public class SecurityManagerImpl implements SecurityManager
 
 	@Override
 	public void checkAccessRights(AccessRightsVO accessRights) throws
-			SecurityException, NotSecuredResourceException
+			SecurityException
 	{
 		if (null == accessRights)
 		{
@@ -71,7 +71,6 @@ public class SecurityManagerImpl implements SecurityManager
 			if (capabilitiesNotFound)
 			{
 				findOrAddSecuredResourceNamedAs(accessRights.getResource().getName());
-
 			}
 			else
 			{
@@ -95,7 +94,7 @@ public class SecurityManagerImpl implements SecurityManager
 		}
 		catch(NotSecuredResourceException e)
 		{
-			throw e;
+			LOG.info(e.getMessage());
 		}
 		catch (Exception e)
 		{
@@ -125,6 +124,7 @@ public class SecurityManagerImpl implements SecurityManager
 			for(Capability capability : capabilities)
 			{
 				capabilityVO = SecurityEntityValueObjectConverter.toCapabilityVO(capability);
+				capabilityVOList.add(capabilityVO);
 			}
 			
 		}
@@ -142,6 +142,10 @@ public class SecurityManagerImpl implements SecurityManager
 		try
 		{
 			Resource resource = SecurityEntityValueObjectConverter.toResource(resourceVO);
+			if(null == resourceVO.getId())
+			{
+				resource.setId(null);
+			}
 			resourceDAO.create(resource);
 			resourceVO = SecurityEntityValueObjectConverter.toResourceVO(resource);
 		}

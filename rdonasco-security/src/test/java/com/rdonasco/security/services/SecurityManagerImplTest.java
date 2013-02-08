@@ -28,6 +28,7 @@ import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
+import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -43,12 +44,10 @@ import static org.mockito.Mockito.*;
  *
  * @author Roy F. Donasco
  */
-//@RunWith(Arquillian.class)
 public class SecurityManagerImplTest
 {
 
-	private static final Logger LOG = Logger.getLogger(SecurityManagerImplTest.class.getName());
-	private static CapabilityDAO capabilityDAOMock;
+	private static CapabilityDAO capabilityDAOMock;// =mock(CapabilityDAO.class);
 	private static UserSecurityProfileVO userSecurityProfileVOMock;
 	private static UserSecurityProfile userSecurityProfileMock;
 	private static ResourceDAO resourceDAOMock;
@@ -56,8 +55,6 @@ public class SecurityManagerImplTest
 	public SecurityManagerImplTest()
 	{
 	}
-
-
 
 	@BeforeClass
 	public static void setUpClass()
@@ -144,9 +141,10 @@ public class SecurityManagerImplTest
 
 		SecurityManagerImpl instance = new SecurityManagerImpl();
 		instance.setCapabilityDAO(capabilityDAOMock);
-
+		instance.setResourceDAO(resourceDAOMock);
 		when(capabilityDAOMock.loadCapabilitiesOf(userSecurityProfileMock)).thenReturn(getCapabilityOnAddingUser());
-
+		when(resourceDAOMock.findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class)))
+				.thenReturn(SecurityEntityValueObjectConverter.toResource(accessRights.getResource()));
 		instance.checkAccessRights(accessRights);
 	}
 
@@ -170,7 +168,7 @@ public class SecurityManagerImplTest
 		instance.checkAccessRights(accessRights);
 	}
 
-	@Test(expected=NotSecuredResourceException.class)
+	@Test
 	public void testNonRestrictedResource() throws Exception
 	{
 		System.out.println("nonRestrictedResource");
@@ -185,11 +183,13 @@ public class SecurityManagerImplTest
 				.setUserProfileVO(userSecurityProfileVOMock)
 				.createAccessRightsVO();
 		List<Capability> emptyCapability = new ArrayList<Capability>();
-		Resource resource = SecurityEntityValueObjectConverter.toResource(accessRights.getResource());
 		when(capabilityDAOMock.loadCapabilitiesOf(userSecurityProfileMock)).thenReturn(emptyCapability);
 		when(resourceDAOMock.findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class)))
-				.thenThrow(NonExistentEntityException.class);		
-		instance.checkAccessRights(accessRights);		
+				.thenThrow(NonExistentEntityException.class);	
+		instance.checkAccessRights(accessRights);	
+		Resource resource = new Resource();
+		resource.setDescription(accessRights.getResource().getDescription());
+		resource.setName(accessRights.getResource().getName());		
 		verify(resourceDAOMock,times(1)).create(resource);
 	}
 
@@ -197,19 +197,21 @@ public class SecurityManagerImplTest
 	public void testCheckEditAccessRights() throws Exception
 	{
 		System.out.println("checkInvalidAccessRights");
+		UserSecurityProfileVO userSecurityProfileVO = createTestDataUserProfileVO();
+		UserSecurityProfile userSecurityProfile = SecurityEntityValueObjectConverter.toUserProfile(userSecurityProfileVO);
 		AccessRightsVO accessRights = new AccessRightsVOBuilder()
 				.setActionAsString("Edit")
 				.setActionID(Long.MIN_VALUE + 1L)
 				.setResourceAsString("User")
 				.setResourceID(Long.MIN_VALUE)
-				.setUserProfileVO(userSecurityProfileVOMock)
+				.setUserProfileVO(userSecurityProfileVO)
 				.createAccessRightsVO();
 
 		SecurityManagerImpl instance = new SecurityManagerImpl();
 		instance.setCapabilityDAO(capabilityDAOMock);
-
-		when(capabilityDAOMock.loadCapabilitiesOf(userSecurityProfileMock)).thenReturn(getCapabilityOnEditingUser());
-
+		instance.setResourceDAO(resourceDAOMock);
+		when(capabilityDAOMock.loadCapabilitiesOf(userSecurityProfile)).thenReturn(getCapabilityOnEditingUser());
+		
 		instance.checkAccessRights(accessRights);
 	}
 
@@ -275,5 +277,14 @@ public class SecurityManagerImplTest
 				.thenThrow(NonExistentEntityException.class);
 		instance.findOrAddSecuredResourceNamedAs(returnedResource.getName());
 		verify(resourceDAOMock,times(1)).create(returnedResource);
+	}
+
+	private UserSecurityProfileVO createTestDataUserProfileVO()
+	{
+		UserSecurityProfileVO userSecurityProfileVO = new UserSecurityProfileVOBuilder()
+				.setId(Long.MIN_VALUE)
+				.setLoginId("test Login ID")
+				.createUserSecurityProfileVO();
+		return userSecurityProfileVO;
 	}
 }

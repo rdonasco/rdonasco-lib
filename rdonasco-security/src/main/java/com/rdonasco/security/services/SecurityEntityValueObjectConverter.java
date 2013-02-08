@@ -37,6 +37,10 @@ class SecurityEntityValueObjectConverter
 	{
 		UserSecurityProfile userSecurityProfile = new UserSecurityProfile();
 		BEAN_UTILS.copyProperties(userSecurityProfile, userSecurityProfileVO);
+		if(null == userSecurityProfileVO.getId())
+		{
+			userSecurityProfile.setId(userSecurityProfileVO.getId());
+		}
 		userSecurityProfile.setCapabilities(new ArrayList<UserCapability>(userSecurityProfileVO.getCapabilityVOList().size()));
 		UserCapability userCapability = null;
 		Capability capability = null;
