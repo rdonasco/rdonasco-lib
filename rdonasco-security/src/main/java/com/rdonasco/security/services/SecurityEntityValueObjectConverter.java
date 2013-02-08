@@ -4,16 +4,19 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.security.model.Action;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.UserSecurityProfile;
+import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.BeanUtilsBean2;
 
@@ -32,35 +35,108 @@ class SecurityEntityValueObjectConverter
 	static UserSecurityProfile toUserProfile(UserSecurityProfileVO userSecurityProfileVO) 
 			throws IllegalAccessException, InvocationTargetException
 	{
-		UserSecurityProfile securityProfile = new UserSecurityProfile();
-		BEAN_UTILS.copyProperties(securityProfile, userSecurityProfileVO);
-		securityProfile.setCapabilities(new ArrayList<UserCapability>(userSecurityProfileVO.getCapabilityVOList().size()));
+		UserSecurityProfile userSecurityProfile = new UserSecurityProfile();
+		BEAN_UTILS.copyProperties(userSecurityProfile, userSecurityProfileVO);
+		userSecurityProfile.setCapabilities(new ArrayList<UserCapability>(userSecurityProfileVO.getCapabilityVOList().size()));
 		UserCapability userCapability = null;
+		Capability capability = null;
 		for(UserCapabilityVO userCapabilityVO : userSecurityProfileVO.getCapabilityVOList())
 		{
 			userCapability = new UserCapability();
-			BEAN_UTILS.copyProperties(userCapability, userCapabilityVO);
-			securityProfile.getCapabilities().add(userCapability);
+			capability = new Capability();			
+			userCapability.setCapability(capability);
+			userCapability.setUserProfile(userSecurityProfile);
+			userCapability.setId(userCapabilityVO.getId());
+			Resource resource = new Resource();
+			BEAN_UTILS.copyProperties(resource, userCapabilityVO.getCapability().getResource());
+			capability.setResource(resource);
+			capability.setDescription(userCapabilityVO.getCapability().getDescription());
+			capability.setId(userCapabilityVO.getCapability().getId());
+			capability.setTitle(userCapabilityVO.getCapability().getTitle());
+			List<Action> actions = new ArrayList<Action>();
+			Action action = null;
+			for(ActionVO actionVO : userCapabilityVO.getCapability().getActions())
+			{
+				action = new Action();
+				BEAN_UTILS.copyProperties(action, actionVO);
+				actions.add(action);
+			}
+			capability.setActions(actions);			
+			
+			userSecurityProfile.getCapabilities().add(userCapability);
 		}
-		return securityProfile;
+		return userSecurityProfile;
 	}
 
 	static CapabilityVO toCapabilityVO(Capability capability)
 			throws IllegalAccessException, InvocationTargetException
 	{
 		CapabilityVO capabilityVO = new CapabilityVO();
-		BEAN_UTILS.copyProperties(capabilityVO, capability);
+		if(capability.getActions() != null)
+		{
+			List<ActionVO> actionVOList = new ArrayList<ActionVO>(capability.getActions().size());
+			for(Action action : capability.getActions())
+			{
+				actionVOList.add(toActionVO(action));
+			}
+			capabilityVO.setActions(actionVOList);			
+		}
+		capabilityVO.setDescription(capability.getDescription());
+		capabilityVO.setId(capability.getId());
+		capabilityVO.setResource(toResourceVO(capability.getResource()));
+		capabilityVO.setTitle(capability.getTitle());
 		
 		return capabilityVO;
 	}
-
-	static Resource toResource(ResourceVO resource)
+	
+	static Capability toCapability(CapabilityVO capabilityVO) throws IllegalAccessException, InvocationTargetException
 	{
-		throw new UnsupportedOperationException("Not yet implemented");
+		Capability capability = new Capability();
+		if(capabilityVO.getActions() != null)
+		{
+			List<Action> actions = new ArrayList<Action>(capabilityVO.getActions().size());
+			for(ActionVO actionVO : capabilityVO.getActions())
+			{
+				actions.add(toAction(actionVO));
+			}
+			capability.setActions(actions);
+		}
+		capability.setDescription(capabilityVO.getDescription());
+		capability.setId(capabilityVO.getId());
+		capability.setResource(toResource(capabilityVO.getResource()));
+		capability.setTitle(capabilityVO.getTitle());				
+		
+		return capability;
+	}			
+
+	static Resource toResource(ResourceVO resourceVO) 
+			throws IllegalAccessException, InvocationTargetException
+	{
+		Resource resource = new Resource();
+		BEAN_UTILS.copyProperties(resource, resourceVO);
+		return resource;
 	}
 
-	static ResourceVO toResourceVO(Resource resource)
+	static ResourceVO toResourceVO(Resource resource) throws IllegalAccessException, InvocationTargetException
 	{
-		throw new UnsupportedOperationException("Not yet implemented");
+		ResourceVO resourceVO = new ResourceVO();
+		BEAN_UTILS.copyProperties(resourceVO, resource);
+		return resourceVO;
 	}
+
+	static Action toAction(ActionVO actionVO) throws IllegalAccessException, InvocationTargetException
+	{
+		Action action = new Action();
+		BEAN_UTILS.copyProperties(action, actionVO);
+		return action;
+	}
+
+	static ActionVO toActionVO(Action action) throws IllegalAccessException, InvocationTargetException
+	{
+		ActionVO actionVO = new ActionVO();
+		BEAN_UTILS.copyProperties(actionVO, action);
+		return actionVO;
+	}
+
+
 }
