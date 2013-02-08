@@ -208,6 +208,20 @@ public class SecurityEntityValueObjectConverterTest
 		assertEquals("result.name did not match",expResult.getName(), result.getName());
 		assertEquals("result.description did not match",expResult.getDescription(), result.getDescription());				
 	}
+	
+	@Test
+	public void testToUserCapability() throws Exception
+	{
+		System.out.println("toUserCapability");
+		CapabilityVO capabilityVO = createTestDataCapabilityVO();
+		UserCapabilityVO userCapabilityVO = createTestDataUserCapabilityVO(capabilityVO);
+		UserCapability expResult = new UserCapability();
+		expResult.setId(userCapabilityVO.getId());
+		expResult.setCapability(SecurityEntityValueObjectConverter.toCapability(capabilityVO));
+		UserCapability result = SecurityEntityValueObjectConverter.toUserCapability(userCapabilityVO);
+		assertEquals(expResult.getId(),result.getId());
+		assertEquals(expResult.getCapability(),result.getCapability());
+	}
 
 	private UserCapabilityVO createTestDataUserCapabilityVO(
 			CapabilityVO capability)

@@ -138,5 +138,18 @@ class SecurityEntityValueObjectConverter
 		return actionVO;
 	}
 
+	static UserCapability toUserCapability(UserCapabilityVO userCapabilityVO) 
+			throws IllegalAccessException, InvocationTargetException
+	{
+		UserCapability userCapability = new UserCapability();
+		userCapability.setId(userCapabilityVO.getId());
+		userCapability.setCapability(toCapability(userCapabilityVO.getCapability()));
+		if(null != userCapabilityVO.getUserProfile())
+		{
+			userCapability.setUserProfile(toUserProfile(userCapabilityVO.getUserProfile()));
+		}
+		return userCapability;
+	}
+
 
 }
