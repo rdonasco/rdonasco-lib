@@ -20,18 +20,19 @@ import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.ResourceVO;
-import javax.ejb.Remote;
+import com.rdonasco.security.vo.UserSecurityProfileVO;
 
 /**
  *
  * @author Roy F. Donasco
  */
-@Remote
-public interface SecurityManager
+
+public interface SystemSecurityManager
 {
 	void checkAccessRights(AccessRightsVO accessRights) throws SecurityException;
 	ResourceVO addResource(ResourceVO resource) throws SecurityManagerException;
 	void removeResource(ResourceVO resource) throws SecurityManagerException;
 	ResourceVO findResourceNamedAs(String resourceName) throws SecurityManagerException, NonExistentEntityException;
 	ResourceVO findOrAddSecuredResourceNamedAs(String resourceName) throws SecurityManagerException, NonExistentEntityException;
+	public UserSecurityProfileVO createNewSecurityProfile(UserSecurityProfileVO userSecurityProfile) throws SecurityManagerException;
 }
