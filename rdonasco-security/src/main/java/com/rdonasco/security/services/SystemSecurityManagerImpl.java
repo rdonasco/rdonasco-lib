@@ -16,6 +16,7 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.security.dao.CapabilityDAO;
@@ -30,6 +31,7 @@ import com.rdonasco.security.vo.AccessRightsVOBuilder;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.ResourceVO;
+import com.rdonasco.security.vo.UserSecurityProfileVO;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,10 +48,10 @@ import javax.inject.Inject;
  * @author Roy F. Donasco
  */
 @Stateless
-public class SecurityManagerImpl implements SecurityManager
+public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote
 {
 
-	private static final Logger LOG = Logger.getLogger(SecurityManagerImpl.class.getName());
+	private static final Logger LOG = Logger.getLogger(SystemSecurityManagerImpl.class.getName());
 	@Inject
 	private CapabilityDAO capabilityDAO;
 	@Inject
@@ -71,6 +73,7 @@ public class SecurityManagerImpl implements SecurityManager
 			if (capabilitiesNotFound)
 			{
 				findOrAddSecuredResourceNamedAs(accessRights.getResource().getName());
+				findOrAddActionNamedAs(accessRights.getAction().getName());
 			}
 			else
 			{
@@ -244,4 +247,18 @@ public class SecurityManagerImpl implements SecurityManager
 	{
 		this.resourceDAO = resourceDAO;
 	}
+
+	@Override
+	public UserSecurityProfileVO createNewSecurityProfile(UserSecurityProfileVO userSecurityProfile)
+			throws SecurityManagerException
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	private void findOrAddActionNamedAs(String name)
+	{
+		throw new UnsupportedOperationException("Not yet implemented");
+	}
+	
+	
 }

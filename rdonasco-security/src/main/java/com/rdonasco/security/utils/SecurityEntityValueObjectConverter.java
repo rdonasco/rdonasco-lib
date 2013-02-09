@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.rdonasco.security.services;
+package com.rdonasco.security.utils;
 
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.model.Capability;
@@ -24,7 +24,7 @@ import org.apache.commons.beanutils.BeanUtilsBean2;
  *
  * @author Roy F. Donasco
  */
-class SecurityEntityValueObjectConverter
+public class SecurityEntityValueObjectConverter
 {
 	static
 	{
@@ -32,7 +32,7 @@ class SecurityEntityValueObjectConverter
 	}
 	static final BeanUtilsBean BEAN_UTILS = BeanUtilsBean.getInstance();
 
-	static UserSecurityProfile toUserProfile(UserSecurityProfileVO userSecurityProfileVO) 
+	public static UserSecurityProfile toUserProfile(UserSecurityProfileVO userSecurityProfileVO) 
 			throws IllegalAccessException, InvocationTargetException
 	{
 		UserSecurityProfile userSecurityProfile = new UserSecurityProfile();
@@ -72,7 +72,7 @@ class SecurityEntityValueObjectConverter
 		return userSecurityProfile;
 	}
 
-	static CapabilityVO toCapabilityVO(Capability capability)
+	public static CapabilityVO toCapabilityVO(Capability capability)
 			throws IllegalAccessException, InvocationTargetException
 	{
 		CapabilityVO capabilityVO = new CapabilityVO();
@@ -93,7 +93,7 @@ class SecurityEntityValueObjectConverter
 		return capabilityVO;
 	}
 	
-	static Capability toCapability(CapabilityVO capabilityVO) throws IllegalAccessException, InvocationTargetException
+	public static Capability toCapability(CapabilityVO capabilityVO) throws IllegalAccessException, InvocationTargetException
 	{
 		Capability capability = new Capability();
 		if(capabilityVO.getActions() != null)
@@ -113,7 +113,7 @@ class SecurityEntityValueObjectConverter
 		return capability;
 	}			
 
-	static Resource toResource(ResourceVO resourceVO) 
+	public static Resource toResource(ResourceVO resourceVO) 
 			throws IllegalAccessException, InvocationTargetException
 	{
 		Resource resource = new Resource();
@@ -121,28 +121,28 @@ class SecurityEntityValueObjectConverter
 		return resource;
 	}
 
-	static ResourceVO toResourceVO(Resource resource) throws IllegalAccessException, InvocationTargetException
+	public static ResourceVO toResourceVO(Resource resource) throws IllegalAccessException, InvocationTargetException
 	{
 		ResourceVO resourceVO = new ResourceVO();
 		BEAN_UTILS.copyProperties(resourceVO, resource);
 		return resourceVO;
 	}
 
-	static Action toAction(ActionVO actionVO) throws IllegalAccessException, InvocationTargetException
+	public static Action toAction(ActionVO actionVO) throws IllegalAccessException, InvocationTargetException
 	{
 		Action action = new Action();
 		BEAN_UTILS.copyProperties(action, actionVO);
 		return action;
 	}
 
-	static ActionVO toActionVO(Action action) throws IllegalAccessException, InvocationTargetException
+	public static ActionVO toActionVO(Action action) throws IllegalAccessException, InvocationTargetException
 	{
 		ActionVO actionVO = new ActionVO();
 		BEAN_UTILS.copyProperties(actionVO, action);
 		return actionVO;
 	}
 
-	static UserCapability toUserCapability(UserCapabilityVO userCapabilityVO) 
+	public static UserCapability toUserCapability(UserCapabilityVO userCapabilityVO) 
 			throws IllegalAccessException, InvocationTargetException
 	{
 		UserCapability userCapability = new UserCapability();

@@ -16,6 +16,7 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.security.dao.CapabilityDAO;
 import com.rdonasco.security.dao.ResourceDAO;
@@ -139,7 +140,7 @@ public class SecurityManagerImplTest
 				.setUserProfileVO(userSecurityProfileVOMock)
 				.createAccessRightsVO();
 
-		SecurityManagerImpl instance = new SecurityManagerImpl();
+		SystemSecurityManagerImpl instance = new SystemSecurityManagerImpl();
 		instance.setCapabilityDAO(capabilityDAOMock);
 		instance.setResourceDAO(resourceDAOMock);
 		when(capabilityDAOMock.loadCapabilitiesOf(userSecurityProfileMock)).thenReturn(getCapabilityOnAddingUser());
@@ -160,7 +161,7 @@ public class SecurityManagerImplTest
 				.setUserProfileVO(userSecurityProfileVOMock)
 				.createAccessRightsVO();
 
-		SecurityManagerImpl instance = new SecurityManagerImpl();
+		SystemSecurityManagerImpl instance = new SystemSecurityManagerImpl();
 		instance.setCapabilityDAO(capabilityDAOMock);
 
 		when(capabilityDAOMock.loadCapabilitiesOf(userSecurityProfileMock)).thenReturn(getCapabilityOnAddingUser());
@@ -172,7 +173,7 @@ public class SecurityManagerImplTest
 	public void testNonRestrictedResource() throws Exception
 	{
 		System.out.println("nonRestrictedResource");
-		SecurityManagerImpl instance = new SecurityManagerImpl();
+		SystemSecurityManagerImpl instance = new SystemSecurityManagerImpl();
 		instance.setCapabilityDAO(capabilityDAOMock);
 		instance.setResourceDAO(resourceDAOMock);
 		AccessRightsVO accessRights = new AccessRightsVOBuilder()
@@ -207,7 +208,7 @@ public class SecurityManagerImplTest
 				.setUserProfileVO(userSecurityProfileVO)
 				.createAccessRightsVO();
 
-		SecurityManagerImpl instance = new SecurityManagerImpl();
+		SystemSecurityManagerImpl instance = new SystemSecurityManagerImpl();
 		instance.setCapabilityDAO(capabilityDAOMock);
 		instance.setResourceDAO(resourceDAOMock);
 		when(capabilityDAOMock.loadCapabilitiesOf(userSecurityProfile)).thenReturn(getCapabilityOnEditingUser());
@@ -219,7 +220,7 @@ public class SecurityManagerImplTest
 	public void testSuccessfulFindResourceNamed() throws Exception
 	{
 		System.out.println("successfulFindResourceNamed");
-		SecurityManagerImpl instance = new SecurityManagerImpl();
+		SystemSecurityManagerImpl instance = new SystemSecurityManagerImpl();
 		instance.setResourceDAO(resourceDAOMock);
 		Resource returnedResource = new Resource();
 		returnedResource.setId(Long.MIN_VALUE);
@@ -234,7 +235,7 @@ public class SecurityManagerImplTest
 	public void testNoRecordFoundInFindResourceNamed() throws Exception
 	{
 		System.out.println("noRecordFoundInFindResourceNamed");
-		SecurityManagerImpl instance = new SecurityManagerImpl();
+		SystemSecurityManagerImpl instance = new SystemSecurityManagerImpl();
 		instance.setResourceDAO(resourceDAOMock);
 		Resource returnedResource = new Resource();
 		returnedResource.setId(Long.MIN_VALUE);
@@ -248,7 +249,7 @@ public class SecurityManagerImplTest
 	public void testSuccessfulFindSecuredResourceNamed() throws Exception
 	{
 		System.out.println("successfulFindSecuredResourceNamed");
-		SecurityManagerImpl instance = new SecurityManagerImpl();
+		SystemSecurityManagerImpl instance = new SystemSecurityManagerImpl();
 		Resource returnedResource = new Resource();
 		returnedResource.setId(Long.MIN_VALUE);
 		returnedResource.setName("anyResource");
@@ -265,7 +266,7 @@ public class SecurityManagerImplTest
 	public void testNotFoundSecuredResourceNamed() throws Exception
 	{
 		System.out.println("notFoundSecuredResourceNamed");
-		SecurityManagerImpl instance = new SecurityManagerImpl();
+		SystemSecurityManagerImpl instance = new SystemSecurityManagerImpl();
 		Resource returnedResource = new Resource();
 		returnedResource.setId(Long.MIN_VALUE);
 		returnedResource.setName("anyResource");

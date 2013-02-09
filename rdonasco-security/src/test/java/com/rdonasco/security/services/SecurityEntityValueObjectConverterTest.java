@@ -4,6 +4,7 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.Resource;
