@@ -79,6 +79,7 @@ public class SecurityEntityValueObjectDataUtil
 		userSecurityProfileVOBuilder
 				.setId(Long.MIN_VALUE)
 				.setLoginId("testLoginID")
+				.setPassword("testPassword")
 				.addCapability(userCapability);
 		UserSecurityProfileVO userProfileVO = userSecurityProfileVOBuilder.createUserSecurityProfileVO();
 		userCapability.setUserProfile(userProfileVO);

@@ -49,6 +49,9 @@ public class UserSecurityProfile implements Serializable
 	@Basic(optional = false)
 	@Column(name = "login_id", nullable = false, length = 128)
 	private String loginId;
+	@Basic(optional = false)
+	@Column(name = "password", nullable = false, length = 256)
+	private String password;
 	@OneToMany(cascade = CascadeType.REFRESH, mappedBy = "userProfile", fetch = FetchType.EAGER)
 	private Collection<UserCapability> capabilities;
 	
@@ -70,6 +73,16 @@ public class UserSecurityProfile implements Serializable
 	public void setLoginId(String loginId)
 	{
 		this.loginId = loginId;
+	}
+
+	public String getPassword()
+	{
+		return password;
+	}
+
+	public void setPassword(String password)
+	{
+		this.password = password;
 	}
 
 	public Collection<UserCapability> getCapabilities()
