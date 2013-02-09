@@ -14,6 +14,7 @@ public class UserSecurityProfileVOBuilder
 	private Long id;
 	private String loginId;
 	private Collection<UserCapabilityVO> capabilities = new ArrayList<UserCapabilityVO>();
+	private String password;
 
 	public UserSecurityProfileVOBuilder()
 	{
@@ -28,6 +29,12 @@ public class UserSecurityProfileVOBuilder
 	public UserSecurityProfileVOBuilder setLoginId(String loginId)
 	{
 		this.loginId = loginId;
+		return this;
+	}
+	
+	public UserSecurityProfileVOBuilder setPassword(String password)
+	{
+		this.password = password;
 		return this;
 	}
 
@@ -45,7 +52,7 @@ public class UserSecurityProfileVOBuilder
 
 	public UserSecurityProfileVO createUserSecurityProfileVO()
 	{
-		return new UserSecurityProfileVO(id, loginId, capabilities);
+		return new UserSecurityProfileVO(id, loginId, password, capabilities);
 	}
 
 }

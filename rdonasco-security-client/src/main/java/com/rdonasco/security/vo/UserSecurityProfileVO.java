@@ -28,13 +28,15 @@ public class UserSecurityProfileVO implements Serializable
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String loginId;
+	private String password;
 	private Collection<UserCapabilityVO> capabilities;
 
-	public UserSecurityProfileVO(Long id, String loginId,
+	public UserSecurityProfileVO(Long id, String loginId, String password,
 			Collection<UserCapabilityVO> capabilities)
 	{
 		this.id = id;
 		this.loginId = loginId;
+		this.password = password;
 		this.capabilities = capabilities;
 	}
 
@@ -57,6 +59,18 @@ public class UserSecurityProfileVO implements Serializable
 	{
 		this.loginId = loginId;
 	}
+
+	public String getPassword()
+	{
+		return password;
+	}
+
+	public void setPassword(String password)
+	{
+		this.password = password;
+	}
+	
+	
 
 	public Collection<UserCapabilityVO> getCapabilityVOList()
 	{
