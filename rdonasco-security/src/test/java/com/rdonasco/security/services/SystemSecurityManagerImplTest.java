@@ -18,6 +18,7 @@ package com.rdonasco.security.services;
 
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
+import com.rdonasco.security.dao.ActionDAO;
 import com.rdonasco.security.dao.CapabilityDAO;
 import com.rdonasco.security.dao.ResourceDAO;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
@@ -27,12 +28,12 @@ import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
+import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -45,15 +46,16 @@ import static org.mockito.Mockito.*;
  *
  * @author Roy F. Donasco
  */
-public class SecurityManagerImplTest
+public class SystemSecurityManagerImplTest
 {
 
 	private static CapabilityDAO capabilityDAOMock;// =mock(CapabilityDAO.class);
 	private static UserSecurityProfileVO userSecurityProfileVOMock;
 	private static UserSecurityProfile userSecurityProfileMock;
 	private static ResourceDAO resourceDAOMock;
+	private static ActionDAO actionDAOMock;
 
-	public SecurityManagerImplTest()
+	public SystemSecurityManagerImplTest()
 	{
 	}
 
@@ -64,6 +66,7 @@ public class SecurityManagerImplTest
 		userSecurityProfileVOMock = mock(UserSecurityProfileVO.class);
 		resourceDAOMock = mock(ResourceDAO.class);
 		userSecurityProfileMock = mock(UserSecurityProfile.class);
+		actionDAOMock = mock(ActionDAO.class);
 	}
 
 	@AfterClass
@@ -78,12 +81,22 @@ public class SecurityManagerImplTest
 		reset(userSecurityProfileVOMock);
 		reset(resourceDAOMock);
 		reset(userSecurityProfileMock);
+		reset(actionDAOMock);
 	}
 
 	@After
 	public void tearDown()
 	{
 	}
+	
+	private UserSecurityProfileVO createTestDataUserProfileVO()
+	{
+		UserSecurityProfileVO userSecurityProfileVO = new UserSecurityProfileVOBuilder()
+				.setId(Long.MIN_VALUE)
+				.setLoginId("test Login ID")
+				.createUserSecurityProfileVO();
+		return userSecurityProfileVO;
+	}	
 
 	private List<Capability> getCapabilityOnAddingUser()
 	{
@@ -124,6 +137,15 @@ public class SecurityManagerImplTest
 		capabilities.add(capability);
 		return capabilities;
 	}	
+	
+	private UserSecurityProfileVO createTestDataUserSecurityProfileVO()
+	{
+		UserSecurityProfileVO testUserSecurityProfileVO = new UserSecurityProfileVOBuilder()
+				.setLoginId("pogi@pogi.com")
+				.setPassword("passwordMoTo")
+				.createUserSecurityProfileVO();
+		return testUserSecurityProfileVO;
+	}	
 	/**
 	 * Test of checkAccessRights method, of class SecurityManagerImpl.
 	 */
@@ -143,9 +165,13 @@ public class SecurityManagerImplTest
 		SystemSecurityManagerImpl instance = new SystemSecurityManagerImpl();
 		instance.setCapabilityDAO(capabilityDAOMock);
 		instance.setResourceDAO(resourceDAOMock);
+		instance.setActionDAO(actionDAOMock);
+		Action action = createTestDataForActionNamed("Add");
+				
 		when(capabilityDAOMock.loadCapabilitiesOf(userSecurityProfileMock)).thenReturn(getCapabilityOnAddingUser());
 		when(resourceDAOMock.findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class)))
 				.thenReturn(SecurityEntityValueObjectConverter.toResource(accessRights.getResource()));
+		when(actionDAOMock.findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class))).thenReturn(action);
 		instance.checkAccessRights(accessRights);
 	}
 
@@ -163,10 +189,11 @@ public class SecurityManagerImplTest
 
 		SystemSecurityManagerImpl instance = new SystemSecurityManagerImpl();
 		instance.setCapabilityDAO(capabilityDAOMock);
-
+		instance.setActionDAO(actionDAOMock);
 		when(capabilityDAOMock.loadCapabilitiesOf(userSecurityProfileMock)).thenReturn(getCapabilityOnAddingUser());
 
 		instance.checkAccessRights(accessRights);
+		verify(actionDAOMock,times(1)).findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class));
 	}
 
 	@Test
@@ -176,6 +203,7 @@ public class SecurityManagerImplTest
 		SystemSecurityManagerImpl instance = new SystemSecurityManagerImpl();
 		instance.setCapabilityDAO(capabilityDAOMock);
 		instance.setResourceDAO(resourceDAOMock);
+		instance.setActionDAO(actionDAOMock);
 		AccessRightsVO accessRights = new AccessRightsVOBuilder()
 				.setActionAsString("Edit")
 				.setActionID(Long.MIN_VALUE + 1L)
@@ -187,11 +215,15 @@ public class SecurityManagerImplTest
 		when(capabilityDAOMock.loadCapabilitiesOf(userSecurityProfileMock)).thenReturn(emptyCapability);
 		when(resourceDAOMock.findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class)))
 				.thenThrow(NonExistentEntityException.class);	
+		when(actionDAOMock.findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class)))
+				.thenThrow(NonExistentEntityException.class);			
 		instance.checkAccessRights(accessRights);	
 		Resource resource = new Resource();
 		resource.setDescription(accessRights.getResource().getDescription());
 		resource.setName(accessRights.getResource().getName());		
 		verify(resourceDAOMock,times(1)).create(resource);
+		verify(actionDAOMock,times(1)).findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class));
+		verify(actionDAOMock,times(1)).create(any(Action.class));
 	}
 
 	@Test
@@ -279,13 +311,59 @@ public class SecurityManagerImplTest
 		instance.findOrAddSecuredResourceNamedAs(returnedResource.getName());
 		verify(resourceDAOMock,times(1)).create(returnedResource);
 	}
-
-	private UserSecurityProfileVO createTestDataUserProfileVO()
+	
+	@Test
+	public void testFindOrAddNonExistingActionNamed() throws Exception
 	{
-		UserSecurityProfileVO userSecurityProfileVO = new UserSecurityProfileVOBuilder()
-				.setId(Long.MIN_VALUE)
-				.setLoginId("test Login ID")
-				.createUserSecurityProfileVO();
-		return userSecurityProfileVO;
+		System.out.println("findOrAddNonExistingActionNamed");
+		SystemSecurityManagerImpl instance = new SystemSecurityManagerImpl();
+		instance.setActionDAO(actionDAOMock);
+		String actionName = "Edit";
+		Action action = new Action();
+		action.setName(actionName);
+		action.setDescription(actionName);				
+		when(actionDAOMock.findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class))).thenThrow(NonExistentEntityException.class);
+		instance.findOrAddActionNamedAs(actionName);
+		verify(actionDAOMock,times(1)).create(action);
+		
 	}
+	
+	@Test
+	public void testFindOrAddAnExistingActionNamed() throws Exception
+	{
+		System.out.println("findOrAddAnExistingActionNamed");
+		SystemSecurityManagerImpl instance = new SystemSecurityManagerImpl();
+		instance.setActionDAO(actionDAOMock);
+		String actionName = "Edit";
+		Action action = new Action();
+		action.setId(Long.MIN_VALUE);
+		action.setName(actionName);
+		action.setDescription(actionName);				
+		when(actionDAOMock.findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class))).thenReturn(action);
+		ActionVO foundAction = instance.findOrAddActionNamedAs(actionName);
+		verify(actionDAOMock,times(1)).findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class));
+		assertEquals("action.id did not match",action.getId(),foundAction.getId());		
+	}	
+	
+	//@Test
+	public void testCreateNewSecurityProfile() throws Exception
+	{
+		System.out.println("createNewSecurityProfile");
+		SystemSecurityManagerImpl ssm = new SystemSecurityManagerImpl();
+		UserSecurityProfileVO userSecurityProfileVO = createTestDataUserSecurityProfileVO();
+		ssm.setCapabilityDAO(capabilityDAOMock);
+		ssm.setResourceDAO(resourceDAOMock);
+		ssm.createNewSecurityProfile(userSecurityProfileVO);
+	}
+
+	private Action createTestDataForActionNamed(String name)
+	{
+		Action action = new Action();
+		action.setDescription(name);
+		action.setName(name);
+		action.setId(Long.MIN_VALUE);
+		return action;
+	}
+
+
 }

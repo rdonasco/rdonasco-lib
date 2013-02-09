@@ -19,10 +19,13 @@ package com.rdonasco.security.services;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
+import com.rdonasco.common.exceptions.PreexistingEntityException;
+import com.rdonasco.security.dao.ActionDAO;
 import com.rdonasco.security.dao.CapabilityDAO;
 import com.rdonasco.security.dao.ResourceDAO;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
+import com.rdonasco.security.model.Action;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.model.UserSecurityProfile;
@@ -32,6 +35,7 @@ import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,7 +52,8 @@ import javax.inject.Inject;
  * @author Roy F. Donasco
  */
 @Stateless
-public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote
+public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
+		SystemSecurityManagerLocal
 {
 
 	private static final Logger LOG = Logger.getLogger(SystemSecurityManagerImpl.class.getName());
@@ -56,6 +61,8 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote
 	private CapabilityDAO capabilityDAO;
 	@Inject
 	private ResourceDAO resourceDAO;
+	@Inject
+	private ActionDAO actionDAO;
 
 	@Override
 	public void checkAccessRights(AccessRightsVO accessRights) throws
@@ -72,8 +79,8 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote
 			boolean capabilitiesNotFound = (capabilities == null || capabilities.isEmpty());
 			if (capabilitiesNotFound)
 			{
-				findOrAddSecuredResourceNamedAs(accessRights.getResource().getName());
 				findOrAddActionNamedAs(accessRights.getAction().getName());
+				findOrAddSecuredResourceNamedAs(accessRights.getResource().getName());				
 			}
 			else
 			{
@@ -95,7 +102,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote
 			}
 
 		}
-		catch(NotSecuredResourceException e)
+		catch (NotSecuredResourceException e)
 		{
 			LOG.info(e.getMessage());
 		}
@@ -104,6 +111,11 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote
 			LOG.log(Level.FINE, e.getMessage(), e);
 			throw new SecurityException(e);
 		}
+	}
+
+	public void setActionDAO(ActionDAO actionDAO)
+	{
+		this.actionDAO = actionDAO;
 	}
 
 	public void setCapabilityDAO(CapabilityDAO capabilityDAO)
@@ -115,21 +127,21 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote
 			AccessRightsVO accessRights)
 			throws DataAccessException
 	{
-		List<CapabilityVO> capabilityVOList = null;		
+		List<CapabilityVO> capabilityVOList = null;
 		try
 		{
-				
+
 			UserSecurityProfile userProfile = SecurityEntityValueObjectConverter.toUserProfile(accessRights.getUserProfile());
 			List<Capability> capabilities = capabilityDAO
 					.loadCapabilitiesOf(userProfile);
 			capabilityVOList = new ArrayList<CapabilityVO>(capabilities.size());
 			CapabilityVO capabilityVO = null;
-			for(Capability capability : capabilities)
+			for (Capability capability : capabilities)
 			{
 				capabilityVO = SecurityEntityValueObjectConverter.toCapabilityVO(capability);
 				capabilityVOList.add(capabilityVO);
 			}
-			
+
 		}
 		catch (Exception ex)
 		{
@@ -145,7 +157,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote
 		try
 		{
 			Resource resource = SecurityEntityValueObjectConverter.toResource(resourceVO);
-			if(null == resourceVO.getId())
+			if (null == resourceVO.getId())
 			{
 				resource.setId(null);
 			}
@@ -197,7 +209,8 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote
 	}
 
 	@Override
-	public ResourceVO findOrAddSecuredResourceNamedAs(String resourceName) throws
+	public ResourceVO findOrAddSecuredResourceNamedAs(String resourceName)
+			throws
 			SecurityManagerException
 	{
 		Resource securedResource = null;
@@ -231,7 +244,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote
 			}
 			securedResourceVO = SecurityEntityValueObjectConverter.toResourceVO(securedResource);
 		}
-		catch(NotSecuredResourceException e)
+		catch (NotSecuredResourceException e)
 		{
 			throw e;
 		}
@@ -239,7 +252,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote
 		{
 			throw new SecurityManagerException(e);
 		}
-		
+
 		return securedResourceVO;
 	}
 
@@ -249,16 +262,54 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote
 	}
 
 	@Override
-	public UserSecurityProfileVO createNewSecurityProfile(UserSecurityProfileVO userSecurityProfile)
+	public UserSecurityProfileVO createNewSecurityProfile(
+			UserSecurityProfileVO userSecurityProfile)
 			throws SecurityManagerException
 	{
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	private void findOrAddActionNamedAs(String name)
+	@Override
+	public ActionVO findOrAddActionNamedAs(String name) throws
+			SecurityManagerException
 	{
-		throw new UnsupportedOperationException("Not yet implemented");
+		ActionVO actionVO = null;
+		Action action = null;
+		try
+		{
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put(Action.QUERY_PARAM_ACTION, name);
+			action = actionDAO.findUniqueDataUsingNamedQuery(Action.NAMED_QUERY_FIND_ACTION_BY_NAME, parameters);
+		}
+		catch (NonExistentEntityException e)
+		{
+			LOG.log(Level.WARNING, "Action {0} not found. Creating one", name);
+			LOG.log(Level.FINE, e.getMessage(), e);
+			action = new Action();
+			action.setName(name);
+			action.setDescription(name);
+			try
+			{
+				actionDAO.create(action);
+			}
+			catch (Exception ex)
+			{
+				throw new SecurityManagerException(ex);
+			}
+
+		}
+		catch (Exception e)
+		{
+			throw new SecurityManagerException(e);
+		}
+		try
+		{
+			actionVO = SecurityEntityValueObjectConverter.toActionVO(action);
+		}
+		catch (Exception ex)
+		{
+			throw new SecurityManagerException(ex);
+		}
+		return actionVO;
 	}
-	
-	
 }

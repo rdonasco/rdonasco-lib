@@ -44,7 +44,9 @@ import javax.persistence.UniqueConstraint;
 })
 public class Action implements Serializable
 {
-
+	public static final String NAMED_QUERY_FIND_ACTION_BY_NAME = "findActionByName";
+	public static final String QUERY_PARAM_ACTION = "action";
+	
 	private static final long serialVersionUID = 1L;
 	private static final String GENERATOR_KEY = "ACTION_IDGEN";
 	private static final String GENERATOR_TABLE = "SEQUENCE";
