@@ -70,7 +70,7 @@
 			<version>3.1</version>
 			<scope>test</scope>
 		</dependency>
-<dependency>
+		<dependency>
 			<groupId>org.jboss.arquillian.container</groupId>
 			<artifactId>arquillian-glassfish-embedded-3.1</artifactId>
 			<version>1.0.0.CR3</version>
@@ -82,13 +82,13 @@
 			<version>1.0.0.Final</version>
 			<scope>test</scope>
 		</dependency>
-<dependency>
+		<dependency>
 			<groupId>org.jboss.arquillian.test</groupId>
 			<artifactId>arquillian-test-impl-base</artifactId>
 			<version>1.0.0.Final</version>
 			<scope>test</scope>
 		</dependency>
-<dependency>
+		<dependency>
 			<groupId>org.apache.derby</groupId>
 			<artifactId>derby</artifactId>
 			<version>10.7.1.1</version>
