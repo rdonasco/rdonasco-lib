@@ -30,6 +30,7 @@ import com.rdonasco.security.vo.UserSecurityProfileVO;
 
 public interface SystemSecurityManager
 {
+	
 	void checkAccessRights(AccessRightsVO accessRights) throws SecurityException;
 	ResourceVO addResource(ResourceVO resource) throws SecurityManagerException;
 	void removeResource(ResourceVO resource) throws SecurityManagerException;
