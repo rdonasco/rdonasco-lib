@@ -36,12 +36,17 @@ import javax.persistence.criteria.CriteriaQuery;
 public abstract class BaseDAO<T> implements DataAccess<T>
 {
 
-    @PersistenceContext
     private EntityManager entityManager;
 
     public BaseDAO()
     {
     }
+	
+	@PersistenceContext
+	public void setEntityManager(EntityManager entityManager)
+	{
+		this.entityManager = entityManager;
+	}
 
     public EntityManager getEntityManager()
     {
