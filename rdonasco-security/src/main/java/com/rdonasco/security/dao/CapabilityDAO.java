@@ -27,6 +27,5 @@ import java.util.List;
  * @author Roy F. Donasco
  */
 public interface CapabilityDAO extends DataAccess<Capability>
-{
-	List<Capability> loadCapabilitiesOf(UserSecurityProfile user) throws DataAccessException;
+{	
 }

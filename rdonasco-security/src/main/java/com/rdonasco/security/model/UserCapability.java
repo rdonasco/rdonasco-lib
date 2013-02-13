@@ -17,9 +17,6 @@
 package com.rdonasco.security.model;
 
 import java.io.Serializable;
-import java.util.Collection;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -28,14 +25,22 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.UniqueConstraint;
 
 /**
  *
  * @author Roy F. Donasco
  */
 @Entity
+@Table(name = "user_capability", catalog = "", schema = "", uniqueConstraints =
+{
+	@UniqueConstraint(columnNames =
+	{
+		"id","capability_id"
+	}, name = "user_capability")
+})
 public class UserCapability implements Serializable
 {
 
@@ -53,6 +58,7 @@ public class UserCapability implements Serializable
 	@JoinColumn(name = "capability_id", referencedColumnName = "id", nullable = true)
 	@ManyToOne(optional = true, fetch = FetchType.EAGER)
 	private Capability capability;
+
 	public Long getId()
 	{
 		return id;
@@ -82,8 +88,6 @@ public class UserCapability implements Serializable
 	{
 		this.capability = capability;
 	}
-
-	
 
 	@Override
 	public int hashCode()

@@ -14,22 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.rdonasco.security.dao;
 
-import com.rdonasco.common.dao.BaseDAO;
+import com.rdonasco.common.dao.DataAccess;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.UserSecurityProfile;
 import java.util.List;
 
-
-public class CapabilityDAOJPAImpl extends BaseDAO<Capability> implements CapabilityDAO 
+/**
+ *
+ * @author Roy F. Donasco
+ */
+public interface UserSecurityProfileDAO extends DataAccess<UserSecurityProfile>
 {
-	@Override
-	public Class<Capability> getDataClass()
-	{
-		return Capability.class;
-	}
-
+	public List<Capability> loadCapabilitiesOf(UserSecurityProfile userSecurityProfile) throws DataAccessException;
 }

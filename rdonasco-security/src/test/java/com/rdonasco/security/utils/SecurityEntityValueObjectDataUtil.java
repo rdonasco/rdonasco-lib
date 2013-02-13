@@ -2,17 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.rdonasco.security.services.utils;
+package com.rdonasco.security.utils;
 
-import com.rdonasco.security.services.*;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.Resource;
-import com.rdonasco.security.model.UserCapability;
-import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.ResourceVO;
+import com.rdonasco.security.vo.ResourceVOBuilder;
 import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
@@ -61,10 +59,11 @@ public class SecurityEntityValueObjectDataUtil
 
 	public static CapabilityVO createTestDataCapabilityVO()
 	{
-		ResourceVO resourceVO = new ResourceVO();
-		resourceVO.setId(Long.MIN_VALUE);
-		resourceVO.setDescription("resource");
-		resourceVO.setName("resource");
+		ResourceVO resourceVO = new ResourceVOBuilder()
+				.setId(Long.MIN_VALUE)
+				.setName("resource")
+				.setDescription("resource")
+				.createResourceVO();
 		CapabilityVO capability = new CapabilityVO();
 		capability.setId(Long.MIN_VALUE);
 		capability.setResource(resourceVO);
@@ -141,10 +140,11 @@ public class SecurityEntityValueObjectDataUtil
 
 	public static ResourceVO createTestDataResourceVO()
 	{
-		ResourceVO resourceVO = new ResourceVO();
-		resourceVO.setId(generateRandomID());
-		resourceVO.setName("test resourceVO");
-		resourceVO.setDescription("test resourceVO description");
+		ResourceVO resourceVO = new ResourceVOBuilder()
+				.setId(generateRandomID())
+				.setName("test resourceVO")
+				.setDescription("test resourceVO description")
+				.createResourceVO();
 		return resourceVO;
 	}
 

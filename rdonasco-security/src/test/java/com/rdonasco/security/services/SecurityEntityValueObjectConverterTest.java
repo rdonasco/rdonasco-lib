@@ -10,10 +10,11 @@ import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.UserSecurityProfile;
-import com.rdonasco.security.services.utils.SecurityEntityValueObjectDataUtil;
+import com.rdonasco.security.utils.SecurityEntityValueObjectDataUtil;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.ResourceVO;
+import com.rdonasco.security.vo.ResourceVOBuilder;
 import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import java.util.List;
@@ -167,10 +168,11 @@ public class SecurityEntityValueObjectConverterTest
 	{
 		System.out.println("toResourceVO");
 		Resource resource = SecurityEntityValueObjectDataUtil.createTestDataResource();
-		ResourceVO expResult = new ResourceVO();
-		expResult.setId(resource.getId());
-		expResult.setName(resource.getName());
-		expResult.setDescription(resource.getDescription());
+		ResourceVO expResult = new ResourceVOBuilder()
+				.setId(resource.getId())
+				.setName(resource.getName())
+				.setDescription(resource.getDescription())
+				.createResourceVO();
 		ResourceVO result = SecurityEntityValueObjectConverter.toResourceVO(resource);
 		assertEquals("result.id did not match",expResult.getId(), result.getId());
 		assertEquals("result.name did not match",expResult.getName(), result.getName());

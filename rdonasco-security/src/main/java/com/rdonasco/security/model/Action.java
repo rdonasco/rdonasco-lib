@@ -35,13 +35,7 @@ import javax.persistence.UniqueConstraint;
  * @author Roy F. Donasco
  */
 @Entity
-@Table(name = "secured_action", catalog = "", schema = "", uniqueConstraints =
-{
-	@UniqueConstraint(columnNames =
-	{
-		"capability_id", "action_name"
-	},name="capability_action")
-})
+@Table(name = "secured_action", catalog = "", schema = "")
 public class Action implements Serializable
 {
 	public static final String NAMED_QUERY_FIND_ACTION_BY_NAME = "findActionByName";

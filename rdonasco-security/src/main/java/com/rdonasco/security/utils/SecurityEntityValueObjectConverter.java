@@ -12,6 +12,7 @@ import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.ResourceVO;
+import com.rdonasco.security.vo.ResourceVOBuilder;
 import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import java.lang.reflect.InvocationTargetException;
@@ -123,7 +124,8 @@ public class SecurityEntityValueObjectConverter
 
 	public static ResourceVO toResourceVO(Resource resource) throws IllegalAccessException, InvocationTargetException
 	{
-		ResourceVO resourceVO = new ResourceVO();
+		ResourceVO resourceVO = new ResourceVOBuilder()
+				.createResourceVO();
 		BEAN_UTILS.copyProperties(resourceVO, resource);
 		return resourceVO;
 	}
@@ -132,6 +134,10 @@ public class SecurityEntityValueObjectConverter
 	{
 		Action action = new Action();
 		BEAN_UTILS.copyProperties(action, actionVO);
+		if(null == actionVO.getId())
+		{
+			action.setId(null);
+		}
 		return action;
 	}
 
@@ -139,6 +145,10 @@ public class SecurityEntityValueObjectConverter
 	{
 		ActionVO actionVO = new ActionVO();
 		BEAN_UTILS.copyProperties(actionVO, action);
+		if(null == action.getId())
+		{
+			actionVO.setId(null);
+		}
 		return actionVO;
 	}
 
