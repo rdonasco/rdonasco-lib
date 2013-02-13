@@ -16,6 +16,7 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.vo.AccessRightsVO;
@@ -27,15 +28,13 @@ import com.rdonasco.security.vo.UserSecurityProfileVO;
  *
  * @author Roy F. Donasco
  */
-
 public interface SystemSecurityManager
 {
-	
+
 	void checkAccessRights(AccessRightsVO accessRights) throws SecurityException;
-	ResourceVO addResource(ResourceVO resource) throws SecurityManagerException;
-	void removeResource(ResourceVO resource) throws SecurityManagerException;
-	ResourceVO findResourceNamedAs(String resourceName) throws SecurityManagerException, NonExistentEntityException;
-	ResourceVO findOrAddSecuredResourceNamedAs(String resourceName) throws SecurityManagerException, NonExistentEntityException;
-	public UserSecurityProfileVO createNewSecurityProfile(UserSecurityProfileVO userSecurityProfile) throws SecurityManagerException;
-	ActionVO findOrAddActionNamedAs(String name) throws SecurityManagerException;
+
+	UserSecurityProfileVO createNewSecurityProfile(
+			UserSecurityProfileVO userSecurityProfile) throws
+			SecurityManagerException;
+	
 }

@@ -17,39 +17,27 @@
 package com.rdonasco.security.vo;
 
 import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.TableGenerator;
 
 /**
  *
  * @author Roy F. Donasco
  */
-@Entity
 public class ResourceVO implements Serializable
 {
-	public static final String NAMED_QUERY_FIND_RESOURCE_BY_NAME = "findResourceByName";
-	public static final String QUERY_PARAM_RESOURCE_NAME = "resourceName";
-
 	private static final long serialVersionUID = 1L;
-	private static final String GENERATOR_KEY = "RESOURCE_IDGEN";
-	private static final String GENERATOR_TABLE = "SEQUENCE";
-	@Id
-	@GeneratedValue(strategy = GenerationType.TABLE, generator =  GENERATOR_KEY)
-	@TableGenerator(name = GENERATOR_KEY, table = GENERATOR_TABLE)
-	@Column(name = "id", nullable = false)
 	private Long id;
-	@Basic(optional = false)
-	@Column(name = "resource_name", nullable = false, length = 256, unique=true)
 	private String name;
-	@Basic(optional = true)
-	@Column(name = "resource_description", nullable = false, length = 256)
 	private String description;	
 
+	public ResourceVO(Long id, String name, String description)
+	{
+		this.id = id;
+		this.name = name;
+		this.description = description;
+	}
+
+	
+	
 	public Long getId()
 	{
 		return id;
@@ -87,7 +75,7 @@ public class ResourceVO implements Serializable
 	@Override
 	public String toString()
 	{
-		return "com.rdonasco.security.model.Resource[ id=" + id + " ]";
+		return "com.rdonasco.security.vo.ResourceVO[ id=" + id + " ]";
 	}
 
 	public String getName()

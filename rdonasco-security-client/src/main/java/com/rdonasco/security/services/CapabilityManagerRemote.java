@@ -4,14 +4,14 @@
  */
 package com.rdonasco.security.services;
 
-import javax.ejb.Local;
+import javax.ejb.Remote;
 
 /**
  *
  * @author Roy F. Donasco
  */
-@Local
-public interface SystemSecurityManagerLocal extends SystemSecurityManager
+@Remote
+public interface CapabilityManagerRemote extends CapabilityManager
 {
 	
 }
