@@ -17,9 +17,7 @@
 package com.rdonasco.security.model;
 
 import java.io.Serializable;
-import java.util.Collection;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -28,45 +26,42 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.UniqueConstraint;
 
 /**
  *
  * @author Roy F. Donasco
  */
 @Entity
-@Table(name="capability")
-public class Capability implements Serializable
+@Table(name = "capability_action", catalog = "", schema = "",
+uniqueConstraints =
+@UniqueConstraint(
+		columnNames =
 {
-	public static final String NAMED_QUERY_FIND_ALL_CAPABILITY_OF_USER = "findAllCapabilityOfUser";
-	public static final String NAMED_QUERY_FIND_BY_RESOURCE_NAME = "findCapabilityByResourceName";
-	public static final String QUERY_PARAM_USER = "user";
-	public static final String QUERY_PARAM_RESOURCE = "resource";
+	"capability_id", "action_id"
+}, name = "unique_capability_action"))
+public class CapabilityAction implements Serializable
+{
+
+	public static final String NAMED_QUERY_FIND_ACTION_BY_NAME = "findActionByName";
 	public static final String QUERY_PARAM_ACTION = "action";
-	public static final String QUERY_PARAM_RESOURCE_NAME = "resourceName";
-	
 	private static final long serialVersionUID = 1L;
-	private static final String GENERATOR_KEY = "CAPABILITY_IDGEN";
+	private static final String GENERATOR_KEY = "ACTION_IDGEN";
 	private static final String GENERATOR_TABLE = "SEQUENCE";
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = GENERATOR_KEY)
 	@TableGenerator(name = GENERATOR_KEY, table = GENERATOR_TABLE)
 	@Column(name = "id", nullable = false)
 	private Long id;
-	@Basic(optional = false)
-	@Column(name = "title", nullable = false, length = 128, unique=true)
-	private String title;
-	@Basic(optional = true)
-	@Column(name = "description", nullable = false, length = 256)
-	private String description;
-	@JoinColumn(name = "resource_id", referencedColumnName = "id", nullable = false)
+	@JoinColumn(name = "capability_id", referencedColumnName = "id", nullable = false)
 	@ManyToOne(optional = false, fetch = FetchType.EAGER)
-	private Resource resource;
-	@OneToMany(cascade = CascadeType.REFRESH, mappedBy = "capability", fetch = FetchType.EAGER)
-	private Collection<CapabilityAction> actions;
+	private Capability capability;
+	@JoinColumn(name = "action_id", referencedColumnName = "id", nullable = false)
+	@ManyToOne(optional = false, fetch= FetchType.EAGER)
+	private Action action;
+	
 
 	public Long getId()
 	{
@@ -78,45 +73,27 @@ public class Capability implements Serializable
 		this.id = id;
 	}
 
-	public String getTitle()
+	public Capability getCapability()
 	{
-		return title;
+		return capability;
 	}
 
-	public void setTitle(String title)
+	public void setCapability(Capability capability)
 	{
-		this.title = title;
+		this.capability = capability;
 	}
 
-	public String getDescription()
+	public Action getAction()
 	{
-		return description;
+		return action;
 	}
 
-	public void setDescription(String description)
+	public void setAction(Action action)
 	{
-		this.description = description;
+		this.action = action;
 	}
-
-	public Resource getResource()
-	{
-		return resource;
-	}
-
-	public void setResource(Resource resource)
-	{
-		this.resource = resource;
-	}
-
-	public Collection<CapabilityAction> getActions()
-	{
-		return actions;
-	}
-
-	public void setActions(Collection<CapabilityAction> actions)
-	{
-		this.actions = actions;
-	}
+	
+	
 
 	@Override
 	public int hashCode()
@@ -130,11 +107,11 @@ public class Capability implements Serializable
 	public boolean equals(Object object)
 	{
 		// TODO: Warning - this method won't work in the case the id fields are not set
-		if (!(object instanceof Capability))
+		if (!(object instanceof CapabilityAction))
 		{
 			return false;
 		}
-		Capability other = (Capability) object;
+		CapabilityAction other = (CapabilityAction) object;
 		if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
 		{
 			return false;
@@ -142,9 +119,4 @@ public class Capability implements Serializable
 		return true;
 	}
 
-	@Override
-	public String toString()
-	{
-		return "com.rdonasco.security.model.SecuredUser[ id=" + id + " ]";
-	}
 }

@@ -31,7 +31,7 @@ public class CapabilityVO implements Serializable
 	private String title;
 	private String description;
 	private ResourceVO resource;
-	private Collection<ActionVO> actions;
+	private Collection<CapabilityActionVO> actions;
 
 	public Long getId()
 	{
@@ -73,12 +73,12 @@ public class CapabilityVO implements Serializable
 		this.resource = resource;
 	}
 
-	public Collection<ActionVO> getActions()
+	public Collection<CapabilityActionVO> getActions()
 	{
 		return actions;
 	}
 
-	public void setActions(Collection<ActionVO> actions)
+	public void setActions(Collection<CapabilityActionVO> actions)
 	{
 		this.actions = actions;
 	}

@@ -24,8 +24,10 @@ import com.rdonasco.security.dao.ResourceDAO;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.Action;
+import com.rdonasco.security.model.CapabilityAction;
 import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.model.UserSecurityProfile;
+import com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
@@ -100,41 +102,16 @@ public class SystemSecurityManagerImplTest
 
 	private List<Capability> getCapabilityOnAddingUser()
 	{
-		Capability capability = new Capability();
-		capability.setId(Long.MIN_VALUE);
-		capability.setTitle("Manage Users");
-		Resource resource = new Resource();
-		resource.setName("User");
-		resource.setId(Long.MIN_VALUE);
-		capability.setResource(resource);
-		List<Action> actions = new ArrayList<Action>();
-		Action addAction = new Action();
-		addAction.setName("Add");
-		addAction.setId(Long.MIN_VALUE);
-		actions.add(addAction);
-		capability.setActions(actions);
 		List<Capability> capabilities = new ArrayList<Capability>();
-		capabilities.add(capability);
+		capabilities.add(SecurityEntityValueObjectDataUtility
+				.createTestDataCapabilityOnResourceAndAction("User", "Add"));
 		return capabilities;
 	}
 
 	private List<Capability> getCapabilityOnEditingUser()
 	{
-		Capability capability = new Capability();
-		capability.setId(Long.MIN_VALUE);
-		capability.setTitle("Manage Users");
-		Resource resource = new Resource();
-		resource.setName("User");
-		resource.setId(Long.MIN_VALUE);
-		capability.setResource(resource);
-		List<Action> actions = new ArrayList<Action>();
-		Action addAction = new Action();
-		addAction.setName("Edit");
-		addAction.setId(Long.MIN_VALUE + 1L);
-		actions.add(addAction);
-		capability.setActions(actions);
 		List<Capability> capabilities = new ArrayList<Capability>();
-		capabilities.add(capability);
+		capabilities.add(SecurityEntityValueObjectDataUtility.createTestDataCapabilityOnResourceAndAction("User", "Edit"));
 		return capabilities;
 	}	
 	

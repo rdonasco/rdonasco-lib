@@ -25,7 +25,7 @@ import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
-import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import java.util.ArrayList;
@@ -85,10 +85,10 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			{
 				for (CapabilityVO capability : capabilities)
 				{
-					for (ActionVO action : capability.getActions())
+					for (CapabilityActionVO action : capability.getActions())
 					{
 						AccessRightsVO rights = new AccessRightsVOBuilder()
-								.setActionVO(action)
+								.setActionVO(action.getActionVO())
 								.setResourceVO(capability.getResource())
 								.setUserProfileVO(accessRights.getUserProfile()).createAccessRightsVO();
 						accessRightsSet.add(rights);

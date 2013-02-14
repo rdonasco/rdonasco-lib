@@ -2,16 +2,16 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.rdonasco.security.services;
+package com.rdonasco.security.utils;
 
-import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.model.Capability;
+import com.rdonasco.security.model.CapabilityAction;
 import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.UserSecurityProfile;
-import com.rdonasco.security.utils.SecurityEntityValueObjectDataUtil;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
@@ -66,7 +66,7 @@ public class SecurityEntityValueObjectConverterTest
 	public void testToUserProfileNoCapability() throws Exception
 	{
 		System.out.println("toUserProfileNoCapability");
-		UserSecurityProfileVO userSecurityProfileVO = SecurityEntityValueObjectDataUtil.createTestDataUserSecurityProfileVOwithoutCapability();
+		UserSecurityProfileVO userSecurityProfileVO = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataUserSecurityProfileVOwithoutCapability();
 		UserSecurityProfile result = SecurityEntityValueObjectConverter.toUserProfile(userSecurityProfileVO);
 		assertNotNull(result);
 		assertNotNull(result.getId());
@@ -78,9 +78,9 @@ public class SecurityEntityValueObjectConverterTest
 	public void testToUserProfileWithCapability() throws Exception
 	{
 		System.out.println("toUserProfileWithCapability");
-		CapabilityVO capability = SecurityEntityValueObjectDataUtil.createTestDataCapabilityVO();
-		UserCapabilityVO userCapability = SecurityEntityValueObjectDataUtil.createTestDataUserCapabilityVO(capability);
-		UserSecurityProfileVO userProfileVO = SecurityEntityValueObjectDataUtil.createTestDataUserSecurityProfileVOwithUserCapability(userCapability);
+		CapabilityVO capability = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataCapabilityVO();
+		UserCapabilityVO userCapability = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataUserCapabilityVO(capability);
+		UserSecurityProfileVO userProfileVO = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataUserSecurityProfileVOwithUserCapability(userCapability);
 		UserSecurityProfile resultingUserSecurityProfile = SecurityEntityValueObjectConverter
 				.toUserProfile(userProfileVO);
 		assertNotNull(resultingUserSecurityProfile);
@@ -110,8 +110,9 @@ public class SecurityEntityValueObjectConverterTest
 	public void testToCapabilityVO() throws Exception
 	{
 		System.out.println("toCapabilityVO");
-		Capability testCapability = SecurityEntityValueObjectDataUtil.createTestDataCapability();
-		List<Action> actions = SecurityEntityValueObjectDataUtil.createTestDataActions();
+		int size = 3;
+		Capability testCapability = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataCapabilityOnResourceAndAction("User", "Add");
+		List<CapabilityAction> actions = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataActionsForWithSize(testCapability,size);
 		testCapability.setActions(actions);
 		CapabilityVO expResult = new CapabilityVO();
 		expResult.setId(testCapability.getId());
@@ -119,7 +120,7 @@ public class SecurityEntityValueObjectConverterTest
 		expResult.setDescription(testCapability.getDescription());		
 		CapabilityVO result = SecurityEntityValueObjectConverter.toCapabilityVO(testCapability);
 		assertEquals("id did not match",expResult.getId(), result.getId());
-		assertEquals("actions.size did not match",1, result.getActions().size());
+		assertEquals("actions.size did not match",size, result.getActions().size());
 		assertEquals("description did not match",expResult.getDescription(), result.getDescription());
 		assertEquals("title did not match",expResult.getTitle(), result.getTitle());	
 		assertNotNull("resource not set",result.getResource());
@@ -130,8 +131,8 @@ public class SecurityEntityValueObjectConverterTest
 	public void testToCapability() throws Exception
 	{
 		System.out.println("toCapability");
-		CapabilityVO testCapabilityVO = SecurityEntityValueObjectDataUtil.createTestDataCapabilityVO();
-		List<ActionVO> actions = SecurityEntityValueObjectDataUtil.createTestDataActionVOList();
+		CapabilityVO testCapabilityVO = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataCapabilityVO();
+		List<ActionVO> actions = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataActionVOList();
 		Capability expResult = new Capability();
 		expResult.setId(testCapabilityVO.getId());
 		expResult.setTitle(testCapabilityVO.getTitle());
@@ -151,7 +152,7 @@ public class SecurityEntityValueObjectConverterTest
 	public void testToResource() throws Exception
 	{
 		System.out.println("toResource");
-		ResourceVO resourceVO = SecurityEntityValueObjectDataUtil.createTestDataResourceVO();
+		ResourceVO resourceVO = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataResourceVO();
 		Resource expResult = new Resource();
 		expResult.setId(resourceVO.getId());
 		expResult.setName(resourceVO.getName());
@@ -167,7 +168,7 @@ public class SecurityEntityValueObjectConverterTest
 	public void testToResourceVO() throws Exception
 	{
 		System.out.println("toResourceVO");
-		Resource resource = SecurityEntityValueObjectDataUtil.createTestDataResource();
+		Resource resource = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataResource();
 		ResourceVO expResult = new ResourceVOBuilder()
 				.setId(resource.getId())
 				.setName(resource.getName())
@@ -183,7 +184,7 @@ public class SecurityEntityValueObjectConverterTest
 	public void testToAction() throws Exception
 	{
 		System.out.println("toAction");
-		ActionVO actionVO = SecurityEntityValueObjectDataUtil.createTestDataActionVO();
+		ActionVO actionVO = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataActionVO();
 		Action expResult = new Action();
 		expResult.setId(actionVO.getId());
 		expResult.setName(actionVO.getName());
@@ -199,7 +200,7 @@ public class SecurityEntityValueObjectConverterTest
 	public void testToActionVO() throws Exception
 	{
 		System.out.println("toAtionVO");
-		Action action = SecurityEntityValueObjectDataUtil.createTestDataAction();
+		Action action = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataAction();
 		ActionVO expResult = new ActionVO();
 		expResult.setId(action.getId());
 		expResult.setName(action.getName());
@@ -214,8 +215,8 @@ public class SecurityEntityValueObjectConverterTest
 	public void testToUserCapability() throws Exception
 	{
 		System.out.println("toUserCapability");
-		CapabilityVO capabilityVO = SecurityEntityValueObjectDataUtil.createTestDataCapabilityVO();
-		UserCapabilityVO userCapabilityVO = SecurityEntityValueObjectDataUtil.createTestDataUserCapabilityVO(capabilityVO);
+		CapabilityVO capabilityVO = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataCapabilityVO();
+		UserCapabilityVO userCapabilityVO = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataUserCapabilityVO(capabilityVO);
 		UserCapability expResult = new UserCapability();
 		expResult.setId(userCapabilityVO.getId());
 		expResult.setCapability(SecurityEntityValueObjectConverter.toCapability(capabilityVO));
@@ -223,126 +224,22 @@ public class SecurityEntityValueObjectConverterTest
 		assertEquals(expResult.getId(),result.getId());
 		assertEquals(expResult.getCapability(),result.getCapability());
 	}
+	
+	@Test
+	public void testToCapabilityActionVO() throws Exception
+	{
+		System.out.println("toCapabilityActionVO");
 
-//	private UserCapabilityVO createTestDataUserCapabilityVO(
-//			CapabilityVO capability)
-//	{
-//		UserCapabilityVO userCapability = new UserCapabilityVO();
-//		userCapability.setId(Long.MIN_VALUE);
-//		userCapability.setCapability(capability);
-//		return userCapability;
-//	}
-//
-//	private ActionVO createTestDataActionVO()
-//	{
-//		ActionVO action = new ActionVO();
-//		action.setId(Long.MIN_VALUE);
-//		action.setName("action");
-//		action.setDescription("action");
-//		return action;
-//	}
-//
-//	private List<ActionVO> createTestDataActionVOList()
-//	{
-//		List<ActionVO> actions = new ArrayList<ActionVO>();
-//		ActionVO action = createTestDataActionVO();
-//		actions.add(action);
-//		return actions;
-//	}
-//
-//	private CapabilityVO createTestDataCapabilityVO()
-//	{
-//		ResourceVO resourceVO = new ResourceVO();
-//		resourceVO.setId(Long.MIN_VALUE);
-//		resourceVO.setDescription("resource");
-//		resourceVO.setName("resource");
-//		CapabilityVO capability = new CapabilityVO();
-//		capability.setId(Long.MIN_VALUE);
-//		capability.setResource(resourceVO);
-//		List<ActionVO> actions = createTestDataActionVOList();
-//		capability.setActions(actions);
-//		return capability;
-//	}
-//
-//	private UserSecurityProfileVO createTestDataUserSecurityProfileVOwithUserCapability(UserCapabilityVO userCapability)
-//	{
-//		UserSecurityProfileVOBuilder userSecurityProfileVOBuilder = new UserSecurityProfileVOBuilder();
-//		userSecurityProfileVOBuilder
-//				.setId(Long.MIN_VALUE)
-//				.setLoginId(anyString())
-//				.addCapability(userCapability);
-//		UserSecurityProfileVO userProfileVO = userSecurityProfileVOBuilder.createUserSecurityProfileVO();
-//		userCapability.setUserProfile(userProfileVO);
-//		return userProfileVO;
-//	}
-//
-//	private UserSecurityProfileVO createTestDataUserSecurityProfileVOwithoutCapability()
-//	{
-//		UserSecurityProfileVO userSecurityProfileVO = new UserSecurityProfileVOBuilder()
-//				.setId(Long.MIN_VALUE)
-//				.setLoginId(anyString())
-//				.createUserSecurityProfileVO();
-//		return userSecurityProfileVO;
-//	}
-//
-//	private Capability createTestDataCapability()
-//	{
-//		Capability capability = new Capability();
-//		capability.setId(generateRandomID());
-//		capability.setTitle("test capability");
-//		capability.setDescription("test capability");
-//		capability.setActions(new ArrayList<Action>());
-//		Action action = createTestDataAction();
-//		capability.getActions().add(action);
-//		
-//		Resource resource = createTestDataResource();
-//		capability.setResource(resource);
-//		
-//		return capability;
-//	}
-//
-//	private Action createTestDataAction()
-//	{
-//		Action action = new Action();
-//		action.setDescription("test action");
-//		action.setName("action");
-//		Long randomID = generateRandomID();
-//		LOG.log(Level.INFO, "generated random ID={0}", randomID);
-//		action.setId(randomID);
-//		return action;
-//	}
-//
-//	private static long MIN_SEED = 1;
-//	private static long MAX_SEED = Long.MAX_VALUE;
-//	private long generateRandomID()
-//	{
-//		long randomID = Math.round(Math.random() * (MAX_SEED-MIN_SEED) + MIN_SEED);
-//		return randomID;
-//	}
-//
-//	private Resource createTestDataResource()
-//	{
-//		Resource resource = new Resource();
-//		resource.setId(generateRandomID());
-//		resource.setDescription("test resource");
-//		resource.setName("test resource");
-//		return resource;
-//	}
-//
-//	private ResourceVO createTestDataResourceVO()
-//	{
-//		ResourceVO resourceVO = new ResourceVO();
-//		resourceVO.setId(generateRandomID());
-//		resourceVO.setName("test resourceVO");
-//		resourceVO.setDescription("test resourceVO description");
-//		return resourceVO;
-//	}
-//
-//	private List<Action> createTestDataActions()
-//	{
-//		List<Action> actions = new ArrayList<Action>();
-//		Action action = createTestDataAction();
-//		actions.add(action);
-//		return actions;
-//	}
+		Capability capability = SecurityEntityValueObjectDataUtility.createTestDataCapabilityOnResourceAndAction("cab", "edit");
+		
+		for(CapabilityAction capabilityAction : capability.getActions())
+		{
+			CapabilityActionVO capabilityActionVO = SecurityEntityValueObjectConverter.toCapabilityActionVO(capabilityAction);
+			assertEquals(capabilityAction.getId(),capabilityActionVO.getId());
+			assertEquals(capabilityAction.getAction().getId(),capabilityActionVO.getActionVO().getId());
+			assertEquals(capabilityAction.getCapability().getId(),capabilityActionVO.getCapabilityVO().getId());
+		}
+
+	}
+
 }

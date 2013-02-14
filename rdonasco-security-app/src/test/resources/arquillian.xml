@@ -9,7 +9,7 @@
     <container qualifier="glassfish" default="true">
         <configuration>
 			<property name="bindHttpPort">9191</property>
-            <property name="resourcesXml">src/main/setup/glassfish-resources.xml</property> 
+            <property name="resourcesXml">src/test/setup/glassfish-resources.xml</property> 
         </configuration>
     </container>
 </arquillian>

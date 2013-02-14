@@ -14,6 +14,7 @@ import com.rdonasco.security.model.Action;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
+import com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
@@ -152,22 +153,9 @@ public class CapabilityManagerImplTest
 	}
 
 	private List<Capability> getCapabilityOnEditingUser()
-	{
-		Capability capability = new Capability();
-		capability.setId(Long.MIN_VALUE);
-		capability.setTitle("Manage Users");
-		Resource resource = new Resource();
-		resource.setName("User");
-		resource.setId(Long.MIN_VALUE);
-		capability.setResource(resource);
-		List<Action> actions = new ArrayList<Action>();
-		Action addAction = new Action();
-		addAction.setName("Edit");
-		addAction.setId(Long.MIN_VALUE + 1L);
-		actions.add(addAction);
-		capability.setActions(actions);
+	{		
 		List<Capability> capabilities = new ArrayList<Capability>();
-		capabilities.add(capability);
+		capabilities.add(SecurityEntityValueObjectDataUtility.createTestDataCapabilityOnResourceAndAction("User", "Edit"));
 		return capabilities;
 	}
 
