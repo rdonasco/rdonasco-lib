@@ -18,6 +18,7 @@ public interface CapabilityManager
 {
 
 	ActionVO createNewAction(ActionVO action) throws CapabilityManagerException;	
+	void updateAction(ActionVO actionToUpdate) throws CapabilityManagerException;	
 	ResourceVO addResource(ResourceVO resource) throws CapabilityManagerException;
 	void removeResource(ResourceVO resource) throws CapabilityManagerException;
 	ResourceVO findResourceNamedAs(String resourceName) throws CapabilityManagerException, NonExistentEntityException;

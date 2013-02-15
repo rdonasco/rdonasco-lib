@@ -77,10 +77,15 @@ public class AccessRightsVO implements Serializable
 	public int hashCode()
 	{
 		int hash = 3;
-		hash = 89 * hash + (this.resource != null ? this.resource.hashCode() : 0);
+		hash = 89 * hash + (this.resource != null && this.resource.getName() != null ? this.resource.getName().hashCode() : 0);
 		hash = 89 * hash + (this.userProfile != null ? this.userProfile.hashCode() : 0);
-		hash = 89 * hash + (this.action != null ? this.action.hashCode() : 0);
+		hash = 89 * hash + (this.action != null && this.action.getName() != null ? this.action.getName().hashCode() : 0);
 		return hash;
+	}
+	
+	public Long getId()
+	{
+		return new Long(hashCode());
 	}
 
 	@Override
@@ -95,19 +100,17 @@ public class AccessRightsVO implements Serializable
 			return false;
 		}
 		final AccessRightsVO other = (AccessRightsVO) obj;
-		if (this.resource != other.resource && (this.resource == null || !this.resource.equals(other.resource)))
+		if(this.getId() == null)
+		{
+			return false;			
+		}
+		else if(other == null)
 		{
 			return false;
 		}
-		if (this.userProfile != other.userProfile && (this.userProfile == null || !this.userProfile.equals(other.userProfile)))
-		{
-			return false;
-		}
-		if (this.action != other.action && (this.action == null || !this.action.equals(other.action)))
-		{
-			return false;
-		}
-		return true;
+		return this.getId().equals(other.getId());
 	}
+
+
 	
 }

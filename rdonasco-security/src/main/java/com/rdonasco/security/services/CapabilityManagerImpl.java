@@ -172,7 +172,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 		try
 		{
 			Map<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put(Action.QUERY_PARAM_ACTION, name);
+			parameters.put(Action.QUERY_PARAM_NAME, name);
 			action = actionDAO.findUniqueDataUsingNamedQuery(Action.NAMED_QUERY_FIND_ACTION_BY_NAME, parameters);
 		}
 		catch (NonExistentEntityException e)
@@ -224,4 +224,20 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 		}
 		return actionVOToReturn;
 	}
+
+	@Override
+	public void updateAction(ActionVO actionToUpdate) throws CapabilityManagerException
+	{
+		try
+		{
+			Action action = SecurityEntityValueObjectConverter.toAction(actionToUpdate);
+			actionDAO.update(action);
+		}
+		catch(Exception e)
+		{
+			throw new CapabilityManagerException(e);
+		}
+	}
+	
+	
 }

@@ -4,6 +4,8 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.security.exceptions.CapabilityManagerException;
+import com.rdonasco.security.vo.ActionVO;
 import javax.ejb.Remote;
 
 /**
@@ -12,6 +14,5 @@ import javax.ejb.Remote;
  */
 @Remote
 public interface CapabilityManagerRemote extends CapabilityManager
-{
-	
+{	
 }

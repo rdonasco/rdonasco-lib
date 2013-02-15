@@ -46,4 +46,24 @@ public class AppTest
 		assertNotNull(savedAction.getId());
 		
     }
+	
+	@Test
+	public void testEditAction() throws Exception
+    {
+		System.out.println("editAction");
+		ActionVO action = new ActionVO();
+		action.setDescription("description");
+		action.setName("edit");
+		ActionVO savedAction = capabilityManager.createNewAction(action);		
+		ActionVO foundAction = capabilityManager.findOrAddActionNamedAs("edit");
+		assertNotNull(foundAction);
+		assertEquals(savedAction.getId(),foundAction.getId());
+		assertEquals(savedAction.getDescription(),foundAction.getDescription());
+		foundAction.setDescription("edited action");
+		capabilityManager.updateAction(foundAction); 
+		ActionVO updatedAction = capabilityManager.findOrAddActionNamedAs("edit");
+		assertNotNull(foundAction);
+		assertEquals(foundAction.getId(),updatedAction.getId());
+		assertEquals(foundAction.getDescription(),updatedAction.getDescription());		
+    }	
 }

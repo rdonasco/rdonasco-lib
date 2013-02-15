@@ -27,6 +27,7 @@ import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
 import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
+import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -79,7 +80,11 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			if (capabilitiesNotFound)
 			{
 				capabilityManager.findOrAddActionNamedAs(accessRights.getAction().getName());
-				capabilityManager.findOrAddSecuredResourceNamedAs(accessRights.getResource().getName());				
+				ResourceVO securedResourceVO = capabilityManager.findOrAddSecuredResourceNamedAs(accessRights.getResource().getName());	
+				if(null != securedResourceVO)
+				{
+					throwSecurityExceptionFor(accessRights);
+				}
 			}
 			else
 			{
@@ -95,7 +100,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 					}
 					if (!accessRightsSet.contains(accessRights))
 					{
-						throw new SecurityException("Access Denied!");
+						throwSecurityExceptionFor(accessRights);
 					}
 				}
 			}
@@ -103,11 +108,11 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		}
 		catch (NotSecuredResourceException e)
 		{
-			LOG.info(e.getMessage());
+			LOG.warning(e.getMessage());
 		}
 		catch (Exception e)
 		{
-			LOG.log(Level.FINE, e.getMessage(), e);
+			LOG.log(Level.SEVERE, e.getMessage(), e);
 			throw new SecurityException(e);
 		}
 	}
@@ -147,5 +152,14 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	{
 		throw new UnsupportedOperationException("Not supported yet.");
 	}	
+
+	private void throwSecurityExceptionFor(AccessRightsVO accessRights) throws SecurityException
+	{
+		StringBuilder errorStringBuild = new StringBuilder("Access Denied on Resource {")
+				.append(accessRights.getResource().getName())
+				.append("} and Action {").append(accessRights.getAction().getName())
+				.append("} for profile with login id {").append(accessRights.getUserProfile().getLoginId()).append("}");
+		throw new SecurityException(errorStringBuild.toString());
+	}
 
 }

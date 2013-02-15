@@ -20,15 +20,13 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.UniqueConstraint;
 
 /**
  *
@@ -36,10 +34,14 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "secured_action", catalog = "", schema = "")
+@NamedQueries(
+{
+	@NamedQuery(name = Action.NAMED_QUERY_FIND_ACTION_BY_NAME, query = "SELECT a FROM Action a WHERE a.name = :name")
+})
 public class Action implements Serializable
 {
 	public static final String NAMED_QUERY_FIND_ACTION_BY_NAME = "findActionByName";
-	public static final String QUERY_PARAM_ACTION = "action";
+	public static final String QUERY_PARAM_NAME = "name";
 	
 	private static final long serialVersionUID = 1L;
 	private static final String GENERATOR_KEY = "ACTION_IDGEN";
