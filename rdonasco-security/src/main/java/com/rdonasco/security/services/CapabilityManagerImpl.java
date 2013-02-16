@@ -4,6 +4,8 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.common.exceptions.MultipleEntityFoundException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.security.dao.ActionDAO;
 import com.rdonasco.security.dao.CapabilityDAO;
@@ -77,6 +79,22 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 		}
 		return resourceVO;
 	}
+
+	@Override
+	public void updateResource(ResourceVO resource) throws CapabilityManagerException
+	{
+		try
+		{
+			Resource resourceToUpdate = SecurityEntityValueObjectConverter.toResource(resource);
+			resourceDAO.update(resourceToUpdate);
+		}
+		catch(Exception e)
+		{
+			throw new CapabilityManagerException(e);
+		}
+	}
+	
+	
 
 	@Override
 	public void removeResource(ResourceVO resource) throws
@@ -171,9 +189,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 		Action action = null;
 		try
 		{
-			Map<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put(Action.QUERY_PARAM_NAME, name);
-			action = actionDAO.findUniqueDataUsingNamedQuery(Action.NAMED_QUERY_FIND_ACTION_BY_NAME, parameters);
+			action = findActionEntityNamed(name);
 		}
 		catch (NonExistentEntityException e)
 		{
@@ -216,9 +232,9 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 		{
 			Action action = SecurityEntityValueObjectConverter.toAction(actionVO);
 			actionDAO.create(action);
-			actionVOToReturn = SecurityEntityValueObjectConverter.toActionVO(action);			
+			actionVOToReturn = SecurityEntityValueObjectConverter.toActionVO(action);
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			throw new CapabilityManagerException(e);
 		}
@@ -226,17 +242,65 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 	}
 
 	@Override
-	public void updateAction(ActionVO actionToUpdate) throws CapabilityManagerException
+	public void updateAction(ActionVO actionToUpdate) throws
+			CapabilityManagerException
 	{
 		try
 		{
 			Action action = SecurityEntityValueObjectConverter.toAction(actionToUpdate);
 			actionDAO.update(action);
 		}
+		catch (Exception e)
+		{
+			throw new CapabilityManagerException(e);
+		}
+	}
+
+	@Override
+	public void removeAction(ActionVO actionToRemove) throws
+			CapabilityManagerException
+	{
+		try
+		{
+			actionDAO.delete(Action.class, actionToRemove.getId());
+		}
+		catch (Exception e)
+		{
+			throw new CapabilityManagerException(e);
+		}
+	}
+
+	private Action findActionEntityNamed(String name) 
+			throws DataAccessException, NonExistentEntityException, MultipleEntityFoundException
+	{
+		Action action;
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put(Action.QUERY_PARAM_NAME, name);
+
+		action = actionDAO.findUniqueDataUsingNamedQuery(Action.NAMED_QUERY_FIND_ACTION_BY_NAME, parameters);
+
+		return action;
+	}
+
+	@Override
+	public ActionVO findActionNamed(String nameOfActionToFind) throws CapabilityManagerException,
+			NonExistentEntityException
+	{
+		ActionVO foundAction = null;
+		try
+		{
+			Action action = findActionEntityNamed(nameOfActionToFind);
+			foundAction = SecurityEntityValueObjectConverter.toActionVO(action);
+		}
+		catch(NonExistentEntityException e)
+		{
+			throw e;
+		}
 		catch(Exception e)
 		{
 			throw new CapabilityManagerException(e);
 		}
+		return foundAction;
 	}
 	
 	

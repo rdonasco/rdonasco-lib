@@ -23,6 +23,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 /**
@@ -30,6 +33,13 @@ import javax.persistence.TableGenerator;
  * @author Roy F. Donasco
  */
 @Entity
+@Table(name="secured_resource",catalog="",schema="")
+@NamedQueries
+(
+	{
+		@NamedQuery(name = Resource.NAMED_QUERY_FIND_RESOURCE_BY_NAME, query = "SELECT r FROM Resource r WHERE r.name = :resourceName")
+	}
+)
 public class Resource implements Serializable
 {
 	public static final String NAMED_QUERY_FIND_RESOURCE_BY_NAME = "findResourceByName";

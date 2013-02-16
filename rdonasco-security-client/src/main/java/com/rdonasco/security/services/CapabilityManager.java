@@ -18,8 +18,11 @@ public interface CapabilityManager
 {
 
 	ActionVO createNewAction(ActionVO action) throws CapabilityManagerException;	
-	void updateAction(ActionVO actionToUpdate) throws CapabilityManagerException;	
+	void updateAction(ActionVO actionToUpdate) throws CapabilityManagerException;
+	void removeAction(ActionVO actionToRemove) throws CapabilityManagerException;
+	ActionVO findActionNamed(String nameOfActionToFind) throws CapabilityManagerException, NonExistentEntityException;
 	ResourceVO addResource(ResourceVO resource) throws CapabilityManagerException;
+	void updateResource(ResourceVO resource) throws CapabilityManagerException;
 	void removeResource(ResourceVO resource) throws CapabilityManagerException;
 	ResourceVO findResourceNamedAs(String resourceName) throws CapabilityManagerException, NonExistentEntityException;
 	ResourceVO findOrAddSecuredResourceNamedAs(String resourceName) throws CapabilityManagerException, NotSecuredResourceException;
