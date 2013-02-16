@@ -14,6 +14,7 @@ import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityActionVOBuilder;
 import com.rdonasco.security.vo.CapabilityVO;
+import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
 import com.rdonasco.security.vo.UserCapabilityVO;
@@ -84,7 +85,11 @@ public class SecurityEntityValueObjectConverter
 		CapabilityVO capabilityVO = null;
 		if (null != capability)
 		{
-			capabilityVO = new CapabilityVO();
+			CapabilityVOBuilder capabilityVOBuilder = new CapabilityVOBuilder()
+					.setId(capability.getId())
+					.setTitle(capability.getTitle())
+					.setDescription(capability.getDescription())
+					.setResource(toResourceVO(capability.getResource()));
 			if (capability.getActions() != null)
 			{
 				List<CapabilityActionVO> actionVOList = new ArrayList<CapabilityActionVO>(capability.getActions().size());
@@ -98,12 +103,9 @@ public class SecurityEntityValueObjectConverter
 					capabilityActionVO.setCapabilityVO(capabilityVO);
 					actionVOList.add(capabilityActionVO);
 				}
-				capabilityVO.setActions(actionVOList);
+				capabilityVOBuilder.setActions(actionVOList);
+				capabilityVO = capabilityVOBuilder.createCapabilityVO();
 			}
-			capabilityVO.setDescription(capability.getDescription());
-			capabilityVO.setId(capability.getId());
-			capabilityVO.setResource(toResourceVO(capability.getResource()));
-			capabilityVO.setTitle(capability.getTitle());
 		}
 		return capabilityVO;
 	}
@@ -112,19 +114,23 @@ public class SecurityEntityValueObjectConverter
 			IllegalAccessException, InvocationTargetException
 	{
 		Capability capability = new Capability();
-		if (capabilityVO.getActions() != null)
-		{
-			List<CapabilityAction> capabilityActions = new ArrayList<CapabilityAction>(capabilityVO.getActions().size());
-			for (CapabilityActionVO capabilityActionVO : capabilityVO.getActions())
-			{
-				capabilityActions.add(toCapabilityAction(capabilityActionVO));
-			}
-			capability.setActions(capabilityActions);
-		}
 		capability.setDescription(capabilityVO.getDescription());
 		capability.setId(capabilityVO.getId());
 		capability.setResource(toResource(capabilityVO.getResource()));
-		capability.setTitle(capabilityVO.getTitle());
+		capability.setTitle(capabilityVO.getTitle());		
+		if (capabilityVO.getActions() != null)
+		{
+			List<CapabilityAction> capabilityActions = new ArrayList<CapabilityAction>(capabilityVO.getActions().size());
+			CapabilityAction capabilityAction;
+			for (CapabilityActionVO capabilityActionVO : capabilityVO.getActions())
+			{
+				capabilityAction = toCapabilityAction(capabilityActionVO);
+				capabilityAction.setCapability(capability);
+				capabilityActions.add(capabilityAction);
+			}
+			capability.setActions(capabilityActions);
+		}
+
 
 		return capability;
 	}
@@ -190,6 +196,11 @@ public class SecurityEntityValueObjectConverter
 	{
 		CapabilityAction capabilityAction = new CapabilityAction();
 		BEAN_UTILS.copyProperties(capabilityAction, capabilityActionVO);
+		capabilityAction.setAction(toAction(capabilityActionVO.getActionVO()));
+//		if(null != capabilityActionVO.getCapabilityVO())
+//		{
+//			capabilityAction.setCapability(toCapability(capabilityActionVO.getCapabilityVO()));
+//		}
 		return capabilityAction;
 	}
 

@@ -12,6 +12,7 @@ import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityActionVOBuilder;
 import com.rdonasco.security.vo.CapabilityVO;
+import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
 import com.rdonasco.security.vo.UserCapabilityVO;
@@ -31,7 +32,7 @@ public class SecurityEntityValueObjectDataUtility
 
 	private static final Logger LOG = Logger.getLogger(SecurityEntityValueObjectDataUtility.class.getName());
 
-	public static List<CapabilityActionVO> createTestDataCapabilityActionVOFor(
+	public static List<CapabilityActionVO> createTestDataCapabilityActionVOsFor(
 			CapabilityVO capability)
 	{
 		List<ActionVO> actions = createTestDataActionVOList();
@@ -128,10 +129,15 @@ public class SecurityEntityValueObjectDataUtility
 				.setName("resource")
 				.setDescription("resource")
 				.createResourceVO();
-		CapabilityVO capability = new CapabilityVO();
-		capability.setId(Long.MIN_VALUE);
-		capability.setResource(resourceVO);
-		List<CapabilityActionVO> capabilityActions = createTestDataCapabilityActionVOFor(capability);
+		ActionVO actionVO = createTestDataActionVO();
+		CapabilityVO capability = new CapabilityVOBuilder()
+				.setId(Long.MIN_VALUE)
+				.setResource(resourceVO)
+				.addAction(actionVO)
+				.setTitle("testCapability")
+				.setDescription("testCapability")
+				.createCapabilityVO();
+		List<CapabilityActionVO> capabilityActions = createTestDataCapabilityActionVOsFor(capability);
 		capability.setActions(capabilityActions);
 		return capability;
 	}

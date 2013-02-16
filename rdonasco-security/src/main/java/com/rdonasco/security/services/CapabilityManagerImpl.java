@@ -17,6 +17,7 @@ import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
 import java.util.HashMap;
@@ -301,6 +302,36 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 			throw new CapabilityManagerException(e);
 		}
 		return foundAction;
+	}
+
+	@Override
+	public CapabilityVO createNewCapability(CapabilityVO capabilityToCreate)
+			throws CapabilityManagerException
+	{
+		CapabilityVO createdCapabilityVO = null;
+		try
+		{
+			Capability capability = SecurityEntityValueObjectConverter.toCapability(capabilityToCreate);
+			capabilityDAO.create(capability);
+			createdCapabilityVO = SecurityEntityValueObjectConverter.toCapabilityVO(capability);
+		}
+		catch(Exception e)
+		{
+			throw new CapabilityManagerException(e);
+		}
+		return createdCapabilityVO;
+	}
+
+	@Override
+	public void updateCapability(CapabilityVO capabilityToUpdate) throws CapabilityManagerException
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public void removeCapability(CapabilityVO capabilityToRemove) throws CapabilityManagerException
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 	
 	

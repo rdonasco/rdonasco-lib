@@ -17,6 +17,7 @@
 package com.rdonasco.security.model;
 
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -58,7 +59,7 @@ public class CapabilityAction implements Serializable
 	@ManyToOne(optional = false, fetch = FetchType.EAGER)
 	private Capability capability;
 	@JoinColumn(name = "action_id", referencedColumnName = "id", nullable = false)
-	@ManyToOne(optional = false, fetch= FetchType.EAGER)
+	@ManyToOne(cascade= CascadeType.REFRESH ,optional = false, fetch= FetchType.EAGER)
 	private Action action;
 	
 

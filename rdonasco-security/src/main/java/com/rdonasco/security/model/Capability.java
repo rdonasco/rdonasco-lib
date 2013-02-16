@@ -65,7 +65,7 @@ public class Capability implements Serializable
 	@JoinColumn(name = "resource_id", referencedColumnName = "id", nullable = false)
 	@ManyToOne(optional = false, fetch = FetchType.EAGER)
 	private Resource resource;
-	@OneToMany(cascade = CascadeType.REFRESH, mappedBy = "capability", fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "capability", fetch = FetchType.EAGER)
 	private Collection<CapabilityAction> actions;
 
 	public Long getId()
@@ -116,6 +116,10 @@ public class Capability implements Serializable
 	public void setActions(Collection<CapabilityAction> actions)
 	{
 		this.actions = actions;
+		for(CapabilityAction action : actions)
+		{
+			action.setCapability(this);
+		}
 	}
 
 	@Override

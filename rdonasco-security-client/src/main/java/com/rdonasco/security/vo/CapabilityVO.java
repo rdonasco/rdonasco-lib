@@ -33,6 +33,17 @@ public class CapabilityVO implements Serializable
 	private ResourceVO resource;
 	private Collection<CapabilityActionVO> actions;
 
+	public CapabilityVO(Long id, String title, String description,
+			ResourceVO resource,
+			Collection<CapabilityActionVO> actions)
+	{
+		this.id = id;
+		this.title = title;
+		this.description = description;
+		this.resource = resource;
+		this.actions = actions;
+	}	
+	
 	public Long getId()
 	{
 		return id;
@@ -110,6 +121,8 @@ public class CapabilityVO implements Serializable
 	@Override
 	public String toString()
 	{
-		return "com.rdonasco.security.model.SecuredUser[ id=" + id + " ]";
+		return "CapabilityVO{" + "id=" + id + ", title=" + title + '}';
 	}
+
+
 }

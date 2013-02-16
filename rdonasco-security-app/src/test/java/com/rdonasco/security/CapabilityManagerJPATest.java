@@ -7,6 +7,8 @@ import com.rdonasco.security.model.Action;
 import com.rdonasco.security.services.CapabilityManagerRemote;
 import com.rdonasco.security.services.SystemSecurityManagerRemote;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.CapabilityVO;
+import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
 import javax.ejb.EJB;
@@ -107,6 +109,23 @@ public class CapabilityManagerJPATest
 		ResourceVO resourceToRemove = createTestDataResourceNamed("resourceToRemove");
 		capabilityManager.removeResource(resourceToRemove);
 		capabilityManager.findResourceNamedAs(resourceToRemove.getName());		
+	}
+	
+	@Test
+	public void testAddCapability() throws Exception
+	{
+		System.out.println("addCapability");
+		ActionVO action = createTestDataActionNamed("add");
+		ResourceVO resource = createTestDataResourceNamed("employee");
+		CapabilityVO capabilityVO = new CapabilityVOBuilder()
+				.addAction(action)
+				.setResource(resource)
+				.setTitle("capabilityToAdd")
+				.setDescription("capabilityDescription")
+				.createCapabilityVO();
+		CapabilityVO savedCapabilityVO = capabilityManager.createNewCapability(capabilityVO);
+		assertNotNull(savedCapabilityVO);
+		assertNotNull(savedCapabilityVO.getId());		
 	}
 
 	private ActionVO createTestDataActionNamed(String name) throws CapabilityManagerException
