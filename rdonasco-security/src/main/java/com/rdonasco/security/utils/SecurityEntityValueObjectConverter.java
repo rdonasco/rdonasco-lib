@@ -18,6 +18,7 @@ import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
 import com.rdonasco.security.vo.UserCapabilityVO;
+import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import java.lang.reflect.InvocationTargetException;
@@ -223,7 +224,7 @@ public class SecurityEntityValueObjectConverter
 	}
 
 	public static UserSecurityProfileVO toUserProfileVO(
-			UserSecurityProfile profileToConvert)
+			UserSecurityProfile profileToConvert) throws IllegalAccessException, InvocationTargetException
 	{
 		UserCapabilityVO userCapabilityVO;
 		List<UserCapabilityVO> userCapabilityVOList = new ArrayList<UserCapabilityVO>();
@@ -241,8 +242,13 @@ public class SecurityEntityValueObjectConverter
 		return userSecurityProfileVO;
 	}
 
-	public static UserCapabilityVO toUserCapabilityVO(UserCapability userCapability)
+	public static UserCapabilityVO toUserCapabilityVO(UserCapability userCapability) 
+			throws IllegalAccessException, InvocationTargetException
 	{
-		throw new UnsupportedOperationException("Not yet implemented");
+		UserCapabilityVO userCapabilityVO = new UserCapabilityVOBuilder()
+				.setCapability(toCapabilityVO(userCapability.getCapability()))
+				.setId(userCapability.getId())
+				.createUserCapabilityVO();
+		return userCapabilityVO;
 	}
 }

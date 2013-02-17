@@ -273,6 +273,16 @@ public class SecurityEntityValueObjectConverterTest
 		UserCapabilityVO userCapabilityVO = SecurityEntityValueObjectConverter.toUserCapabilityVO(userCapability);
 		assertNotNull(userCapabilityVO);
 		assertEquals(userCapability.getId(),userCapabilityVO.getId());
+		assertNotNull(userCapabilityVO.getCapability());
+		assertEquals(userCapability.getCapability().getId(),userCapabilityVO.getCapability().getId());
+		if(userCapability.getUserProfile() != null)
+		{
+			assertNotNull(userCapabilityVO.getUserProfile());
+			assertEquals(userCapability.getUserProfile().getId(),userCapabilityVO.getUserProfile().getId());
+		}
+		
+		
+		
 	}
 	
 	@Test

@@ -18,6 +18,7 @@ import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
 import com.rdonasco.security.vo.UserCapabilityVO;
+import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import java.util.ArrayList;
@@ -119,8 +120,10 @@ public class SecurityEntityValueObjectDataUtility
 		capability.setId(generateRandomID());
 		capability.setDescription("dummy capability");
 		capability.setResource(resource);
+		capability.setActions(new ArrayList<CapabilityAction>());
 		CapabilityAction capabilityAction = createTestDataCapabilityActionForWithActionName("edit", capability);
 		capabilityAction.setAction(action);
+		capability.getActions().add(capabilityAction);
 		UserCapability userCapability = new UserCapability();
 		userCapability.setCapability(capability);
 		userCapability.setId(generateRandomID());
@@ -135,9 +138,11 @@ public class SecurityEntityValueObjectDataUtility
 	public static UserCapabilityVO createTestDataUserCapabilityVO(
 			CapabilityVO capability)
 	{
-		UserCapabilityVO userCapability = new UserCapabilityVO();
-		userCapability.setId(Long.MIN_VALUE);
-		userCapability.setCapability(capability);
+		CapabilityVO capabilityVO = createTestDataCapabilityVO();
+		UserCapabilityVO userCapability = new UserCapabilityVOBuilder()
+				.setCapability(capability)
+				.setId(generateRandomID())
+				.createUserCapabilityVO();
 		return userCapability;
 	}
 
