@@ -15,6 +15,5 @@
     <module>rdonasco-common</module>
     <module>rdonasco-security</module>
     <module>rdonasco-security-client</module>
-    <module>rdonasco-security-app</module>
   </modules>
 </project>

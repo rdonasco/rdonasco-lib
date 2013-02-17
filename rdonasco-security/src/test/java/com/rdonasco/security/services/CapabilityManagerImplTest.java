@@ -5,7 +5,6 @@
 package com.rdonasco.security.services;
 
 import com.rdonasco.common.exceptions.NonExistentEntityException;
-import com.rdonasco.common.exceptions.PreexistingEntityException;
 import com.rdonasco.security.dao.ActionDAO;
 import com.rdonasco.security.dao.CapabilityDAO;
 import com.rdonasco.security.dao.ResourceDAO;
@@ -28,7 +27,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.mockito.Mock;
 import static org.mockito.Mockito.*;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
