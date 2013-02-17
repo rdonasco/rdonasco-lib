@@ -342,13 +342,28 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 	@Override
 	public void updateCapability(CapabilityVO capabilityToUpdate) throws CapabilityManagerException
 	{
-		throw new UnsupportedOperationException("Not supported yet.");
+		try
+		{
+			Capability capability = SecurityEntityValueObjectConverter.toCapability(capabilityToUpdate);
+			capabilityDAO.update(capability);
+		}
+		catch(Exception e)
+		{
+			throw new CapabilityManagerException(e);
+		}
 	}
 
 	@Override
 	public void removeCapability(CapabilityVO capabilityToRemove) throws CapabilityManagerException
 	{
-		throw new UnsupportedOperationException("Not supported yet.");
+		try
+		{
+			capabilityDAO.delete(Capability.class, capabilityToRemove.getId());
+		}
+		catch(Exception e)
+		{
+			throw new CapabilityManagerException(e);
+		}
 	}
 	
 	
