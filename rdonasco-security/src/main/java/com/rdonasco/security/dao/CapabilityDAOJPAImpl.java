@@ -18,10 +18,7 @@
 package com.rdonasco.security.dao;
 
 import com.rdonasco.common.dao.BaseDAO;
-import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.security.model.Capability;
-import com.rdonasco.security.model.UserSecurityProfile;
-import java.util.List;
 
 
 public class CapabilityDAOJPAImpl extends BaseDAO<Capability> implements CapabilityDAO 
