@@ -136,6 +136,7 @@ public class CapabilityManagerJPATest
 		assertEquals(capabilityVOtoUpdate.getId(),updatedCapabilityVO.getId());
 		assertEquals(capabilityVOtoUpdate.getDescription(),updatedCapabilityVO.getDescription());
 		assertEquals(capabilityVOtoUpdate.getTitle(),updatedCapabilityVO.getTitle());
+		assertEquals(capabilityVOtoUpdate.getActions().size(),updatedCapabilityVO.getActions().size());
 	}
 
 	private ActionVO createTestDataActionNamed(String name) throws CapabilityManagerException
