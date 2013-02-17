@@ -8,6 +8,8 @@ import com.rdonasco.security.model.Action;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.CapabilityAction;
 import com.rdonasco.security.model.Resource;
+import com.rdonasco.security.model.UserCapability;
+import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityActionVOBuilder;
@@ -45,7 +47,7 @@ public class SecurityEntityValueObjectDataUtility
 		return capabilityActions;
 	}
 	
-	public static List<CapabilityAction> createTestDataActionsForWithActionName(
+	public static List<CapabilityAction> createTestDataCapabilityActionsForWithActionName(
 			Capability capability, String actionName)
 	{
 		List<CapabilityAction> actions = new ArrayList<CapabilityAction>(1);
@@ -54,7 +56,7 @@ public class SecurityEntityValueObjectDataUtility
 		return actions;
 	}
 
-	public static List<CapabilityAction> createTestDataActionsForWithSize(
+	public static List<CapabilityAction> createTestDataCapabilityActionsForWithSize(
 			Capability capability, int size)
 	{
 		List<CapabilityAction> actions = new ArrayList<CapabilityAction>(size);
@@ -82,14 +84,48 @@ public class SecurityEntityValueObjectDataUtility
 		Action action;
 		CapabilityAction capabilityAction;
 		action = new Action();
-		action.setId(Long.MIN_VALUE);
+		action.setId(generateRandomID());
 		action.setName(actionName);
 		action.setDescription("action description for " + actionName);
 		capabilityAction = new CapabilityAction();
-		capabilityAction.setId(Long.MIN_VALUE);
+		capabilityAction.setId(generateRandomID());
 		capabilityAction.setAction(action);
 		capabilityAction.setCapability(capability);
 		return capabilityAction;
+	}
+
+	static UserSecurityProfile createTestDataUserSecurityProfileWithCapability(String action,
+			String resource)
+	{		
+		UserSecurityProfile userSecurityProfile = new UserSecurityProfile();
+		Capability capability = createTestDataCapabilityOnResourceAndAction(resource, action);
+		UserCapability userCapability = new UserCapability();
+		userCapability.setCapability(capability);
+		List<UserCapability> capabilities = new ArrayList<UserCapability>();
+		userCapability.setCapability(capability);
+		userCapability.setUserProfile(userSecurityProfile);
+		capabilities.add(userCapability);		
+		userSecurityProfile.setCapabilities(capabilities);
+		
+		return userSecurityProfile;
+	}
+
+	static UserCapability createTestDataUserCapabilityWithResourceAndAction(Resource resource,
+			Action action)
+	{
+
+		Capability capability = new Capability();
+		capability.setTitle("dummy capability");
+		capability.setId(generateRandomID());
+		capability.setDescription("dummy capability");
+		capability.setResource(resource);
+		CapabilityAction capabilityAction = createTestDataCapabilityActionForWithActionName("edit", capability);
+		capabilityAction.setAction(action);
+		UserCapability userCapability = new UserCapability();
+		userCapability.setCapability(capability);
+		userCapability.setId(generateRandomID());
+		return userCapability;
+
 	}
 
 	public SecurityEntityValueObjectDataUtility()
@@ -193,11 +229,11 @@ public class SecurityEntityValueObjectDataUtility
 
 		if (null == actionName)
 		{
-			capability.setActions(createTestDataActionsForWithSize(capability, 3));
+			capability.setActions(createTestDataCapabilityActionsForWithSize(capability, 3));
 		}
 		else
 		{
-			capability.setActions(createTestDataActionsForWithActionName(capability, actionName));
+			capability.setActions(createTestDataCapabilityActionsForWithActionName(capability, actionName));
 		}
 
 		Resource resource = createTestDataResource(resourceName);

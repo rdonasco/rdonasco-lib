@@ -93,6 +93,10 @@ public class UserSecurityProfile implements Serializable
 	public void setCapabilities(Collection<UserCapability> capabilities)
 	{
 		this.capabilities = capabilities;
+		for(UserCapability capability : capabilities)
+		{
+			capability.setUserProfile(this);
+		}
 	}	
 
 	@Override
