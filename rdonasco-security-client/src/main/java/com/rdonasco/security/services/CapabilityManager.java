@@ -29,6 +29,7 @@ public interface CapabilityManager
 	ResourceVO findOrAddSecuredResourceNamedAs(String resourceName) throws CapabilityManagerException, NotSecuredResourceException;
 	ActionVO findOrAddActionNamedAs(String name) throws CapabilityManagerException;
 	CapabilityVO createNewCapability(CapabilityVO capabilityToCreate) throws CapabilityManagerException;
+	CapabilityVO findCapabilityWithId(Long id) throws CapabilityManagerException;
 	void updateCapability(CapabilityVO capabilityToUpdate) throws CapabilityManagerException;
 	void removeCapability(CapabilityVO capabilityToRemove) throws CapabilityManagerException;
 }

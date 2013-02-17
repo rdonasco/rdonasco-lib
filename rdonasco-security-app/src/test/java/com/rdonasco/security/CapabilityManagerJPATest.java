@@ -115,17 +115,27 @@ public class CapabilityManagerJPATest
 	public void testAddCapability() throws Exception
 	{
 		System.out.println("addCapability");
-		ActionVO action = createTestDataActionNamed("add");
-		ResourceVO resource = createTestDataResourceNamed("employee");
-		CapabilityVO capabilityVO = new CapabilityVOBuilder()
-				.addAction(action)
-				.setResource(resource)
-				.setTitle("capabilityToAdd")
-				.setDescription("capabilityDescription")
-				.createCapabilityVO();
-		CapabilityVO savedCapabilityVO = capabilityManager.createNewCapability(capabilityVO);
+		final String actionName = "add";
+		final String resourceName = "employee";
+		CapabilityVO savedCapabilityVO = createTestDataCapabilityWithActionAndResourceName(actionName, resourceName);
 		assertNotNull(savedCapabilityVO);
 		assertNotNull(savedCapabilityVO.getId());		
+	}
+	
+	@Test
+	public void testUpdateCapability() throws Exception
+	{
+		System.out.println("updateCapability");
+		final String actionName = "add";
+		final String resourceName = "employee";
+		CapabilityVO capabilityVOtoUpdate = createTestDataCapabilityWithActionAndResourceName(actionName, resourceName);
+		capabilityVOtoUpdate.setDescription("updated description");
+		capabilityVOtoUpdate.setTitle("updated title");
+		capabilityManager.updateCapability(capabilityVOtoUpdate);
+		CapabilityVO updatedCapabilityVO = capabilityManager.findCapabilityWithId(capabilityVOtoUpdate.getId());
+		assertEquals(capabilityVOtoUpdate.getId(),updatedCapabilityVO.getId());
+		assertEquals(capabilityVOtoUpdate.getDescription(),updatedCapabilityVO.getDescription());
+		assertEquals(capabilityVOtoUpdate.getTitle(),updatedCapabilityVO.getTitle());
 	}
 
 	private ActionVO createTestDataActionNamed(String name) throws CapabilityManagerException
@@ -146,5 +156,21 @@ public class CapabilityManagerJPATest
 		
 		ResourceVO resourceAdded = capabilityManager.addResource(resourceToAdd);
 		return resourceAdded;
+	}
+
+	private CapabilityVO createTestDataCapabilityWithActionAndResourceName(final String actionName,
+			final String resourceName) throws CapabilityManagerException
+	{
+		ActionVO action = createTestDataActionNamed(actionName);
+		ResourceVO resource = createTestDataResourceNamed(resourceName);
+		final String capabilityTitle = "capability to " + actionName + " " + resourceName;
+		CapabilityVO capabilityVO = new CapabilityVOBuilder()
+				.addAction(action)
+				.setResource(resource)
+				.setTitle(capabilityTitle)
+				.setDescription(capabilityTitle + " description")
+				.createCapabilityVO();
+		CapabilityVO savedCapabilityVO = capabilityManager.createNewCapability(capabilityVO);
+		return savedCapabilityVO;
 	}
 }

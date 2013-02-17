@@ -6,6 +6,7 @@ package com.rdonasco.security.services;
 
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.CapabilityVO;
 import javax.ejb.Remote;
 
 /**

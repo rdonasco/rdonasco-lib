@@ -323,6 +323,23 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 	}
 
 	@Override
+	public CapabilityVO findCapabilityWithId(Long id) throws CapabilityManagerException
+	{
+		CapabilityVO foundCapabilityVO = null;
+		try
+		{
+			Capability capability = capabilityDAO.findData(Capability.class, id);
+			foundCapabilityVO = SecurityEntityValueObjectConverter.toCapabilityVO(capability);
+		}
+		catch(Exception e)
+		{
+			throw new CapabilityManagerException(e);
+		}
+		return foundCapabilityVO;
+	}
+
+	
+	@Override
 	public void updateCapability(CapabilityVO capabilityToUpdate) throws CapabilityManagerException
 	{
 		throw new UnsupportedOperationException("Not supported yet.");
