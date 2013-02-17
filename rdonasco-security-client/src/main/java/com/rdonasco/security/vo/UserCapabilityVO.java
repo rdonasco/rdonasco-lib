@@ -29,6 +29,16 @@ public class UserCapabilityVO implements Serializable
 	private Long id;
 	private UserSecurityProfileVO userProfile;
 	private CapabilityVO capability;
+
+	public UserCapabilityVO(Long id, UserSecurityProfileVO userProfile,
+			CapabilityVO capability)
+	{
+		this.id = id;
+		this.userProfile = userProfile;
+		this.capability = capability;
+	}
+	
+	
 	public Long getId()
 	{
 		return id;
