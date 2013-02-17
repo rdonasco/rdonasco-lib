@@ -3,3 +3,12 @@
 \.chg\..*$
 \.rej$
 \.conflict\~$
+syntax: glob
+rdonasco-security/target
+rdonasco-common-dao/target
+rdonasco-common-i18/target
+rdonasco-common-vaadin/target
+rdonasco-common-validator/target
+rdonasco-common/target
+rdonasco-datamanager/target
+rdonasco-security-client/target

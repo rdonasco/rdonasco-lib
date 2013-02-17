@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
  * Unit test for simple App.
  */
 @RunWith(Arquillian.class)
-public class CapabilityManagerJPATest
+public class CapabilityManagerLocalTest
 {
 
 	@EJB
