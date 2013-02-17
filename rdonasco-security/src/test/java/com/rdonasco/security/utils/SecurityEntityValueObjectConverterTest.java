@@ -113,7 +113,7 @@ public class SecurityEntityValueObjectConverterTest
 		System.out.println("toCapabilityVO");
 		int size = 3;
 		Capability testCapability = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataCapabilityOnResourceAndAction("User", "Add");
-		List<CapabilityAction> actions = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataActionsForWithSize(testCapability,size);
+		List<CapabilityAction> actions = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataCapabilityActionsForWithSize(testCapability,size);
 		testCapability.setActions(actions);
 		CapabilityVO expResult = new CapabilityVOBuilder()
 				.setId(testCapability.getId())
@@ -258,10 +258,32 @@ public class SecurityEntityValueObjectConverterTest
 			CapabilityAction capabilityAction = SecurityEntityValueObjectConverter.toCapabilityAction(capabilityActionVO);
 			assertNotNull("action is null",capabilityAction.getAction());
 			assertEquals(capabilityActionVO.getActionVO().getId(),capabilityAction.getAction().getId());
-//			assertNotNull("capability is null",capabilityAction.getCapability());
-//			assertEquals(capabilityActionVO.getCapabilityVO().getId(),capabilityAction.getCapability().getId());
+
 		}
 		
+	}
+	
+	@Test
+	public void testToUserCapabilityVO() throws Exception
+	{
+		System.out.println("toUserCapabilityVO");
+		Action action = SecurityEntityValueObjectDataUtility.createTestDataAction();
+		Resource resource = SecurityEntityValueObjectDataUtility.createTestDataResource();		
+		UserCapability userCapability = SecurityEntityValueObjectDataUtility.createTestDataUserCapabilityWithResourceAndAction(resource,action);
+		UserCapabilityVO userCapabilityVO = SecurityEntityValueObjectConverter.toUserCapabilityVO(userCapability);
+		assertNotNull(userCapabilityVO);
+		assertEquals(userCapability.getId(),userCapabilityVO.getId());
+	}
+	
+	@Test
+	public void testToUserProfileVO() throws Exception
+	{
+		System.out.println("toUserProfileVO");		
+		UserSecurityProfile userSecurityProfile 
+				= SecurityEntityValueObjectDataUtility.createTestDataUserSecurityProfileWithCapability("edit","User");
+		UserSecurityProfileVO userSecurityProfileVO = SecurityEntityValueObjectConverter.toUserProfileVO(userSecurityProfile);
+		assertNotNull(userSecurityProfileVO);
+		assertEquals(userSecurityProfile.getId(),userSecurityProfileVO.getId());
 	}
 
 }

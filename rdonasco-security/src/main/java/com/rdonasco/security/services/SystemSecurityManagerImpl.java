@@ -150,7 +150,18 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			UserSecurityProfileVO userSecurityProfile)
 			throws SecurityManagerException
 	{
-		throw new UnsupportedOperationException("Not supported yet.");
+		UserSecurityProfileVO createdProfile = null;
+		try
+		{
+			UserSecurityProfile profileToCreate = SecurityEntityValueObjectConverter.toUserProfile(userSecurityProfile);
+			userSecurityProfileDAO.create(profileToCreate);
+			createdProfile = SecurityEntityValueObjectConverter.toUserProfileVO(profileToCreate);
+		}
+		catch(Exception e)
+		{
+			throw new SecurityManagerException(e);
+		}
+		return createdProfile;
 	}	
 
 	private void throwSecurityExceptionFor(AccessRightsVO accessRights) throws SecurityException

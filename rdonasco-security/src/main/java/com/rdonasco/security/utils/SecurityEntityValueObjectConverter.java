@@ -19,6 +19,7 @@ import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
 import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
+import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -117,7 +118,7 @@ public class SecurityEntityValueObjectConverter
 		capability.setDescription(capabilityVO.getDescription());
 		capability.setId(capabilityVO.getId());
 		capability.setResource(toResource(capabilityVO.getResource()));
-		capability.setTitle(capabilityVO.getTitle());		
+		capability.setTitle(capabilityVO.getTitle());
 		if (capabilityVO.getActions() != null)
 		{
 			List<CapabilityAction> capabilityActions = new ArrayList<CapabilityAction>(capabilityVO.getActions().size());
@@ -219,5 +220,29 @@ public class SecurityEntityValueObjectConverter
 			capabilityActionVO.setCapabilityVO(capabilityVO);
 		}
 		return capabilityActionVO;
+	}
+
+	public static UserSecurityProfileVO toUserProfileVO(
+			UserSecurityProfile profileToConvert)
+	{
+		UserCapabilityVO userCapabilityVO;
+		List<UserCapabilityVO> userCapabilityVOList = new ArrayList<UserCapabilityVO>();
+		for(UserCapability userCapability : profileToConvert.getCapabilities())
+		{
+			userCapabilityVO = toUserCapabilityVO(userCapability);
+			userCapabilityVOList.add(userCapabilityVO);
+		}
+		UserSecurityProfileVO userSecurityProfileVO = new UserSecurityProfileVOBuilder()
+				.setId(profileToConvert.getId())
+				.setLoginId(profileToConvert.getLoginId())
+				.setPassword(profileToConvert.getPassword())
+				.setCapabilities(userCapabilityVOList)
+				.createUserSecurityProfileVO();
+		return userSecurityProfileVO;
+	}
+
+	public static UserCapabilityVO toUserCapabilityVO(UserCapability userCapability)
+	{
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 }
