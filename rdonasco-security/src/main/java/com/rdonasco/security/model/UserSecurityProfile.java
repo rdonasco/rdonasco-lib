@@ -52,7 +52,7 @@ public class UserSecurityProfile implements Serializable
 	@Basic(optional = false)
 	@Column(name = "password", nullable = false, length = 256)
 	private String password;
-	@OneToMany(cascade = CascadeType.REFRESH, mappedBy = "userProfile", fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile", fetch = FetchType.EAGER)
 	private Collection<UserCapability> capabilities;
 	
 	public Long getId()

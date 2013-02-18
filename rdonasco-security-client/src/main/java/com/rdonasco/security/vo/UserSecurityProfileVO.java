@@ -17,6 +17,7 @@
 package com.rdonasco.security.vo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -38,6 +39,13 @@ public class UserSecurityProfileVO implements Serializable
 		this.loginId = loginId;
 		this.password = password;
 		this.capabilities = capabilities;
+		if(null != capabilities)
+		{
+			for(UserCapabilityVO userCapabilityVO : capabilities)
+			{
+				userCapabilityVO.setUserProfile(this);
+			}
+		}
 	}
 
 	public Long getId()
@@ -110,6 +118,21 @@ public class UserSecurityProfileVO implements Serializable
 	public String toString()
 	{
 		return "UserSecurityProfileVO{" + "id=" + id + ", loginId=" + loginId + ", capabilities=" + capabilities + '}';
+	}
+
+	private void ensureCapabilitiesAreInitialized()
+	{
+		if(null == capabilities)
+		{
+			capabilities = new ArrayList<UserCapabilityVO>();
+		}
+	}
+	
+	public void addCapbility(UserCapabilityVO userCapabilityVO)
+	{
+		ensureCapabilitiesAreInitialized();
+		capabilities.add(userCapabilityVO);
+		userCapabilityVO.setUserProfile(this);
 	}
 
 

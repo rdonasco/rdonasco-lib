@@ -8,6 +8,8 @@ import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
+import com.rdonasco.security.vo.UserCapabilityVO;
+import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import javax.ejb.EJB;
@@ -56,6 +58,33 @@ public class SystemSecurityManagerLocalTest
 		assertNotNull(createdUser);
 		
 	}
+	
+	@Test
+	public void testCreateSecurityProfileWithCapability() throws Exception
+	{
+		System.out.println("createSecurityProfileWithCapability");
+		UserSecurityProfileVO userProfile = new UserSecurityProfileVOBuilder()
+				.setLoginId("rdonasco")
+				.setPassword("rdonasco")
+				.createUserSecurityProfileVO();
+		
+		CapabilityVO capabilityVO = createTestDataCapabilityWithActionAndResourceName("edit", "pets");
+		
+		UserCapabilityVO userCapabilityVO = createTestDataUserCapabilityVO(capabilityVO);
+		userProfile.addCapbility(userCapabilityVO);
+		
+		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userProfile);
+		
+		assertNotNull("user not created",createdUser);
+		assertNotNull("id is null",createdUser.getId());
+		assertNotNull("capabilities is not null",createdUser.getCapabilityVOList());
+		assertTrue("capabilities.size() is zero",createdUser.getCapabilityVOList().size() > 0);
+		for(UserCapabilityVO savedUserCapabilityVO : createdUser.getCapabilityVOList())
+		{
+			assertNotNull(savedUserCapabilityVO.getId());
+			System.out.println("savedUserCapabilityVO.toString() = " + savedUserCapabilityVO.toString());
+		}
+	}
 
 	private ActionVO createTestDataActionNamed(String name) throws
 			CapabilityManagerException
@@ -95,4 +124,12 @@ public class SystemSecurityManagerLocalTest
 		CapabilityVO savedCapabilityVO = capabilityManager.createNewCapability(capabilityVO);
 		return savedCapabilityVO;
 	}	
+
+	private UserCapabilityVO createTestDataUserCapabilityVO(CapabilityVO capabilityVO)
+	{
+		UserCapabilityVO userCapabilityVO = new UserCapabilityVOBuilder()
+				.setCapability(capabilityVO)
+				.createUserCapabilityVO();
+		return userCapabilityVO;
+	}
 }
