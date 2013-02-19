@@ -3,9 +3,10 @@
   <persistence-unit name="SECURITY_PU" transaction-type="JTA">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:derby://localhost:1527/security_test"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:derby:memory:unit-testing-jpa"/>
       <property name="javax.persistence.jdbc.password" value="security"/>
-      <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.ClientDriver"/>
+	  <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+<!--      <property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.ClientDriver"/>-->
       <property name="javax.persistence.jdbc.user" value="security"/>
       <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
     </properties>
