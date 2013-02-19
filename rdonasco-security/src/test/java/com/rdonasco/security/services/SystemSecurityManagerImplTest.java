@@ -127,7 +127,7 @@ public class SystemSecurityManagerImplTest
 	public void testCheckValidAccessRights() throws Exception
 	{
 
-		System.out.println("checkAccessRights");
+		System.out.println("checkValidAccessRights");
 		SystemSecurityManagerImpl instance = prepareSecurityManagerInstanceToTest();
 		AccessRightsVO accessRights = new AccessRightsVOBuilder()
 				.setActionAsString("Add")
