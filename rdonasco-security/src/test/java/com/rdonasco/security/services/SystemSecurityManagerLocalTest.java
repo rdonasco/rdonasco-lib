@@ -71,7 +71,7 @@ public class SystemSecurityManagerLocalTest
 		for(UserCapabilityVO savedUserCapabilityVO : createdUser.getCapabilityVOList())
 		{
 			assertNotNull(savedUserCapabilityVO.getId());
-			System.out.println("savedUserCapabilityVO.toString() = " + savedUserCapabilityVO.toString());
+			System.out.println("savedUserCapabilityVO.toString()=" + savedUserCapabilityVO.toString());
 		}
 	}
 
