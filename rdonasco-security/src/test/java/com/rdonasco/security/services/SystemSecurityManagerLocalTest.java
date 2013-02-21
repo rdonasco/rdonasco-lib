@@ -49,10 +49,7 @@ public class SystemSecurityManagerLocalTest
 	public void testCreateSecurityProfileWithoutCapability() throws Exception
 	{
 		System.out.println("createSecurityProfileWithoutCapability");
-		UserSecurityProfileVO userProfile = new UserSecurityProfileVOBuilder()
-				.setLoginId("rdonasco")
-				.setPassword("rdonasco")
-				.createUserSecurityProfileVO();
+		UserSecurityProfileVO userProfile = createTestDataWithoutCapability();
 		
 		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userProfile);
 		assertNotNull(createdUser);
@@ -63,15 +60,7 @@ public class SystemSecurityManagerLocalTest
 	public void testCreateSecurityProfileWithCapability() throws Exception
 	{
 		System.out.println("createSecurityProfileWithCapability");
-		UserSecurityProfileVO userProfile = new UserSecurityProfileVOBuilder()
-				.setLoginId("rdonasco")
-				.setPassword("rdonasco")
-				.createUserSecurityProfileVO();
-		
-		CapabilityVO capabilityVO = createTestDataCapabilityWithActionAndResourceName("edit", "pets");
-		
-		UserCapabilityVO userCapabilityVO = createTestDataUserCapabilityVO(capabilityVO);
-		userProfile.addCapbility(userCapabilityVO);
+		UserSecurityProfileVO userProfile = createTestDataUserProfileWithCapability();
 		
 		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userProfile);
 		
@@ -86,6 +75,7 @@ public class SystemSecurityManagerLocalTest
 		}
 	}
 
+	// ------ utility methods below here ------ //
 	private ActionVO createTestDataActionNamed(String name) throws
 			CapabilityManagerException
 	{
@@ -131,5 +121,24 @@ public class SystemSecurityManagerLocalTest
 				.setCapability(capabilityVO)
 				.createUserCapabilityVO();
 		return userCapabilityVO;
+	}
+
+	private UserSecurityProfileVO createTestDataUserProfileWithCapability()
+			throws CapabilityManagerException
+	{
+		UserSecurityProfileVO userProfile = createTestDataWithoutCapability();
+		CapabilityVO capabilityVO = createTestDataCapabilityWithActionAndResourceName("edit", "pets");
+		UserCapabilityVO userCapabilityVO = createTestDataUserCapabilityVO(capabilityVO);
+		userProfile.addCapbility(userCapabilityVO);
+		return userProfile;
+	}
+
+	private UserSecurityProfileVO createTestDataWithoutCapability()
+	{
+		UserSecurityProfileVO userProfile = new UserSecurityProfileVOBuilder()
+				.setLoginId("rdonasco")
+				.setPassword("rdonasco")
+				.createUserSecurityProfileVO();
+		return userProfile;
 	}
 }
