@@ -18,9 +18,11 @@ package com.rdonasco.security.services;
 
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
+import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.AccessRightsVO;
@@ -175,6 +177,10 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			Map<String,Object> parameters = new HashMap<String, Object>();
 			parameters.put(UserSecurityProfile.QUERY_PARAM_LOGON_ID, logonId);
 			userSecurityProfileDAO.findUniqueDataUsingNamedQuery(UserSecurityProfile.NAMED_QUERY_FIND_SECURITY_PROFILE_BY_LOGON_ID, parameters);
+		}
+		catch(NonExistentEntityException e)
+		{
+			throw new SecurityProfileNotFoundException(e);
 		}
 		catch(Exception e)
 		{
