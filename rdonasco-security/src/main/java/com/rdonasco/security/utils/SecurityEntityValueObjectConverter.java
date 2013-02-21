@@ -235,7 +235,7 @@ public class SecurityEntityValueObjectConverter
 		}
 		UserSecurityProfileVO userSecurityProfileVO = new UserSecurityProfileVOBuilder()
 				.setId(profileToConvert.getId())
-				.setLoginId(profileToConvert.getLoginId())
+				.setLoginId(profileToConvert.getLogonId())
 				.setPassword(profileToConvert.getPassword())
 				.setCapabilities(userCapabilityVOList)
 				.createUserSecurityProfileVO();

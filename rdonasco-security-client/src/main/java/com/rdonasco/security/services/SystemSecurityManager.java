@@ -16,12 +16,8 @@
  */
 package com.rdonasco.security.services;
 
-import com.rdonasco.common.exceptions.DataAccessException;
-import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.vo.AccessRightsVO;
-import com.rdonasco.security.vo.ActionVO;
-import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 
 /**
@@ -36,5 +32,10 @@ public interface SystemSecurityManager
 	UserSecurityProfileVO createNewSecurityProfile(
 			UserSecurityProfileVO userSecurityProfile) throws
 			SecurityManagerException;
+	
+	void removeSecurityProfile(UserSecurityProfileVO createdUser) throws SecurityManagerException;
+	UserSecurityProfileVO loadSecurityProfileUsingLogonID(String logonID) throws SecurityManagerException;
+
+	
 	
 }

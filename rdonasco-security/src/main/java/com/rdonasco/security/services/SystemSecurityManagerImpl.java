@@ -30,8 +30,10 @@ import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -164,12 +166,36 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		return createdProfile;
 	}	
 
+	@Override
+	public UserSecurityProfileVO loadSecurityProfileUsingLogonID(String logonId) throws SecurityManagerException
+	{
+		UserSecurityProfileVO foundSecurityProfileVO = null;
+		try
+		{
+			Map<String,Object> parameters = new HashMap<String, Object>();
+			parameters.put(UserSecurityProfile.QUERY_PARAM_LOGON_ID, logonId);
+			userSecurityProfileDAO.findUniqueDataUsingNamedQuery(UserSecurityProfile.NAMED_QUERY_FIND_SECURITY_PROFILE_BY_LOGON_ID, parameters);
+		}
+		catch(Exception e)
+		{
+			throw new SecurityManagerException(e);
+		}
+		
+		return foundSecurityProfileVO;
+	}		
+
+	@Override
+	public void removeSecurityProfile(UserSecurityProfileVO createdUser) throws SecurityManagerException
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}		
+
 	private void throwSecurityExceptionFor(AccessRightsVO accessRights) throws SecurityException
 	{
 		StringBuilder errorStringBuild = new StringBuilder("Access Denied on Resource {")
 				.append(accessRights.getResource().getName())
 				.append("} and Action {").append(accessRights.getAction().getName())
-				.append("} for profile with login id {").append(accessRights.getUserProfile().getLoginId()).append("}");
+				.append("} for profile with login id {").append(accessRights.getUserProfile().getLogonId()).append("}");
 		throw new SecurityException(errorStringBuild.toString());
 	}
 

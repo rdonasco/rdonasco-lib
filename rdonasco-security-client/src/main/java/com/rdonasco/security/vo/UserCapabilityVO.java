@@ -98,7 +98,7 @@ public class UserCapabilityVO implements Serializable
 	@Override
 	public String toString()
 	{
-		return "UserCapabilityVO{" + "id=" + id + ", userProfile.loginId=" + userProfile.getLoginId() + ", capability=" + capability + '}';
+		return "UserCapabilityVO{" + "id=" + id + ", userProfile.loginId=" + userProfile.getLogonId() + ", capability=" + capability + '}';
 	}
 
 

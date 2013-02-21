@@ -86,13 +86,13 @@ public class SecurityEntityValueObjectConverterTest
 				.toUserProfile(userProfileVO);
 		assertNotNull(resultingUserSecurityProfile);
 		assertEquals("id did not match", userProfileVO.getId(), resultingUserSecurityProfile.getId());
-		assertEquals("login id did not match", userProfileVO.getLoginId(), resultingUserSecurityProfile.getLoginId());
+		assertEquals("login id did not match", userProfileVO.getLogonId(), resultingUserSecurityProfile.getLogonId());
 		assertEquals("password did not match", userProfileVO.getPassword(), resultingUserSecurityProfile.getPassword());
 		assertEquals("user capabilities did not match", userProfileVO.getCapabilityVOList().size(), resultingUserSecurityProfile.getCapabilities().size());
 		UserCapability resultUserCapability = resultingUserSecurityProfile.getCapabilities().iterator().next();
 		assertEquals("userCapability.id did not match", userCapability.getId(), resultUserCapability.getId());
 		assertEquals("userCapability.userProfile.id did not match", userCapability.getUserProfile().getId(),resultUserCapability.getUserProfile().getId());
-		assertEquals("userCapability.userProfile.LoginId did not match", userCapability.getUserProfile().getLoginId(),resultUserCapability.getUserProfile().getLoginId());
+		assertEquals("userCapability.userProfile.LoginId did not match", userCapability.getUserProfile().getLogonId(),resultUserCapability.getUserProfile().getLogonId());
 		assertEquals("capability.id did not match", capability.getId(), resultUserCapability.getCapability().getId());
 		assertEquals("capability.title did not match", capability.getTitle(), resultUserCapability.getCapability().getTitle());
 		assertEquals("capability.description did not match", capability.getDescription(), resultUserCapability.getCapability().getDescription());

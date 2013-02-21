@@ -4,7 +4,6 @@
  */
 package com.rdonasco.security.services;
 
-import com.rdonasco.security.services.SystemSecurityManager;
 import javax.ejb.Local;
 
 /**
@@ -14,5 +13,5 @@ import javax.ejb.Local;
 @Local
 public interface SystemSecurityManagerLocal extends SystemSecurityManager
 {
-	
+
 }

@@ -26,6 +26,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -36,19 +38,23 @@ import javax.persistence.TableGenerator;
  */
 @Entity
 @Table(name="user_security_profile",catalog="",schema="")
+@NamedQueries({@NamedQuery(name=UserSecurityProfile.NAMED_QUERY_FIND_SECURITY_PROFILE_BY_LOGON_ID,
+		query="SELECT u from UserSecurityProfile u where u.logonId = :logonId")})
 public class UserSecurityProfile implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 	private static final String GENERATOR_KEY = "SECURITY_PROFILE_IDGEN";
 	private static final String GENERATOR_TABLE = "SEQUENCE";
+	public static final String NAMED_QUERY_FIND_SECURITY_PROFILE_BY_LOGON_ID = "UserSecurityProfile.findSecurityProfileByLogonId";
+	public static final String QUERY_PARAM_LOGON_ID = "logonId";
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = GENERATOR_KEY)
 	@TableGenerator(name = GENERATOR_KEY, table = GENERATOR_TABLE)
 	@Column(name = "id", nullable = false)
 	private Long id;
 	@Basic(optional = false)
-	@Column(name = "login_id", nullable = false, length = 128)
-	private String loginId;
+	@Column(name = "logon_id", nullable = false, length = 128)
+	private String logonId;
 	@Basic(optional = false)
 	@Column(name = "password", nullable = false, length = 256)
 	private String password;
@@ -65,14 +71,14 @@ public class UserSecurityProfile implements Serializable
 		this.id = id;
 	}
 
-	public String getLoginId()
+	public String getLogonId()
 	{
-		return loginId;
+		return logonId;
 	}
 
-	public void setLoginId(String loginId)
+	public void setLogonId(String loginId)
 	{
-		this.loginId = loginId;
+		this.logonId = loginId;
 	}
 
 	public String getPassword()

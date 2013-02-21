@@ -28,7 +28,7 @@ public class UserSecurityProfileVO implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 	private Long id;
-	private String loginId;
+	private String logonId;
 	private String password;
 	private Collection<UserCapabilityVO> capabilities;
 
@@ -36,7 +36,7 @@ public class UserSecurityProfileVO implements Serializable
 			Collection<UserCapabilityVO> capabilities)
 	{
 		this.id = id;
-		this.loginId = loginId;
+		this.logonId = loginId;
 		this.password = password;
 		this.capabilities = capabilities;
 		if(null != capabilities)
@@ -58,14 +58,14 @@ public class UserSecurityProfileVO implements Serializable
 		this.id = id;
 	}
 
-	public String getLoginId()
+	public String getLogonId()
 	{
-		return loginId;
+		return logonId;
 	}
 
-	public void setLoginId(String loginId)
+	public void setLogonId(String loginId)
 	{
-		this.loginId = loginId;
+		this.logonId = loginId;
 	}
 
 	public String getPassword()
@@ -117,7 +117,7 @@ public class UserSecurityProfileVO implements Serializable
 	@Override
 	public String toString()
 	{
-		return "UserSecurityProfileVO{" + "id=" + id + ", loginId=" + loginId + ", capabilities=" + capabilities + '}';
+		return "UserSecurityProfileVO{" + "id=" + id + ", loginId=" + logonId + ", capabilities=" + capabilities + '}';
 	}
 
 	private void ensureCapabilitiesAreInitialized()

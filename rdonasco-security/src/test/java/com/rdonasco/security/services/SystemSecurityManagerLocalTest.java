@@ -2,6 +2,7 @@ package com.rdonasco.security.services;
 
 import com.rdonasco.security.dao.ActionDAO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
+import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
@@ -73,6 +74,16 @@ public class SystemSecurityManagerLocalTest
 			assertNotNull(savedUserCapabilityVO.getId());
 			System.out.println("savedUserCapabilityVO.toString()=" + savedUserCapabilityVO.toString());
 		}
+	}
+	
+	@Test(expected=SecurityProfileNotFoundException.class)
+	public void testRemoveSecurityProfile() throws Exception
+	{
+		System.out.println("removeSecurityProfile");
+		UserSecurityProfileVO userSecurityProfileVO = createTestDataUserProfileWithCapability();
+		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userSecurityProfileVO);
+		systemSecurityManager.removeSecurityProfile(createdUser);
+		systemSecurityManager.loadSecurityProfileUsingLogonID(createdUser.getLogonId());
 	}
 
 	// ------ utility methods below here ------ //
