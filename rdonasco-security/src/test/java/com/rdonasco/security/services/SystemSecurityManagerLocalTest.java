@@ -4,6 +4,7 @@ import com.rdonasco.security.dao.ActionDAO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
 import com.rdonasco.security.model.Action;
+import com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
@@ -83,17 +84,14 @@ public class SystemSecurityManagerLocalTest
 		UserSecurityProfileVO userSecurityProfileVO = createTestDataUserProfileWithCapability();
 		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userSecurityProfileVO);
 		systemSecurityManager.removeSecurityProfile(createdUser);
-		systemSecurityManager.loadSecurityProfileUsingLogonID(createdUser.getLogonId());
+		systemSecurityManager.findSecurityProfileWithLogonID(createdUser.getLogonId());
 	}
 
 	// ------ utility methods below here ------ //
 	private ActionVO createTestDataActionNamed(String name) throws
 			CapabilityManagerException
 	{
-		ActionVO action = new ActionVO();
-		action.setDescription(name + " description");
-		action.setName(name);
-		ActionVO savedAction = capabilityManager.createNewAction(action);
+		ActionVO savedAction = capabilityManager.findOrAddActionNamedAs(name);
 		return savedAction;
 	}
 
@@ -114,8 +112,8 @@ public class SystemSecurityManagerLocalTest
 			final String resourceName) throws CapabilityManagerException
 	{
 		ActionVO action = createTestDataActionNamed(actionName);
-		ResourceVO resource = createTestDataResourceNamed(resourceName);
-		final String capabilityTitle = "capability to " + actionName + " " + resourceName;
+		ResourceVO resource = createTestDataResourceNamed(resourceName + SecurityEntityValueObjectDataUtility.generateRandomID());
+		final String capabilityTitle = "capability to " + action.getName() + " " + resource.getName();
 		CapabilityVO capabilityVO = new CapabilityVOBuilder()
 				.addAction(action)
 				.setResource(resource)
@@ -147,7 +145,7 @@ public class SystemSecurityManagerLocalTest
 	private UserSecurityProfileVO createTestDataWithoutCapability()
 	{
 		UserSecurityProfileVO userProfile = new UserSecurityProfileVOBuilder()
-				.setLoginId("rdonasco")
+				.setLoginId("rdonasco"+SecurityEntityValueObjectDataUtility.generateRandomID())
 				.setPassword("rdonasco")
 				.createUserSecurityProfileVO();
 		return userProfile;

@@ -169,7 +169,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	}	
 
 	@Override
-	public UserSecurityProfileVO loadSecurityProfileUsingLogonID(String logonId) throws SecurityManagerException
+	public UserSecurityProfileVO findSecurityProfileWithLogonID(String logonId) throws SecurityManagerException
 	{
 		UserSecurityProfileVO foundSecurityProfileVO = null;
 		try
@@ -191,9 +191,17 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	}		
 
 	@Override
-	public void removeSecurityProfile(UserSecurityProfileVO createdUser) throws SecurityManagerException
+	public void removeSecurityProfile(UserSecurityProfileVO securityProfileToRemove) throws SecurityManagerException
 	{
-		throw new UnsupportedOperationException("Not supported yet.");
+		try
+		{
+			this.userSecurityProfileDAO.delete(UserSecurityProfile.class, securityProfileToRemove.getId());
+			LOG.log(Level.INFO, "Security profile {0} removed", securityProfileToRemove.toString());
+		}
+		catch(Exception e)
+		{
+			throw new SecurityManagerException(e);
+		}
 	}		
 
 	private void throwSecurityExceptionFor(AccessRightsVO accessRights) throws SecurityException
