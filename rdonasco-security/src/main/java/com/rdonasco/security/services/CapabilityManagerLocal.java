@@ -4,6 +4,7 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.security.vo.CapabilityVO;
 import javax.ejb.Local;
 
 /**

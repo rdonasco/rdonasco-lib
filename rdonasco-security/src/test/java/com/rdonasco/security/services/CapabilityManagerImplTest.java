@@ -217,6 +217,8 @@ public class CapabilityManagerImplTest
 		verify(actionDAOMock, times(1)).findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class));
 		assertEquals("action.id did not match", action.getId(), foundAction.getId());
 	}
+	
+	///---- no more test beyond this line
 
 	private CapabilityManagerImpl prepareCapabilityManagerInstanceToTest()
 	{

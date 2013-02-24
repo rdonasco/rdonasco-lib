@@ -28,6 +28,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -37,27 +39,32 @@ import javax.persistence.TableGenerator;
  * @author Roy F. Donasco
  */
 @Entity
-@Table(name="capability")
+@Table(name = "capability")
+@NamedQueries(
+		{
+	@NamedQuery(name = Capability.NAMED_QUERY_FIND_BY_TITLE,
+			query = "SELECT c FROM Capability c WHERE c.title = :title"),
+	@NamedQuery(name = Capability.NAMED_QUERY_FIND_BY_RESOURCE_NAME,
+			query = "SELECT c FROM Capability c WHERE c.resource.name = :resource_name")
+})
 public class Capability implements Serializable
 {
-	public static final String NAMED_QUERY_FIND_ALL_CAPABILITY_OF_USER = "findAllCapabilityOfUser";
+
 	public static final String NAMED_QUERY_FIND_BY_RESOURCE_NAME = "findCapabilityByResourceName";
-	public static final String QUERY_PARAM_USER = "user";
-	public static final String QUERY_PARAM_RESOURCE = "resource";
+	public static final String NAMED_QUERY_FIND_BY_TITLE = "findCapabilityByTitle";
+	public static final String QUERY_PARAM_RESOURCE_NAME = "resource_name";
 	public static final String QUERY_PARAM_ACTION = "action";
-	public static final String QUERY_PARAM_RESOURCE_NAME = "resourceName";
-	
+	public static final String QUERY_PARAM_TITLE = "title";
 	private static final long serialVersionUID = 1L;
 	private static final String GENERATOR_KEY = "CAPABILITY_IDGEN";
 	private static final String GENERATOR_TABLE = "SEQUENCE";
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = GENERATOR_KEY)
 	@TableGenerator(name = GENERATOR_KEY, table = GENERATOR_TABLE)
 	@Column(name = "id", nullable = false)
 	private Long id;
 	@Basic(optional = false)
-	@Column(name = "title", nullable = false, length = 128, unique=true)
+	@Column(name = "title", nullable = false, length = 128, unique = true)
 	private String title;
 	@Basic(optional = true)
 	@Column(name = "description", nullable = false, length = 256)
@@ -116,7 +123,7 @@ public class Capability implements Serializable
 	public void setActions(Collection<CapabilityAction> actions)
 	{
 		this.actions = actions;
-		for(CapabilityAction action : actions)
+		for (CapabilityAction action : actions)
 		{
 			action.setCapability(this);
 		}

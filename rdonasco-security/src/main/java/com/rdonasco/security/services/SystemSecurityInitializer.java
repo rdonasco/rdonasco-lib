@@ -31,6 +31,6 @@ public class SystemSecurityInitializer implements SystemSecurityInitializerLocal
 	public void initializeDefaultSystemAccessCapabilities() throws
 			SystemSecurityInitializationException
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		
 	}	
 }

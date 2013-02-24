@@ -20,6 +20,7 @@ import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,20 +83,19 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 	}
 
 	@Override
-	public void updateResource(ResourceVO resource) throws CapabilityManagerException
+	public void updateResource(ResourceVO resource) throws
+			CapabilityManagerException
 	{
 		try
 		{
 			Resource resourceToUpdate = SecurityEntityValueObjectConverter.toResource(resource);
 			resourceDAO.update(resourceToUpdate);
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			throw new CapabilityManagerException(e);
 		}
 	}
-	
-	
 
 	@Override
 	public void removeResource(ResourceVO resource) throws
@@ -142,9 +142,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 		ResourceVO securedResourceVO = null;
 		try
 		{
-			Map<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put(Capability.QUERY_PARAM_RESOURCE, resourceName);
-			List<Capability> capabilities = capabilityDAO.findAllDataUsingNamedQuery(Capability.NAMED_QUERY_FIND_BY_RESOURCE_NAME, parameters);
+			List<Capability> capabilities = findCapabilityEntitiesWithResourceName(resourceName);
 			if (null != capabilities && !capabilities.isEmpty())
 			{
 				securedResource = capabilities.get(0).getResource();
@@ -271,8 +269,9 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 		}
 	}
 
-	private Action findActionEntityNamed(String name) 
-			throws DataAccessException, NonExistentEntityException, MultipleEntityFoundException
+	private Action findActionEntityNamed(String name)
+			throws DataAccessException, NonExistentEntityException,
+			MultipleEntityFoundException
 	{
 		Action action;
 		Map<String, Object> parameters = new HashMap<String, Object>();
@@ -284,7 +283,8 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 	}
 
 	@Override
-	public ActionVO findActionNamed(String nameOfActionToFind) throws CapabilityManagerException,
+	public ActionVO findActionNamed(String nameOfActionToFind) throws
+			CapabilityManagerException,
 			NonExistentEntityException
 	{
 		ActionVO foundAction = null;
@@ -293,11 +293,11 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 			Action action = findActionEntityNamed(nameOfActionToFind);
 			foundAction = SecurityEntityValueObjectConverter.toActionVO(action);
 		}
-		catch(NonExistentEntityException e)
+		catch (NonExistentEntityException e)
 		{
 			throw e;
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			throw new CapabilityManagerException(e);
 		}
@@ -315,7 +315,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 			capabilityDAO.create(capability);
 			createdCapabilityVO = SecurityEntityValueObjectConverter.toCapabilityVO(capability);
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			throw new CapabilityManagerException(e);
 		}
@@ -323,7 +323,8 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 	}
 
 	@Override
-	public CapabilityVO findCapabilityWithId(Long id) throws CapabilityManagerException
+	public CapabilityVO findCapabilityWithId(Long id) throws
+			CapabilityManagerException
 	{
 		CapabilityVO foundCapabilityVO = null;
 		try
@@ -331,40 +332,100 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 			Capability capability = capabilityDAO.findData(Capability.class, id);
 			foundCapabilityVO = SecurityEntityValueObjectConverter.toCapabilityVO(capability);
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			throw new CapabilityManagerException(e);
 		}
 		return foundCapabilityVO;
 	}
 
-	
 	@Override
-	public void updateCapability(CapabilityVO capabilityToUpdate) throws CapabilityManagerException
+	public void updateCapability(CapabilityVO capabilityToUpdate) throws
+			CapabilityManagerException
 	{
 		try
 		{
 			Capability capability = SecurityEntityValueObjectConverter.toCapability(capabilityToUpdate);
 			capabilityDAO.update(capability);
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			throw new CapabilityManagerException(e);
 		}
 	}
 
 	@Override
-	public void removeCapability(CapabilityVO capabilityToRemove) throws CapabilityManagerException
+	public void removeCapability(CapabilityVO capabilityToRemove) throws
+			CapabilityManagerException
 	{
 		try
 		{
 			capabilityDAO.delete(Capability.class, capabilityToRemove.getId());
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			throw new CapabilityManagerException(e);
 		}
 	}
-	
-	
+
+	@Override
+	public CapabilityVO findCapabilityWithTitle(String capabilityTitle) throws
+			CapabilityManagerException, NonExistentEntityException
+	{
+		CapabilityVO foundCapabilityVO = null;
+		try
+		{
+			Map<String, Object> parameter = new HashMap<String, Object>();
+			parameter.put(Capability.QUERY_PARAM_TITLE, capabilityTitle);
+			Capability capability = capabilityDAO.findUniqueDataUsingNamedQuery(Capability.NAMED_QUERY_FIND_BY_TITLE, parameter);
+			foundCapabilityVO = SecurityEntityValueObjectConverter.toCapabilityVO(capability);
+		}
+		catch (NonExistentEntityException e)
+		{
+			throw e;
+		}
+		catch (Exception e)
+		{
+			throw new CapabilityManagerException(e);
+		}
+		return foundCapabilityVO;
+	}
+
+	private List<Capability> findCapabilityEntitiesWithResourceName(
+			String resourceName) throws CapabilityManagerException
+	{
+		List<Capability> capabilities = null;
+		try
+		{
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put(Capability.QUERY_PARAM_RESOURCE_NAME, resourceName);
+			capabilities = capabilityDAO.findAllDataUsingNamedQuery(Capability.NAMED_QUERY_FIND_BY_RESOURCE_NAME, parameters);
+		}
+		catch (Exception e)
+		{
+			throw new CapabilityManagerException(e);
+		}
+		return capabilities;
+	}
+
+	@Override
+	public List<CapabilityVO> findCapabilitiesWithResourceName(
+			String resourceName) throws CapabilityManagerException
+	{
+		List<CapabilityVO> capabilityVOList = null;
+		try
+		{
+
+			List<Capability> capabilities = findCapabilityEntitiesWithResourceName(resourceName);
+			for (Capability capability : capabilities)
+			{
+				capabilityVOList.add(SecurityEntityValueObjectConverter.toCapabilityVO(capability));
+			}
+		}
+		catch (Exception e)
+		{
+			throw new CapabilityManagerException(e);
+		}
+		return capabilityVOList;
+	}
 }

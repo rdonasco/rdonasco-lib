@@ -151,6 +151,21 @@ public class CapabilityManagerLocalTest
 		assertNull(foundCapabilityVO);
 	}
 
+	@Test
+	public void testFindCapabilityWithTitle() throws Exception
+	{
+		System.out.println("FindCapabilityWithTitle");
+		System.out.println("addCapability");
+		final String actionName = "logon";
+		final String resourceName = "system";
+		CapabilityVO savedCapabilityVO = createTestDataCapabilityWithActionAndResourceName(actionName, resourceName);
+
+		CapabilityVO foundCapabilityVO = capabilityManager.findCapabilityWithTitle(savedCapabilityVO.getTitle());
+		assertNotNull(foundCapabilityVO);
+		assertEquals(savedCapabilityVO.getTitle(), foundCapabilityVO.getTitle());
+	}
+
+	//--- no more test beyond this point.
 	private ActionVO createTestDataActionNamed(String name) throws
 			CapabilityManagerException
 	{

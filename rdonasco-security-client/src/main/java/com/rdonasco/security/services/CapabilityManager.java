@@ -10,6 +10,7 @@ import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.ResourceVO;
+import java.util.List;
 
 /**
  *
@@ -30,6 +31,9 @@ public interface CapabilityManager
 	ActionVO findOrAddActionNamedAs(String name) throws CapabilityManagerException;
 	CapabilityVO createNewCapability(CapabilityVO capabilityToCreate) throws CapabilityManagerException;
 	CapabilityVO findCapabilityWithId(Long id) throws CapabilityManagerException;
+	CapabilityVO findCapabilityWithTitle(String capabilityTitle) throws CapabilityManagerException, NonExistentEntityException;
 	void updateCapability(CapabilityVO capabilityToUpdate) throws CapabilityManagerException;
 	void removeCapability(CapabilityVO capabilityToRemove) throws CapabilityManagerException;
+	List<CapabilityVO> findCapabilitiesWithResourceName(String resourceName)
+			throws CapabilityManagerException;
 }

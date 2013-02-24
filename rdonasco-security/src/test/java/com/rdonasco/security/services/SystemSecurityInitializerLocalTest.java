@@ -31,7 +31,7 @@ public class SystemSecurityInitializerLocalTest
 {
 
 	@EJB
-	private SystemSecurityManagerLocal systemSecurityManager;
+	private SystemSecurityInitializerLocal systemSecurityInitializer;
 	@EJB
 	private CapabilityManagerLocal capabilityManager;
 
@@ -48,9 +48,16 @@ public class SystemSecurityInitializerLocalTest
 	}
 	
 	@Test
-	public void testInitializeDefaultSystemAccessCapabilities()
+	public void testInitializeDefaultSystemAccessCapabilities() throws Exception
 	{
-		System.out.println("InitializeDefaultSystemAccessCapabilities");
+		String systemAccessCapabilityTitle = "logonToSystem";
+		String systemResource = "system";
+		systemSecurityInitializer.initializeDefaultSystemAccessCapabilities();
+		CapabilityVO capabilityVO = capabilityManager.findCapabilityWithTitle(systemAccessCapabilityTitle);
+		assertNotNull(capabilityVO);
+		assertEquals(systemAccessCapabilityTitle,capabilityVO.getTitle());
+		assertNotNull(capabilityVO.getResource());
+		assertEquals(systemResource,capabilityVO.getResource().getName());
 	}
 
 	// ------ utility methods below here ------ //
