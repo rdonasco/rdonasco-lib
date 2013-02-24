@@ -8,8 +8,7 @@
 
 	<container qualifier="glassfish" default="true">
 		<configuration>			
-<!--			<property name="configurationXml">src/test/setup/domain.xml</property>-->
-			<property name="resourcesXml">src/test/setup/glassfish-resources.xml</property> 
+<!--			<property name="resourcesXml">src/test/setup/glassfish-resources.xml</property> -->
 		</configuration>
 	</container>
 </arquillian>
