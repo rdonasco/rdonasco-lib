@@ -17,7 +17,6 @@ package com.rdonasco.config.services;
 
 import com.rdonasco.config.exceptions.LoadValueException;
 import java.util.List;
-import javax.ejb.Remote;
 import com.rdonasco.config.dao.ConfigElementDAO;
 import com.rdonasco.config.exceptions.ConfigXPathException;
 import com.rdonasco.config.data.ConfigAttribute;
@@ -25,13 +24,14 @@ import com.rdonasco.config.data.ConfigData;
 import com.rdonasco.config.data.ConfigElement;
 import com.rdonasco.datamanager.services.DataManager;
 import com.rdonasco.common.exceptions.DataAccessException;
+import javax.ejb.Local;
 
 /**
  *
  * @author Roy F. Donasco
  */
-@Remote
-public interface ConfigDataManager extends DataManager<ConfigElement>
+@Local
+public interface ConfigDataManagerLocal extends DataManager<ConfigElement>
 {
     ConfigElementDAO getConfigElementDAO();
     void setConfigElementDAO(ConfigElementDAO unitOfMeasureDAO);

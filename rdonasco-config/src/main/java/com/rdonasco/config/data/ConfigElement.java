@@ -40,6 +40,7 @@ public class ConfigElement implements Serializable, ConfigData
     public static final String QUERY_PARAM_NAME = "name";
     public static final String QUERY_PARAM_XPATH = "xpath";
     private static final String IDGEN = "CONFIG_DATA_IDGEN";
+	private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @Column(name = "id", nullable = false)
@@ -108,6 +109,17 @@ public class ConfigElement implements Serializable, ConfigData
     {
         this.xpath = xpath;
     }
+
+	@Override
+	public String getParentXpath()
+	{
+		String parentXpath = null;
+		if(!isRoot())
+		{
+			parentXpath = getParentConfig().getXpath();
+		}
+		return parentXpath;
+	}		
         
     public List<ConfigElement> getSubConfigElements()
     {

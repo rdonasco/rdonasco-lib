@@ -45,7 +45,7 @@ import com.rdonasco.common.i18.I18NResource;
  * @author Roy F. Donasco
  */
 @Stateless
-public class ConfigDataManagerImpl implements ConfigDataManager
+public class ConfigDataManagerImpl implements ConfigDataManagerLocal
 {
 
     private static final Logger LOGGER = Logger.getLogger(ConfigDataManagerImpl.class.
@@ -244,14 +244,17 @@ public class ConfigDataManagerImpl implements ConfigDataManager
             StringBuilder xPathBuilder = new StringBuilder();
             if (null != configData && null != configData.getParentConfig())
             {
-                if(null == configData.getParentConfig().getXpath() || !configData.getParentConfig().getXpath().startsWith("/"))
+                if(null == configData.getParentXpath() || !configData.getParentXpath().startsWith("/"))
                 {
                     configureXpath(configData.getParentConfig());
                 }
-                xPathBuilder.append(configData.getParentConfig().getXpath());
+                xPathBuilder.append(configData.getParentXpath());
             }
-            xPathBuilder.append("/").append(configData.getName());
-            configData.setXpath(xPathBuilder.toString());
+			if(null != configData)
+			{
+				xPathBuilder.append("/").append(configData.getName());
+				configData.setXpath(xPathBuilder.toString());
+			}
         }
         catch (Exception e)
         {

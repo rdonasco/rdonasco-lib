@@ -26,7 +26,7 @@ import javax.ejb.EJB;
 import com.rdonasco.config.data.ConfigAttribute;
 import com.rdonasco.config.data.ConfigData;
 import com.rdonasco.config.data.ConfigElement;
-import com.rdonasco.config.services.ConfigDataManager;
+import com.rdonasco.config.services.ConfigDataManagerLocal;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.view.ViewWidget;
@@ -41,7 +41,7 @@ public class ConfigDataContainer extends HierarchicalContainer implements
 {
 
 	@EJB
-	private ConfigDataManager dataManager;
+	private ConfigDataManagerLocal dataManager;
 	protected static final String PROPERTY_CONFIG_NAME = "name";
 	protected static final String PROPERTY_CONFIG_VALUE = "value";
 	protected static final String PROPERTY_CONFIG_VALUE_FIELD = "field";

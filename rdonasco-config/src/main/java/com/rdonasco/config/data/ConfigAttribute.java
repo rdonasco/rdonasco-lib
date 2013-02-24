@@ -90,6 +90,17 @@ public class ConfigAttribute implements Serializable, ConfigData
         this.xpath = xpath;
     }
 
+	@Override
+	public String getParentXpath()
+	{
+		String parentXpath = null;
+		if(!isRoot())
+		{
+			parentXpath = getParentConfig().getXpath();
+		}
+		return parentXpath;
+	}		
+        	
     @Override
     public String getName()
     {

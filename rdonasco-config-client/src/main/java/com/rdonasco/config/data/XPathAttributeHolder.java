@@ -1,5 +1,6 @@
 /*
- * Copyright 2012 Roy F. Donasco <rdonasco2@yahoo.com>.
+ * Copyright 2013 Roy F. Donasco.
+ * File Created on: 24-Feb-2013
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,20 +16,14 @@
  */
 package com.rdonasco.config.data;
 
-import java.io.Serializable;
-
 /**
  *
- * @author Roy F. Donasco <rdonasco2@yahoo.com>
+ * @author Roy F. Donasco
  */
-public interface ConfigData extends Serializable, XPathAttributeHolder
+public interface XPathAttributeHolder
 {
-    public void setName(String name);
-    public String getName();
-    public void setValue(String value);
-    public String getValue();    
-    public void setId(Long id);
-    public Long getId();
-    public ConfigData getParentConfig();
-    public void setParentConfig(ConfigData config);
+    boolean isRoot();  
+    String getXpath();
+    void setXpath(String xpath);	
+	String getParentXpath();
 }
