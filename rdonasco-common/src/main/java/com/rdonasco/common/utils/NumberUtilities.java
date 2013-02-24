@@ -26,9 +26,21 @@ public final class NumberUtilities
 	private static long MIN_SEED = 1;
 	private static long MAX_SEED = Long.MAX_VALUE;
 	
-	public static long generateRandomID()
+	public static long generateRandomLongValue()
 	{
-		long randomID = Math.round(Math.random() * (MAX_SEED - MIN_SEED) + MIN_SEED);
+		long randomID = generateRandomLongValue(MIN_SEED, Long.MAX_VALUE);
+		return randomID;
+	}
+	
+	public static int generateRandomIntValue()
+	{
+		int randomID = (int)generateRandomLongValue(MIN_SEED, Integer.MAX_VALUE);
+		return randomID;
+	}
+	
+	public static long generateRandomLongValue(long min, long max)
+	{
+		long randomID = Math.round(Math.random() * (max - min) + min);
 		return randomID;
 	}
 }

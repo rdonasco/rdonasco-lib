@@ -22,6 +22,7 @@ import com.rdonasco.config.data.ConfigElement;
 import com.rdonasco.config.vo.ConfigAttributeVO;
 import com.rdonasco.config.vo.ConfigAttributeVOBuilder;
 import com.rdonasco.config.vo.ConfigElementVO;
+import com.rdonasco.config.vo.ConfigElementVOBuilder;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -111,12 +112,27 @@ public class ConfigDataValueObjectConverterTest
 	public void testToConfigElementVO()
 	{
 		System.out.println("toConfigElementVO");
-		ConfigElement configElement = null;
-		ConfigElementVO expResult = null;
+		ConfigElement configElement = new ConfigElement();
+		configElement.setId(NumberUtilities.generateRandomLongValue());
+		configElement.setName("configElementName-"+NumberUtilities.generateRandomLongValue());
+		configElement.setVersion(NumberUtilities.generateRandomIntValue());
+		configElement.setValue("value-" + NumberUtilities.generateRandomIntValue());
+		configElement.setXpath("/root/sub");
+		ConfigElementVO expResult = new ConfigElementVOBuilder()
+				.setId(configElement.getId())
+				.setName(configElement.getName())
+				.setRoot(configElement.isRoot())
+				.setValue(configElement.getValue())
+				.setVersion(configElement.getVersion())
+				.setXpath(configElement.getXpath())
+				.createConfigElementVO();
 		ConfigElementVO result = ConfigDataValueObjectConverter.toConfigElementVO(configElement);
 		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-		fail("The test case is a prototype.");
+		assertEquals(expResult.getId(), result.getId());
+		assertEquals(expResult.getName(), result.getName());
+		assertEquals(expResult.getValue(), result.getValue());
+		assertEquals(expResult.getVersion(), result.getVersion());
+		assertEquals(expResult.getXpath(), result.getXpath());
 	}
 
 	/**
@@ -147,10 +163,10 @@ public class ConfigDataValueObjectConverterTest
 	private ConfigAttributeVO createTestDataConfigAttributeVO()
 	{
 		ConfigAttributeVO testData = new ConfigAttributeVOBuilder()
-				.setId(NumberUtilities.generateRandomID())
-				.setName("testData-" + NumberUtilities.generateRandomID())
+				.setId(NumberUtilities.generateRandomLongValue())
+				.setName("testData-" + NumberUtilities.generateRandomLongValue())
 				.setRoot(true)
-				.setValue("value-" + NumberUtilities.generateRandomID())
+				.setValue("value-" + NumberUtilities.generateRandomLongValue())
 				.setXpath("/root/sub/attribute")
 				.createConfigAttributeVO();
 		return testData;

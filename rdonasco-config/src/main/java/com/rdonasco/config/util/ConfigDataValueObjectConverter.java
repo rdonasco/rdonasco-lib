@@ -52,7 +52,13 @@ public class ConfigDataValueObjectConverter
 	public static ConfigAttribute toConfigAttribute(
 			ConfigAttributeVO configAttributeVO)
 	{
-		throw new UnsupportedOperationException("Not supported yet.");
+		ConfigAttribute configAttribute = new ConfigAttribute();
+		configAttribute.setId(configAttributeVO.getId());
+		configAttribute.setName(configAttributeVO.getName());
+		configAttribute.setValue(configAttributeVO.getValue());
+		configAttribute.setXpath(configAttributeVO.getXpath());
+		configAttribute.setParentConfig((ConfigElement) toConfigElement(configAttributeVO.getParentConfig()));
+		return configAttribute;
 	}
 
 	public static ConfigElementVO toConfigElementVO(ConfigElement configElement)
@@ -67,6 +73,7 @@ public class ConfigDataValueObjectConverter
 					.setRoot(configElement.isRoot())
 					.setValue(configElement.getValue())
 					.setXpath(configElement.getXpath())
+					.setVersion(configElement.getVersion())
 					.createConfigElementVO();
 		}
 		return configElementVO;
@@ -79,6 +86,22 @@ public class ConfigDataValueObjectConverter
 	}
 
 	public static ConfigElement toConfigElement(ConfigElementVO configElementVO)
+	{
+		ConfigElement configElement = null;
+		if (null != configElementVO)
+		{
+			configElement = new ConfigElement();
+			configElement.setId(configElementVO.getId());
+			configElement.setName(configElementVO.getName());
+			configElement.setValue(configElementVO.getValue());
+			configElement.setVersion(configElementVO.getVersion());
+			configElement.setXpath(configElementVO.getXpath());
+		}
+		return configElement;
+	}
+
+	public static ConfigElement toConfigElementIncludingAggregates(
+			ConfigElementVO configElementVO)
 	{
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

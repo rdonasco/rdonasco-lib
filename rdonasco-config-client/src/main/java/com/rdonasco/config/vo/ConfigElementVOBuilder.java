@@ -31,6 +31,7 @@ public class ConfigElementVOBuilder
 	private boolean root = false;
 	private List<ConfigElementVO> subConfigElementVOList = new ArrayList<ConfigElementVO>();
 	private List<ConfigAttributeVO> attributeVOList = new ArrayList<ConfigAttributeVO>();
+	private int version;
 
 	public ConfigElementVOBuilder()
 	{
@@ -85,10 +86,16 @@ public class ConfigElementVOBuilder
 		this.attributeVOList = attributeVOList;
 		return this;
 	}
-
+	public ConfigElementVOBuilder setVersion(int version)
+	{
+		this.version = version;
+		return this;
+	}
+	
 	public ConfigElementVO createConfigElementVO()
 	{
-		return new ConfigElementVO(id, name, parentConfig, value, xpath, root, subConfigElementVOList, attributeVOList);
+		return new ConfigElementVO(id, name, parentConfig, value, xpath, root, subConfigElementVOList, attributeVOList,version);
 	}
+
 
 }

@@ -35,11 +35,12 @@ public class ConfigElementVO implements Serializable
 	private boolean root;
 	private List<ConfigElementVO> subConfigElementVOList;
 	private List<ConfigAttributeVO> attributeVOList;
+	private int version;
 
 	ConfigElementVO(Long id, String name, ConfigElementVO parentConfig,
 			String value, String xpath, boolean root,
 			List<ConfigElementVO> subConfigElementVOList,
-			List<ConfigAttributeVO> attributeVOList)
+			List<ConfigAttributeVO> attributeVOList,int version)
 	{
 		this.id = id;
 		this.name = name;
@@ -49,6 +50,7 @@ public class ConfigElementVO implements Serializable
 		this.root = root;
 		this.subConfigElementVOList = subConfigElementVOList;
 		this.attributeVOList = attributeVOList;
+		this.version = version;
 	}
 	
 	public Long getId()
@@ -164,6 +166,11 @@ public class ConfigElementVO implements Serializable
 	public String toString()
 	{
 		return "ConfigElementVO{" + "id=" + id + ", xpath=" + xpath + '}';
+	}
+
+	public int getVersion()
+	{
+		return this.version;
 	}
 	
 }
