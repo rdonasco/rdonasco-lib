@@ -1,6 +1,5 @@
 /*
- * Copyright 2013 Roy F. Donasco.
- * File Created on: 24-Feb-2013
+ * Copyright 2011 Roy F. Donasco.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rdonasco.security.services;
+package com.rdonasco.config.dao;
 
-import com.rdonasco.security.exceptions.SystemSecurityInitializationException;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import com.rdonasco.config.data.ConfigElement;
+import com.rdonasco.common.dao.DataAccess;
+import com.rdonasco.common.exceptions.DataAccessException;
 
 /**
  *
  * @author Roy F. Donasco
  */
-@Stateless
-public class SystemSecurityInitializer implements SystemSecurityInitializerLocal
+public interface ConfigElementDAO extends DataAccess<ConfigElement>
 {
-	@EJB
-	private CapabilityManagerLocal capabilityManager;
-
-	@Override
-	public void initializeDefaultSystemAccessCapabilities() throws
-			SystemSecurityInitializationException
-	{
-		
-	}	
+    public ConfigElement findConfigElementByName(String name) throws DataAccessException;
 }

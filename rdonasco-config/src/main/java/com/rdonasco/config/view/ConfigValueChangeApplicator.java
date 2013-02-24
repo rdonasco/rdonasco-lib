@@ -1,6 +1,5 @@
 /*
- * Copyright 2013 Roy F. Donasco.
- * File Created on: 24-Feb-2013
+ * Copyright 2012 Roy F. Donasco <rdonasco2@yahoo.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rdonasco.security.services;
-
-import com.rdonasco.security.exceptions.SystemSecurityInitializationException;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
+package com.rdonasco.config.view;
 
 /**
  *
- * @author Roy F. Donasco
+ * @author Roy F. Donasco <rdonasco2@yahoo.com>
  */
-@Stateless
-public class SystemSecurityInitializer implements SystemSecurityInitializerLocal
+public interface ConfigValueChangeApplicator
 {
-	@EJB
-	private CapabilityManagerLocal capabilityManager;
-
-	@Override
-	public void initializeDefaultSystemAccessCapabilities() throws
-			SystemSecurityInitializationException
-	{
-		
-	}	
+    public void applyChanges() throws ValueChangeException;
 }
