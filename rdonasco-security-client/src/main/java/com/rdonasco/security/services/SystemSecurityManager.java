@@ -33,9 +33,6 @@ public interface SystemSecurityManager
 			UserSecurityProfileVO userSecurityProfile) throws
 			SecurityManagerException;
 	
-	void removeSecurityProfile(UserSecurityProfileVO createdUser) throws SecurityManagerException;
-	UserSecurityProfileVO loadSecurityProfileUsingLogonID(String logonID) throws SecurityManagerException;
-
-	
-	
+	void removeSecurityProfile(UserSecurityProfileVO securityProfileToRemove) throws SecurityManagerException;
+	UserSecurityProfileVO findSecurityProfileWithLogonID(String logonID) throws SecurityManagerException;
 }
