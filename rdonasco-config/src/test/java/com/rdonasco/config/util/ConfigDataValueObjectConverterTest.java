@@ -23,6 +23,8 @@ import com.rdonasco.config.vo.ConfigAttributeVO;
 import com.rdonasco.config.vo.ConfigAttributeVOBuilder;
 import com.rdonasco.config.vo.ConfigElementVO;
 import com.rdonasco.config.vo.ConfigElementVOBuilder;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -71,9 +73,22 @@ public class ConfigDataValueObjectConverterTest
 		ConfigAttribute configAttribute = createTestDataConfigAttribute();
 		ConfigAttributeVO result = ConfigDataValueObjectConverter.toConfigAttributeVO(configAttribute);
 		assertNotNull(result);
-		assertEquals("sampleName", result.getName());
-		assertEquals("sampleValue", result.getValue());
-		assertEquals("/sampleValue", result.getXpath());
+		assertEquals(configAttribute.getName(), result.getName());
+		assertEquals(configAttribute.getValue(), result.getValue());
+		assertEquals(configAttribute.getXpath(), result.getXpath());
+	}
+	
+	@Test
+	public void testToConfigAttributeVOWithParent()
+	{
+		System.out.println("ToConfigAttributeVOWithParent");
+		ConfigAttribute configAttribute = createTestDataConfigAttribute();
+		ConfigElement parentConfigElement = createTestDataConfigElement();
+		configAttribute.setParentConfig(parentConfigElement);
+		ConfigAttributeVO result = ConfigDataValueObjectConverter.toConfigAttributeVO(configAttribute);
+		assertNotNull(result);
+		assertNotNull(result.getParentConfig());
+		assertEquals(parentConfigElement.getId(),result.getParentConfig().getId());
 	}
 	
 	@Test
@@ -88,7 +103,7 @@ public class ConfigDataValueObjectConverterTest
 	 * Test of toConfigAttribute method, of class ConfigDataValueObjectConverter.
 	 */
 	@Test
-	public void testToConfigAttribute()
+	public void testToConfigAttribute() throws Exception
 	{
 		System.out.println("toConfigAttribute");
 		ConfigAttributeVO configAttributeVO = createTestDataConfigAttributeVO();
@@ -104,6 +119,19 @@ public class ConfigDataValueObjectConverterTest
 		assertEquals(expResult.getValue(), result.getValue());
 		assertEquals(expResult.getXpath(), result.getXpath());		
 	}
+	
+	@Test
+	public void testToConfigAttributeWithParent() throws Exception
+	{
+		System.out.println("ToConfigAttributeWithParent");
+		ConfigAttributeVO configAttributeVO = createTestDataConfigAttributeVO();
+		ConfigElementVO parentElementVO = createTestDataConfigElementVO();
+		configAttributeVO.setParentConfig(parentElementVO);
+		ConfigAttribute configAttribute = ConfigDataValueObjectConverter.toConfigAttribute(configAttributeVO);
+		assertNotNull(configAttribute);
+		assertNotNull(configAttribute.getParentConfig());
+		assertEquals(parentElementVO.getId(),configAttribute.getParentConfig().getId());
+	}
 
 	/**
 	 * Test of toConfigElementVO method, of class ConfigDataValueObjectConverter.
@@ -112,12 +140,7 @@ public class ConfigDataValueObjectConverterTest
 	public void testToConfigElementVO()
 	{
 		System.out.println("toConfigElementVO");
-		ConfigElement configElement = new ConfigElement();
-		configElement.setId(NumberUtilities.generateRandomLongValue());
-		configElement.setName("configElementName-"+NumberUtilities.generateRandomLongValue());
-		configElement.setVersion(NumberUtilities.generateRandomIntValue());
-		configElement.setValue("value-" + NumberUtilities.generateRandomIntValue());
-		configElement.setXpath("/root/sub");
+		ConfigElement configElement = createTestDataConfigElement();
 		ConfigElementVO expResult = new ConfigElementVOBuilder()
 				.setId(configElement.getId())
 				.setName(configElement.getName())
@@ -134,29 +157,60 @@ public class ConfigDataValueObjectConverterTest
 		assertEquals(expResult.getVersion(), result.getVersion());
 		assertEquals(expResult.getXpath(), result.getXpath());
 	}
+	
+	@Test 
+	public void testToConfigElementVOWithParent()
+	{
+		System.out.println("ToConfigElementVOWithParent");
+		ConfigElement parentElement = createTestDataConfigElement();
+		ConfigElement childElement = createTestDataConfigElement();
+		childElement.setParentConfig(parentElement);
+		ConfigElementVO convertedChild = ConfigDataValueObjectConverter.toConfigElementVO(childElement);
+		assertNotNull(convertedChild.getParentConfig());
+		assertEquals(parentElement.getId(),convertedChild.getParentConfig().getId());
+	}
 
 	/**
 	 * Test of toConfigElement method, of class ConfigDataValueObjectConverter.
 	 */
 	@Test
-	public void testToConfigElement()
+	public void testToConfigElement() throws Exception
 	{
 		System.out.println("toConfigElement");
-		ConfigElementVO configElementVO = null;
-		ConfigElement expResult = null;
+		ConfigElementVO configElementVO = createTestDataConfigElementVO();
+		ConfigElement expResult = new ConfigElement();
+		expResult.setId(configElementVO.getId());
+		expResult.setName(configElementVO.getName());
+		expResult.setValue(configElementVO.getValue());
+		expResult.setVersion(configElementVO.getVersion());
+		expResult.setXpath(configElementVO.getXpath());
 		ConfigElement result = ConfigDataValueObjectConverter.toConfigElement(configElementVO);
 		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-		fail("The test case is a prototype.");
+		assertEquals(expResult.getId(),result.getId());
+		assertEquals(expResult.getName(),result.getName());
+		assertTrue("expected attribute.size > 0",result.getAttributes().size() > 0);
+		
+	}
+	
+	@Test
+	public void testToConfigElementWithParentElement() throws Exception
+	{
+		ConfigElementVO parentElementVO = createTestDataConfigElementVO();
+		ConfigElementVO childElementVO = createTestDataConfigElementVO();
+		childElementVO.setParentConfig(parentElementVO);
+		ConfigElement converted = ConfigDataValueObjectConverter.toConfigElement(childElementVO);
+		assertNotNull(converted);
+		assertEquals(parentElementVO.getId(),converted.getParentConfig().getId());
 	}
 
 	private ConfigAttribute createTestDataConfigAttribute()
 	{
 		ConfigAttribute configAttribute = new ConfigAttribute();
-		configAttribute.setId(Long.MIN_VALUE);
-		configAttribute.setName("sampleName");
-		configAttribute.setValue("sampleValue");
-		configAttribute.setXpath("/sampleValue");
+		configAttribute.setId(NumberUtilities.generateRandomLongValue());
+		configAttribute.setName("sampleName" + NumberUtilities.generateRandomLongValue());
+		Long value = NumberUtilities.generateRandomLongValue();
+		configAttribute.setValue("sampleValue-" + value);
+		configAttribute.setXpath("/sampleValue-" + value);
 		return configAttribute;
 	}
 
@@ -170,5 +224,33 @@ public class ConfigDataValueObjectConverterTest
 				.setXpath("/root/sub/attribute")
 				.createConfigAttributeVO();
 		return testData;
+	}
+
+	private ConfigElement createTestDataConfigElement()
+	{
+		ConfigElement configElement = new ConfigElement();
+		configElement.setId(NumberUtilities.generateRandomLongValue());
+		configElement.setName("configElementName-"+NumberUtilities.generateRandomLongValue());
+		configElement.setVersion(NumberUtilities.generateRandomIntValue());
+		configElement.setValue("value-" + NumberUtilities.generateRandomIntValue());
+		configElement.setXpath("/root/sub");
+		return configElement;
+	}
+
+	private ConfigElementVO createTestDataConfigElementVO()
+	{
+		ConfigAttributeVO configAttributeVO = createTestDataConfigAttributeVO();
+		List<ConfigAttributeVO> attributes = new ArrayList<ConfigAttributeVO>();
+		attributes.add(configAttributeVO);
+		ConfigElementVO configElementVO = new ConfigElementVOBuilder()
+				.setId(NumberUtilities.generateRandomLongValue())
+				.setName(NumberUtilities.generateRandomIntValue() + "-name")
+				.setValue("value-"+NumberUtilities.generateRandomIntValue())
+				.setVersion(NumberUtilities.generateRandomIntValue())
+				.setAttributeVOList(attributes)
+				.setRoot(true)
+				.setXpath("/xpath/subpath/"+NumberUtilities.generateRandomIntValue())
+				.createConfigElementVO();
+		return configElementVO;
 	}
 }

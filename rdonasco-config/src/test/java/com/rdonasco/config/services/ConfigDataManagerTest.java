@@ -45,10 +45,10 @@ import org.junit.runner.RunWith;
  * @author Roy F. Donasco
  */
 @RunWith(Arquillian.class)
-public class ConfigDataManagerImplTest
+public class ConfigDataManagerTest
 {
 
-    public ConfigDataManagerImplTest()
+    public ConfigDataManagerTest()
     {
     }
     @EJB

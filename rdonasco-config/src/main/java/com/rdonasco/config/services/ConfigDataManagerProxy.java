@@ -17,11 +17,14 @@
 package com.rdonasco.config.services;
 
 import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.config.data.ConfigElement;
 import com.rdonasco.config.exceptions.ConfigXPathException;
 import com.rdonasco.config.exceptions.LoadValueException;
+import com.rdonasco.config.util.ConfigDataValueObjectConverter;
 import com.rdonasco.config.vo.ConfigAttributeVO;
 import com.rdonasco.config.vo.ConfigElementVO;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 /**
@@ -29,9 +32,12 @@ import javax.ejb.Stateless;
  * @author Roy F. Donasco
  */
 @Stateless
-public class ConfigDataManagerService implements ConfigDataManagerServiceRemote
+public class ConfigDataManagerProxy implements ConfigDataManagerProxyRemote
 {
 
+	@EJB
+	private ConfigDataManagerLocal configDataManager;
+	
 	@Override
 	public ConfigAttributeVO saveAttribute(ConfigAttributeVO attribute) throws
 			DataAccessException
@@ -102,5 +108,28 @@ public class ConfigDataManagerService implements ConfigDataManagerServiceRemote
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
+	@Override
+	public ConfigElementVO saveConfigElement(ConfigElementVO configElementVO)
+			throws DataAccessException
+	{
+		ConfigElement parentElement = ConfigDataValueObjectConverter.toConfigElement(configElementVO.getParentConfig());
+		ConfigElement configElement = ConfigDataValueObjectConverter.toConfigElement(configElementVO);
+		configElement.setParentConfig(parentElement);
+		ConfigElement savedElement = configDataManager.saveData(configElement);
+		ConfigElementVO savedElementVO = ConfigDataValueObjectConverter.toConfigElementVO(savedElement);
+		return savedElementVO;
+	}
 
+	@Override
+	public ConfigElementVO loadConfigElement(ConfigElementVO savedParentConfig)
+			throws DataAccessException
+	{
+		ConfigElement configElementToSearch = new ConfigElement();
+		configElementToSearch.setId(savedParentConfig.getId());
+		ConfigElement configElement = configDataManager.loadData(configElementToSearch);
+		ConfigElementVO configElementFound = ConfigDataValueObjectConverter.toConfigElementVOIncludingAggregates(configElement);
+		return configElementFound;
+	}
+	
+	
 }

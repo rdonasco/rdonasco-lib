@@ -45,10 +45,10 @@ import com.rdonasco.common.i18.I18NResource;
  * @author Roy F. Donasco
  */
 @Stateless
-public class ConfigDataManagerImpl implements ConfigDataManagerLocal
+public class ConfigDataManager implements ConfigDataManagerLocal
 {
 
-    private static final Logger LOGGER = Logger.getLogger(ConfigDataManagerImpl.class.
+    private static final Logger LOGGER = Logger.getLogger(ConfigDataManager.class.
             getName());
     @Inject
     private ConfigElementDAO configElementDAO;
@@ -396,7 +396,7 @@ public class ConfigDataManagerImpl implements ConfigDataManagerLocal
             }
             catch (Exception ex)
             {
-                Logger.getLogger(ConfigDataManagerImpl.class.getName()).
+                Logger.getLogger(ConfigDataManager.class.getName()).
                         log(Level.WARNING, null, ex);
             }
             value = defaultValue;

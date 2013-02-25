@@ -29,7 +29,7 @@ import javax.ejb.Remote;
  * @author Roy F. Donasco
  */
 @Remote
-public interface ConfigDataManagerServiceRemote
+public interface ConfigDataManagerProxyRemote
 {
 
 	public ConfigAttributeVO saveAttribute(ConfigAttributeVO attribute) throws
@@ -59,4 +59,10 @@ public interface ConfigDataManagerServiceRemote
 
 	public ConfigAttributeVO createAttributeFromXpath(String xpath, Object value)
 			throws DataAccessException, ConfigXPathException;
+
+	public ConfigElementVO saveConfigElement(ConfigElementVO configElement) 
+			throws DataAccessException;
+
+	public ConfigElementVO loadConfigElement(ConfigElementVO savedParentConfig)
+			throws DataAccessException;
 }
