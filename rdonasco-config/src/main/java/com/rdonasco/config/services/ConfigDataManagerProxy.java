@@ -24,6 +24,7 @@ import com.rdonasco.config.exceptions.LoadValueException;
 import com.rdonasco.config.util.ConfigDataValueObjectConverter;
 import com.rdonasco.config.vo.ConfigAttributeVO;
 import com.rdonasco.config.vo.ConfigElementVO;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -74,42 +75,55 @@ public class ConfigDataManagerProxy implements ConfigDataManagerProxyRemote
 	public ConfigAttributeVO findConfigAttributeWithXpath(String xpath) throws
 			DataAccessException
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return ConfigDataValueObjectConverter.toConfigAttributeVO(
+				configDataManager.findConfigAttributeWithXpath(xpath));
 	}
 
 	@Override
 	public List<ConfigElementVO> findConfigElementsWithXpath(String xpath)
 			throws DataAccessException
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		List<ConfigElementVO> elementVOList = new ArrayList<ConfigElementVO>();
+		List<ConfigElement> elements = configDataManager.findConfigElementsWithXpath(xpath);
+		for(ConfigElement element : elements)
+		{
+			elementVOList.add(ConfigDataValueObjectConverter.toConfigElementVO(element));			
+		}
+		return elementVOList;
 	}
 
 	@Override
 	public List<ConfigAttributeVO> findConfigAttributesWithXpath(String xpath)
 			throws DataAccessException
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		List<ConfigAttributeVO> attributeVOs = new ArrayList<ConfigAttributeVO>();
+		List<ConfigAttribute> attributes = configDataManager.findConfigAttributesWithXpath(xpath);
+		for(ConfigAttribute attribute : attributes)
+		{
+			attributeVOs.add(ConfigDataValueObjectConverter.toConfigAttributeVO(attribute));
+		}
+		return attributeVOs;
 	}
 
 	@Override
 	public <T> T loadValue(String xpath,
 			Class<T> t) throws LoadValueException
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return configDataManager.loadValue(xpath, t);
 	}
 
 	@Override
 	public <T> T loadValue(String xpath,
 			Class<T> t, T defaultValue)
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return configDataManager.loadValue(xpath, t, defaultValue);
 	}
 
 	@Override
 	public ConfigAttributeVO createAttributeFromXpath(String xpath, Object value)
 			throws DataAccessException, ConfigXPathException
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return ConfigDataValueObjectConverter.toConfigAttributeVO(configDataManager.createAttributeFromXpath(xpath, value));
 	}
 
 	@Override

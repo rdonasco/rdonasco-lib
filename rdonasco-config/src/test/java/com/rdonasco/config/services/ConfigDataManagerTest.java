@@ -156,7 +156,7 @@ public class ConfigDataManagerTest
     {
         ConfigAttribute attribute = new ConfigAttribute();
         attribute.setName("birthDate");
-        attribute.setValue("1971-05-13");
+        attribute.setValue("1970-06-01");
         attribute.setParentConfig(parentConfigElement);
 
         ConfigAttribute savedConfigAttribute = configDataManagerUnderTest.
