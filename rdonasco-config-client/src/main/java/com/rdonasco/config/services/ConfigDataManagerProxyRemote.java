@@ -65,4 +65,6 @@ public interface ConfigDataManagerProxyRemote
 
 	public ConfigElementVO loadConfigElement(ConfigElementVO savedParentConfig)
 			throws DataAccessException;
+
+	public void deleteConfigElement(ConfigElementVO configElementVO) throws DataAccessException;
 }

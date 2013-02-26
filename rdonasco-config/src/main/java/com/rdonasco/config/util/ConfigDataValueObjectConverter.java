@@ -85,25 +85,28 @@ public class ConfigDataValueObjectConverter
 			ConfigElement configElement)
 	{
 		ConfigElementVO configElementVO = toConfigElementVO(configElement);
-		if (configElement.getAttributes() != null)
+		if (null != configElement)
 		{
-			List<ConfigAttributeVO> attributes = new ArrayList<ConfigAttributeVO>();
-			for (ConfigAttribute attribute : configElement.getAttributes())
+			if (configElement.getAttributes() != null)
 			{
-				ConfigAttributeVO attributeVO = toConfigAttributeVO(attribute);
-				attributes.add(attributeVO);				
+				List<ConfigAttributeVO> attributes = new ArrayList<ConfigAttributeVO>();
+				for (ConfigAttribute attribute : configElement.getAttributes())
+				{
+					ConfigAttributeVO attributeVO = toConfigAttributeVO(attribute);
+					attributes.add(attributeVO);
+				}
+				configElementVO.setAttributeVOList(attributes);
 			}
-			configElementVO.setAttributeVOList(attributes);
-		}
-		if(configElement.getSubConfigElements() != null)
-		{
-			List<ConfigElementVO> subElements = new ArrayList<ConfigElementVO>();
-			for(ConfigElement subElement : configElement.getSubConfigElements())
+			if (configElement.getSubConfigElements() != null)
 			{
-				ConfigElementVO elementVO = toConfigElementVO(subElement);
-				subElements.add(elementVO);
+				List<ConfigElementVO> subElements = new ArrayList<ConfigElementVO>();
+				for (ConfigElement subElement : configElement.getSubConfigElements())
+				{
+					ConfigElementVO elementVO = toConfigElementVO(subElement);
+					subElements.add(elementVO);
+				}
+				configElementVO.setSubConfigElementVOList(subElements);
 			}
-			configElementVO.setSubConfigElementVOList(subElements);
 		}
 		return configElementVO;
 	}

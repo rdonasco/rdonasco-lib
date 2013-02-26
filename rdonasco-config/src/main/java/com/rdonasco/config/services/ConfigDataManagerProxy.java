@@ -17,6 +17,7 @@
 package com.rdonasco.config.services;
 
 import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.config.data.ConfigAttribute;
 import com.rdonasco.config.data.ConfigElement;
 import com.rdonasco.config.exceptions.ConfigXPathException;
 import com.rdonasco.config.exceptions.LoadValueException;
@@ -42,7 +43,9 @@ public class ConfigDataManagerProxy implements ConfigDataManagerProxyRemote
 	public ConfigAttributeVO saveAttribute(ConfigAttributeVO attribute) throws
 			DataAccessException
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		ConfigAttribute attibuteToSave = ConfigDataValueObjectConverter.toConfigAttribute(attribute);
+		ConfigAttribute savedAttribute = configDataManager.saveAttribute(attibuteToSave);
+		return ConfigDataValueObjectConverter.toConfigAttributeVO(savedAttribute);
 	}
 
 	@Override
@@ -63,7 +66,8 @@ public class ConfigDataManagerProxy implements ConfigDataManagerProxyRemote
 	public ConfigElementVO findConfigElementWithXpath(String xpath) throws
 			DataAccessException
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return ConfigDataValueObjectConverter.toConfigElementVO(configDataManager.findConfigElementWithXpath(xpath));
+		
 	}
 
 	@Override
@@ -129,6 +133,14 @@ public class ConfigDataManagerProxy implements ConfigDataManagerProxyRemote
 		ConfigElement configElement = configDataManager.loadData(configElementToSearch);
 		ConfigElementVO configElementFound = ConfigDataValueObjectConverter.toConfigElementVOIncludingAggregates(configElement);
 		return configElementFound;
+	}
+
+	@Override
+	public void deleteConfigElement(ConfigElementVO configElementVO) throws
+			DataAccessException
+	{
+		ConfigElement elementToDelete = ConfigDataValueObjectConverter.toConfigElement(configElementVO);
+		configDataManager.deleteData(elementToDelete);		
 	}
 	
 	

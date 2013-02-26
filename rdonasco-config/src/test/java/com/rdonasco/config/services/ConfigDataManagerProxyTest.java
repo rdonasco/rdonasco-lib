@@ -15,10 +15,6 @@
  */
 package com.rdonasco.config.services;
 
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 import javax.ejb.EJB;
 import com.rdonasco.common.dao.BaseDAO;
 import com.rdonasco.common.exceptions.DataAccessException;
@@ -26,12 +22,15 @@ import com.rdonasco.datamanager.services.DataManager;
 import com.rdonasco.datamanager.utils.CommonConstants;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.config.dao.ConfigElementDAO;
-import com.rdonasco.config.data.ConfigAttribute;
-import com.rdonasco.config.data.ConfigData;
 import com.rdonasco.config.data.ConfigElement;
 import com.rdonasco.config.parsers.ValueParser;
+import com.rdonasco.config.vo.ConfigAttributeVO;
+import com.rdonasco.config.vo.ConfigAttributeVOBuilder;
 import com.rdonasco.config.vo.ConfigElementVO;
 import com.rdonasco.config.vo.ConfigElementVOBuilder;
+import java.io.PrintStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -49,96 +48,97 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class ConfigDataManagerProxyTest
 {
+	private static final Logger LOG = Logger.getLogger(ConfigDataManagerProxyTest.class.getName());
 
-    public ConfigDataManagerProxyTest()
-    {
-    }
-    @EJB
-    private ConfigDataManagerProxyRemote configDataManagerProxyUnderTest;
-    private static int rootElementSeed;
+	public ConfigDataManagerProxyTest()
+	{
+	}
+	@EJB
+	private ConfigDataManagerProxyRemote configDataManagerProxyUnderTest;
+	private static int rootElementSeed;
 
-    @Deployment
-    public static JavaArchive createTestArchive()
-    {
-        return ShrinkWrap.create(JavaArchive.class, "ConfigDataManagerTest.jar")
-                .addPackage(BaseDAO.class.getPackage())
-                .addPackage(DataAccessException.class.getPackage())
-                .addPackage(I18NResource.class.getPackage())
-                .addPackage(CommonConstants.class.getPackage())
-                .addPackage(DataManager.class.getPackage())
-                .addPackage(ConfigElementDAO.class.getPackage())
-                .addPackage(ValueParser.class.getPackage())
-                .addPackage(ConfigElement.class.getPackage())
-                .addPackage(ConfigDataManagerLocal.class.getPackage())
-                .addAsManifestResource(new ByteArrayAsset("<beans/>".getBytes()),ArchivePaths.create("beans.xml"))
-                .addAsResource(I18NResource.class.getPackage(), "i18nResource.properties","/WEB-INF/classes/net/baligya/i18n")
-                .addAsManifestResource("persistence.xml",ArchivePaths.create("persistence.xml"));
-    
-    }
+	@Deployment
+	public static JavaArchive createTestArchive()
+	{
+		return ShrinkWrap.create(JavaArchive.class, "ConfigDataManagerTest.jar")
+				.addPackage(BaseDAO.class.getPackage())
+				.addPackage(DataAccessException.class.getPackage())
+				.addPackage(I18NResource.class.getPackage())
+				.addPackage(CommonConstants.class.getPackage())
+				.addPackage(DataManager.class.getPackage())
+				.addPackage(ConfigElementDAO.class.getPackage())
+				.addPackage(ValueParser.class.getPackage())
+				.addPackage(ConfigElement.class.getPackage())
+				.addPackage(ConfigDataManagerLocal.class.getPackage())
+				.addAsManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"))
+				.addAsResource(I18NResource.class.getPackage(), "i18nResource.properties", "/WEB-INF/classes/net/baligya/i18n")
+				.addAsManifestResource("persistence.xml", ArchivePaths.create("persistence.xml"));
 
-    @BeforeClass
-    public static void setUpClass() throws Exception
-    {
-    }
+	}
 
-    @AfterClass
-    public static void tearDownClass() throws Exception
-    {
-    }
+	@BeforeClass
+	public static void setUpClass() throws Exception
+	{
+	}
 
-    @Before
-    public void setUp()
-    {
-    }
+	@AfterClass
+	public static void tearDownClass() throws Exception
+	{
+	}
 
-    @After
-    public void tearDown()
-    {
-    }
+	@Before
+	public void setUp()
+	{
+	}
 
-    /**
-     * Test of saveData method, of class ConfigDataManager.
-     */
-    @Test
-    public void testSaveData() throws Exception
-    {
-        System.out.println("saveData");
-        ConfigElementVO configElement = new ConfigElementVOBuilder()
+	@After
+	public void tearDown()
+	{
+	}
+	
+	@Test
+	public void testSaveData() throws Exception
+	{
+		LOG.info("saveData");
+		ConfigElementVO configElement = new ConfigElementVOBuilder()
 				.setName("testElement")
 				.createConfigElementVO();
 
-        ConfigElementVO result = configDataManagerProxyUnderTest.saveConfigElement(configElement);
-        assertNotNull(result.getId());
-    }
+		ConfigElementVO result = configDataManagerProxyUnderTest.saveConfigElement(configElement);
+		assertNotNull(result.getId());
+	}
 
-    @Test
-    public void testSaveSubConfig() throws Exception
-    {
-        System.out.println("saveSubConfig");
-        ConfigElementVO savedParentConfig = createAndSaveParentConfig();
-        createAndSaveSubConfig(savedParentConfig);
+	@Test
+	public void testSaveSubConfig() throws Exception
+	{
+		LOG.info("saveSubConfig");
+		ConfigElementVO savedParentConfig = createAndSaveParentConfig();
+		createAndSaveSubConfig(savedParentConfig);
 
-        savedParentConfig = configDataManagerProxyUnderTest.loadConfigElement(savedParentConfig);
-        assertNotNull("subConfigElements not initialized", savedParentConfig.
-                getSubConfigElementVOList());
-        assertTrue("subConfigElements not loaded", savedParentConfig.
-                getSubConfigElementVOList().size() > 0);
-    }
-//
-//    private ConfigAttribute createAndSaveAttribute(ConfigElement parentConfigElement)
-//            throws DataAccessException
-//    {
-//        ConfigAttribute attribute = new ConfigAttribute();
-//        attribute.setName("host");
-//        attribute.setValue("roy.pogi.com");
-//        attribute.setParentConfig(parentConfigElement);
-//
-//        ConfigAttribute savedConfigAttribute = configDataManagerProxyUnderTest.
-//                saveAttribute(attribute);
-//        assertNotNull(savedConfigAttribute.getId());
-//        return savedConfigAttribute;
-//    }
-//
+		savedParentConfig = configDataManagerProxyUnderTest.loadConfigElement(savedParentConfig);
+		assertNotNull("subConfigElements not initialized", savedParentConfig.
+				getSubConfigElementVOList());
+		assertTrue("subConfigElements not loaded", savedParentConfig.
+				getSubConfigElementVOList().size() > 0);
+	}
+
+	private ConfigAttributeVO createAndSaveAttribute(
+			ConfigElementVO parentConfigElement)
+			throws DataAccessException
+	{
+		ConfigAttributeVO attribute = new ConfigAttributeVOBuilder()
+				.setName("host")
+				.setValue("roy.pogi.com")
+				.setParentConfig(parentConfigElement)
+				.createConfigAttributeVO();
+
+
+		ConfigAttributeVO savedConfigAttribute = configDataManagerProxyUnderTest.
+				saveAttribute(attribute);
+		assertNotNull(savedConfigAttribute.getId());
+		return savedConfigAttribute;
+	}
+
 //    private ConfigAttribute createAndSaveIntegerAttribute(ConfigElement parentConfigElement)
 //            throws DataAccessException
 //    {
@@ -167,137 +167,102 @@ public class ConfigDataManagerProxyTest
 //        return savedConfigAttribute;
 //    }
 //
-    private ConfigElementVO createAndSaveSubConfig(ConfigElementVO savedParentConfig)
-            throws DataAccessException
-    {
-        ConfigElementVO subConfigElement = new ConfigElementVOBuilder()
+	private ConfigElementVO createAndSaveSubConfig(
+			ConfigElementVO savedParentConfig)
+			throws DataAccessException
+	{
+		ConfigElementVO subConfigElement = new ConfigElementVOBuilder()
 				.setName("subConfigElement")
 				.setParentConfig(savedParentConfig)
 				.createConfigElementVO();
-        ConfigElementVO savedSubConfig = configDataManagerProxyUnderTest.saveConfigElement(subConfigElement);
-        assertNotNull("failed to save sub config element",
-                savedSubConfig.getId());
-        return savedSubConfig;
-    }
+		ConfigElementVO savedSubConfig = configDataManagerProxyUnderTest.saveConfigElement(subConfigElement);
+		assertNotNull("failed to save sub config element",
+				savedSubConfig.getId());
+		return savedSubConfig;
+	}
 
-    private ConfigElementVO createAndSaveParentConfig() throws DataAccessException
-    {
-        ConfigElementVO configElement = new ConfigElementVOBuilder()
+	private ConfigElementVO createAndSaveParentConfig() throws
+			DataAccessException
+	{
+		ConfigElementVO configElement = new ConfigElementVOBuilder()
 				.setName("parentConfig" + (rootElementSeed++))
 				.createConfigElementVO();
-        ConfigElementVO savedParentConfig = configDataManagerProxyUnderTest.saveConfigElement(configElement);
-        assertNotNull("failed to save parent config", savedParentConfig.getId());
-        return savedParentConfig;
+		ConfigElementVO savedParentConfig = configDataManagerProxyUnderTest.saveConfigElement(configElement);
+		assertNotNull("failed to save parent config", savedParentConfig.getId());
+		return savedParentConfig;
+	}
+
+	@Test
+	public void testSaveAttributeOfRootConfig() throws Exception
+	{
+		LOG.info("saveAttributeOfRootConfig");
+		ConfigElementVO rootConfig = new ConfigElementVOBuilder()
+				.setName("rootConfig")
+				.createConfigElementVO();
+		ConfigElementVO savedRootConfig = configDataManagerProxyUnderTest.saveConfigElement(rootConfig);
+		createAndSaveAttribute(savedRootConfig);
+
+		savedRootConfig = configDataManagerProxyUnderTest.loadConfigElement(savedRootConfig);
+
+		assertNotNull("attributes not initalized",
+				savedRootConfig.getAttributeVOList());
+		assertTrue("attributes not loaded",
+				savedRootConfig.getAttributeVOList().size() > 0);
+
+	}
+
+    @Test
+    public void testSaveAttributeOfSubConfig() throws Exception
+    {
+        LOG.info("saveAttributeOfSubConfig");
+        ConfigElementVO rootConfig = createAndSaveParentConfig();
+        ConfigElementVO subConfig = createAndSaveSubConfig(rootConfig);
+        ConfigAttributeVO attribute = createAndSaveAttribute(subConfig);
+        assertEquals(subConfig, attribute.getParentConfig());
     }
-//
-//    @Test
-//    public void testSaveAttributeOfRootConfig() throws Exception
-//    {
-//        System.out.println("saveAttributeOfRootConfig");
-//        ConfigElement rootConfig = new ConfigElement();
-//        rootConfig.setName("rootConfig");
-//        ConfigElement savedRootConfig = configDataManagerProxyUnderTest.saveData(
-//                rootConfig);
-//        createAndSaveAttribute(savedRootConfig);
-//
-//        savedRootConfig = configDataManagerProxyUnderTest.loadData(savedRootConfig);
-//
-//        assertNotNull("attributes not initalized",
-//                savedRootConfig.getAttributes());
-//        assertTrue("attributes not loaded",
-//                savedRootConfig.getAttributes().size() > 0);
-//
-//    }
-//
-//    @Test
-//    public void testSaveAttributeOfSubConfig() throws Exception
-//    {
-//        System.out.println("saveAttributeOfSubConfig");
-//        ConfigElement rootConfig = createAndSaveParentConfig();
-//        ConfigElement subConfig = createAndSaveSubConfig(rootConfig);
-//        ConfigAttribute attribute = createAndSaveAttribute(subConfig);
-//        assertEquals(subConfig, attribute.getParentConfig());
-//    }
-//
-//    @Test
-//    public void testDeleteSubRecursive() throws Exception
-//    {
-//        System.out.println("deleteSubRecursive");
-//        ConfigElement rootConfig = createAndSaveParentConfig();
-//        ConfigElement subConfig = createAndSaveSubConfig(rootConfig);
-//        ConfigAttribute attribute = createAndSaveAttribute(subConfig);
-//        Long id = rootConfig.getId();
-//        configDataManagerProxyUnderTest.deleteData(subConfig);
-//        ConfigElement deletedElement = configDataManagerProxyUnderTest.loadData(
-//                subConfig);
-//        assertNull(deletedElement);
-//        rootConfig = configDataManagerProxyUnderTest.loadData(rootConfig);
-//        configDataManagerProxyUnderTest.deleteData(rootConfig);
-//        deletedElement = configDataManagerProxyUnderTest.loadData(rootConfig);
-//        assertNull(deletedElement);
-//
-//    }
-//
-//    @Test
-//    public void testDeleteRootRecursive() throws Exception
-//    {
-//        System.out.println("deleteRootRecursive");
-//        ConfigElement rootConfig = createAndSaveParentConfig();
-//        ConfigElement subConfig = createAndSaveSubConfig(rootConfig);
-//        ConfigAttribute attribute = createAndSaveAttribute(subConfig);
-//        configDataManagerProxyUnderTest.deleteData(rootConfig);
-//        ConfigElement deletedElement = configDataManagerProxyUnderTest.loadData(
-//                rootConfig);
-//        assertNull(deletedElement);
-//    }
-//
-//    @Test
-//    public void testConfigureXpath() throws Exception
-//    {
-//        System.out.println("configureXpath");
-//        ConfigData roy = new ConfigElement();
-//        roy.setName("roy");
-//        roy = configDataManagerProxyUnderTest.configureXpath(roy);
-//        assertEquals("firstLevel","/roy", roy.getXpath());
-//        ConfigData donasco = new ConfigElement();
-//        donasco.setName("donasco");
-//        donasco.setParentConfig(roy);
-//        donasco = configDataManagerProxyUnderTest.configureXpath(donasco);
-//        assertEquals("secondLevel","/roy/donasco", donasco.getXpath());
-//        ConfigData flores = new ConfigAttribute();
-//        flores.setName("flores");
-//        flores.setParentConfig(donasco);
-//        flores = configDataManagerProxyUnderTest.configureXpath(flores);
-//        assertEquals("thirdLevel","/roy/donasco/flores", flores.getXpath());
-//    }
-//    
-//@Test
-//    public void testConfigureXpathRecursive() throws Exception
-//    {
-//        System.out.println("configureXpath");
-//        ConfigData roy = new ConfigElement();
-//        roy.setName("roy");
-//        ConfigData donasco = new ConfigElement();
-//        donasco.setName("donasco");
-//        donasco.setParentConfig(roy);
-//        ConfigData flores = new ConfigAttribute();
-//        flores.setName("flores");
-//        flores.setParentConfig(donasco);
-//        flores = configDataManagerProxyUnderTest.configureXpath(flores);
-//        assertEquals("/roy/donasco/flores", flores.getXpath());
-//    }    
-//
-//    @Test
-//    public void testFindElementWithXpath() throws Exception
-//    {
-//        System.out.println("findElementWithXpath");
-//        ConfigElement parent = createAndSaveParentConfig();
-//        ConfigElement sub = createAndSaveSubConfig(parent);
-//        ConfigElement foundSubElement = configDataManagerProxyUnderTest.
-//                findConfigElementWithXpath(sub.getXpath());
-//        assertNotNull(foundSubElement);
-//
-//    }
+
+    @Test
+    public void testDeleteSubRecursive() throws Exception
+    {
+        LOG.info("deleteSubRecursive");
+        ConfigElementVO rootConfig = createAndSaveParentConfig();
+        ConfigElementVO subConfig = createAndSaveSubConfig(rootConfig);
+        createAndSaveAttribute(subConfig);
+        configDataManagerProxyUnderTest.deleteConfigElement(subConfig);
+        ConfigElementVO deletedElement = configDataManagerProxyUnderTest.loadConfigElement(subConfig);
+        assertNull(deletedElement);
+        rootConfig = configDataManagerProxyUnderTest.loadConfigElement(rootConfig);
+        configDataManagerProxyUnderTest.deleteConfigElement(rootConfig);
+        deletedElement = configDataManagerProxyUnderTest.loadConfigElement(rootConfig);
+        assertNull(deletedElement);
+
+    }
+
+    @Test
+    public void testDeleteRootRecursive() throws Exception
+    {
+        LOG.info("deleteRootRecursive");
+        ConfigElementVO rootConfig = createAndSaveParentConfig();
+        ConfigElementVO subConfig = createAndSaveSubConfig(rootConfig);
+        createAndSaveAttribute(subConfig);
+        configDataManagerProxyUnderTest.deleteConfigElement(rootConfig);
+        ConfigElementVO deletedElement = configDataManagerProxyUnderTest.loadConfigElement(rootConfig);
+        assertNull(deletedElement);
+    }
+
+    @Test
+    public void testFindElementWithXpath() throws Exception
+    {
+        LOG.info("findElementWithXpath");
+        ConfigElementVO parent = createAndSaveParentConfig();
+        ConfigElementVO sub = createAndSaveSubConfig(parent);
+        ConfigElementVO foundSubElement = configDataManagerProxyUnderTest.
+                findConfigElementWithXpath(sub.getXpath());
+        assertNotNull(foundSubElement);
+		assertEquals(sub.getXpath(),foundSubElement.getXpath());
+		LOG.log(Level.INFO, "xpath={0}", foundSubElement.getXpath());
+
+    }
 //
 //    @Test(expected = com.rdonasco.common.exceptions.DataAccessException.class)
 //    public void testFindElementWithXpathReturningMultipleRecords() throws
