@@ -44,4 +44,15 @@ public class SystemSecurityInitializationException extends Exception
 	{
 		super(msg);
 	}
+
+	public SystemSecurityInitializationException(String message, Throwable cause)
+	{
+		super(message, cause);
+	}
+
+	public SystemSecurityInitializationException(Throwable cause)
+	{
+		super(cause);
+	}
+	
 }

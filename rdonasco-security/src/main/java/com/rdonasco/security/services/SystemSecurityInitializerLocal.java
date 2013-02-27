@@ -26,7 +26,10 @@ import javax.ejb.Local;
 @Local
 public interface SystemSecurityInitializerLocal
 {
-
+	static final String DEFAULT_CAPABILITIES =  "/system/capability/default";
+	static final String DEFAULT_CAPABILITY_TITLE = "Logon To System";
+	static final String DEFAULT_ACCESS_RESOURCE = "system";
+	static final String DEFAULT_ACCESS_ACTION = "logon";
 	void initializeDefaultSystemAccessCapabilities() throws SystemSecurityInitializationException;
 	
 }

@@ -16,7 +16,13 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.config.services.ConfigDataManagerProxyRemote;
+import com.rdonasco.config.vo.ConfigElementVO;
 import com.rdonasco.security.exceptions.SystemSecurityInitializationException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -27,6 +33,11 @@ import javax.ejb.Stateless;
 @Stateless
 public class SystemSecurityInitializer implements SystemSecurityInitializerLocal
 {
+	private static final Logger LOG = Logger.getLogger(SystemSecurityInitializer.class.getName());
+	
+	@EJB 
+	private ConfigDataManagerProxyRemote configDataManager;
+			
 	@EJB
 	private CapabilityManagerLocal capabilityManager;
 
@@ -34,6 +45,18 @@ public class SystemSecurityInitializer implements SystemSecurityInitializerLocal
 	public void initializeDefaultSystemAccessCapabilities() throws
 			SystemSecurityInitializationException
 	{
-		
+		try
+		{
+			List<ConfigElementVO> configElements = configDataManager.findConfigElementsWithXpath(DEFAULT_CAPABILITIES);			
+			for(ConfigElementVO configElementVO : configElements)
+			{
+//				String capabilityTitle = configElementVO.get
+//				capabilityManager.findCapabilityWithTitle()
+			}
+		}
+		catch (DataAccessException ex)
+		{
+			throw new SystemSecurityInitializationException(ex);
+		}
 	}	
 }

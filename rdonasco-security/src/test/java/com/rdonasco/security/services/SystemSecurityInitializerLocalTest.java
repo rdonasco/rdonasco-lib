@@ -1,8 +1,11 @@
 package com.rdonasco.security.services;
 
+import com.rdonasco.config.dao.ConfigElementDAO;
+import com.rdonasco.config.data.ConfigElement;
+import com.rdonasco.config.parsers.ValueParser;
+import com.rdonasco.config.services.ConfigDataManagerLocal;
 import com.rdonasco.security.dao.ActionDAO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
-import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility;
 import com.rdonasco.security.vo.ActionVO;
@@ -21,7 +24,6 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import test.util.ArchiveCreator;
-import static org.junit.Assert.*;
 
 /**
  * Unit test for simple App.
@@ -42,17 +44,21 @@ public class SystemSecurityInitializerLocalTest
 				.addPackage(ActionDAO.class.getPackage())
 				.addPackage(SystemSecurityManagerLocal.class.getPackage())
 				.addPackage(ActionVO.class.getPackage())
-				.addPackage(Action.class.getPackage());
+				.addPackage(Action.class.getPackage())
+				.addPackage(ConfigElementDAO.class.getPackage())
+				.addPackage(ValueParser.class.getPackage())
+				.addPackage(ConfigElement.class.getPackage())
+				.addPackage(ConfigDataManagerLocal.class.getPackage());
 
 		return archive;
 	}
-	
+
 	@Test
 	public void testInitializeDefaultSystemAccessCapabilities() throws Exception
 	{
 		String systemAccessCapabilityTitle = "logonToSystem";
 		String systemResource = "system";
-//		systemSecurityInitializer.initializeDefaultSystemAccessCapabilities();
+		systemSecurityInitializer.initializeDefaultSystemAccessCapabilities();
 //		CapabilityVO capabilityVO = capabilityManager.findCapabilityWithTitle(systemAccessCapabilityTitle);
 //		assertNotNull(capabilityVO);
 //		assertEquals(systemAccessCapabilityTitle,capabilityVO.getTitle());
@@ -95,9 +101,10 @@ public class SystemSecurityInitializerLocalTest
 				.createCapabilityVO();
 		CapabilityVO savedCapabilityVO = capabilityManager.createNewCapability(capabilityVO);
 		return savedCapabilityVO;
-	}	
+	}
 
-	private UserCapabilityVO createTestDataUserCapabilityVO(CapabilityVO capabilityVO)
+	private UserCapabilityVO createTestDataUserCapabilityVO(
+			CapabilityVO capabilityVO)
 	{
 		UserCapabilityVO userCapabilityVO = new UserCapabilityVOBuilder()
 				.setCapability(capabilityVO)
@@ -118,7 +125,7 @@ public class SystemSecurityInitializerLocalTest
 	private UserSecurityProfileVO createTestDataWithoutCapability()
 	{
 		UserSecurityProfileVO userProfile = new UserSecurityProfileVOBuilder()
-				.setLoginId("rdonasco"+SecurityEntityValueObjectDataUtility.generateRandomID())
+				.setLoginId("rdonasco" + SecurityEntityValueObjectDataUtility.generateRandomID())
 				.setPassword("rdonasco")
 				.createUserSecurityProfileVO();
 		return userProfile;
