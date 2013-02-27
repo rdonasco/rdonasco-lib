@@ -146,20 +146,21 @@ public class ConfigElementVO implements Serializable
 	@Override
 	public boolean equals(Object obj)
 	{
+		boolean returnValue = true;
 		if (obj == null)
 		{
-			return false;
+			returnValue = false;
 		}
 		if (getClass() != obj.getClass())
 		{
-			return false;
+			returnValue = false;
 		}
 		final ConfigElementVO other = (ConfigElementVO) obj;
 		if (this.id != other.id && (this.id == null || !this.id.equals(other.id)))
 		{
-			return false;
+			returnValue = false;
 		}
-		return true;
+		return returnValue;
 	}
 
 	@Override
