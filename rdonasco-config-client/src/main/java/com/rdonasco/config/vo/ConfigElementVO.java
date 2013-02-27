@@ -14,11 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.rdonasco.config.vo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -26,6 +30,7 @@ import java.util.List;
  */
 public class ConfigElementVO implements Serializable
 {
+
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String name;
@@ -36,11 +41,12 @@ public class ConfigElementVO implements Serializable
 	private List<ConfigElementVO> subConfigElementVOList;
 	private List<ConfigAttributeVO> attributeVOList;
 	private int version;
+	private Map<String, List<ConfigAttributeVO>> attributeMap = new HashMap<String, List<ConfigAttributeVO>>();
 
 	ConfigElementVO(Long id, String name, ConfigElementVO parentConfig,
 			String value, String xpath, boolean root,
 			List<ConfigElementVO> subConfigElementVOList,
-			List<ConfigAttributeVO> attributeVOList,int version)
+			List<ConfigAttributeVO> attributeVOList, int version)
 	{
 		this.id = id;
 		this.name = name;
@@ -52,7 +58,7 @@ public class ConfigElementVO implements Serializable
 		this.attributeVOList = attributeVOList;
 		this.version = version;
 	}
-	
+
 	public Long getId()
 	{
 		return id;
@@ -133,6 +139,7 @@ public class ConfigElementVO implements Serializable
 			List<ConfigAttributeVO> attributeVOList)
 	{
 		this.attributeVOList = attributeVOList;
+		organizeAttributesByName();
 	}
 
 	@Override
@@ -173,5 +180,34 @@ public class ConfigElementVO implements Serializable
 	{
 		return this.version;
 	}
-	
+
+	void organizeAttributesByName()
+	{
+		attributeMap.clear();
+		Comparator<ConfigAttributeVO> attributeNameComparator = new Comparator<ConfigAttributeVO>()
+		{
+
+			public int compare(ConfigAttributeVO o1, ConfigAttributeVO o2)
+			{
+				return o1.getName().compareTo(o2.getName());
+			}
+		};
+		Collections.sort(attributeVOList,attributeNameComparator);
+		List<ConfigAttributeVO> attributes;
+		for(ConfigAttributeVO attribute : attributeVOList)
+		{
+			attributes = attributeMap.get(attribute.getName());
+			if(null == attributes)
+			{
+				attributes = new ArrayList<ConfigAttributeVO>();
+				attributeMap.put(attribute.getName(), attributes);
+			}
+			attributes.add(attribute);
+		}
+	}
+
+	public List<ConfigAttributeVO> getAttributesNamed(String attributeName)
+	{
+		return attributeMap.get(attributeName);
+	}
 }

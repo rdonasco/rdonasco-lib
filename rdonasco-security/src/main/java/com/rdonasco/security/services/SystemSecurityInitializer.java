@@ -47,7 +47,7 @@ public class SystemSecurityInitializer implements SystemSecurityInitializerLocal
 	{
 		try
 		{
-			List<ConfigElementVO> configElements = configDataManager.findConfigElementsWithXpath(DEFAULT_CAPABILITIES);			
+			List<ConfigElementVO> configElements = configDataManager.findConfigElementsWithXpath(DEFAULT_CAPABILITY_ELEMENT);			
 			for(ConfigElementVO configElementVO : configElements)
 			{
 //				String capabilityTitle = configElementVO.get
