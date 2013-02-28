@@ -384,7 +384,7 @@ public class ConfigDataManagerProxyTest
         assertEquals(xpath,attribute.getXpath());
         ConfigAttributeVO savedDefaultAttribute = configDataManagerProxyUnderTest.createAttributeFromXpath(xpath, value);
         assertNotNull(savedDefaultAttribute);
-        assertEquals(attribute,savedDefaultAttribute);
+        assertEquals(xpath,savedDefaultAttribute.getXpath());
         
     }
 
