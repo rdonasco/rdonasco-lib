@@ -389,9 +389,9 @@ public class ConfigDataManagerProxyTest
     }
 
     @Test
-    public void testGetDefaultValue() throws Exception
+    public void testGetDefaultStringValue() throws Exception
     {
-        LOG.info("getDefaultValue");
+        LOG.info("getDefaultStringValue");
         String defaultValue = "baligya";
         String value = configDataManagerProxyUnderTest.loadValue("/system/name",
                 String.class,defaultValue);
@@ -399,4 +399,17 @@ public class ConfigDataManagerProxyTest
         String savedValue = configDataManagerProxyUnderTest.loadValue("/system/name", String.class);
         assertEquals(defaultValue,savedValue);
     }
+	
+    @Test
+    public void testGetDefaultIntegerValue() throws Exception
+    {
+        LOG.info("getDefaultIntegerValue");
+		String xpath = "/system/timeout";
+        Integer expectedValue = 100;
+        Integer value = configDataManagerProxyUnderTest.loadValue(xpath,
+                Integer.class,expectedValue);
+        assertEquals(expectedValue, value);
+        Integer savedValue = configDataManagerProxyUnderTest.loadValue(xpath, Integer.class);
+        assertEquals(expectedValue,savedValue);
+    }	
 }

@@ -410,9 +410,9 @@ public class ConfigDataManagerTest
         ConfigAttribute attribute = configDataManagerUnderTest.createAttributeFromXpath(xpath, value);
         assertNotNull(attribute);
         assertEquals(xpath,attribute.getXpath());
-        ConfigAttribute savedDefaultAttribute = configDataManagerUnderTest.createAttributeFromXpath(xpath, value);
-        assertNotNull(savedDefaultAttribute);
-        assertEquals(attribute,savedDefaultAttribute);
+        String savedValue = configDataManagerUnderTest.loadValue(xpath, String.class);
+        assertNotNull(savedValue);
+        assertEquals(attribute.getValue(),savedValue);
         
     }
 	
@@ -420,7 +420,7 @@ public class ConfigDataManagerTest
 	public void testCreateMultipleAttributeFromXPath() throws Exception
 	{
 		System.out.println("createMultipleAttributeFromXPath");
-        String xpath = "/application/name";
+        String xpath = "/application/multipleAttribute";
         ConfigAttribute firstAttribute = configDataManagerUnderTest.createAttributeFromXpath(xpath, "value1");
 		assertNotNull(firstAttribute);
 		ConfigAttribute secondAttribute = configDataManagerUnderTest.createAttributeFromXpath(xpath, "value2");
