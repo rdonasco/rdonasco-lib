@@ -42,6 +42,7 @@ public class ConfigElementVO implements Serializable
 	private List<ConfigAttributeVO> attributeVOList;
 	private int version;
 	private Map<String, List<ConfigAttributeVO>> attributeMap = new HashMap<String, List<ConfigAttributeVO>>();
+	private Map<String, List<ConfigElementVO>> subElementsMap = new HashMap<String, List<ConfigElementVO>>();
 
 	ConfigElementVO(Long id, String name, ConfigElementVO parentConfig,
 			String value, String xpath, boolean root,
@@ -128,6 +129,7 @@ public class ConfigElementVO implements Serializable
 			List<ConfigElementVO> subConfigElementVOList)
 	{
 		this.subConfigElementVOList = subConfigElementVOList;
+		organizeSubConfigElementsByName();
 	}
 
 	public List<ConfigAttributeVO> getAttributeVOList()
@@ -181,33 +183,65 @@ public class ConfigElementVO implements Serializable
 		return this.version;
 	}
 
-	void organizeAttributesByName()
+	private void organizeAttributesByName()
 	{
 		attributeMap.clear();
-		Comparator<ConfigAttributeVO> attributeNameComparator = new Comparator<ConfigAttributeVO>()
+		if (null != attributeVOList)
 		{
-
-			public int compare(ConfigAttributeVO o1, ConfigAttributeVO o2)
+			Comparator<ConfigAttributeVO> attributeNameComparator = new Comparator<ConfigAttributeVO>()
 			{
-				return o1.getName().compareTo(o2.getName());
-			}
-		};
-		Collections.sort(attributeVOList,attributeNameComparator);
-		List<ConfigAttributeVO> attributes;
-		for(ConfigAttributeVO attribute : attributeVOList)
-		{
-			attributes = attributeMap.get(attribute.getName());
-			if(null == attributes)
+				public int compare(ConfigAttributeVO o1, ConfigAttributeVO o2)
+				{
+					return o1.getName().compareTo(o2.getName());
+				}
+			};
+			Collections.sort(attributeVOList, attributeNameComparator);
+			List<ConfigAttributeVO> attributes;
+			for (ConfigAttributeVO attribute : attributeVOList)
 			{
-				attributes = new ArrayList<ConfigAttributeVO>();
-				attributeMap.put(attribute.getName(), attributes);
+				attributes = attributeMap.get(attribute.getName());
+				if (null == attributes)
+				{
+					attributes = new ArrayList<ConfigAttributeVO>();
+					attributeMap.put(attribute.getName(), attributes);
+				}
+				attributes.add(attribute);
 			}
-			attributes.add(attribute);
 		}
 	}
 
 	public List<ConfigAttributeVO> getAttributesNamed(String attributeName)
 	{
 		return attributeMap.get(attributeName);
+	}
+
+	public List<ConfigElementVO> getSubElementsNamed(String elementName)
+	{
+		return subElementsMap.get(elementName);
+	}
+
+	private void organizeSubConfigElementsByName()
+	{
+		subElementsMap.clear();
+		Comparator<ConfigElementVO> elementComparator = new Comparator<ConfigElementVO>()
+		{
+			public int compare(ConfigElementVO elementA,
+					ConfigElementVO elementB)
+			{
+				return elementA.getName().compareTo(elementB.getName());
+			}
+		};
+		Collections.sort(subConfigElementVOList, elementComparator);
+		List<ConfigElementVO> subElements;
+		for (ConfigElementVO subElement : subConfigElementVOList)
+		{
+			subElements = subElementsMap.get(subElement.getName());
+			if (null == subElements)
+			{
+				subElements = new ArrayList<ConfigElementVO>();
+				subElementsMap.put(subElement.getName(), subElements);
+			}
+			subElements.add(subElement);
+		}
 	}
 }

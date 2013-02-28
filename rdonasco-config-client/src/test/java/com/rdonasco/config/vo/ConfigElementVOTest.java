@@ -18,42 +18,26 @@ package com.rdonasco.config.vo;
 
 import java.util.ArrayList;
 import java.util.List;
-import static junit.framework.Assert.assertEquals;
-import junit.framework.TestCase;
+import static junit.framework.Assert.*;
+import org.junit.Test;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public class ConfigElementVOTest extends TestCase
+public class ConfigElementVOTest
 {
-
-	public ConfigElementVOTest(String testName)
-	{
-		super(testName);
-	}
-
-	@Override
-	protected void setUp() throws Exception
-	{
-		super.setUp();
-	}
-
-	@Override
-	protected void tearDown() throws Exception
-	{
-		super.tearDown();
-	}
 
 	/**
 	 * Test of organizeAttributesByName method, of class ConfigElementVO.
 	 */
-	public void testOrganizeAttributesByName()
+	@Test
+	public void testOrganizeAttributesByName() throws Exception
 	{
 		System.out.println("organizeAttributesByName");
 
 		List<ConfigAttributeVO> attributes = prepareTestDataConfigAttributeVOs();
-		ConfigElementVO instance = prepareTestDataConfigElementVOs(attributes);
+		ConfigElementVO instance = prepareTestDataConfigElementVOs("organizeAttributesByName", attributes);
 		assertEquals("A", instance.getAttributeVOList().get(0).getName());
 		assertEquals("B", instance.getAttributeVOList().get(1).getName());
 		assertEquals("X", instance.getAttributeVOList().get(2).getName());
@@ -64,17 +48,46 @@ public class ConfigElementVOTest extends TestCase
 	/**
 	 * Test of getAttributesNamed method, of class ConfigElementVO.
 	 */
-	public void testGetAttributesNamed()
+	@Test
+	public void testGetAttributesNamed() throws Exception
 	{
 		System.out.println("getAttributesNamed");
 		List<ConfigAttributeVO> attributes = prepareTestDataConfigAttributeVOs();
-		ConfigElementVO instance = prepareTestDataConfigElementVOs(attributes);
+		ConfigElementVO instance = prepareTestDataConfigElementVOs("getAttributesNamed", attributes);
 		List<ConfigAttributeVO> foundAttribs = instance.getAttributesNamed("X");
 		assertEquals(2, foundAttribs.size());
 		foundAttribs = instance.getAttributesNamed("B");
 		assertEquals(1, foundAttribs.size());
 		foundAttribs = instance.getAttributesNamed("A");
-		assertEquals(1, foundAttribs.size());		
+		assertEquals(1, foundAttribs.size());
+	}
+
+	@Test
+	public void testOrganizeSubElementsByName() throws Exception
+	{
+		System.out.println("organizeSubElementsByName");
+		List<ConfigElementVO> subElements = prepareTestDataConfigElementVOs("X", "X", "A", "B");
+		ConfigElementVO instance = prepareTestDataConfigElementVOs("organizeSubElementsByName", null);
+		instance.setSubConfigElementVOList(subElements);
+		assertEquals("A", instance.getSubConfigElementVOList().get(0).getName());
+		assertEquals("B", instance.getSubConfigElementVOList().get(1).getName());
+		assertEquals("X", instance.getSubConfigElementVOList().get(2).getName());
+		assertEquals("X", instance.getSubConfigElementVOList().get(3).getName());
+	}
+
+	@Test
+	public void testGetSubElementsByName() throws Exception
+	{
+		System.out.println("getSubElementsByName");
+		List<ConfigElementVO> subElements = prepareTestDataConfigElementVOs("X", "X", "A", "B");
+		ConfigElementVO instance = prepareTestDataConfigElementVOs("organizeSubElementsByName", null);
+		instance.setSubConfigElementVOList(subElements);
+		List<ConfigElementVO> foundSubElements = instance.getSubElementsNamed("X");
+		assertEquals(2, foundSubElements.size());
+		foundSubElements = instance.getSubElementsNamed("B");
+		assertEquals(1, foundSubElements.size());
+		foundSubElements = instance.getSubElementsNamed("A");
+		assertEquals(1, foundSubElements.size());
 	}
 
 	private List<ConfigAttributeVO> prepareTestDataConfigAttributeVOs()
@@ -103,14 +116,25 @@ public class ConfigElementVOTest extends TestCase
 		return attributes;
 	}
 
-	private ConfigElementVO prepareTestDataConfigElementVOs(
+	private ConfigElementVO prepareTestDataConfigElementVOs(String elementName,
 			List<ConfigAttributeVO> attributes)
 	{
 		ConfigElementVO instance = new ConfigElementVOBuilder()
-				.setName("sample")
+				.setName(elementName)
 				.setValue(null)
 				.createConfigElementVO();
 		instance.setAttributeVOList(attributes);
 		return instance;
+	}
+
+	private List<ConfigElementVO> prepareTestDataConfigElementVOs(
+			String... names)
+	{
+		List<ConfigElementVO> elements = new ArrayList<ConfigElementVO>(names.length);
+		for (String name : names)
+		{
+			elements.add(prepareTestDataConfigElementVOs(name, null));
+		}
+		return elements;
 	}
 }
