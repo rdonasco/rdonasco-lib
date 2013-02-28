@@ -61,4 +61,5 @@ public interface ConfigDataManagerLocal extends DataManager<ConfigElement>
     public <T> T loadValue(String xpath,Class<T> t) throws LoadValueException;
     public <T> T loadValue(String xpath,Class<T> t, T defaultValue);
     public ConfigAttribute createAttributeFromXpath(String xpath, Object value) throws DataAccessException, ConfigXPathException;
+	public ConfigAttribute createOrUpdateAttributeFromXpath(String xpath, Object value) throws DataAccessException, ConfigXPathException;
 }

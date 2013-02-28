@@ -48,416 +48,436 @@ import com.rdonasco.common.i18.I18NResource;
 public class ConfigDataManager implements ConfigDataManagerLocal
 {
 
-    private static final Logger LOGGER = Logger.getLogger(ConfigDataManager.class.
-            getName());
-    @Inject
-    private ConfigElementDAO configElementDAO;
-    @Inject
-    private ConfigAttributeDAO configAttributeDAO;
-    private List<ValueParser> valueParsers = new ArrayList<ValueParser>();
+	private static final Logger LOGGER = Logger.getLogger(ConfigDataManager.class.
+			getName());
+	@Inject
+	private ConfigElementDAO configElementDAO;
+	@Inject
+	private ConfigAttributeDAO configAttributeDAO;
+	private List<ValueParser> valueParsers = new ArrayList<ValueParser>();
 
-    @Inject
-    void initParsers(@Any Instance<ValueParser> parsers)
-    {
-        for (ValueParser parser : parsers)
-        {
-            valueParsers.add(parser);
-        }
-    }
+	@Inject
+	void initParsers(@Any Instance<ValueParser> parsers)
+	{
+		for (ValueParser parser : parsers)
+		{
+			valueParsers.add(parser);
+		}
+	}
 
-    @Override
-    public ConfigElementDAO getConfigElementDAO()
-    {
-        return configElementDAO;
-    }
+	@Override
+	public ConfigElementDAO getConfigElementDAO()
+	{
+		return configElementDAO;
+	}
 
-    @Override
-    public void setConfigElementDAO(ConfigElementDAO configElementDAO)
-    {
-        this.configElementDAO = configElementDAO;
-    }
+	@Override
+	public void setConfigElementDAO(ConfigElementDAO configElementDAO)
+	{
+		this.configElementDAO = configElementDAO;
+	}
 
-    public ConfigAttributeDAO getConfigAttributeDAO()
-    {
-        return configAttributeDAO;
-    }
+	public ConfigAttributeDAO getConfigAttributeDAO()
+	{
+		return configAttributeDAO;
+	}
 
-    public void setConfigAttributeDAO(ConfigAttributeDAO configAttributeDAO)
-    {
-        this.configAttributeDAO = configAttributeDAO;
-    }
+	public void setConfigAttributeDAO(ConfigAttributeDAO configAttributeDAO)
+	{
+		this.configAttributeDAO = configAttributeDAO;
+	}
 
-    @Override
-    public List<ConfigElement> retrieveAllData() throws DataAccessException
-    {
-        List<ConfigElement> configElement = null;
-        try
-        {
-            configElement = getConfigElementDAO().findAllDataUsingNamedQuery(
-                    ConfigElement.NAMED_QUERY_FIND_ROOT_ELEMENTS, null);
-        }
-        catch (Exception e)
-        {
-            throw new DataAccessException(e);
-        }
-        return configElement;
-    }
+	@Override
+	public List<ConfigElement> retrieveAllData() throws DataAccessException
+	{
+		List<ConfigElement> configElement = null;
+		try
+		{
+			configElement = getConfigElementDAO().findAllDataUsingNamedQuery(
+					ConfigElement.NAMED_QUERY_FIND_ROOT_ELEMENTS, null);
+		}
+		catch (Exception e)
+		{
+			throw new DataAccessException(e);
+		}
+		return configElement;
+	}
 
-    @Override
-    public ConfigElement loadData(ConfigElement configElement) throws
-            DataAccessException
-    {
-        try
-        {
-            return getConfigElementDAO().findFreshData(ConfigElement.class,
-                    configElement.getId());
-        }
-        catch (Exception e)
-        {
-            throw new DataAccessException(e);
-        }
-    }
+	@Override
+	public ConfigElement loadData(ConfigElement configElement) throws
+			DataAccessException
+	{
+		try
+		{
+			return getConfigElementDAO().findFreshData(ConfigElement.class,
+					configElement.getId());
+		}
+		catch (Exception e)
+		{
+			throw new DataAccessException(e);
+		}
+	}
 
-    @Override
-    public ConfigElement saveData(ConfigElement configElement) throws
-            DataAccessException
-    {
-        try
-        {
-            ConfigElement parent = (ConfigElement) configElement.getParentConfig();
-            configureXpath(configElement);
-            getConfigElementDAO().create(configElement);
-            if (parent != null)
-            {
-                parent = getConfigElementDAO().findData(ConfigElement.class,
-                        parent.getId());
-                parent.getSubConfigElements().add(configElement);
-                getConfigElementDAO().update(parent);
+	@Override
+	public ConfigElement saveData(ConfigElement configElement) throws
+			DataAccessException
+	{
+		try
+		{
+			ConfigElement parent = (ConfigElement) configElement.getParentConfig();
+			configureXpath(configElement);
+			getConfigElementDAO().create(configElement);
+			if (parent != null)
+			{
+				parent = getConfigElementDAO().findData(ConfigElement.class,
+						parent.getId());
+				parent.getSubConfigElements().add(configElement);
+				getConfigElementDAO().update(parent);
 
-            }
+			}
 
-        }
-        catch (Exception e)
-        {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            throw new DataAccessException(
-                    I18NResource.localizeWithParameter(
-                    CommonConstants.UNABLE_TO_SAVE_RECORD__, configElement), e);
-        }
-        return configElement;
-    }
+		}
+		catch (Exception e)
+		{
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			throw new DataAccessException(
+					I18NResource.localizeWithParameter(
+					CommonConstants.UNABLE_TO_SAVE_RECORD__, configElement), e);
+		}
+		return configElement;
+	}
 
-    @Override
-    public void updateData(ConfigElement configElement) throws
-            DataAccessException
-    {
-        try
-        {
-            configureXpath(configElement);
-            getConfigElementDAO().update(configElement);
-        }
-        catch (Exception e)
-        {
-            throw new DataAccessException(
-                    I18NResource.localizeWithParameter(
-                    CommonConstants.UNABLE_TO_UPDATE_RECORD__, configElement), e);
-        }
-    }
+	@Override
+	public void updateData(ConfigElement configElement) throws
+			DataAccessException
+	{
+		try
+		{
+			configureXpath(configElement);
+			getConfigElementDAO().update(configElement);
+		}
+		catch (Exception e)
+		{
+			throw new DataAccessException(
+					I18NResource.localizeWithParameter(
+					CommonConstants.UNABLE_TO_UPDATE_RECORD__, configElement), e);
+		}
+	}
 
-    @Override
-    public void deleteData(ConfigElement configElement) throws
-            DataAccessException
-    {
-        try
-        {
-            getConfigElementDAO().delete(ConfigElement.class, configElement.
-                    getId());
-        }
-        catch (Exception e)
-        {
-            throw new DataAccessException(
-                    I18NResource.localizeWithParameter(
-                    CommonConstants.UNABLE_TO_DELETE_RECORD__, configElement), e);
-        }
-    }
+	@Override
+	public void deleteData(ConfigElement configElement) throws
+			DataAccessException
+	{
+		try
+		{
+			getConfigElementDAO().delete(ConfigElement.class, configElement.
+					getId());
+		}
+		catch (Exception e)
+		{
+			throw new DataAccessException(
+					I18NResource.localizeWithParameter(
+					CommonConstants.UNABLE_TO_DELETE_RECORD__, configElement), e);
+		}
+	}
 
-    @Override
-    public ConfigAttribute saveAttribute(ConfigAttribute attribute) throws
-            DataAccessException
-    {
-        try
-        {
-            ConfigElement configElement = getConfigElementDAO().findData(
-                    ConfigElement.class,
-                    attribute.getParentConfig().getId());
-            configElement.addConfigAttribute(attribute);
-            configureXpath(attribute);
-            getConfigAttributeDAO().create(attribute);
-            getConfigElementDAO().update(configElement);
-        }
-        catch (Exception e)
-        {
-            throw new DataAccessException(I18NResource.localizeWithParameter(
-                    CommonConstants.UNABLE_TO_SAVE_RECORD__, attribute), e);
-        }
+	@Override
+	public ConfigAttribute saveAttribute(ConfigAttribute attribute) throws
+			DataAccessException
+	{
+		try
+		{
+			ConfigElement configElement = getConfigElementDAO().findData(
+					ConfigElement.class,
+					attribute.getParentConfig().getId());
+			configElement.addConfigAttribute(attribute);
+			configureXpath(attribute);
+			getConfigAttributeDAO().create(attribute);
+			getConfigElementDAO().update(configElement);
+		}
+		catch (Exception e)
+		{
+			throw new DataAccessException("Unable to save attribute " + attribute, e);
+		}
 
-        return attribute;
-    }
+		return attribute;
+	}
 
-    @Override
-    public void updateAttribute(ConfigAttribute attribute) throws
-            DataAccessException
-    {
-        try
-        {
-            configureXpath(attribute);
-            getConfigAttributeDAO().update(attribute);
-        }
-        catch (Exception e)
-        {
-            throw new DataAccessException(I18NResource.localizeWithParameter(
-                    CommonConstants.UNABLE_TO_UPDATE_RECORD__, attribute), e);
-        }
-    }
+	@Override
+	public void updateAttribute(ConfigAttribute attribute) throws
+			DataAccessException
+	{
+		try
+		{
+			configureXpath(attribute);
+			getConfigAttributeDAO().update(attribute);
+		}
+		catch (Exception e)
+		{
+			throw new DataAccessException(I18NResource.localizeWithParameter(
+					CommonConstants.UNABLE_TO_UPDATE_RECORD__, attribute), e);
+		}
+	}
 
-    @Override
-    public void deleteAttribute(ConfigAttribute configAttribute) throws
-            DataAccessException
-    {
-        try
-        {
-            getConfigAttributeDAO().delete(ConfigAttribute.class,
-                    configAttribute.getId());
-        }
-        catch (Exception e)
-        {
-            throw new DataAccessException(e);
-        }
-    }
+	@Override
+	public void deleteAttribute(ConfigAttribute configAttribute) throws
+			DataAccessException
+	{
+		try
+		{
+			getConfigAttributeDAO().delete(ConfigAttribute.class,
+					configAttribute.getId());
+		}
+		catch (Exception e)
+		{
+			throw new DataAccessException(e);
+		}
+	}
 
-    @Override
-    public ConfigData configureXpath(ConfigData configData) throws
-            ConfigXPathException
-    {
-        try
-        {
-            StringBuilder xPathBuilder = new StringBuilder();
-            if (null != configData && null != configData.getParentConfig())
-            {
-                if(null == configData.getParentXpath() || !configData.getParentXpath().startsWith("/"))
-                {
-                    configureXpath(configData.getParentConfig());
-                }
-                xPathBuilder.append(configData.getParentXpath());
-            }
-			if(null != configData)
+	@Override
+	public ConfigData configureXpath(ConfigData configData) throws
+			ConfigXPathException
+	{
+		try
+		{
+			StringBuilder xPathBuilder = new StringBuilder();
+			if (null != configData && null != configData.getParentConfig())
+			{
+				if (null == configData.getParentXpath() || !configData.getParentXpath().startsWith("/"))
+				{
+					configureXpath(configData.getParentConfig());
+				}
+				xPathBuilder.append(configData.getParentXpath());
+			}
+			if (null != configData)
 			{
 				xPathBuilder.append("/").append(configData.getName());
 				configData.setXpath(xPathBuilder.toString());
 			}
-        }
-        catch (Exception e)
-        {
-            throw new ConfigXPathException(e);
-        }
-        return configData;
-    }
+		}
+		catch (Exception e)
+		{
+			throw new ConfigXPathException(e);
+		}
+		return configData;
+	}
 
-    @Override
-    public ConfigAttribute findConfigAttributeWithXpath(String xpath) throws
-            DataAccessException
-    {
-        ConfigAttribute attribute = null;
-        try
-        {
-            Map<String, Object> parameters = new HashMap<String, Object>();
-            parameters.put(ConfigAttribute.QUERY_PARAM_XPATH, xpath);
-            attribute = getConfigAttributeDAO().findUniqueDataUsingNamedQuery(
-                    ConfigAttribute.NAMED_QUERY_FIND_BY_XPATH, parameters);
-        }
-        catch (Exception e)
-        {
-            throw new DataAccessException(e);
-        }
-        return attribute;
-    }
+	@Override
+	public ConfigAttribute findConfigAttributeWithXpath(String xpath) throws
+			DataAccessException
+	{
+		ConfigAttribute attribute = null;
+		try
+		{
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put(ConfigAttribute.QUERY_PARAM_XPATH, xpath);
+			attribute = getConfigAttributeDAO().findUniqueDataUsingNamedQuery(
+					ConfigAttribute.NAMED_QUERY_FIND_BY_XPATH, parameters);
+		}
+		catch (Exception e)
+		{
+			throw new DataAccessException(e);
+		}
+		return attribute;
+	}
 
-    @Override
-    public ConfigElement findConfigElementWithXpath(String xpath) throws
-            DataAccessException
-    {
-        ConfigElement configElement = null;
-        try
-        {
-            Map<String, Object> parameters = new HashMap<String, Object>();
-            parameters.put(ConfigElement.QUERY_PARAM_XPATH, xpath);
-            configElement = getConfigElementDAO().findUniqueDataUsingNamedQuery(
-                    ConfigElement.NAMED_QUERY_FIND_BY_XPATH, parameters);
-        }
-        catch (Exception e)
-        {
-            throw new DataAccessException(e);
-        }
-        return configElement;
-    }
+	@Override
+	public ConfigElement findConfigElementWithXpath(String xpath) throws
+			DataAccessException
+	{
+		ConfigElement configElement = null;
+		try
+		{
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put(ConfigElement.QUERY_PARAM_XPATH, xpath);
+			configElement = getConfigElementDAO().findUniqueDataUsingNamedQuery(
+					ConfigElement.NAMED_QUERY_FIND_BY_XPATH, parameters);
+		}
+		catch (Exception e)
+		{
+			throw new DataAccessException(e);
+		}
+		return configElement;
+	}
 
-    @Override
-    public List<ConfigAttribute> findConfigAttributesWithXpath(String xpath)
-            throws DataAccessException
-    {
-        List<ConfigAttribute> attributes = null;
-        try
-        {
-            Map<String, Object> parameters = new HashMap<String, Object>();
-            parameters.put(ConfigAttribute.QUERY_PARAM_XPATH, xpath);
-            attributes = getConfigAttributeDAO().findAllDataUsingNamedQuery(
-                    ConfigAttribute.NAMED_QUERY_FIND_BY_XPATH, parameters);
-        }
-        catch (Exception e)
-        {
-            throw new DataAccessException(e);
-        }
-        return attributes;
-    }
+	@Override
+	public List<ConfigAttribute> findConfigAttributesWithXpath(String xpath)
+			throws DataAccessException
+	{
+		List<ConfigAttribute> attributes = null;
+		try
+		{
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put(ConfigAttribute.QUERY_PARAM_XPATH, xpath);
+			attributes = getConfigAttributeDAO().findAllDataUsingNamedQuery(
+					ConfigAttribute.NAMED_QUERY_FIND_BY_XPATH, parameters);
+		}
+		catch (Exception e)
+		{
+			throw new DataAccessException(e);
+		}
+		return attributes;
+	}
 
-    @Override
-    public List<ConfigElement> findConfigElementsWithXpath(String xpath) throws
-            DataAccessException
-    {
-        List<ConfigElement> configElements = null;
-        try
-        {
-            Map<String, Object> parameters = new HashMap<String, Object>();
-            parameters.put(ConfigElement.QUERY_PARAM_XPATH, xpath);
-            configElements = getConfigElementDAO().findAllDataUsingNamedQuery(
-                    ConfigElement.NAMED_QUERY_FIND_BY_XPATH, parameters);
-        }
-        catch (Exception e)
-        {
-            throw new DataAccessException(e);
-        }
-        return configElements;
-    }
+	@Override
+	public List<ConfigElement> findConfigElementsWithXpath(String xpath) throws
+			DataAccessException
+	{
+		List<ConfigElement> configElements = null;
+		try
+		{
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put(ConfigElement.QUERY_PARAM_XPATH, xpath);
+			configElements = getConfigElementDAO().findAllDataUsingNamedQuery(
+					ConfigElement.NAMED_QUERY_FIND_BY_XPATH, parameters);
+		}
+		catch (Exception e)
+		{
+			throw new DataAccessException(e);
+		}
+		return configElements;
+	}
 
-    @Override
-    public <T> T loadValue(String xpath, Class<T> t) throws LoadValueException
-    {
-        T value = null;
-        try
-        {
-            ConfigAttribute attribute = findConfigAttributeWithXpath(xpath);
-            Constructor<T> constructor = t.getConstructor(new Class[]
-                    {
-                        String.class
-                    });
+	@Override
+	public <T> T loadValue(String xpath, Class<T> t) throws LoadValueException
+	{
+		T value = null;
+		try
+		{
+			ConfigAttribute attribute = findConfigAttributeWithXpath(xpath);
+			Constructor<T> constructor = t.getConstructor(new Class[]
+			{
+				String.class
+			});
 
-            for (ValueParser parser : valueParsers)
-            {
-                try
-                {
-                    value = (T) parser.parse(t, attribute.getValue());
-                }
-                catch (Exception ex)
-                {
-                    Logger.getLogger(this.getClass().getName()).
-                            log(Level.WARNING, ex.getMessage(), ex);
-                }
-                if (value != null)
-                {
-                    break;
-                }
-            }
-            if (value == null)
-            {
-                value = constructor.newInstance(attribute.getValue());
-            }
+			for (ValueParser parser : valueParsers)
+			{
+				try
+				{
+					value = (T) parser.parse(t, attribute.getValue());
+				}
+				catch (Exception ex)
+				{
+					Logger.getLogger(this.getClass().getName()).
+							log(Level.WARNING, ex.getMessage(), ex);
+				}
+				if (value != null)
+				{
+					break;
+				}
+			}
+			if (value == null)
+			{
+				value = constructor.newInstance(attribute.getValue());
+			}
 
-        }
-        catch (Exception ex)
-        {
-            throw new LoadValueException(ex);
-        }
-        return value;
-    }
+		}
+		catch (Exception ex)
+		{
+			throw new LoadValueException(ex);
+		}
+		return value;
+	}
 
-    @Override
-    public <T> T loadValue(String xpath, Class<T> t, T defaultValue)
-    {
-        T value = null;
-        try
-        {
-            value = loadValue(xpath, t);
-        }
-        catch (LoadValueException e)
-        {
-            try
-            {
-                createAttributeFromXpath(xpath, defaultValue);
-            }
-            catch (Exception ex)
-            {
-                Logger.getLogger(ConfigDataManager.class.getName()).
-                        log(Level.WARNING, null, ex);
-            }
-            value = defaultValue;
-        }
+	@Override
+	public <T> T loadValue(String xpath, Class<T> t, T defaultValue)
+	{
+		T value = null;
+		try
+		{
+			value = loadValue(xpath, t);
+		}
+		catch (LoadValueException e)
+		{
+			try
+			{
+				createAttributeFromXpath(xpath, defaultValue);
+			}
+			catch (Exception ex)
+			{
+				Logger.getLogger(ConfigDataManager.class.getName()).
+						log(Level.WARNING, null, ex);
+			}
+			value = defaultValue;
+		}
 
-        return value;
-    }
+		return value;
+	}
 
-    @Override
-    public ConfigAttribute createAttributeFromXpath(String xpath, Object value)
-            throws DataAccessException, ConfigXPathException
-    {
-        ConfigAttribute attribute = null;
-        List<ConfigData> configList = XpathToConfigTransformer.transform(
-                xpath);
-        int elementCount = configList.size() - 1;
-        ConfigElement element = null;
-        for (ConfigData configData : configList)
-        {
-            ConfigElement parent = element;
-            element = null;
-            elementCount--;
-            configData = configureXpath(configData);            
-            if (elementCount < 0)
-            {
-                attribute = (ConfigAttribute)configData;
-                attribute.setParentConfig(parent);
-                attribute.setValue(value.toString());
-                break;
-            }            
-            try
-            {
-                element = findConfigElementWithXpath(configData.getXpath());
-            }
-            catch(Exception e)
-            {
-                LOGGER.log(Level.WARNING,e.getMessage(),e);
-            }
-            if(element == null)
-            {
-                element = saveData((ConfigElement)configData);
-            }
-            if(parent != null && !parent.equals(element.getParentConfig()))
-            {
-                element.setParentConfig(parent);
-            }
-            
-        }
-        
-        try
-        {
-            ConfigAttribute oldAttribute = findConfigAttributeWithXpath(attribute.getXpath());
-            oldAttribute.setValue(attribute.getValue());
-            updateAttribute(oldAttribute);
-            attribute = oldAttribute;            
-        }
-        catch(Exception e)
-        {
-            saveAttribute(attribute);
-        }
-        
-        return attribute;
-    }
+	@Override
+	public ConfigAttribute createOrUpdateAttributeFromXpath(String xpath,
+			Object value) throws DataAccessException, ConfigXPathException
+	{
+		return privatelyCreateOrUpdateAttributeFromXpath(xpath, value, true);
+	}
+
+	@Override
+	public ConfigAttribute createAttributeFromXpath(String xpath, Object value)
+			throws DataAccessException, ConfigXPathException
+	{
+		return privatelyCreateOrUpdateAttributeFromXpath(xpath, value, false);
+	}
+
+	private ConfigAttribute privatelyCreateOrUpdateAttributeFromXpath(
+			String xpath, Object value, boolean updateWhenAble)
+			throws DataAccessException, ConfigXPathException
+	{
+		ConfigAttribute attribute = null;
+		List<ConfigData> configList = XpathToConfigTransformer.transform(
+				xpath);
+		int elementCount = configList.size() - 1;
+		ConfigElement element = null;
+		for (ConfigData configData : configList)
+		{
+			ConfigElement parent = element;
+			element = null;
+			elementCount--;
+			configData = configureXpath(configData);
+			if (elementCount < 0)
+			{
+				attribute = (ConfigAttribute) configData;
+				attribute.setParentConfig(parent);
+				attribute.setValue(value.toString());
+				break;
+			}
+			try
+			{
+				element = findConfigElementWithXpath(configData.getXpath());
+			}
+			catch (Exception e)
+			{
+				LOGGER.log(Level.WARNING, e.getMessage(), e);
+			}
+			if (element == null)
+			{
+				element = saveData((ConfigElement) configData);
+			}
+			if (parent != null && !parent.equals(element.getParentConfig()))
+			{
+				element.setParentConfig(parent);
+			}
+
+		}
+
+		if (updateWhenAble)
+		{
+			try
+			{
+				ConfigAttribute oldAttribute = findConfigAttributeWithXpath(attribute.getXpath());
+				oldAttribute.setValue(attribute.getValue());
+				updateAttribute(oldAttribute);
+				attribute = oldAttribute;
+			}
+			catch (Exception e)
+			{
+				saveAttribute(attribute);
+			}
+		}
+		else
+		{
+			saveAttribute(attribute);
+		}
+
+		return attribute;
+	}
 }

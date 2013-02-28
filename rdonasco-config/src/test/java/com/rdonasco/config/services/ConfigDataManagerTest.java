@@ -399,28 +399,7 @@ public class ConfigDataManagerTest
         Format sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date expected = (Date) sdf.parseObject(attrib.getValue());
         assertEquals(expected, value);
-    }
-    
-//    @Test
-//    public void testCreateRecursive() throws Exception
-//    {
-//        System.out.println("createRecursive");
-//        ConfigElement root = new ConfigElement();
-//        root.setName("root");
-//        ConfigElement sub = new ConfigElement();
-//        sub.setName("sub");
-//        sub.setParentConfig(root);
-//        ConfigAttribute attribute = new ConfigAttribute();
-//        attribute.setName("name");
-//        attribute.setValue("roy");
-//        attribute.setParentConfig(sub);
-//        attribute = configDataManagerUnderTest.saveAttribute(attribute);
-//        assertEquals("/root/sub/name",attribute.getXpath());
-//        assertEquals("roy",attribute.getValue());
-//        sub = (ConfigElement)attribute.getParentConfig();
-//        assertEquals("/root/sub",sub.getXpath());
-//    }
-    
+    }    
     
     @Test
     public void testCreateAttributeFromXpath() throws Exception
@@ -436,6 +415,21 @@ public class ConfigDataManagerTest
         assertEquals(attribute,savedDefaultAttribute);
         
     }
+	
+	@Test
+	public void testCreateMultipleAttributeFromXPath() throws Exception
+	{
+		System.out.println("createMultipleAttributeFromXPath");
+        String xpath = "/application/name";
+        ConfigAttribute firstAttribute = configDataManagerUnderTest.createAttributeFromXpath(xpath, "value1");
+		assertNotNull(firstAttribute);
+		ConfigAttribute secondAttribute = configDataManagerUnderTest.createAttributeFromXpath(xpath, "value2");
+		assertNotNull(secondAttribute);
+		List<ConfigAttribute> attributes = configDataManagerUnderTest.findConfigAttributesWithXpath(xpath);
+		assertNotNull(attributes);
+		assertEquals(2,attributes.size());
+
+	}
 
     @Test
     public void testGetDefaultValue() throws Exception
