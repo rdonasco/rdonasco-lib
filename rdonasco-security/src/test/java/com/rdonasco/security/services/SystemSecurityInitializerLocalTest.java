@@ -94,6 +94,7 @@ public class SystemSecurityInitializerLocalTest
 		String actionXPath = new StringBuilder(SystemSecurityInitializerLocal.DEFAULT_CAPABILITY_ELEMENT_XPATH)
 				.append("/Logon To System/action").toString();
 		List<ConfigAttributeVO> attributes = configDataManagerProxyUnderTest.findConfigAttributesWithXpath(actionXPath);
+		System.out.println("attrbuteSize:" + attributes.size());
 		assertNotNull(attributes);
 		assertEquals("logon",attributes.get(0).getValue());
 		assertEquals("logoff",attributes.get(1).getValue());
