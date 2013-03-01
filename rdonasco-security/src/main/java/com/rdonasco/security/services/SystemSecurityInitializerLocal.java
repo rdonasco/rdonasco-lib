@@ -26,13 +26,16 @@ import javax.ejb.Local;
 @Local
 public interface SystemSecurityInitializerLocal
 {
-	static final String DEFAULT_CAPABILITY_ELEMENT = "/system/capability/default";
-	static final int CAPABILITY_TITLE = 0;
-	static final int RESOURCE = 1;
+	static final String DEFAULT_CAPABILITY_ELEMENT_XPATH = "/system/capability/default";
+	static final int ELEMENT_XPATH = 0;
+	static final int ELEMENT_CAPABILITY_TITLE = 1;
+	static final int ELEMENT_RESOURCE = 2;
+	static final String ATTRIBUTE_RESOURCE = "resource";
+	static final String ATTRIBUTE_ACTION = "action";
 	
 	static final String[][] DEFAULT_CAPABILITY_ELEMENTS = 
 	{
-		{"Logon To System","system","logon","logoff"}
+		{DEFAULT_CAPABILITY_ELEMENT_XPATH,"Logon To System","system","logon","logoff"}
 	};
 	
 	void initializeDefaultSystemAccessCapabilities() throws SystemSecurityInitializationException;

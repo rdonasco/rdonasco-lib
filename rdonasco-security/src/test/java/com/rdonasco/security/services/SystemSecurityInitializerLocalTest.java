@@ -1,12 +1,21 @@
 package com.rdonasco.security.services;
 
+import com.rdonasco.common.dao.BaseDAO;
+import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.config.dao.ConfigElementDAO;
 import com.rdonasco.config.data.ConfigElement;
 import com.rdonasco.config.parsers.ValueParser;
 import com.rdonasco.config.services.ConfigDataManagerLocal;
+import com.rdonasco.config.services.ConfigDataManagerProxyRemote;
+import com.rdonasco.config.util.ConfigDataValueObjectConverter;
+import com.rdonasco.config.vo.ConfigAttributeVO;
+import com.rdonasco.datamanager.services.DataManager;
+import com.rdonasco.datamanager.utils.CommonConstants;
 import com.rdonasco.security.dao.ActionDAO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.model.Action;
+import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
@@ -17,13 +26,18 @@ import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
+import java.util.List;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ArchivePaths;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import test.util.ArchiveCreator;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for simple App.
@@ -32,40 +46,82 @@ import test.util.ArchiveCreator;
 public class SystemSecurityInitializerLocalTest
 {
 
+	private static final Logger LOG = Logger.getLogger(SystemSecurityInitializerLocalTest.class.getName());
 	@EJB
 	private SystemSecurityInitializerLocal systemSecurityInitializer;
+	@EJB
+	private ConfigDataManagerProxyRemote configDataManagerProxyUnderTest;
 	@EJB
 	private CapabilityManagerLocal capabilityManager;
 
 	@Deployment
 	public static JavaArchive createTestArchive()
 	{
-		JavaArchive archive = ArchiveCreator.createCommonArchive()
-				.addPackage(ActionDAO.class.getPackage())
-				.addPackage(SystemSecurityManagerLocal.class.getPackage())
-				.addPackage(ActionVO.class.getPackage())
-				.addPackage(Action.class.getPackage())
+		return ShrinkWrap.create(JavaArchive.class, "SecurityClientTest.jar")
+				.addPackage(BaseDAO.class.getPackage())
+				.addPackage(DataAccessException.class.getPackage())
+				.addPackage(I18NResource.class.getPackage())
+				.addPackage(CommonConstants.class.getPackage())
+				.addPackage(DataManager.class.getPackage())
 				.addPackage(ConfigElementDAO.class.getPackage())
 				.addPackage(ValueParser.class.getPackage())
 				.addPackage(ConfigElement.class.getPackage())
-				.addPackage(ConfigDataManagerLocal.class.getPackage());
+				.addPackage(ConfigDataManagerLocal.class.getPackage())
+				.addPackage(ConfigAttributeVO.class.getPackage())
+				.addPackage(ActionDAO.class.getPackage())
+				.addPackage(Action.class.getPackage())
+				.addPackage(CapabilityManagerLocal.class.getPackage())
+				.addPackage(ConfigDataValueObjectConverter.class.getPackage())
+				.addPackage(SecurityEntityValueObjectConverter.class.getPackage())
+				.addAsManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"))
+				.addAsResource(I18NResource.class.getPackage(), "i18nResource.properties", "/WEB-INF/classes/net/baligya/i18n")
+				.addAsManifestResource("persistence.xml", ArchivePaths.create("persistence.xml"));
 
-		return archive;
+
 	}
+
 
 	@Test
 	public void testInitializeDefaultSystemAccessCapabilities() throws Exception
 	{
-		String systemAccessCapabilityTitle = "logonToSystem";
-		String systemResource = "system";
+		System.out.println("InitializeDefaultSystemAccessCapabilities");
 		systemSecurityInitializer.initializeDefaultSystemAccessCapabilities();
-//		CapabilityVO capabilityVO = capabilityManager.findCapabilityWithTitle(systemAccessCapabilityTitle);
-//		assertNotNull(capabilityVO);
-//		assertEquals(systemAccessCapabilityTitle,capabilityVO.getTitle());
-//		assertNotNull(capabilityVO.getResource());
-//		assertEquals(systemResource,capabilityVO.getResource().getName());
+		String resourceXPath = new StringBuilder(SystemSecurityInitializerLocal.DEFAULT_CAPABILITY_ELEMENT_XPATH)
+				.append("/Logon To System/resource").toString();
+		String resourceName = configDataManagerProxyUnderTest.loadValue(resourceXPath, String.class);
+		assertEquals("system",resourceName);
+		
+		String actionXPath = new StringBuilder(SystemSecurityInitializerLocal.DEFAULT_CAPABILITY_ELEMENT_XPATH)
+				.append("/Logon To System/action").toString();
+		List<ConfigAttributeVO> attributes = configDataManagerProxyUnderTest.findConfigAttributesWithXpath(actionXPath);
+		assertNotNull(attributes);
+		assertEquals("logon",attributes.get(0).getValue());
+		assertEquals("logoff",attributes.get(1).getValue());
 	}
 
+	/*
+	 @Test
+	 public void testInitializeDefaultSystemAccessCapabilities() throws Exception
+	 {
+	 System.out.println("initializeDefaultSystemAccessCapabilities");
+	 systemSecurityInitializer.initializeDefaultSystemAccessCapabilities();
+	 String title;
+	 String resourceName;
+	 String action;
+	 for (String[] capabilityInitString : SystemSecurityInitializerLocal.DEFAULT_CAPABILITY_ELEMENTS)
+	 {
+	 title = capabilityInitString[SystemSecurityInitializerLocal.ELEMENT_CAPABILITY_TITLE];
+	 CapabilityVO capability = capabilityManager.findCapabilityWithTitle(title);
+	 assertNotNull("capability" + title + " not found",capability);
+	 //			resourceName = capabilityInitString[SystemSecurityInitializerLocal.ELEMENT_RESOURCE];
+	 //			for (int i = SystemSecurityInitializerLocal.ELEMENT_RESOURCE + 1; i < capabilityInitString.length; i++)
+	 //			{
+	 //				action = capabilityInitString[i];
+	 //			}
+	 }
+
+	 }
+	 */
 	// ------ utility methods below here ------ //
 	private ActionVO createTestDataActionNamed(String name) throws
 			CapabilityManagerException
