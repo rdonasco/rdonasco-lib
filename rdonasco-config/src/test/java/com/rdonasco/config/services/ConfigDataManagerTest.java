@@ -435,7 +435,7 @@ public class ConfigDataManagerTest
 	public void testCreateAttributeFromXpathFourLevels() throws Exception
 	{
 		System.out.println("CreateAttributeFromXpathFourLevels");
-		String xpath = "/levelOne/levelTwo/levelThree/levelFour";
+		String xpath = "/levelOne/levelTwo/levelThree/levelFourA";
 		String value = "valueOfAttribute";
 		ConfigAttribute attribute = configDataManagerUnderTest.createAttributeFromXpath(xpath, value);
 		assertNotNull(attribute);
