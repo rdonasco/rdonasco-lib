@@ -152,7 +152,7 @@ public class ConfigElement implements Serializable, ConfigData
     @Override
     public String toString()
     {
-        return "ConfigElement{" + "id=" + id + ", name=" + name + '}';
+        return "ConfigElement{" + "id=" + id + ", name=" + name + ", xpath = " + xpath +"}";
     }
 
     @Override

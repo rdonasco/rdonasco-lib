@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.ejb.TransactionManagement;
 
 /**
  *
@@ -119,6 +122,7 @@ public class ConfigDataManagerProxy implements ConfigDataManagerProxyRemote
 		return configDataManager.loadValue(xpath, t, defaultValue);
 	}
 
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Override
 	public ConfigAttributeVO createAttributeFromXpath(String xpath, Object value)
 			throws DataAccessException, ConfigXPathException

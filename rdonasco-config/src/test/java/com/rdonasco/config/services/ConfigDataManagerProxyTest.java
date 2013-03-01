@@ -52,6 +52,7 @@ import org.junit.runner.RunWith;
 public class ConfigDataManagerProxyTest
 {
 	private static final Logger LOG = Logger.getLogger(ConfigDataManagerProxyTest.class.getName());
+	private static final String VALUE_BALIGYA = "baligya";
 
 	public ConfigDataManagerProxyTest()
 	{
@@ -374,19 +375,32 @@ public class ConfigDataManagerProxyTest
     
     
     @Test
-    public void testCreateAttributeFromXpath() throws Exception
-    {
-        LOG.info("createAttributeFromXpath");
-        String xpath = "/application/name";
-        String value = "baligya";
-        ConfigAttributeVO attribute = configDataManagerProxyUnderTest.createAttributeFromXpath(xpath, value);
-        assertNotNull(attribute);
-        assertEquals(xpath,attribute.getXpath());
-        ConfigAttributeVO savedDefaultAttribute = configDataManagerProxyUnderTest.createAttributeFromXpath(xpath, value);
-        assertNotNull(savedDefaultAttribute);
-        assertEquals(xpath,savedDefaultAttribute.getXpath());
-        
-    }
+	public void testCreateAttributeFromXpath() throws Exception
+	{
+		LOG.info("createAttributeFromXpath");
+		String xpath = "/application/name";
+		String value = VALUE_BALIGYA;
+		ConfigAttributeVO attribute = configDataManagerProxyUnderTest.createAttributeFromXpath(xpath, value);
+		assertNotNull(attribute);
+		assertEquals(xpath, attribute.getXpath());
+		assertEquals(value, attribute.getValue());
+		String savedValue = configDataManagerProxyUnderTest.loadValue(xpath, String.class);
+		assertNotNull(savedValue);
+	}
+	
+//    @Test
+//	public void testCreateAttributeFromXpathThreeLevels() throws Exception
+//	{
+//		LOG.info("createAttributeFromXpath");
+//		String xpath = "/bla/bla/sublevel";
+//		String value = VALUE_BALIGYA;
+//		ConfigAttributeVO attribute = configDataManagerProxyUnderTest.createAttributeFromXpath(xpath, value);
+//		assertNotNull(attribute);
+//		assertEquals(xpath, attribute.getXpath());
+//		assertEquals(value, attribute.getValue());
+//		String savedValue = configDataManagerProxyUnderTest.loadValue(xpath, String.class);
+//		assertNotNull(savedValue);
+//	}	
 
     @Test
     public void testGetDefaultStringValue() throws Exception

@@ -444,7 +444,7 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 			}
 			catch (Exception e)
 			{
-				LOGGER.log(Level.WARNING, e.getMessage(), e);
+				LOGGER.log(Level.FINER, e.getMessage(), e);
 			}
 			if (element == null)
 			{
@@ -453,6 +453,7 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 			if (parent != null && !parent.equals(element.getParentConfig()))
 			{
 				element.setParentConfig(parent);
+				updateData(element);
 			}
 
 		}

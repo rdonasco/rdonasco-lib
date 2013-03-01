@@ -155,7 +155,7 @@ public class ConfigAttribute implements Serializable, ConfigData
     @Override
     public String toString()
     {
-        return "ConfigAttribute{" + "id=" + id + ", name=" + name + ", value=" + value + '}';
+        return "ConfigAttribute{" + "id=" + id + ", name=" + name + ", xpath = " + xpath +"}";
     }
 
     @Override
