@@ -64,7 +64,10 @@ public class XpathToConfigTransformerTest
 		List<ConfigData> result = XpathToConfigTransformer.transform(xpath);
 		assertEquals(3, result.size());
 		assertEquals("application", result.get(0).getName());
+		assertEquals("/application", result.get(0).getXpath());
 		assertEquals("module", result.get(1).getName());
+		assertEquals("/application/module", result.get(1).getXpath());
 		assertEquals("name", result.get(2).getName());
+		assertEquals("/application/module/name", result.get(2).getXpath());
 	}
 }
