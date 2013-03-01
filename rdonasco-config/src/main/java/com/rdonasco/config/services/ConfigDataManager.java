@@ -140,9 +140,7 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 		catch (Exception e)
 		{
 			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-			throw new DataAccessException(
-					I18NResource.localizeWithParameter(
-					CommonConstants.UNABLE_TO_SAVE_RECORD__, configElement), e);
+			throw new DataAccessException("Unable to save Record" + configElement, e);
 		}
 		return configElement;
 	}
