@@ -13,3 +13,5 @@ rdonasco-common-dao/target
 rdonasco-security-client/target
 rdonasco-common-vaadin/target
 derby.log
+rdonasco-config/target
+rdonasco-config-client/target
