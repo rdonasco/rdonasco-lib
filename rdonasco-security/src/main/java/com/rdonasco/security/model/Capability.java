@@ -156,6 +156,8 @@ public class Capability implements Serializable
 	@Override
 	public String toString()
 	{
-		return "com.rdonasco.security.model.SecuredUser[ id=" + id + " ]";
+		return "Capability{" + "id=" + id + ", title=" + title + ", description=" + description + '}';
 	}
+
+
 }
