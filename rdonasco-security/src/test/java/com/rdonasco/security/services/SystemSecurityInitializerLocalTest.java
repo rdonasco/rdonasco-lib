@@ -18,6 +18,7 @@ import com.rdonasco.security.model.Action;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
@@ -98,6 +99,19 @@ public class SystemSecurityInitializerLocalTest
 		assertNotNull(attributes);
 		assertEquals("logon",attributes.get(0).getValue());
 		assertEquals("logoff",attributes.get(1).getValue());
+		
+		for(String[] capabilityArray : SystemSecurityInitializerLocal.DEFAULT_CAPABILITY_ELEMENTS )
+		{
+			CapabilityVO capability = capabilityManager.findCapabilityWithTitle(
+					capabilityArray[SystemSecurityInitializerLocal.ELEMENT_CAPABILITY_TITLE]);
+			assertNotNull(capability);
+			for(int i = SystemSecurityInitializerLocal.ELEMENT_RESOURCE+1; i < capabilityArray.length; i++)
+			{
+				String action = capabilityArray[i];
+				CapabilityActionVO actionVO = capability.findActionNamed(action);
+				assertNotNull(actionVO);
+			}
+		}
 	}
 
 	/*
