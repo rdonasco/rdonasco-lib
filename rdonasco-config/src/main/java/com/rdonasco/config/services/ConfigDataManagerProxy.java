@@ -17,6 +17,7 @@
 package com.rdonasco.config.services;
 
 import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.config.data.ConfigAttribute;
 import com.rdonasco.config.data.ConfigElement;
 import com.rdonasco.config.exceptions.ConfigXPathException;
@@ -68,7 +69,7 @@ public class ConfigDataManagerProxy implements ConfigDataManagerProxyRemote
 
 	@Override
 	public ConfigElementVO findConfigElementWithXpath(String xpath) throws
-			DataAccessException
+			DataAccessException, NonExistentEntityException
 	{
 		return ConfigDataValueObjectConverter.toConfigElementVO(configDataManager.findConfigElementWithXpath(xpath));
 		
@@ -76,7 +77,7 @@ public class ConfigDataManagerProxy implements ConfigDataManagerProxyRemote
 
 	@Override
 	public ConfigAttributeVO findConfigAttributeWithXpath(String xpath) throws
-			DataAccessException
+			DataAccessException, NonExistentEntityException
 	{
 		return ConfigDataValueObjectConverter.toConfigAttributeVO(
 				configDataManager.findConfigAttributeWithXpath(xpath));
@@ -122,7 +123,7 @@ public class ConfigDataManagerProxy implements ConfigDataManagerProxyRemote
 		return configDataManager.loadValue(xpath, t, defaultValue);
 	}
 
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+//	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Override
 	public ConfigAttributeVO createAttributeFromXpath(String xpath, Object value)
 			throws DataAccessException, ConfigXPathException

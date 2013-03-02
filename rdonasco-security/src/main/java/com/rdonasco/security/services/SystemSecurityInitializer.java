@@ -20,8 +20,16 @@ import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.config.exceptions.ConfigXPathException;
 import com.rdonasco.config.services.ConfigDataManagerProxyRemote;
+import com.rdonasco.config.vo.ConfigAttributeVO;
 import com.rdonasco.config.vo.ConfigElementVO;
+import com.rdonasco.security.exceptions.CapabilityManagerException;
+import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import com.rdonasco.security.exceptions.SystemSecurityInitializationException;
+import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.CapabilityVO;
+import com.rdonasco.security.vo.CapabilityVOBuilder;
+import com.rdonasco.security.vo.ResourceVO;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,6 +47,8 @@ public class SystemSecurityInitializer implements SystemSecurityInitializerLocal
 	private static final Logger LOG = Logger.getLogger(SystemSecurityInitializer.class.getName());
 	@EJB
 	private ConfigDataManagerProxyRemote configDataManager;
+	@EJB
+	private CapabilityManagerLocal capabilityManager;
 
 	@Override
 	public void initializeDefaultSystemAccessCapabilities() throws
@@ -54,29 +64,35 @@ public class SystemSecurityInitializer implements SystemSecurityInitializerLocal
 		}
 
 	}
+	private static final String PATH_SEPARATOR = "/";
 
-	void initializeConfigurationEntries()
+	void initializeConfigurationEntries() throws Exception
 	{
 		for (String[] configInitString : SystemSecurityInitializerLocal.DEFAULT_CAPABILITY_ELEMENTS)
 		{
 			String xpath = configInitString[SystemSecurityInitializerLocal.ELEMENT_XPATH];
 			String title = configInitString[SystemSecurityInitializerLocal.ELEMENT_CAPABILITY_TITLE];
 			String resource = configInitString[SystemSecurityInitializerLocal.ELEMENT_RESOURCE];
-			final String pathSeparator = "/";
 			String configDefaultCapabilityXPath = new StringBuilder(xpath)
-					.append(pathSeparator).append(title).toString();
+					.append(PATH_SEPARATOR).append(title).toString();
 			String configResourceXpath = new StringBuilder(configDefaultCapabilityXPath)
-					.append(pathSeparator).append(SystemSecurityInitializerLocal.ATTRIBUTE_RESOURCE).toString();
+					.append(PATH_SEPARATOR).append(SystemSecurityInitializerLocal.ATTRIBUTE_RESOURCE).toString();
 			try
 			{
-				configDataManager.createAttributeFromXpath(configResourceXpath, resource);
-				String configActionXPath;
-				for (int i = SystemSecurityInitializerLocal.ELEMENT_RESOURCE + 1; i < configInitString.length; i++)
+				configDataManager.loadValue(configResourceXpath, String.class, resource);
+				ConfigElementVO capabilityConfig = configDataManager.findConfigElementWithXpath(configDefaultCapabilityXPath);
+				CapabilityVO capability;
+				try
 				{
-					configActionXPath = new StringBuilder(configDefaultCapabilityXPath)
-							.append(pathSeparator).append(SystemSecurityInitializerLocal.ATTRIBUTE_ACTION).toString();
-					configDataManager.createAttributeFromXpath(configActionXPath, configInitString[i]);
+					capability = capabilityManager.findCapabilityWithTitle(capabilityConfig.getName());
 				}
+				catch (NonExistentEntityException e)
+				{
+					LOG.warning("Default capability not found. Creating one");
+					capability = createDefaultCapability(configResourceXpath, capabilityConfig);
+				}
+				List<ConfigAttributeVO> actions = loadDefaultActionsFromConfig(configDefaultCapabilityXPath, configInitString);
+				addMissingActionsToCapability(actions, capability);
 			}
 			catch (DataAccessException ex)
 			{
@@ -89,4 +105,57 @@ public class SystemSecurityInitializer implements SystemSecurityInitializerLocal
 		}
 	}
 
+	CapabilityVO createDefaultCapability(String configResourceXpath,
+			ConfigElementVO capabilityConfig) throws
+			CapabilityManagerException,
+			NonExistentEntityException, DataAccessException
+	{
+		CapabilityVO capabilityVO;
+		ConfigAttributeVO resourceAttributeVO = configDataManager.findConfigAttributeWithXpath(configResourceXpath);
+		ResourceVO resourceVOToAdd = capabilityManager.findOrAddResourceNamedAs(resourceAttributeVO.getName());
+
+		capabilityVO = new CapabilityVOBuilder()
+				.setTitle(capabilityConfig.getName())
+				.setDescription(capabilityConfig.getName())
+				.setResource(resourceVOToAdd)
+				.createCapabilityVO();
+		return capabilityManager.createNewCapability(capabilityVO);
+	}
+
+	List<ConfigAttributeVO> loadDefaultActionsFromConfig(
+			String configDefaultCapabilityXPath, String[] configInitString)
+			throws DataAccessException, ConfigXPathException
+	{
+		String configActionXPath = new StringBuilder(configDefaultCapabilityXPath)
+				.append(PATH_SEPARATOR).append(SystemSecurityInitializerLocal.ATTRIBUTE_ACTION).toString();
+		List<ConfigAttributeVO> actions = configDataManager.findConfigAttributesWithXpath(configActionXPath);
+		if (actions.isEmpty())
+		{
+			for (int i = SystemSecurityInitializerLocal.ELEMENT_RESOURCE + 1; i < configInitString.length; i++)
+			{
+				actions.add(configDataManager.createAttributeFromXpath(configActionXPath, configInitString[i]));
+			}
+		}
+		return actions;
+	}
+
+	void addMissingActionsToCapability(
+			List<ConfigAttributeVO> actions, CapabilityVO capability) throws
+			CapabilityManagerException
+	{
+		ActionVO action;
+		List<ActionVO> actionsToAdd = new ArrayList<ActionVO>();
+		for (ConfigAttributeVO actionAttributeVO : actions)
+		{
+			action = capabilityManager.findOrAddActionNamedAs(actionAttributeVO.getValue());
+			if (null == capability.findActionNamed(actionAttributeVO.getValue()))
+			{
+				actionsToAdd.add(action);
+			}
+		}
+		if (!actionsToAdd.isEmpty())
+		{
+			capabilityManager.addActionsToCapability(actionsToAdd, capability);
+		}
+	}
 }

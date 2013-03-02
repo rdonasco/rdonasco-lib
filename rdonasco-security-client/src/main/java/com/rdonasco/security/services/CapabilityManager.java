@@ -28,8 +28,10 @@ public interface CapabilityManager
 	void removeResource(ResourceVO resource) throws CapabilityManagerException;
 	ResourceVO findResourceNamedAs(String resourceName) throws CapabilityManagerException, NonExistentEntityException;
 	ResourceVO findOrAddSecuredResourceNamedAs(String resourceName) throws CapabilityManagerException, NotSecuredResourceException;
+	ResourceVO findOrAddResourceNamedAs(String resourceName) throws CapabilityManagerException;
 	ActionVO findOrAddActionNamedAs(String name) throws CapabilityManagerException;
 	CapabilityVO createNewCapability(CapabilityVO capabilityToCreate) throws CapabilityManagerException;
+	public void addActionsToCapability(List<ActionVO> actions, CapabilityVO capabilityVO) throws CapabilityManagerException;
 	CapabilityVO findCapabilityWithId(Long id) throws CapabilityManagerException;
 	CapabilityVO findCapabilityWithTitle(String capabilityTitle) throws CapabilityManagerException, NonExistentEntityException;
 	void updateCapability(CapabilityVO capabilityToUpdate) throws CapabilityManagerException;
