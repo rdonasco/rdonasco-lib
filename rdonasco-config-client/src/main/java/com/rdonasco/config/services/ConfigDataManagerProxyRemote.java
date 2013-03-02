@@ -17,6 +17,7 @@
 package com.rdonasco.config.services;
 
 import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.config.exceptions.ConfigXPathException;
 import com.rdonasco.config.exceptions.LoadValueException;
 import com.rdonasco.config.vo.ConfigAttributeVO;
@@ -42,10 +43,10 @@ public interface ConfigDataManagerProxyRemote
 			DataAccessException;
 
 	public ConfigElementVO findConfigElementWithXpath(String xpath) throws
-			DataAccessException;
+			DataAccessException, NonExistentEntityException;
 
 	public ConfigAttributeVO findConfigAttributeWithXpath(String xpath) throws
-			DataAccessException;
+			DataAccessException, NonExistentEntityException;
 
 	public List<ConfigElementVO> findConfigElementsWithXpath(String xpath) throws
 			DataAccessException;
