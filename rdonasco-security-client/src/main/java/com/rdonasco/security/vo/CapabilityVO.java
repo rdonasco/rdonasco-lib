@@ -18,6 +18,8 @@ package com.rdonasco.security.vo;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -32,6 +34,7 @@ public class CapabilityVO implements Serializable
 	private String description;
 	private ResourceVO resource;
 	private Collection<CapabilityActionVO> actions;
+	private Map<String,CapabilityActionVO> actionsMap = new HashMap<String, CapabilityActionVO>(); 
 
 	public CapabilityVO(Long id, String title, String description,
 			ResourceVO resource,
@@ -91,7 +94,14 @@ public class CapabilityVO implements Serializable
 
 	public void setActions(Collection<CapabilityActionVO> actions)
 	{
+		actionsMap.clear();
 		this.actions = actions;
+		populateActionMap();
+	}
+	
+	public CapabilityActionVO findActionNamed(String actionName)
+	{
+		return actionsMap.get(actionName);
 	}
 
 	@Override
@@ -105,23 +115,31 @@ public class CapabilityVO implements Serializable
 	@Override
 	public boolean equals(Object object)
 	{
-		// TODO: Warning - this method won't work in the case the id fields are not set
+		boolean areEqual = true;
 		if (!(object instanceof CapabilityVO))
 		{
-			return false;
+			areEqual = false;
 		}
 		CapabilityVO other = (CapabilityVO) object;
-		if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
+		if (areEqual && (this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
 		{
-			return false;
+			areEqual = false;
 		}
-		return true;
+		return areEqual;
 	}
 
 	@Override
 	public String toString()
 	{
 		return "CapabilityVO{" + "id=" + id + ", title=" + title + '}';
+	}
+
+	void populateActionMap()
+	{
+		for(CapabilityActionVO action : actions)
+		{
+			actionsMap.put(action.getActionVO().getName(), action);
+		}
 	}
 
 
