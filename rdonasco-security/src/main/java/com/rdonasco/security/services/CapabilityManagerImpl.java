@@ -14,13 +14,14 @@ import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.model.Capability;
+import com.rdonasco.security.model.CapabilityAction;
 import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
-import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 			}
 			resourceDAO.create(resource);
 			resourceVO = SecurityEntityValueObjectConverter.toResourceVO(resource);
+			LOG.log(Level.FINE, "resource {0} created", resourceVO);
 		}
 		catch (Exception e)
 		{
@@ -135,7 +137,30 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 	}
 
 	@Override
+	public ResourceVO findOrAddResourceNamedAs(String resourceName) throws
+			CapabilityManagerException
+	{
+		ResourceVO resourceVO = null;
+		try
+		{
+			resourceVO = findOrAddSecuredResourceNamedAsAndPotentiallyThrowNotSecuredException(resourceName, false);
+		}
+		catch(NotSecuredResourceException e)
+		{
+			LOG.log(Level.SEVERE,"NotSecuredResourceException thrown despite the request not to.",e);
+		}
+		return resourceVO;
+	}
+
+	@Override
 	public ResourceVO findOrAddSecuredResourceNamedAs(String resourceName)
+			throws CapabilityManagerException, NotSecuredResourceException
+	{
+		return findOrAddSecuredResourceNamedAsAndPotentiallyThrowNotSecuredException(resourceName, true);
+	}
+	
+	
+	private ResourceVO findOrAddSecuredResourceNamedAsAndPotentiallyThrowNotSecuredException(String resourceName,boolean throwNotSecuredException)
 			throws CapabilityManagerException, NotSecuredResourceException
 	{
 		Resource securedResource = null;
@@ -146,12 +171,13 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 			if (null != capabilities && !capabilities.isEmpty())
 			{
 				securedResource = capabilities.get(0).getResource();
+				securedResourceVO = SecurityEntityValueObjectConverter.toResourceVO(securedResource);
 			}
 			else
 			{
 				try
 				{
-					findResourceNamedAs(resourceName);
+					securedResourceVO = findResourceNamedAs(resourceName);
 				}
 				catch (NonExistentEntityException e)
 				{
@@ -159,18 +185,25 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 							.setName(resourceName)
 							.setDescription(resourceName)
 							.createResourceVO();
-					addResource(resourceToAdd);
+					securedResourceVO = addResource(resourceToAdd);
 				}
-			}
+			}			
 			if (null == securedResource)
 			{
 				throw new NotSecuredResourceException("Not Secured Resource. Can be accessed by anyone.");
-			}
-			securedResourceVO = SecurityEntityValueObjectConverter.toResourceVO(securedResource);
+			}						
 		}
 		catch (NotSecuredResourceException e)
 		{
-			throw e;
+			if(throwNotSecuredException)
+			{
+				throw e;
+			}
+			else
+			{
+				LOG.log(Level.FINE,"ignored exception {0}", e.getMessage());
+				LOG.log(Level.FINE,e.getMessage(),e);
+			}
 		}
 		catch (Exception e)
 		{
@@ -200,6 +233,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 			try
 			{
 				actionDAO.create(action);
+				LOG.log(Level.FINE, "Action {0} created.", action);
 			}
 			catch (Exception ex)
 			{
@@ -232,6 +266,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 			Action action = SecurityEntityValueObjectConverter.toAction(actionVO);
 			actionDAO.create(action);
 			actionVOToReturn = SecurityEntityValueObjectConverter.toActionVO(action);
+			LOG.log(Level.FINE, "action {0} created", actionVOToReturn);
 		}
 		catch (Exception e)
 		{
@@ -314,6 +349,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 			Capability capability = SecurityEntityValueObjectConverter.toCapability(capabilityToCreate);
 			capabilityDAO.create(capability);
 			createdCapabilityVO = SecurityEntityValueObjectConverter.toCapabilityVO(capability);
+			LOG.log(Level.FINE, "capability {0} created", createdCapabilityVO);
 		}
 		catch (Exception e)
 		{
@@ -427,5 +463,33 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 			throw new CapabilityManagerException(e);
 		}
 		return capabilityVOList;
+	}
+
+	@Override
+	public void addActionsToCapability(
+			List<ActionVO> actions, CapabilityVO capabilityVO) throws
+			CapabilityManagerException
+	{
+		try
+		{
+			Capability capability = capabilityDAO.findData(Capability.class, capabilityVO.getId());
+			List<CapabilityAction> actionsToAdd = new ArrayList<CapabilityAction>();
+			Action action;
+			CapabilityAction capabilityAction;
+			for (ActionVO actionVO : actions)
+			{
+				action = SecurityEntityValueObjectConverter.toAction(actionVO);
+				capabilityAction = new CapabilityAction();
+				capabilityAction.setAction(action);
+				capabilityAction.setCapability(capability);
+				actionsToAdd.add(capabilityAction);
+			}
+			capability.getActions().addAll(actionsToAdd);
+			capabilityDAO.update(capability);
+		}
+		catch (Exception e)
+		{
+			throw new CapabilityManagerException(e);
+		}
 	}
 }
