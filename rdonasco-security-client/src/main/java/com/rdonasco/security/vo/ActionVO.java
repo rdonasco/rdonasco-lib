@@ -91,7 +91,7 @@ public class ActionVO implements Serializable
 	@Override
 	public String toString()
 	{
-		return "com.rdonasco.security.model.Resource[ id=" + id + " ]";
+		return "ActionVO{" + "id=" + id + ", name=" + name + ", description=" + description + '}';
 	}
 
 	public String getName()
