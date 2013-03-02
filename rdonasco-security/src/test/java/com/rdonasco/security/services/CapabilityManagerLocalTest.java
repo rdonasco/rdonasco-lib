@@ -9,6 +9,8 @@ import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
+import java.util.ArrayList;
+import java.util.List;
 import javax.ejb.EJB;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -163,6 +165,20 @@ public class CapabilityManagerLocalTest
 		CapabilityVO foundCapabilityVO = capabilityManager.findCapabilityWithTitle(savedCapabilityVO.getTitle());
 		assertNotNull(foundCapabilityVO);
 		assertEquals(savedCapabilityVO.getTitle(), foundCapabilityVO.getTitle());
+	}
+	
+	@Test
+	public void testAddActionsToCapability() throws Exception
+	{
+		System.out.println("addActionsToCapability");
+		ActionVO actionToAdd = createTestDataActionNamed("missingInAction");
+		CapabilityVO capabilityToUpdate = createTestDataCapabilityWithActionAndResourceName("currentAction", "newResource");
+		List<ActionVO> actionsToAdd = new ArrayList<ActionVO>();
+		actionsToAdd.add(actionToAdd);
+		capabilityManager.addActionsToCapability(actionsToAdd, capabilityToUpdate);
+		CapabilityVO updatedCapability = capabilityManager.findCapabilityWithId(capabilityToUpdate.getId());
+		updatedCapability.findActionNamed("missingInAction");
+		
 	}
 
 	//--- no more test beyond this point.
