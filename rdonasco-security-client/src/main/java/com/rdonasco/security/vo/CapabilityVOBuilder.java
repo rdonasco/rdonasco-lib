@@ -75,6 +75,7 @@ public class CapabilityVOBuilder
 		{
 			action.setCapabilityVO(capabilityVO);
 		}
+		capabilityVO.populateActionMap();
 		return capabilityVO;
 	}
 
