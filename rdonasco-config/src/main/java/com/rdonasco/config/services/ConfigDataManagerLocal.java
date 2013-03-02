@@ -24,6 +24,7 @@ import com.rdonasco.config.data.ConfigData;
 import com.rdonasco.config.data.ConfigElement;
 import com.rdonasco.datamanager.services.DataManager;
 import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.common.exceptions.NonExistentEntityException;
 import javax.ejb.Local;
 
 /**
@@ -54,8 +55,8 @@ public interface ConfigDataManagerLocal extends DataManager<ConfigElement>
     public void deleteAttribute(ConfigAttribute configAttribute) throws DataAccessException;
     
     public ConfigData configureXpath(ConfigData configData) throws ConfigXPathException;
-    public ConfigElement findConfigElementWithXpath(String xpath) throws DataAccessException;
-    public ConfigAttribute findConfigAttributeWithXpath(String xpath) throws DataAccessException;    
+    public ConfigElement findConfigElementWithXpath(String xpath) throws DataAccessException, NonExistentEntityException;
+    public ConfigAttribute findConfigAttributeWithXpath(String xpath) throws DataAccessException, NonExistentEntityException;    
     public List<ConfigElement> findConfigElementsWithXpath(String xpath) throws DataAccessException;
     public List<ConfigAttribute> findConfigAttributesWithXpath(String xpath) throws DataAccessException;   
     public <T> T loadValue(String xpath,Class<T> t) throws LoadValueException;

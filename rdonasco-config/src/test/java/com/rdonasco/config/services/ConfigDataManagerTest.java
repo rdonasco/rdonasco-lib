@@ -301,7 +301,7 @@ public class ConfigDataManagerTest
 
 	}
 
-	@Test(expected = DataAccessException.class)
+	@Test(expected = NonExistentEntityException.class)
 	public void testNotFoundElementWithXpath() throws Exception
 	{
 		System.out.println("NotFoundElementWithXpath");
@@ -330,11 +330,22 @@ public class ConfigDataManagerTest
 		System.out.println("findElementsWithXpath");
 		ConfigElement parent = createAndSaveParentConfig();
 		ConfigElement sub = createAndSaveSubConfig(parent);
-		ConfigElement sub2 = createAndSaveSubConfig(parent);
+		createAndSaveSubConfig(parent);
 		List<ConfigElement> foundSubElements = configDataManagerUnderTest.
 				findConfigElementsWithXpath(sub.getXpath());
 		assertEquals(2, foundSubElements.size());
 	}
+	
+	@Test
+	public void testNotFoundElementsWithXpath() throws
+			Exception
+	{
+		System.out.println("NotFoundElementsWithXpath");
+		List<ConfigElement> foundSubElements = configDataManagerUnderTest.
+				findConfigElementsWithXpath("/element/that/cannot/be/found");
+		assertTrue(foundSubElements.isEmpty());
+	}
+	
 
 	@Test
 	public void testFindAttributeWithXpath() throws Exception
@@ -347,6 +358,14 @@ public class ConfigDataManagerTest
 				findConfigAttributeWithXpath(attrib.getXpath());
 		assertNotNull(foundAttribute);
 	}
+	
+	@Test(expected = NonExistentEntityException.class)
+	public void testNotFoundAttributeWithXpath() throws Exception
+	{
+		System.out.println("NotFoundAttributeWithXpath");
+		configDataManagerUnderTest.
+				findConfigAttributeWithXpath("/attribute/that/cannot/be/found");
+	}	
 
 	@Test(expected = com.rdonasco.common.exceptions.DataAccessException.class)
 	public void testFindAttributeWithXpathReturningMultipleRecords() throws

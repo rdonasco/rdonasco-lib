@@ -37,6 +37,7 @@ import com.rdonasco.config.exceptions.LoadValueException;
 import com.rdonasco.config.parsers.ValueParser;
 import com.rdonasco.config.util.XpathToConfigTransformer;
 import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.datamanager.utils.CommonConstants;
 import com.rdonasco.common.i18.I18NResource;
 
@@ -262,7 +263,7 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 
 	@Override
 	public ConfigAttribute findConfigAttributeWithXpath(String xpath) throws
-			DataAccessException
+			DataAccessException, NonExistentEntityException
 	{
 		ConfigAttribute attribute = null;
 		try
@@ -271,6 +272,10 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 			parameters.put(ConfigAttribute.QUERY_PARAM_XPATH, xpath);
 			attribute = getConfigAttributeDAO().findUniqueDataUsingNamedQuery(
 					ConfigAttribute.NAMED_QUERY_FIND_BY_XPATH, parameters);
+		}
+		catch(NonExistentEntityException e)
+		{
+			throw e;
 		}
 		catch (Exception e)
 		{
@@ -281,7 +286,7 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 
 	@Override
 	public ConfigElement findConfigElementWithXpath(String xpath) throws
-			DataAccessException
+			DataAccessException, NonExistentEntityException
 	{
 		ConfigElement configElement = null;
 		try
@@ -290,6 +295,10 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 			parameters.put(ConfigElement.QUERY_PARAM_XPATH, xpath);
 			configElement = getConfigElementDAO().findUniqueDataUsingNamedQuery(
 					ConfigElement.NAMED_QUERY_FIND_BY_XPATH, parameters);
+		}
+		catch(NonExistentEntityException e)
+		{
+			throw e;
 		}
 		catch (Exception e)
 		{
