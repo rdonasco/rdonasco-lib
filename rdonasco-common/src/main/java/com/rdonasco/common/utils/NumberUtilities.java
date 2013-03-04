@@ -14,33 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.rdonasco.common.utils;
+
+import java.text.DecimalFormat;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public final class NumberUtilities 
+public final class NumberUtilities
 {
+
 	private static long MIN_SEED = 1;
 	private static long MAX_SEED = Long.MAX_VALUE;
-	
+
 	public static long generateRandomLongValue()
 	{
 		long randomID = generateRandomLongValue(MIN_SEED, Long.MAX_VALUE);
 		return randomID;
 	}
-	
+
 	public static int generateRandomIntValue()
 	{
-		int randomID = (int)generateRandomLongValue(MIN_SEED, Integer.MAX_VALUE);
+		int randomID = (int) generateRandomLongValue(MIN_SEED, Integer.MAX_VALUE);
 		return randomID;
 	}
 	
+	public static int generateRandomIntValue(int min, int max)
+	{
+		return (int) generateRandomLongValue(min, max);
+	}
+
 	public static long generateRandomLongValue(long min, long max)
 	{
 		long randomID = Math.round(Math.random() * (max - min) + min);
 		return randomID;
+	}
+
+	public static String generateKey(String decimalFormat, long start, long end)
+	{
+		DecimalFormat dformat = new DecimalFormat(decimalFormat);
+		return dformat.format(generateRandomLongValue(start, end));
 	}
 }
