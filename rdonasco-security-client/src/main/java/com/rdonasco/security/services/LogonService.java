@@ -15,7 +15,7 @@
  */
 package com.rdonasco.security.services;
 
-import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
+import com.rdonasco.security.exceptions.SecurityAuthenticationException;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 
 /**
@@ -24,5 +24,6 @@ import com.rdonasco.security.vo.UserSecurityProfileVO;
  */
 public interface LogonService
 {
-    UserSecurityProfileVO logon(String userID, String password) throws SecurityProfileNotFoundException;
+    UserSecurityProfileVO logon(String userID, String password) 
+			throws SecurityAuthenticationException;
 }
