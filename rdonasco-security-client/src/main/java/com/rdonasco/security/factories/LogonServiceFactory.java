@@ -17,8 +17,8 @@
 
 package com.rdonasco.security.factories;
 
+import com.rdonasco.security.exceptions.LogonServiceNotFoundException;
 import com.rdonasco.security.services.LogonService;
-import javax.enterprise.inject.spi.InjectionPoint;
 
 /**
  *
@@ -26,5 +26,5 @@ import javax.enterprise.inject.spi.InjectionPoint;
  */
 public interface LogonServiceFactory 
 {
-	public LogonService createLogonService(InjectionPoint injectionPoint);
+	public LogonService createLogonService(String serviceID) throws LogonServiceNotFoundException;
 }

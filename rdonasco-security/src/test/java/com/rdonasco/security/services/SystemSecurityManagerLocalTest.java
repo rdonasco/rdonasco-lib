@@ -84,7 +84,15 @@ public class SystemSecurityManagerLocalTest
 		UserSecurityProfileVO userSecurityProfileVO = createTestDataUserProfileWithCapability();
 		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userSecurityProfileVO);
 		systemSecurityManager.removeSecurityProfile(createdUser);
-		systemSecurityManager.findSecurityProfileWithLogonID(createdUser.getLogonId());
+		try
+		{
+			systemSecurityManager.findSecurityProfileWithLogonID(createdUser.getLogonId());
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
 	// ------ utility methods below here ------ //

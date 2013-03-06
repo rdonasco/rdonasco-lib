@@ -20,7 +20,6 @@
  */
 package com.rdonasco.security.utils;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -33,6 +32,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * This class is used for encrypting decrypting String using password.
@@ -79,7 +79,7 @@ public class EncryptionUtil
 		Cipher pbeCipher = Cipher.getInstance(CIPHER_KEY_SPEC);
 		pbeCipher.init(Cipher.ENCRYPT_MODE, pbeKey, PBE_PARAM_SPEC);
 		byte[] encryptedBytes = pbeCipher.doFinal(stringToEncrypt.getBytes());
-		return Base64.encode(encryptedBytes);
+		return Base64.encodeBase64String(encryptedBytes);
 	}
 
 	public static String decryptWithPassword(String encryptedString,
@@ -89,7 +89,7 @@ public class EncryptionUtil
 		SecretKey pbeKey = getKeyFactory().generateSecret(pbeKeySpec);
 		Cipher pbeCipher = Cipher.getInstance(CIPHER_KEY_SPEC);
 		pbeCipher.init(Cipher.DECRYPT_MODE, pbeKey, PBE_PARAM_SPEC);
-		byte[] decryptedBytes = pbeCipher.doFinal(Base64.decode(encryptedString));
+		byte[] decryptedBytes = pbeCipher.doFinal(Base64.decodeBase64(encryptedString));
 		return new String(decryptedBytes);
 	}
 

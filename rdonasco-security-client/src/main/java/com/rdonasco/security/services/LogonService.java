@@ -24,6 +24,7 @@ import com.rdonasco.security.vo.UserSecurityProfileVO;
  */
 public interface LogonService
 {
+	String getServiceID();
     UserSecurityProfileVO logon(String userID, String password) 
 			throws SecurityAuthenticationException;
 }
