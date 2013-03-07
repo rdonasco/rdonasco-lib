@@ -20,7 +20,9 @@ import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
+import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
+import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
 import com.rdonasco.security.model.Capability;
@@ -70,7 +72,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	
 	@Override
 	public void checkAccessRights(AccessRightsVO accessRights) throws
-			SecurityException
+			SecurityAuthorizationException
 	{
 		if (null == accessRights)
 		{
@@ -202,7 +204,30 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		{
 			throw new SecurityManagerException(e);
 		}
-	}		
+	}	
+
+	@Override
+	public boolean isSecuredResource(String resource)
+	{
+		boolean secured = true;
+		try
+		{
+			capabilityManager.findOrAddSecuredResourceNamedAs(resource);
+		}
+		catch(NotSecuredResourceException e)
+		{
+			LOG.log(Level.FINE,e.getMessage(),e);
+			secured = false;
+		}
+		catch (CapabilityManagerException e)
+		{
+			LOG.log(Level.FINE,e.getMessage());
+			secured = false;
+		}
+		return secured;
+	}
+	
+	
 
 	private void throwSecurityExceptionFor(AccessRightsVO accessRights) throws SecurityException
 	{
