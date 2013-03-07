@@ -16,6 +16,7 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
@@ -27,7 +28,7 @@ import com.rdonasco.security.vo.UserSecurityProfileVO;
 public interface SystemSecurityManager
 {
 
-	void checkAccessRights(AccessRightsVO accessRights) throws SecurityException;
+	void checkAccessRights(AccessRightsVO accessRights) throws SecurityAuthorizationException;
 
 	UserSecurityProfileVO createNewSecurityProfile(
 			UserSecurityProfileVO userSecurityProfile) throws
@@ -35,4 +36,5 @@ public interface SystemSecurityManager
 	
 	void removeSecurityProfile(UserSecurityProfileVO securityProfileToRemove) throws SecurityManagerException;
 	UserSecurityProfileVO findSecurityProfileWithLogonID(String logonID) throws SecurityManagerException;
+	boolean isSecuredResource(String resource);
 }
