@@ -31,5 +31,6 @@ import javax.interceptor.InterceptorBinding;
 @Retention(RUNTIME) @Target({TYPE, METHOD})
 public @interface Secured
 {
-	
+	String resource() default "";
+	String action() default "";	
 }
