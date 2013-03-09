@@ -18,15 +18,17 @@
 package com.rdonasco.security.services;
 
 import com.rdonasco.security.vo.UserSecurityProfileVO;
+import java.io.Serializable;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public class LoggedOnSession 
+public class LoggedOnSession implements Serializable
 {
 	private static ThreadLocal<UserSecurityProfileVO> sessionToken 
 			= new ThreadLocal<UserSecurityProfileVO>();
+	private static final long serialVersionUID = 1L;
 	public boolean isLoggedOn()
 	{
 		return (null != sessionToken.get());
