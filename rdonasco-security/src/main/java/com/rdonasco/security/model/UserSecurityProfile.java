@@ -117,16 +117,17 @@ public class UserSecurityProfile implements Serializable
 	public boolean equals(Object object)
 	{
 		// TODO: Warning - this method won't work in the case the id fields are not set
+		boolean isEqual = true;
 		if (!(object instanceof UserSecurityProfile))
 		{
-			return false;
+			isEqual = false;
 		}
 		UserSecurityProfile other = (UserSecurityProfile) object;
 		if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
 		{
-			return false;
+			isEqual = false;
 		}
-		return true;
+		return isEqual;
 	}
 
 	@Override
