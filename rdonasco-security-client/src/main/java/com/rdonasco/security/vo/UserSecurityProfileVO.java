@@ -19,6 +19,7 @@ package com.rdonasco.security.vo;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  *
@@ -30,15 +31,20 @@ public class UserSecurityProfileVO implements Serializable
 	private Long id;
 	private String logonId;
 	private String password;
+	private String registrationToken;
+	private Date registrationTokenExpiration;
 	private Collection<UserCapabilityVO> capabilities;
 
 	public UserSecurityProfileVO(Long id, String loginId, String password,
+			String token, Date expiryDate,
 			Collection<UserCapabilityVO> capabilities)
 	{
 		this.id = id;
 		this.logonId = loginId;
 		this.password = password;
 		this.capabilities = capabilities;
+		this.registrationToken = token;
+		this.registrationTokenExpiration = expiryDate;
 		if(null != capabilities)
 		{
 			for(UserCapabilityVO userCapabilityVO : capabilities)
@@ -77,8 +83,26 @@ public class UserSecurityProfileVO implements Serializable
 	{
 		this.password = password;
 	}
-	
-	
+
+	public String getRegistrationToken()
+	{
+		return registrationToken;
+	}
+
+	public void setRegistrationToken(String registrationToken)
+	{
+		this.registrationToken = registrationToken;
+	}
+
+	public Date getRegistrationTokenExpiration()
+	{
+		return registrationTokenExpiration;
+	}
+
+	public void setRegistrationTokenExpiration(Date registrationTokenExpiration)
+	{
+		this.registrationTokenExpiration = registrationTokenExpiration;
+	}
 
 	public Collection<UserCapabilityVO> getCapabilityVOList()
 	{

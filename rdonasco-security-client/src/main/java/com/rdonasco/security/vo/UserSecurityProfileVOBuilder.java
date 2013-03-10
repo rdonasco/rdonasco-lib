@@ -7,6 +7,7 @@ package com.rdonasco.security.vo;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 
 public class UserSecurityProfileVOBuilder 
@@ -15,6 +16,8 @@ public class UserSecurityProfileVOBuilder
 	private String loginId;
 	private Collection<UserCapabilityVO> capabilities = new ArrayList<UserCapabilityVO>();
 	private String password;
+	private Date expiryDate = new Date();
+	private String registrationToken;
 
 	public UserSecurityProfileVOBuilder()
 	{
@@ -38,6 +41,19 @@ public class UserSecurityProfileVOBuilder
 		return this;
 	}
 
+	public UserSecurityProfileVOBuilder setRegistrationToken(String token)
+	{
+		this.registrationToken = token;
+		return this;
+	}
+
+	public UserSecurityProfileVOBuilder setRegistrationTokenExpiry(
+			Date expiryDate)
+	{
+		this.expiryDate = expiryDate;
+		return this;
+	}
+
 	public UserSecurityProfileVOBuilder setCapabilities(Collection<UserCapabilityVO> capabilities)
 	{
 		this.capabilities = capabilities;
@@ -52,7 +68,8 @@ public class UserSecurityProfileVOBuilder
 
 	public UserSecurityProfileVO createUserSecurityProfileVO()
 	{
-		return new UserSecurityProfileVO(id, loginId, password, capabilities);
+		return new UserSecurityProfileVO(id, loginId, password, registrationToken, expiryDate, capabilities);
 	}
+
 
 }
