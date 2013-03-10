@@ -101,17 +101,18 @@ public class UserSecurityProfileVO implements Serializable
 	@Override
 	public boolean equals(Object object)
 	{
+		boolean isEqual = true;
 		// TODO: Warning - this method won't work in the case the id fields are not set
 		if (!(object instanceof UserSecurityProfileVO))
 		{
-			return false;
+			isEqual = false;
 		}
 		UserSecurityProfileVO other = (UserSecurityProfileVO) object;
 		if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
 		{
-			return false;
+			isEqual = false;
 		}
-		return true;
+		return isEqual;
 	}
 
 	@Override
