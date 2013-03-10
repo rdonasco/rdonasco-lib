@@ -16,6 +16,7 @@
 package com.rdonasco.security.services;
 
 import com.rdonasco.security.exceptions.SecurityAuthenticationException;
+import com.rdonasco.security.vo.LogonVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 
 /**
@@ -25,6 +26,6 @@ import com.rdonasco.security.vo.UserSecurityProfileVO;
 public interface LogonService
 {
 	String getServiceID();
-    UserSecurityProfileVO logon(String userID, String password) 
+	UserSecurityProfileVO logon(LogonVO logonVO)
 			throws SecurityAuthenticationException;
 }
