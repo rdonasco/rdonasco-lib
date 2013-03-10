@@ -18,6 +18,7 @@ package com.rdonasco.security.model;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,6 +32,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -58,6 +61,13 @@ public class UserSecurityProfile implements Serializable
 	@Basic(optional = false)
 	@Column(name = "password", nullable = false, length = 256)
 	private String password;
+	@Basic(optional = true)
+	@Column(name = "registrationToken")
+	private String registrationToken;
+	@Basic(optional = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "tokenExpiration")
+	private Date registrationTokenExpiration;
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile", fetch = FetchType.EAGER)
 	private Collection<UserCapability> capabilities;
 	
@@ -89,6 +99,26 @@ public class UserSecurityProfile implements Serializable
 	public void setPassword(String password)
 	{
 		this.password = password;
+	}
+
+	public String getRegistrationToken()
+	{
+		return registrationToken;
+	}
+
+	public void setRegistrationToken(String registrationToken)
+	{
+		this.registrationToken = registrationToken;
+	}
+
+	public Date getRegistrationTokenExpiration()
+	{
+		return registrationTokenExpiration;
+	}
+
+	public void setRegistrationTokenExpiration(Date registrationTokenExpiration)
+	{
+		this.registrationTokenExpiration = registrationTokenExpiration;
 	}
 
 	public Collection<UserCapability> getCapabilities()

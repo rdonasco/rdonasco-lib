@@ -17,12 +17,10 @@
 package com.rdonasco.security.services;
 
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
-import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.Action;
-import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility;
 import com.rdonasco.security.vo.AccessRightsVO;
@@ -33,6 +31,7 @@ import com.rdonasco.security.vo.ResourceVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 import org.junit.After;
@@ -136,7 +135,8 @@ public class SystemSecurityManagerImplTest
 				.setResourceID(Long.MIN_VALUE)
 				.setUserProfileVO(userSecurityProfileVOMock)
 				.createAccessRightsVO();
-		
+		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
+		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
 		when(userSecurityProfileDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getCapabilityOnAddingUser());
 		instance.checkAccessRights(accessRights);
 	}
@@ -221,7 +221,8 @@ public class SystemSecurityManagerImplTest
 				.createAccessRightsVO();
 		List<Capability> emptyCapability = new ArrayList<Capability>();
 		when(userSecurityProfileDAOMock.loadCapabilitiesOf(userSecurityProfileMock)).thenReturn(emptyCapability);
-		
+		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
+		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
 		ActionVO actionVOtoReturn = new ActionVO();
 		actionVOtoReturn.setId(Long.MIN_VALUE);
 		actionVOtoReturn.setName("Edit");

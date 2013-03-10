@@ -71,6 +71,10 @@ public class SecurityEntityValueObjectConverterTest
 		UserSecurityProfile result = SecurityEntityValueObjectConverter.toUserProfile(userSecurityProfileVO);
 		assertNotNull(result);
 		assertNotNull(result.getId());
+		assertNotNull(result.getRegistrationToken());
+		assertNotNull(result.getRegistrationTokenExpiration());
+		assertEquals(userSecurityProfileVO.getRegistrationToken(), result.getRegistrationToken());
+		assertEquals(userSecurityProfileVO.getRegistrationTokenExpiration(), result.getRegistrationTokenExpiration());
 		assertEquals(new Long(Long.MIN_VALUE), result.getId());
 
 	}
@@ -291,9 +295,13 @@ public class SecurityEntityValueObjectConverterTest
 		System.out.println("toUserProfileVO");		
 		UserSecurityProfile userSecurityProfile 
 				= SecurityEntityValueObjectDataUtility.createTestDataUserSecurityProfileWithCapability("edit","User");
-		UserSecurityProfileVO userSecurityProfileVO = SecurityEntityValueObjectConverter.toUserProfileVO(userSecurityProfile);
-		assertNotNull(userSecurityProfileVO);
-		assertEquals(userSecurityProfile.getId(),userSecurityProfileVO.getId());
+		UserSecurityProfileVO result = SecurityEntityValueObjectConverter.toUserProfileVO(userSecurityProfile);
+		assertNotNull(result);
+		assertEquals(userSecurityProfile.getId(), result.getId());
+		assertNotNull(result.getRegistrationToken());
+		assertNotNull(result.getRegistrationTokenExpiration());
+		assertEquals(userSecurityProfile.getRegistrationToken(), result.getRegistrationToken());
+		assertEquals(userSecurityProfile.getRegistrationTokenExpiration(), result.getRegistrationTokenExpiration());
 	}
 
 }

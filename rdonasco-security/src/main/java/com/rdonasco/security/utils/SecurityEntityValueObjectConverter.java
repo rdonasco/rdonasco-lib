@@ -215,20 +215,18 @@ public class SecurityEntityValueObjectConverter
 				.setActionVO(toActionVO(capabilityAction.getAction()))
 				.setId(capabilityAction.getId())
 				.createCapabilityActionVO();
-		if (null != capabilityAction)
-		{
-			CapabilityVO capabilityVO = toCapabilityVO(capabilityAction.getCapability());
-			capabilityActionVO.setCapabilityVO(capabilityVO);
-		}
+		CapabilityVO capabilityVO = toCapabilityVO(capabilityAction.getCapability());
+		capabilityActionVO.setCapabilityVO(capabilityVO);
 		return capabilityActionVO;
 	}
 
 	public static UserSecurityProfileVO toUserProfileVO(
-			UserSecurityProfile profileToConvert) throws IllegalAccessException, InvocationTargetException
+			UserSecurityProfile profileToConvert) throws IllegalAccessException,
+			InvocationTargetException
 	{
 		UserCapabilityVO userCapabilityVO;
 		List<UserCapabilityVO> userCapabilityVOList = new ArrayList<UserCapabilityVO>();
-		for(UserCapability userCapability : profileToConvert.getCapabilities())
+		for (UserCapability userCapability : profileToConvert.getCapabilities())
 		{
 			userCapabilityVO = toUserCapabilityVO(userCapability);
 			userCapabilityVOList.add(userCapabilityVO);
@@ -238,11 +236,14 @@ public class SecurityEntityValueObjectConverter
 				.setLoginId(profileToConvert.getLogonId())
 				.setPassword(profileToConvert.getPassword())
 				.setCapabilities(userCapabilityVOList)
+				.setRegistrationToken(profileToConvert.getRegistrationToken())
+				.setRegistrationTokenExpiry(profileToConvert.getRegistrationTokenExpiration())
 				.createUserSecurityProfileVO();
 		return userSecurityProfileVO;
 	}
 
-	public static UserCapabilityVO toUserCapabilityVO(UserCapability userCapability) 
+	public static UserCapabilityVO toUserCapabilityVO(
+			UserCapability userCapability)
 			throws IllegalAccessException, InvocationTargetException
 	{
 		UserCapabilityVO userCapabilityVO = new UserCapabilityVOBuilder()

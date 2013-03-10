@@ -22,6 +22,7 @@ import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -107,6 +108,8 @@ public class SecurityEntityValueObjectDataUtility
 		userCapability.setUserProfile(userSecurityProfile);
 		capabilities.add(userCapability);		
 		userSecurityProfile.setCapabilities(capabilities);
+		userSecurityProfile.setRegistrationToken("token");
+		userSecurityProfile.setRegistrationTokenExpiration(new Date());
 		
 		return userSecurityProfile;
 	}
@@ -209,6 +212,8 @@ public class SecurityEntityValueObjectDataUtility
 				.setId(Long.MIN_VALUE)
 				.setLoginId("testLoginID")
 				.setPassword("testPassword")
+				.setRegistrationToken("token")
+				.setRegistrationTokenExpiry(new Date())
 				.addCapability(userCapability);
 		UserSecurityProfileVO userProfileVO = userSecurityProfileVOBuilder.createUserSecurityProfileVO();
 		userCapability.setUserProfile(userProfileVO);
@@ -220,6 +225,8 @@ public class SecurityEntityValueObjectDataUtility
 		UserSecurityProfileVO userSecurityProfileVO = new UserSecurityProfileVOBuilder()
 				.setId(Long.MIN_VALUE)
 				.setLoginId("testLoginID")
+				.setRegistrationToken("token")
+				.setRegistrationTokenExpiry(new Date())
 				.createUserSecurityProfileVO();
 		return userSecurityProfileVO;
 	}
