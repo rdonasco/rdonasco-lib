@@ -36,6 +36,7 @@ public class LoggedOnSession implements Serializable
 	
 	public void setLoggedOnUser(UserSecurityProfileVO loggedOnUser)
 	{
+		clear();
 		sessionToken.set(loggedOnUser);
 	}
 	
@@ -46,6 +47,6 @@ public class LoggedOnSession implements Serializable
 
 	public void clear()
 	{
-		sessionToken.set(null);
+		sessionToken.remove();
 	}
 }
