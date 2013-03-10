@@ -18,6 +18,7 @@ package com.rdonasco.security.vo;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
@@ -137,6 +138,19 @@ public class UserSecurityProfileVO implements Serializable
 			isEqual = false;
 		}
 		return isEqual;
+	}
+
+	public boolean isTokenExpired()
+	{
+		Calendar now = Calendar.getInstance();
+		boolean isExpired = (getRegistrationToken() == null || getRegistrationToken().isEmpty() || getRegistrationTokenExpiration() == null);
+		if (!isExpired)
+		{
+			Calendar expiry = Calendar.getInstance();
+			expiry.setTime(getRegistrationTokenExpiration());
+			isExpired = now.after(expiry);
+		}
+		return isExpired;
 	}
 
 	@Override
