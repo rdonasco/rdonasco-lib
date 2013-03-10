@@ -178,7 +178,8 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		{
 			Map<String,Object> parameters = new HashMap<String, Object>();
 			parameters.put(UserSecurityProfile.QUERY_PARAM_LOGON_ID, logonId);
-			userSecurityProfileDAO.findUniqueDataUsingNamedQuery(UserSecurityProfile.NAMED_QUERY_FIND_SECURITY_PROFILE_BY_LOGON_ID, parameters);
+			UserSecurityProfile userSecurityProfile = userSecurityProfileDAO.findUniqueDataUsingNamedQuery(UserSecurityProfile.NAMED_QUERY_FIND_SECURITY_PROFILE_BY_LOGON_ID, parameters);
+			foundSecurityProfileVO = SecurityEntityValueObjectConverter.toUserProfileVO(userSecurityProfile);
 		}
 		catch(NonExistentEntityException e)
 		{
