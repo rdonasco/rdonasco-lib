@@ -2,10 +2,15 @@ package com.rdonasco.security.services;
 
 import com.rdonasco.security.dao.ActionDAO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
+import com.rdonasco.security.exceptions.SecurityAuthenticationException;
+import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility;
+import com.rdonasco.security.vo.AccessRightsVO;
+import com.rdonasco.security.vo.AccessRightsVOBuilder;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
@@ -74,6 +79,51 @@ public class SystemSecurityManagerLocalTest
 		{
 			assertNotNull(savedUserCapabilityVO.getId());
 			System.out.println("savedUserCapabilityVO.toString()=" + savedUserCapabilityVO.toString());
+		}
+	}
+
+	@Test
+	public void testAddCapability() throws Exception
+	{
+		System.out.println("addCapability");
+		UserSecurityProfileVO userProfile = createTestDataUserProfileWithCapability();
+		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userProfile);
+		CapabilityVO additionalCapability = createTestDataCapabilityWithActionAndResourceName("fire", "employee");
+		systemSecurityManager.addCapabilityForUser(createdUser, additionalCapability);
+		String actionName = null;
+		for (CapabilityActionVO action : additionalCapability.getActions())
+		{
+			actionName = action.getActionVO().getName();
+		}
+		AccessRightsVO accessRights = new AccessRightsVOBuilder()
+				.setActionAsString(actionName)
+				.setResourceAsString(additionalCapability.getResource().getName())
+				.setUserProfileVO(createdUser)
+				.createAccessRightsVO();
+		systemSecurityManager.checkAccessRights(accessRights);
+	}
+
+	@Test(expected = Exception.class)
+	public void testCheckAccessRights() throws Exception
+	{
+		System.out.println("CheckAccessRights");
+		UserSecurityProfileVO userProfile = createTestDataUserProfileWithCapability();
+		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userProfile);
+		CapabilityVO additionalCapability = createTestDataCapabilityWithActionAndResourceName("fire", "employee");
+		systemSecurityManager.addCapabilityForUser(createdUser, additionalCapability);
+		String actionName = "doit";
+		AccessRightsVO accessRights = new AccessRightsVOBuilder()
+				.setActionAsString(actionName)
+				.setResourceAsString(additionalCapability.getResource().getName())
+				.setUserProfileVO(createdUser)
+				.createAccessRightsVO();
+		try
+		{
+			systemSecurityManager.checkAccessRights(accessRights);
+		}
+		catch (Exception e)
+		{
+			throw e;
 		}
 	}
 	

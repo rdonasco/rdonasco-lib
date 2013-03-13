@@ -25,6 +25,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.UniqueConstraint;
@@ -41,12 +43,18 @@ import javax.persistence.UniqueConstraint;
 		"id","capability_id"
 	}, name = "user_capability")
 })
+@NamedQueries(
+{
+	@NamedQuery(name = UserCapability.NAMED_QUERY_FIND_CAPABILITY_BY_USER,
+			query = "SELECT uc from UserCapability uc where uc.userProfile = :user")
+})
 public class UserCapability implements Serializable
 {
-
 	private static final long serialVersionUID = 1L;
 	private static final String GENERATOR_KEY = "USER_CAPABILITY_IDGEN";
 	private static final String GENERATOR_TABLE = "SEQUENCE";
+	public static final String NAMED_QUERY_FIND_CAPABILITY_BY_USER = "UserCapability.findCapabilityByUser";
+	public static final String QUERY_PARAM_USER = "user";
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = GENERATOR_KEY)
 	@TableGenerator(name = GENERATOR_KEY, table = GENERATOR_TABLE)

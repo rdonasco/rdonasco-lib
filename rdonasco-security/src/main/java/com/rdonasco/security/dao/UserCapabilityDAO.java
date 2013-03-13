@@ -1,6 +1,6 @@
 /*
  * Copyright 2013 Roy F. Donasco.
- * File Created on: 27-Jan-2013
+ * File Created on: 13-Mar-2013
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.rdonasco.security.dao;
 import com.rdonasco.common.dao.DataAccess;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.security.model.Capability;
+import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.UserSecurityProfile;
 import java.util.List;
 
@@ -26,6 +27,9 @@ import java.util.List;
  *
  * @author Roy F. Donasco
  */
-public interface UserSecurityProfileDAO extends DataAccess<UserSecurityProfile>
+public interface UserCapabilityDAO extends DataAccess<UserCapability>
 {
+
+	List<Capability> loadCapabilitiesOf(UserSecurityProfile user) throws
+			DataAccessException;
 }

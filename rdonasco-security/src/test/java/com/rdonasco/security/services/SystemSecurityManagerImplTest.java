@@ -16,9 +16,12 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.security.dao.UserCapabilityDAO;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
+import com.rdonasco.security.exceptions.SecurityAuthenticationException;
+import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.model.UserSecurityProfile;
@@ -53,6 +56,7 @@ public class SystemSecurityManagerImplTest
 	private static UserSecurityProfile userSecurityProfileMock;
 	private static UserSecurityProfileDAO userSecurityProfileDAOMock;
 	private static CapabilityManagerLocal capabilityManagerMock;
+	private static UserCapabilityDAO userCapabilityDAOMock;
 
 	public SystemSecurityManagerImplTest()
 	{
@@ -65,6 +69,7 @@ public class SystemSecurityManagerImplTest
 		userSecurityProfileMock = mock(UserSecurityProfile.class);
 		userSecurityProfileDAOMock = mock(UserSecurityProfileDAO.class);
 		capabilityManagerMock = mock(CapabilityManagerLocal.class);
+		userCapabilityDAOMock = mock(UserCapabilityDAO.class);
 	}
 
 	@AfterClass
@@ -79,6 +84,7 @@ public class SystemSecurityManagerImplTest
 		reset(userSecurityProfileMock);
 		reset(userSecurityProfileDAOMock);
 		reset(capabilityManagerMock);
+		reset(userCapabilityDAOMock);
 	}
 
 	@After
@@ -137,11 +143,11 @@ public class SystemSecurityManagerImplTest
 				.createAccessRightsVO();
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
 		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
-		when(userSecurityProfileDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getCapabilityOnAddingUser());
+		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getCapabilityOnAddingUser());
 		instance.checkAccessRights(accessRights);
 	}
 
-	@Test(expected = SecurityException.class)
+	@Test(expected = SecurityAuthorizationException.class)
 	public void testCheckInvalidAccessRights() throws Exception
 	{
 		System.out.println("checkInvalidAccessRights");
@@ -157,7 +163,7 @@ public class SystemSecurityManagerImplTest
 
 			SystemSecurityManagerImpl instance = prepareSecurityManagerInstanceToTest();
 
-			when(userSecurityProfileDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getCapabilityOnAddingUser());
+			when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getCapabilityOnAddingUser());
 			instance.checkAccessRights(accessRights);
 		}
 		catch (SecurityException e)
@@ -167,7 +173,7 @@ public class SystemSecurityManagerImplTest
 		}
 	}
 	
-	@Test(expected=SecurityException.class)
+	@Test(expected = SecurityAuthorizationException.class)
 	public void testRestrictedResource() throws Exception
 	{
 		System.out.println("restrictedResource");
@@ -181,7 +187,7 @@ public class SystemSecurityManagerImplTest
 				.setUserProfileVO(userSecurityProfileVOMock)
 				.createAccessRightsVO();
 		List<Capability> emptyCapability = new ArrayList<Capability>();
-		when(userSecurityProfileDAOMock.loadCapabilitiesOf(userSecurityProfileMock)).thenReturn(emptyCapability);
+		when(userCapabilityDAOMock.loadCapabilitiesOf(userSecurityProfileMock)).thenReturn(emptyCapability);
 		
 		ActionVO actionVOtoReturn = new ActionVO();
 		actionVOtoReturn.setId(Long.MIN_VALUE);
@@ -220,7 +226,7 @@ public class SystemSecurityManagerImplTest
 				.setUserProfileVO(userSecurityProfileVOMock)
 				.createAccessRightsVO();
 		List<Capability> emptyCapability = new ArrayList<Capability>();
-		when(userSecurityProfileDAOMock.loadCapabilitiesOf(userSecurityProfileMock)).thenReturn(emptyCapability);
+		when(userCapabilityDAOMock.loadCapabilitiesOf(userSecurityProfileMock)).thenReturn(emptyCapability);
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
 		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
 		ActionVO actionVOtoReturn = new ActionVO();
@@ -249,7 +255,7 @@ public class SystemSecurityManagerImplTest
 
 		SystemSecurityManagerImpl instance = prepareSecurityManagerInstanceToTest();
 
-		when(userSecurityProfileDAOMock.loadCapabilitiesOf(userSecurityProfile)).thenReturn(getCapabilityOnEditingUser());
+		when(userCapabilityDAOMock.loadCapabilitiesOf(userSecurityProfile)).thenReturn(getCapabilityOnEditingUser());
 
 		instance.checkAccessRights(accessRights);
 	}
@@ -275,13 +281,10 @@ public class SystemSecurityManagerImplTest
 
 	private SystemSecurityManagerImpl prepareSecurityManagerInstanceToTest()
 	{
-//		CapabilityManagerImpl capabilityManager = new CapabilityManagerImpl();
-//		capabilityManager.setCapabilityDAO(capabilityDAOMock);
-//		capabilityManager.setResourceDAO(resourceDAOMock);
-//		capabilityManager.setActionDAO(actionDAOMock);
 		SystemSecurityManagerImpl systemSecurityManager = new SystemSecurityManagerImpl();
 		systemSecurityManager.setCapabilityManager(capabilityManagerMock);
 		systemSecurityManager.setUserSecurityProfileDAO(userSecurityProfileDAOMock);
+		systemSecurityManager.setUserCapabilityDAO(userCapabilityDAOMock);
 		return systemSecurityManager;
 	}
 }

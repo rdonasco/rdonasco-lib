@@ -19,6 +19,7 @@ package com.rdonasco.security.services;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
+import com.rdonasco.security.dao.UserCapabilityDAO;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
@@ -32,6 +33,8 @@ import com.rdonasco.security.vo.AccessRightsVOBuilder;
 import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.ResourceVO;
+import com.rdonasco.security.vo.UserCapabilityVO;
+import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,10 +60,18 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	private static final Logger LOG = Logger.getLogger(SystemSecurityManagerImpl.class.getName());
 	@Inject
 	private UserSecurityProfileDAO userSecurityProfileDAO;
-	@EJB 
-	private CapabilityManagerLocal capabilityManager;	
+	@Inject
+	private UserCapabilityDAO userCapabilityDAO;
+	@EJB
+	private CapabilityManagerLocal capabilityManager;
 
-	public void setUserSecurityProfileDAO(UserSecurityProfileDAO userSecurityProfileDAO)
+	public void setUserCapabilityDAO(UserCapabilityDAO userCapabilityDAO)
+	{
+		this.userCapabilityDAO = userCapabilityDAO;
+	}
+
+	public void setUserSecurityProfileDAO(
+			UserSecurityProfileDAO userSecurityProfileDAO)
 	{
 		this.userSecurityProfileDAO = userSecurityProfileDAO;
 	}
@@ -69,10 +80,9 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	{
 		this.capabilityManager = capabilityManager;
 	}
-	
+
 	@Override
-	public void checkAccessRights(AccessRightsVO accessRights) throws
-			SecurityAuthorizationException
+	public void checkAccessRights(AccessRightsVO accessRights) 
 	{
 		if (null == accessRights)
 		{
@@ -86,10 +96,10 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			if (capabilitiesNotFound)
 			{
 				capabilityManager.findOrAddActionNamedAs(accessRights.getAction().getName());
-				ResourceVO securedResourceVO = capabilityManager.findOrAddSecuredResourceNamedAs(accessRights.getResource().getName());	
-				if(null != securedResourceVO)
+				ResourceVO securedResourceVO = capabilityManager.findOrAddSecuredResourceNamedAs(accessRights.getResource().getName());
+				if (null != securedResourceVO)
 				{
-					throwSecurityExceptionFor(accessRights);
+					throwSecurityAuthorizationExceptionFor(accessRights);
 				}
 			}
 			else
@@ -104,10 +114,10 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 								.setUserProfileVO(accessRights.getUserProfile()).createAccessRightsVO();
 						accessRightsSet.add(rights);
 					}
-					if (!accessRightsSet.contains(accessRights))
-					{
-						throwSecurityExceptionFor(accessRights);
-					}
+				}
+				if (!accessRightsSet.contains(accessRights))
+				{
+					throwSecurityAuthorizationExceptionFor(accessRights);
 				}
 			}
 
@@ -119,10 +129,9 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		catch (Exception e)
 		{
 			LOG.log(Level.SEVERE, e.getMessage(), e);
-			throw new SecurityException(e);
+			throw new SecurityAuthorizationException(e);
 		}
 	}
-
 
 	private List<CapabilityVO> retrieveCapabilitiesOfUser(
 			AccessRightsVO accessRights)
@@ -133,7 +142,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		{
 
 			UserSecurityProfile userProfile = SecurityEntityValueObjectConverter.toUserProfile(accessRights.getUserProfile());
-			List<Capability> capabilities = userSecurityProfileDAO
+			List<Capability> capabilities = userCapabilityDAO
 					.loadCapabilitiesOf(userProfile);
 			capabilityVOList = new ArrayList<CapabilityVO>(capabilities.size());
 			CapabilityVO capabilityVO = null;
@@ -163,49 +172,52 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			userSecurityProfileDAO.create(profileToCreate);
 			createdProfile = SecurityEntityValueObjectConverter.toUserProfileVO(profileToCreate);
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			throw new SecurityManagerException(e);
 		}
 		return createdProfile;
-	}	
+	}
 
 	@Override
-	public UserSecurityProfileVO findSecurityProfileWithLogonID(String logonId) throws SecurityManagerException
+	public UserSecurityProfileVO findSecurityProfileWithLogonID(String logonId)
+			throws SecurityManagerException
 	{
 		UserSecurityProfileVO foundSecurityProfileVO = null;
 		try
 		{
-			Map<String,Object> parameters = new HashMap<String, Object>();
+			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put(UserSecurityProfile.QUERY_PARAM_LOGON_ID, logonId);
 			UserSecurityProfile userSecurityProfile = userSecurityProfileDAO.findUniqueDataUsingNamedQuery(UserSecurityProfile.NAMED_QUERY_FIND_SECURITY_PROFILE_BY_LOGON_ID, parameters);
 			foundSecurityProfileVO = SecurityEntityValueObjectConverter.toUserProfileVO(userSecurityProfile);
 		}
-		catch(NonExistentEntityException e)
+		catch (NonExistentEntityException e)
 		{
 			throw new SecurityProfileNotFoundException(e);
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			throw new SecurityManagerException(e);
 		}
-		
+
 		return foundSecurityProfileVO;
-	}		
+	}
 
 	@Override
-	public void removeSecurityProfile(UserSecurityProfileVO securityProfileToRemove) throws SecurityManagerException
+	public void removeSecurityProfile(
+			UserSecurityProfileVO securityProfileToRemove) throws
+			SecurityManagerException
 	{
 		try
 		{
 			this.userSecurityProfileDAO.delete(UserSecurityProfile.class, securityProfileToRemove.getId());
 			LOG.log(Level.INFO, "Security profile {0} removed", securityProfileToRemove.toString());
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			throw new SecurityManagerException(e);
 		}
-	}	
+	}
 
 	@Override
 	public boolean isSecuredResource(String resource)
@@ -215,28 +227,76 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		{
 			capabilityManager.findOrAddSecuredResourceNamedAs(resource);
 		}
-		catch(NotSecuredResourceException e)
+		catch (NotSecuredResourceException e)
 		{
-			LOG.log(Level.FINE,e.getMessage(),e);
+			LOG.log(Level.FINE, e.getMessage(), e);
 			secured = false;
 		}
 		catch (CapabilityManagerException e)
 		{
-			LOG.log(Level.FINE,e.getMessage());
+			LOG.log(Level.FINE, e.getMessage());
 			secured = false;
 		}
 		return secured;
 	}
-	
-	
 
-	private void throwSecurityExceptionFor(AccessRightsVO accessRights) throws SecurityException
+	@Override
+	public void addCapabilityForUser(UserSecurityProfileVO userSecurityProfileVO,
+			CapabilityVO capability) throws SecurityManagerException
+	{
+		try
+		{
+			UserCapabilityVO userCapabilityVO = new UserCapabilityVOBuilder()
+					.setCapability(capability)
+					.setUserProfile(userSecurityProfileVO)
+					.createUserCapabilityVO();
+			userSecurityProfileVO.addCapbility(userCapabilityVO);
+			UserSecurityProfile userSecurityProfile = SecurityEntityValueObjectConverter.toUserProfile(userSecurityProfileVO);
+			userSecurityProfileDAO.update(userSecurityProfile);
+		}
+		catch (Exception e)
+		{
+			throw new SecurityManagerException(e);
+		}
+	}
+
+	@Override
+	public void setupDefaultCapabilitiesForUser(
+			UserSecurityProfileVO userSecurityProfile) throws
+			SecurityManagerException
+	{
+		for (String[] capabilityArray : SystemSecurityInitializerLocal.DEFAULT_CAPABILITY_ELEMENTS)
+		{
+			try
+			{
+				CapabilityVO capability = capabilityManager.findCapabilityWithTitle(
+						capabilityArray[SystemSecurityInitializerLocal.ELEMENT_CAPABILITY_TITLE]);
+				addCapabilityForUser(userSecurityProfile, capability);
+
+			}
+			catch (CapabilityManagerException ex)
+			{
+				LOG.log(Level.WARNING, ex.getMessage(), ex);
+			}
+			catch (NonExistentEntityException ex)
+			{
+				LOG.log(Level.WARNING, ex.getLocalizedMessage(), ex);
+			}
+			catch (Exception ex)
+			{
+				throw new SecurityManagerException(ex);
+			}
+		}
+	}
+
+	private void throwSecurityAuthorizationExceptionFor(
+			AccessRightsVO accessRights) throws
+			SecurityAuthorizationException
 	{
 		StringBuilder errorStringBuild = new StringBuilder("Access Denied on Resource {")
 				.append(accessRights.getResource().getName())
 				.append("} and Action {").append(accessRights.getAction().getName())
 				.append("} for profile with login id {").append(accessRights.getUserProfile().getLogonId()).append("}");
-		throw new SecurityException(errorStringBuild.toString());
+		throw new SecurityAuthorizationException(errorStringBuild.toString());
 	}
-
 }

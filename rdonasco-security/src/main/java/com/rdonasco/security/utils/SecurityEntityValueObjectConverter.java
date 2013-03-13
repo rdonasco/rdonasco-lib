@@ -45,7 +45,11 @@ public class SecurityEntityValueObjectConverter
 			throws IllegalAccessException, InvocationTargetException
 	{
 		UserSecurityProfile userSecurityProfile = new UserSecurityProfile();
-		BEAN_UTILS.copyProperties(userSecurityProfile, userSecurityProfileVO);
+		userSecurityProfile.setId(userSecurityProfileVO.getId());
+		userSecurityProfile.setLogonId(userSecurityProfileVO.getLogonId());
+		userSecurityProfile.setPassword(userSecurityProfileVO.getPassword());
+		userSecurityProfile.setRegistrationToken(userSecurityProfileVO.getRegistrationToken());
+		userSecurityProfile.setRegistrationTokenExpiration(userSecurityProfileVO.getRegistrationTokenExpiration());
 		if (null == userSecurityProfileVO.getId())
 		{
 			userSecurityProfile.setId(userSecurityProfileVO.getId());
