@@ -20,6 +20,7 @@ package com.rdonasco.security.services;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.vo.AccessRightsVO;
+import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import javax.ejb.EJB;
 
@@ -33,8 +34,7 @@ public class SystemSecurityManagerDecorator implements SystemSecurityManager
 	private SystemSecurityManagerRemote systemSecurityManager;
 
 	@Override
-	public void checkAccessRights(AccessRightsVO accessRights) throws
-			SecurityAuthorizationException
+	public void checkAccessRights(AccessRightsVO accessRights)
 	{
 		systemSecurityManager.checkAccessRights(accessRights);
 	}
@@ -67,6 +67,20 @@ public class SystemSecurityManagerDecorator implements SystemSecurityManager
 	{
 		return systemSecurityManager.isSecuredResource(resource);
 	}
-	
+
+	@Override
+	public void setupDefaultCapabilitiesForUser(
+			UserSecurityProfileVO userSecurityProfile) throws
+			SecurityManagerException
+	{
+		systemSecurityManager.setupDefaultCapabilitiesForUser(userSecurityProfile);
+	}
+
+	@Override
+	public void addCapabilityForUser(UserSecurityProfileVO userSecurityProfile,
+			CapabilityVO capability) throws SecurityManagerException
+	{
+		systemSecurityManager.addCapabilityForUser(userSecurityProfile, capability);
+	}
 	
 }

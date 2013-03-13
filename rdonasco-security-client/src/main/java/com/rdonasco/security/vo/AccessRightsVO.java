@@ -111,6 +111,10 @@ public class AccessRightsVO implements Serializable
 		return this.getId().equals(other.getId());
 	}
 
-
+	@Override
+	public String toString()
+	{
+		return "AccessRightsVO{" + "resource=" + resource.getName() + ", userProfile=" + userProfile.getId() + ", action=" + action.getName() + '}';
+	}
 	
 }

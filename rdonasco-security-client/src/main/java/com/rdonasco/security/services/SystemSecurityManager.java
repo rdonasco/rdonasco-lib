@@ -19,6 +19,7 @@ package com.rdonasco.security.services;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.vo.AccessRightsVO;
+import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 
 /**
@@ -28,11 +29,18 @@ import com.rdonasco.security.vo.UserSecurityProfileVO;
 public interface SystemSecurityManager
 {
 
-	void checkAccessRights(AccessRightsVO accessRights) throws SecurityAuthorizationException;
+	void checkAccessRights(AccessRightsVO accessRights);
 
 	UserSecurityProfileVO createNewSecurityProfile(
 			UserSecurityProfileVO userSecurityProfile) throws
 			SecurityManagerException;
+
+	void setupDefaultCapabilitiesForUser(
+			UserSecurityProfileVO userSecurityProfile)
+			throws SecurityManagerException;
+
+	void addCapabilityForUser(UserSecurityProfileVO userSecurityProfile,
+			CapabilityVO capability) throws SecurityManagerException;
 	
 	void removeSecurityProfile(UserSecurityProfileVO securityProfileToRemove) throws SecurityManagerException;
 	UserSecurityProfileVO findSecurityProfileWithLogonID(String logonID) throws SecurityManagerException;
