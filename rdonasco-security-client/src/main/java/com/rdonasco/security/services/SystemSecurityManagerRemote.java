@@ -4,7 +4,6 @@
  */
 package com.rdonasco.security.services;
 
-import com.rdonasco.security.vo.ActionVO;
 import javax.ejb.Remote;
 
 /**
