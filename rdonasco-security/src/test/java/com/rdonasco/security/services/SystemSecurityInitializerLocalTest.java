@@ -69,10 +69,10 @@ public class SystemSecurityInitializerLocalTest
 				.addPackage(ConfigElement.class.getPackage())
 				.addPackage(ConfigDataManagerLocal.class.getPackage())
 				.addPackage(ConfigAttributeVO.class.getPackage())
+				.addPackage(ConfigDataValueObjectConverter.class.getPackage())
 				.addPackage(ActionDAO.class.getPackage())
 				.addPackage(Action.class.getPackage())
 				.addPackage(CapabilityManagerLocal.class.getPackage())
-				.addPackage(ConfigDataValueObjectConverter.class.getPackage())
 				.addPackage(SecurityEntityValueObjectConverter.class.getPackage())
 				.addAsManifestResource(new ByteArrayAsset("<beans/>".getBytes()), ArchivePaths.create("beans.xml"))
 				.addAsResource(I18NResource.class.getPackage(), "i18nResource.properties", "/WEB-INF/classes/net/baligya/i18n")
@@ -110,6 +110,9 @@ public class SystemSecurityInitializerLocalTest
 				String action = capabilityArray[i];
 				CapabilityActionVO actionVO = capability.findActionNamed(action);
 				assertNotNull(actionVO);
+				assertNotNull(capability.getResource().getName());
+				assertEquals(capabilityArray[SystemSecurityInitializerLocal.ELEMENT_RESOURCE], capability.getResource().getName());
+
 			}
 		}
 	}
