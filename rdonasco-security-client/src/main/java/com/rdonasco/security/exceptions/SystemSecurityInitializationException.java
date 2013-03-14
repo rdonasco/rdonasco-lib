@@ -20,7 +20,7 @@ package com.rdonasco.security.exceptions;
  *
  * @author Roy F. Donasco
  */
-public class SystemSecurityInitializationException extends Exception
+public class SystemSecurityInitializationException extends RuntimeException
 {
 	private static final long serialVersionUID = 1L;
 
