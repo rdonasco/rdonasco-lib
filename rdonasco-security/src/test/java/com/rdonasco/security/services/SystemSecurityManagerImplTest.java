@@ -20,7 +20,6 @@ import com.rdonasco.security.dao.UserCapabilityDAO;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
-import com.rdonasco.security.exceptions.SecurityAuthenticationException;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.Action;
