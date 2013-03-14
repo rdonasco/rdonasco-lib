@@ -23,7 +23,6 @@ import com.rdonasco.config.services.ConfigDataManagerProxyRemote;
 import com.rdonasco.config.vo.ConfigAttributeVO;
 import com.rdonasco.config.vo.ConfigElementVO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
-import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import com.rdonasco.security.exceptions.SystemSecurityInitializationException;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
@@ -33,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
@@ -51,8 +51,7 @@ public class SystemSecurityInitializer implements SystemSecurityInitializerLocal
 	private CapabilityManagerLocal capabilityManager;
 
 	@Override
-	public void initializeDefaultSystemAccessCapabilities() throws
-			SystemSecurityInitializationException
+	public void initializeDefaultSystemAccessCapabilities()
 	{
 		try
 		{
@@ -112,7 +111,7 @@ public class SystemSecurityInitializer implements SystemSecurityInitializerLocal
 	{
 		CapabilityVO capabilityVO;
 		ConfigAttributeVO resourceAttributeVO = configDataManager.findConfigAttributeWithXpath(configResourceXpath);
-		ResourceVO resourceVOToAdd = capabilityManager.findOrAddResourceNamedAs(resourceAttributeVO.getName());
+		ResourceVO resourceVOToAdd = capabilityManager.findOrAddResourceNamedAs(resourceAttributeVO.getValue());
 
 		capabilityVO = new CapabilityVOBuilder()
 				.setTitle(capabilityConfig.getName())
