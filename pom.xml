@@ -17,5 +17,6 @@
     <module>rdonasco-security-client</module>
     <module>rdonasco-config</module>
     <module>rdonasco-config-client</module>
+    <module>rdonasco-config-view</module>
   </modules>
 </project>
