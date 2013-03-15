@@ -39,6 +39,7 @@ import com.rdonasco.common.i18.I18NResource;
 public class ConfigDataContainer extends HierarchicalContainer implements
 		ViewWidget
 {
+	private static final long serialVersionUID = 1L;
 
 	@EJB
 	private ConfigDataManagerLocal dataManager;
