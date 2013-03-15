@@ -19,8 +19,10 @@ package com.rdonasco.security.interceptors;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.services.LoggedOnSession;
 import com.rdonasco.security.services.SystemSecurityManager;
+import com.rdonasco.security.services.SystemSecurityManagerRemote;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
+import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
@@ -40,7 +42,9 @@ public class SecuredInterceptor
 	@Inject
 	private LoggedOnSession loggedOnSession;
 
-	void setSystemSecurityManager(SystemSecurityManager systemSecurityManager)
+	@EJB
+	void setSystemSecurityManager(
+			SystemSecurityManagerRemote systemSecurityManager)
 	{
 		this.securityManager = systemSecurityManager;
 	}

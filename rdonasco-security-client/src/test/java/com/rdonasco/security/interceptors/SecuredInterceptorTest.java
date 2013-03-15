@@ -19,6 +19,7 @@ package com.rdonasco.security.interceptors;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.services.LoggedOnSession;
 import com.rdonasco.security.services.SystemSecurityManager;
+import com.rdonasco.security.services.SystemSecurityManagerRemote;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
@@ -42,7 +43,7 @@ public class SecuredInterceptorTest
 {
 
 	InvocationContext joinPointMock = mock(InvocationContext.class);
-	SystemSecurityManager systemSecurityManagerMock = mock(SystemSecurityManager.class);
+	SystemSecurityManagerRemote systemSecurityManagerMock = mock(SystemSecurityManagerRemote.class);
 	LoggedOnSession sessionMock = mock(LoggedOnSession.class);
 
 	public SecuredInterceptorTest()
