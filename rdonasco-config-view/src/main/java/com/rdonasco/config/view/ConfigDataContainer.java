@@ -39,8 +39,8 @@ import com.rdonasco.common.i18.I18NResource;
 public class ConfigDataContainer extends HierarchicalContainer implements
 		ViewWidget
 {
-	private static final long serialVersionUID = 1L;
 
+	private static final long serialVersionUID = 1L;
 	@EJB
 	private ConfigDataManagerLocal dataManager;
 	protected static final String PROPERTY_CONFIG_NAME = "name";
@@ -130,7 +130,6 @@ public class ConfigDataContainer extends HierarchicalContainer implements
 		configElementItem.getItemProperty(PROPERTY_CONFIG_CHANGE_APPLICATOR).
 				setValue(new ConfigValueChangeApplicator()
 		{
-
 			@Override
 			public void applyChanges() throws ValueChangeException
 			{
@@ -193,9 +192,12 @@ public class ConfigDataContainer extends HierarchicalContainer implements
 			ConfigElement configElement)
 	{
 		Item configAttributeItem = addItem(configAttribute);
-		bindConfigAttributeToItem(configAttributeItem, configAttribute);
-		setChildrenAllowed(configAttribute, false);
-		setParent(configAttribute, configElement);
+		if (null != configAttributeItem)
+		{
+			bindConfigAttributeToItem(configAttributeItem, configAttribute);
+			setChildrenAllowed(configAttribute, false);
+			setParent(configAttribute, configElement);
+		}
 		return configAttributeItem;
 	}
 
@@ -209,7 +211,6 @@ public class ConfigDataContainer extends HierarchicalContainer implements
 		configAttributeItem.getItemProperty(PROPERTY_CONFIG_CHANGE_APPLICATOR).
 				setValue(new ConfigValueChangeApplicator()
 		{
-
 			@Override
 			public void applyChanges() throws ValueChangeException
 			{
