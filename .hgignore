@@ -15,3 +15,4 @@ rdonasco-common-vaadin/target
 derby.log
 rdonasco-config/target
 rdonasco-config-client/target
+rdonasco-config-view/target
