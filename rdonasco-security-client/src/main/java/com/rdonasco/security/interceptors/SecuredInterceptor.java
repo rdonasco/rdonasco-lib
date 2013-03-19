@@ -17,6 +17,7 @@
 package com.rdonasco.security.interceptors;
 
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
+import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.services.LoggedOnSession;
 import com.rdonasco.security.services.SystemSecurityManager;
 import com.rdonasco.security.services.SystemSecurityManagerRemote;
@@ -37,7 +38,6 @@ import javax.interceptor.InvocationContext;
 public class SecuredInterceptor
 {
 
-	@Inject
 	private SystemSecurityManager securityManager;
 	@Inject
 	private LoggedOnSession loggedOnSession;
@@ -65,25 +65,19 @@ public class SecuredInterceptor
 		{
 			action = getActionFromType(joinPoint);
 		}
-
-		if (!resource.isEmpty())
+		Object returnValue;
+		InvocationEventType invocationEventType = getInvocationEventTypeFromMethod(joinPoint);
+		if (InvocationEventType.BEFORE == invocationEventType)
 		{
-			if (securityManager.isSecuredResource(resource) && !loggedOnSession.isLoggedOn())
-			{
-				throw new SecurityAuthorizationException("Logon Required");
-			}
-			else if (securityManager.isSecuredResource(resource))
-			{
-				AccessRightsVO accessRightsVO = new AccessRightsVOBuilder()
-						.setResourceAsString(resource)
-						.setActionAsString(action)
-						.setUserProfileVO(securityManager.findSecurityProfileWithLogonID(loggedOnSession.getLoggedOnUser().getLogonId()))
-						.createAccessRightsVO();
-				securityManager.checkAccessRights(accessRightsVO);
-			}
+			doTheInvocationCheck(resource, action);
+			returnValue = joinPoint.proceed();
 		}
-
-		return joinPoint.proceed();
+		else
+		{
+			returnValue = joinPoint.proceed();
+			doTheInvocationCheck(resource, action);
+		}
+		return returnValue;
 	}
 
 	void setLoggedOnSession(LoggedOnSession loggedOnSession)
@@ -114,6 +108,18 @@ public class SecuredInterceptor
 		return resource;
 	}
 
+	private InvocationEventType getInvocationEventTypeFromMethod(
+			InvocationContext joinPoint)
+	{
+		InvocationEventType invocationEventType = InvocationEventType.BEFORE;
+		Secured methodAnnotation = joinPoint.getMethod().getAnnotation(Secured.class);
+		if (null != methodAnnotation)
+		{
+			invocationEventType = methodAnnotation.invocationEventType();
+		}
+		return invocationEventType;
+	}
+
 	private String getActionFromMethod(InvocationContext joinPoint)
 	{
 		String action = "";
@@ -134,5 +140,26 @@ public class SecuredInterceptor
 			action = typeAnnotation.action();
 		}
 		return action;
+	}
+
+	private void doTheInvocationCheck(String resource, String action) throws
+			SecurityManagerException, SecurityAuthorizationException
+	{
+		if (!resource.isEmpty())
+		{
+			if (securityManager.isSecuredResource(resource) && !loggedOnSession.isLoggedOn())
+			{
+				throw new SecurityAuthorizationException("Logon Required");
+			}
+			else if (securityManager.isSecuredResource(resource))
+			{
+				AccessRightsVO accessRightsVO = new AccessRightsVOBuilder()
+						.setResourceAsString(resource)
+						.setActionAsString(action)
+						.setUserProfileVO(securityManager.findSecurityProfileWithLogonID(loggedOnSession.getLoggedOnUser().getLogonId()))
+						.createAccessRightsVO();
+				securityManager.checkAccessRights(accessRightsVO);
+			}
+		}
 	}
 }
