@@ -45,7 +45,7 @@ public class SystemSecurityManagerLocalTest
 	private CapabilityManagerLocal capabilityManager;
 	@EJB
 	private SystemSecurityInitializerLocal systemSecurityInitializerLocal;
-
+	
 	@Deployment
 	public static JavaArchive createTestArchive()
 	{
