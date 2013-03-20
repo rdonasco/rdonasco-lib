@@ -17,5 +17,6 @@ Any value defined here will override the pom.xml file value but is only applicab
         <netbeans.compile.on.save>all</netbeans.compile.on.save>
         <org-zeroturnaround-jrebel-netbeans.remoting_2e_autosync>true</org-zeroturnaround-jrebel-netbeans.remoting_2e_autosync>
         <org-zeroturnaround-jrebel-netbeans.remoting_2e_notifications>true</org-zeroturnaround-jrebel-netbeans.remoting_2e_notifications>
+        <netbeans.hint.jdkPlatform>JDK_1.6</netbeans.hint.jdkPlatform>
     </properties>
 </project-shared-configuration>
