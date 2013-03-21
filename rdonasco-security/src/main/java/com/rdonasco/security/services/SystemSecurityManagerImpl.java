@@ -95,8 +95,8 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			List<CapabilityVO> capabilities = retrieveCapabilitiesOfUser(requestedAccessRight);
 			Set<AccessRightsVO> accessRightsSet = new HashSet<AccessRightsVO>();
 			boolean capabilitiesNotFound = (capabilities == null || capabilities.isEmpty());
-			ResourceVO securedResourceVO = ensureThatResourceExistsAndIsSecured(requestedAccessRight.getResource().getName());
 			capabilityManager.findOrAddActionNamedAs(requestedAccessRight.getAction().getName());
+			ResourceVO securedResourceVO = ensureThatResourceExistsAndIsSecured(requestedAccessRight.getResource().getName());			
 			if (capabilitiesNotFound)
 			{								
 				if (null != securedResourceVO)
