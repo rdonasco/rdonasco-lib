@@ -68,7 +68,7 @@ public class LoggedOnSessionTest
 	public void testSetLoggedOnUser()
 	{
 		System.out.println("setLoggedOnUser");
-		UserSecurityProfileVO loggedOnUser = createTestDataUserSecurityProfileVO(null);
+		UserSecurityProfileVO loggedOnUser = createTestDataUserSecurityProfileVO(LOGON_ID);
 		LoggedOnSession instance = new LoggedOnSession();
 		instance.setLoggedOnUser(loggedOnUser);
 		UserSecurityProfileVO loggedOnUserResult = instance.getLoggedOnUser();
@@ -83,6 +83,7 @@ public class LoggedOnSessionTest
 	{
 		System.out.println("getLoggedOnUser");
 		LoggedOnSession instance = new LoggedOnSession();
+		instance.setLoggedOnUser(createTestDataUserSecurityProfileVO(LOGON_ID));
 		assertTrue(instance.isLoggedOn());
 		UserSecurityProfileVO result = instance.getLoggedOnUser();
 		assertNotNull(result);
@@ -94,6 +95,7 @@ public class LoggedOnSessionTest
 	{
 		System.out.println("setNewLoggedOnUser");
 		LoggedOnSession instance = new LoggedOnSession();
+		instance.setLoggedOnUser(createTestDataUserSecurityProfileVO(LOGON_ID));
 		assertTrue(instance.isLoggedOn());
 		instance.setLoggedOnUser(createTestDataUserSecurityProfileVO("newUser"));
 		UserSecurityProfileVO result = instance.getLoggedOnUser();
