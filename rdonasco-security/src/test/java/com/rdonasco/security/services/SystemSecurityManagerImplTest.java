@@ -225,7 +225,7 @@ public class SystemSecurityManagerImplTest
 				.setUserProfileVO(userSecurityProfileVOMock)
 				.createAccessRightsVO();
 		List<Capability> emptyCapability = new ArrayList<Capability>();
-		when(userCapabilityDAOMock.loadCapabilitiesOf(userSecurityProfileMock)).thenReturn(emptyCapability);
+		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(emptyCapability);
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
 		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
 		ActionVO actionVOtoReturn = new ActionVO();
@@ -236,6 +236,33 @@ public class SystemSecurityManagerImplTest
 		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessRights.getResource().getName())).thenThrow(NotSecuredResourceException.class);				
 		instance.checkAccessRights(accessRights);
 		
+	}
+
+	@Test
+	public void testNonRestrictedResourceWithAUserThatHasCapability() throws
+			Exception
+	{
+		System.out.println("NonRestrictedResourceWithAUserThatHasCapability");
+		SystemSecurityManagerImpl instance = prepareSecurityManagerInstanceToTest();
+
+		AccessRightsVO accessRights = new AccessRightsVOBuilder()
+				.setActionAsString("Edit")
+				.setActionID(Long.MIN_VALUE + 1L)
+				.setResourceAsString("User")
+				.setResourceID(Long.MIN_VALUE)
+				.setUserProfileVO(userSecurityProfileVOMock)
+				.createAccessRightsVO();
+		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getCapabilityOnAddingUser());
+		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
+		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
+		ActionVO actionVOtoReturn = new ActionVO();
+		actionVOtoReturn.setId(Long.MIN_VALUE);
+		actionVOtoReturn.setName("Edit");
+
+		when(capabilityManagerMock.findOrAddActionNamedAs(accessRights.getAction().getName())).thenReturn(actionVOtoReturn);
+		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessRights.getResource().getName())).thenThrow(new NotSecuredResourceException("resource is not restricted"));
+		instance.checkAccessRights(accessRights);
+
 	}
 
 	@Test
