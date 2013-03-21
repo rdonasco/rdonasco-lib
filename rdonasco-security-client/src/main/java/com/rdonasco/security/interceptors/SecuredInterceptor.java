@@ -73,14 +73,14 @@ public class SecuredInterceptor
 		{
 			if (InvocationEventType.BEFORE == invocationEventType)
 			{
-				LOG.log(Level.INFO, "executing doTheInvocationCheck before");
+				LOG.log(Level.INFO, "executing doTheInvocationCheck before method {0}", joinPoint.getMethod().getName());
 				doTheInvocationCheck(resource, action);
 				returnValue = joinPoint.proceed();
 			}
 			else
 			{
 				returnValue = joinPoint.proceed();
-				LOG.log(Level.INFO, "executing doTheInvocationCheck after");
+				LOG.log(Level.INFO, "executing doTheInvocationCheck after method {0}", joinPoint.getMethod().getName());
 				doTheInvocationCheck(resource, action);
 			}
 		}
