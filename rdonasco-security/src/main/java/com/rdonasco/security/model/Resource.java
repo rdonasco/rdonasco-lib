@@ -33,7 +33,7 @@ import javax.persistence.TableGenerator;
  * @author Roy F. Donasco
  */
 @Entity
-@Table(name = "capability_resource", catalog = "", schema = "")
+@Table(name = "secured_resource", catalog = "", schema = "")
 @NamedQueries
 (
 	{
@@ -54,7 +54,7 @@ public class Resource implements Serializable
 	@Column(name = "id", nullable = false)
 	private Long id;
 	@Basic(optional = false)
-	@Column(name = "resource_name", nullable = false, length = 128, unique = true)
+	@Column(name = "resource_name", nullable = false, length = 256, unique = true)
 	private String name;
 	@Basic(optional = true)
 	@Column(name = "resource_description", nullable = false, length = 256)

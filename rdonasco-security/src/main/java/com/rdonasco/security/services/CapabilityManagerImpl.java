@@ -190,7 +190,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 			}			
 			if (null == securedResource)
 			{
-				throw new NotSecuredResourceException("Not Secured Resource. Can be accessed by anyone.");
+				throw new NotSecuredResourceException(String.format("Not Secured Resource {%s}. Can be accessed by anyone.", resourceName));
 			}						
 		}
 		catch (NotSecuredResourceException e)
