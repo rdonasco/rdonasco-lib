@@ -45,7 +45,7 @@ public class SystemSecurityManagerLocalTest
 	private CapabilityManagerLocal capabilityManager;
 	@EJB
 	private SystemSecurityInitializerLocal systemSecurityInitializerLocal;
-	
+
 	@Deployment
 	public static JavaArchive createTestArchive()
 	{
@@ -137,6 +137,54 @@ public class SystemSecurityManagerLocalTest
 		{
 			throw e;
 		}
+	}
+
+	@Test
+	public void testCheckAccessRightsOnNonRestrictedResourceToCreateDefaultCapability()
+			throws Exception
+	{
+		System.out.println("CheckAccessRightsOnNonRestrictedResourceToCreateDefaultCapability");
+		UserSecurityProfileVO userProfile = createTestDataUserProfileWithCapability();
+		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userProfile);
+		String actionName = "do";
+		String resourceName = "her";
+		String capabilityTitle = "do her";
+		AccessRightsVO accessRights = new AccessRightsVOBuilder()
+				.setActionAsString(actionName)
+				.setResourceAsString(resourceName)
+				.setUserProfileVO(createdUser)
+				.createAccessRightsVO();
+
+		systemSecurityManager.checkAccessRights(accessRights);
+		CapabilityVO capabilityVO = capabilityManager.findCapabilityWithTitle(capabilityTitle);
+		assertNotNull(capabilityVO);
+		assertEquals(capabilityTitle, capabilityVO.getTitle());
+
+	}
+
+	@Test
+	public void testCheckAccessRightsOnNonRestrictedResourceToCreateDefaultCapabilityWithoutDuplication()
+			throws Exception
+	{
+		System.out.println("CheckAccessRightsOnNonRestrictedResourceToCreateDefaultCapabilityWithoutDuplication");
+		UserSecurityProfileVO userProfile = createTestDataUserProfileWithCapability();
+		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userProfile);
+		String actionName = "enter";
+		String resourceName = "the dragon";
+		String capabilityTitle = String.format("%1s %2s", actionName, resourceName);
+		AccessRightsVO accessRights = new AccessRightsVOBuilder()
+				.setActionAsString(actionName)
+				.setResourceAsString(resourceName)
+				.setUserProfileVO(createdUser)
+				.createAccessRightsVO();
+
+		systemSecurityManager.checkAccessRights(accessRights);
+		systemSecurityManager.checkAccessRights(accessRights);
+		systemSecurityManager.checkAccessRights(accessRights);
+		CapabilityVO capabilityVO = capabilityManager.findCapabilityWithTitle(capabilityTitle);
+		assertNotNull(capabilityVO);
+		assertEquals(capabilityTitle, capabilityVO.getTitle());
+
 	}
 
 	@Test(expected = SecurityProfileNotFoundException.class)

@@ -30,8 +30,10 @@ import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
+import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
+import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserCapabilityVOBuilder;
@@ -82,24 +84,24 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	}
 
 	@Override
-	public void checkAccessRights(AccessRightsVO accessRights) 
+	public void checkAccessRights(final AccessRightsVO requestedAccessRight)
 	{
-		if (null == accessRights)
+		if (null == requestedAccessRight)
 		{
 			throw new SecurityException("accessRights is null. Please provide valid access rights to check");
 		}
 		try
 		{
-			List<CapabilityVO> capabilities = retrieveCapabilitiesOfUser(accessRights);
+			List<CapabilityVO> capabilities = retrieveCapabilitiesOfUser(requestedAccessRight);
 			Set<AccessRightsVO> accessRightsSet = new HashSet<AccessRightsVO>();
 			boolean capabilitiesNotFound = (capabilities == null || capabilities.isEmpty());
-			ResourceVO securedResourceVO = ensureThatResourceExistsAndIsSecured(accessRights.getResource().getName());
+			ResourceVO securedResourceVO = ensureThatResourceExistsAndIsSecured(requestedAccessRight.getResource().getName());
+			capabilityManager.findOrAddActionNamedAs(requestedAccessRight.getAction().getName());
 			if (capabilitiesNotFound)
-			{				
-				capabilityManager.findOrAddActionNamedAs(accessRights.getAction().getName());				
+			{								
 				if (null != securedResourceVO)
 				{
-					throwSecurityAuthorizationExceptionFor(accessRights);
+					throwSecurityAuthorizationExceptionFor(requestedAccessRight);
 				}
 			}
 			else
@@ -111,13 +113,13 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 						AccessRightsVO rights = new AccessRightsVOBuilder()
 								.setActionVO(action.getActionVO())
 								.setResourceVO(capability.getResource())
-								.setUserProfileVO(accessRights.getUserProfile()).createAccessRightsVO();
+								.setUserProfileVO(requestedAccessRight.getUserProfile()).createAccessRightsVO();
 						accessRightsSet.add(rights);
 					}
 				}
-				if (!accessRightsSet.contains(accessRights))
+				if (!accessRightsSet.contains(requestedAccessRight))
 				{
-					throwSecurityAuthorizationExceptionFor(accessRights);
+					throwSecurityAuthorizationExceptionFor(requestedAccessRight);
 				}
 			}
 
@@ -125,6 +127,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		catch (NotSecuredResourceException e)
 		{
 			LOG.warning(e.getMessage());
+			createDefaultCapabilityBasedOnRequestedAccessRight(requestedAccessRight);
 		}
 		catch (Exception e)
 		{
@@ -305,5 +308,34 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			NotSecuredResourceException, CapabilityManagerException
 	{
 		return capabilityManager.findOrAddSecuredResourceNamedAs(resourceName);
+	}
+
+	private void createDefaultCapabilityBasedOnRequestedAccessRight(
+			AccessRightsVO requestedAccessRight) 
+	{
+		try
+		{
+			String capabilityTitleOrDescription =
+					String.format("%1$s %2$s",
+					requestedAccessRight.getAction().getName(),
+					requestedAccessRight.getResource().getName());
+			try
+			{
+				capabilityManager.findCapabilityWithTitle(capabilityTitleOrDescription);
+			}
+			catch (NonExistentEntityException e)
+			{
+				LOG.log(Level.INFO, "Capability [{0}] not found. Creating...", capabilityTitleOrDescription);
+				CapabilityVO capabilityVO = new CapabilityVOBuilder()
+						.setTitle(capabilityTitleOrDescription)
+						.setDescription(capabilityTitleOrDescription)
+						.createCapabilityVO();
+				capabilityManager.createNewCapability(capabilityVO);
+			}
+		}
+		catch (CapabilityManagerException ex)
+		{
+			LOG.log(Level.WARNING, ex.getMessage(), ex);
+		}
 	}
 }

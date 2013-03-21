@@ -94,8 +94,11 @@ public class SecurityEntityValueObjectConverter
 			CapabilityVOBuilder capabilityVOBuilder = new CapabilityVOBuilder()
 					.setId(capability.getId())
 					.setTitle(capability.getTitle())
-					.setDescription(capability.getDescription())
-					.setResource(toResourceVO(capability.getResource()));
+					.setDescription(capability.getDescription());
+			if (null != capability.getResource())
+			{
+				capabilityVOBuilder.setResource(toResourceVO(capability.getResource()));
+			}
 			if (capability.getActions() != null)
 			{
 				List<CapabilityActionVO> actionVOList = new ArrayList<CapabilityActionVO>(capability.getActions().size());
@@ -122,7 +125,10 @@ public class SecurityEntityValueObjectConverter
 		Capability capability = new Capability();
 		capability.setDescription(capabilityVO.getDescription());
 		capability.setId(capabilityVO.getId());
-		capability.setResource(toResource(capabilityVO.getResource()));
+		if (null != capabilityVO.getResource())
+		{
+			capability.setResource(toResource(capabilityVO.getResource()));
+		}
 		capability.setTitle(capabilityVO.getTitle());
 		if (capabilityVO.getActions() != null)
 		{
