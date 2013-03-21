@@ -16,3 +16,4 @@ derby.log
 rdonasco-config/target
 rdonasco-config-client/target
 rdonasco-config-view/target
+rdonasco-security-interceptor/target
