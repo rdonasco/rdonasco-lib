@@ -93,10 +93,10 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			List<CapabilityVO> capabilities = retrieveCapabilitiesOfUser(accessRights);
 			Set<AccessRightsVO> accessRightsSet = new HashSet<AccessRightsVO>();
 			boolean capabilitiesNotFound = (capabilities == null || capabilities.isEmpty());
+			ResourceVO securedResourceVO = ensureThatResourceExistsAndIsSecured(accessRights.getResource().getName());
 			if (capabilitiesNotFound)
-			{
-				capabilityManager.findOrAddActionNamedAs(accessRights.getAction().getName());
-				ResourceVO securedResourceVO = capabilityManager.findOrAddSecuredResourceNamedAs(accessRights.getResource().getName());
+			{				
+				capabilityManager.findOrAddActionNamedAs(accessRights.getAction().getName());				
 				if (null != securedResourceVO)
 				{
 					throwSecurityAuthorizationExceptionFor(accessRights);
@@ -298,5 +298,12 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 				.append("} and Action {").append(accessRights.getAction().getName())
 				.append("} for profile with login id {").append(accessRights.getUserProfile().getLogonId()).append("}");
 		throw new SecurityAuthorizationException(errorStringBuild.toString());
+	}
+
+	private ResourceVO ensureThatResourceExistsAndIsSecured(String resourceName)
+			throws
+			NotSecuredResourceException, CapabilityManagerException
+	{
+		return capabilityManager.findOrAddSecuredResourceNamedAs(resourceName);
 	}
 }
