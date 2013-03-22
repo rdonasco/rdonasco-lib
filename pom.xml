@@ -37,7 +37,6 @@
 	  <module>rdonasco-common</module>
 	  <module>rdonasco-security</module>
 	  <module>rdonasco-security-client</module>
-	  <module>rdonasco-security-interceptor</module>
 	  <module>rdonasco-config</module>
 	  <module>rdonasco-config-client</module>
 	  <module>rdonasco-config-view</module>
