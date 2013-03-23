@@ -17,7 +17,6 @@
 package com.rdonasco.common.vaadin.view.utils;
 
 import com.vaadin.Application;
-import javax.inject.Inject;
 import com.rdonasco.common.vaadin.view.NotificationFactory;
 
 /**
@@ -26,7 +25,6 @@ import com.rdonasco.common.vaadin.view.NotificationFactory;
  */
 public class NotificationHelper 
 {
-	@Inject 
 	private Application application;
 
 	public void showHumanErrorNotification(String message)
@@ -52,5 +50,10 @@ public class NotificationHelper
 		application.getMainWindow().showNotification(
 				NotificationFactory.createTrayNotification(message));
 		
+	}
+
+	public void setApplication(Application application)
+	{
+		this.application = application;
 	}
 }
