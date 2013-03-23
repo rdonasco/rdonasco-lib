@@ -17,3 +17,6 @@ rdonasco-config/target
 rdonasco-config-client/target
 rdonasco-config-view/target
 rdonasco-security-interceptor/target
+security-app/security-app-ear/target
+security-app/security-app-ejb/target
+security-app/security-app-web/target
