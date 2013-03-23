@@ -1,0 +1,15 @@
+@import url(../runo/styles.css);
+/* Using the old default theme (runo) as the basis for now */
+
+.featureButtonLayout
+{
+    margin: 32px;
+    padding:8px;
+    color: black;
+    float: left;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    background-color: aliceblue;
+}
+
+/* Custom Styles - END */
