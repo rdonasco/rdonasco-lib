@@ -31,16 +31,18 @@ public class I18NResource
 
     public static String localize(String stringToLocalize)
     {
-        String key = createKeyFrom(stringToLocalize);
+		String key = createKeyFrom(stringToLocalize);
+		String returnValue;
         try
         {
-            return getBundle().getString(key);
+			returnValue = getBundle().getString(key);
         }
         catch (MissingResourceException e)
         {
             Logger.getLogger(I18NResource.class.getName()).log(Level.FINE, e.getMessage(), e);
-            return new StringBuilder("cannot localize string with key ").append(key).toString();
-        }
+			returnValue = new StringBuilder("cannot localize string with key ").append(key).toString();
+		}
+		return returnValue;
     }
 
     public static String localizeWithParameter(String stringToLocalize, Object... parameters)
