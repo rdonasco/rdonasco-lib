@@ -40,6 +40,7 @@
 	  <module>rdonasco-config</module>
 	  <module>rdonasco-config-client</module>
 	  <module>rdonasco-config-view</module>
+    <module>security-app</module>
   </modules>
   <properties>
 	  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
