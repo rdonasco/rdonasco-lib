@@ -1,6 +1,16 @@
 @import url(../chameleon/styles.css);
 /* Using the old default theme (runo) as the basis for now */
 
+.toolbar
+{
+    background: #ccc url(images/hborder.png) repeat-x bottom left;
+    background-repeat: repeat-x;
+    background-position: 0px -1460px;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-color: #ccffff;
+}
+
 .featureButtonLayout
 {
     margin-top: 16px;

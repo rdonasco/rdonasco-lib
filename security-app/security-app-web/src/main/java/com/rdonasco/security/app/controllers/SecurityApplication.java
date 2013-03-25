@@ -8,6 +8,7 @@ package com.rdonasco.security.app.controllers;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.utils.NotificationHelper;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.security.home.controllers.HomeFrameViewController;
 import com.rdonasco.security.home.controllers.HomeViewController;
 import com.vaadin.Application;
 import com.vaadin.ui.Window;
@@ -22,7 +23,7 @@ import javax.inject.Inject;
  */
 @SessionScoped
 public class SecurityApplication extends Application implements
-		ApplicationExceptionPopupProvider
+		ApplicationExceptionPopupProvider, ApplicationPopupProvider
 {
 
 	private static final Logger LOG = Logger.getLogger(SecurityApplication.class.getName());
@@ -33,7 +34,7 @@ public class SecurityApplication extends Application implements
 		I18NResource.setBundle(java.util.ResourceBundle.getBundle("com/rdonasco/security/i18n/i18nResource"));
 	}
 	@Inject
-	private HomeViewController homeViewController;
+	private HomeFrameViewController homeFrameController;
 	private NotificationHelper notificationHelper;
 
 	@Override
@@ -44,7 +45,7 @@ public class SecurityApplication extends Application implements
 		LOG.log(Level.INFO, "current theme: ", getTheme());
 		Window mainWindow = new Window("rdonasco Security");
 		setMainWindow(mainWindow);
-		mainWindow.addComponent(homeViewController.getControlledView());
+		mainWindow.addComponent(homeFrameController.getControlledView());
 		setTheme(SecurityDefaultTheme.THEME_NAME);
 	}
 
@@ -52,21 +53,21 @@ public class SecurityApplication extends Application implements
 	public void popUpInfoException(Throwable t)
 	{
 		LOG.log(Level.INFO, t.getMessage(), t);
-		notificationHelper.showHumanNotification(t.getMessage());
+		popUpInfo(t.getMessage());
 	}
 
 	@Override
 	public void popUpErrorException(Throwable t)
 	{
 		LOG.log(Level.SEVERE, t.getMessage(), t);
-		notificationHelper.showHumanErrorNotification(t.getMessage());
+		popUpError(t.getMessage());
 	}
 
 	@Override
 	public void popUpWarningException(Throwable t)
 	{
 		LOG.log(Level.WARNING, t.getMessage(), t);
-		notificationHelper.showHumanWarningNotification(t.getMessage());
+		popUpWarning(t.getMessage());
 
 	}
 
@@ -74,7 +75,31 @@ public class SecurityApplication extends Application implements
 	public void popUpDebugException(Throwable t)
 	{
 		LOG.log(Level.FINE, t.getMessage(), t);
-		notificationHelper.showHumanNotification(t.getMessage());
+		popUpInfo(t.getMessage());
 
+	}
+
+	@Override
+	public void popUpInfo(String infoMessage)
+	{
+		notificationHelper.showHumanNotification(infoMessage);
+	}
+
+	@Override
+	public void popUpError(String errorMessage)
+	{
+		notificationHelper.showHumanErrorNotification(errorMessage);
+	}
+
+	@Override
+	public void popUpWarning(String warningMessage)
+	{
+		notificationHelper.showHumanWarningNotification(warningMessage);
+	}
+
+	@Override
+	public void showTrayNotification(String trayMessage)
+	{
+		notificationHelper.showTrayNotification(trayMessage);
 	}
 }
