@@ -8,14 +8,12 @@ package com.rdonasco.security.home.controllers;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.controller.ViewController;
-import com.rdonasco.security.home.services.SecureWorldLocal;
-import com.rdonasco.security.home.views.FeatureButtonLayout;
+import com.rdonasco.security.home.views.FeatureHomeButton;
 import com.rdonasco.security.home.views.HomeViewLayout;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
@@ -34,7 +32,7 @@ public class HomeViewController implements ViewController<HomeViewLayout>,
 	@Inject
 	private HomeViewLayout homeView;
 	@Inject
-	private Instance<HomeViewButtonController<FeatureButtonLayout>> buttonControllersProviders;
+	private Instance<HomeViewButtonController<FeatureHomeButton>> buttonControllersProviders;
 
 	@PostConstruct
 	@Override
@@ -43,7 +41,7 @@ public class HomeViewController implements ViewController<HomeViewLayout>,
 		try
 		{
 			homeView.initWidget();
-			for (HomeViewButtonController<FeatureButtonLayout> buttonController : buttonControllersProviders)
+			for (HomeViewButtonController<FeatureHomeButton> buttonController : buttonControllersProviders)
 			{
 				homeView.addComponent(buttonController.getControlledView());
 			}

@@ -8,10 +8,9 @@ package com.rdonasco.security.home.controllers;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.security.app.controllers.ApplicationExceptionPopupProvider;
-import com.rdonasco.security.home.views.FeatureButtonLayout;
-import com.vaadin.ui.Label;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.security.home.views.FeatureHomeButton;
+import com.vaadin.terminal.ThemeResource;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -24,7 +23,7 @@ public class CapabilityManagerHomeButtonController implements
 {
 
 	@Inject
-	private FeatureButtonLayout featureButtonLayout;
+	private FeatureHomeButton featureButton;
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
 
@@ -43,16 +42,16 @@ public class CapabilityManagerHomeButtonController implements
 	}
 
 	@Override
-	public FeatureButtonLayout getControlledView()
+	public FeatureHomeButton getControlledView()
 	{
-		return featureButtonLayout;
+		return featureButton;
 	}
 
 	@Override
 	public void refreshView() throws WidgetException
 	{
-		featureButtonLayout.removeAllComponents();
-		featureButtonLayout.addComponent(new Label(I18NResource.localize("Manage Capabilities")));
+		featureButton.setCaption(I18NResource.localize("Manage Capabilities"));
+		featureButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_32x32_CAPABILITIES));
 	}
 
 	private void doTheRefresh() throws WidgetException

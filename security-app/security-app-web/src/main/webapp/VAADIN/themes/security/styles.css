@@ -14,5 +14,24 @@
     -moz-border-radius: 6px;
     background-color: aliceblue;
 }
+.featureButtonLayout .v-button-wrap
+{
+	text-align: center;
+}
+.featureButtonLayout .v-icon
+{
+	/* make next element after the icon appear next line */
+	display: list-item;
+	/* center the icon */
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 4px;
+}
+.featureButtonLayout .v-button-caption
+{
+	height: 90px;
+	color: blueviolet;
+	white-space: normal;
+}
 
 /* Custom Styles - END */

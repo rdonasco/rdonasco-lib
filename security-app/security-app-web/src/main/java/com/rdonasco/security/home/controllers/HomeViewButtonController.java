@@ -5,13 +5,13 @@
 package com.rdonasco.security.home.controllers;
 
 import com.rdonasco.common.vaadin.controller.ViewController;
-import com.rdonasco.security.home.views.FeatureButtonLayout;
+import com.rdonasco.security.home.views.FeatureHomeButton;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public interface HomeViewButtonController<T extends FeatureButtonLayout> extends
+public interface HomeViewButtonController<T extends FeatureHomeButton> extends
 		ViewController<T>
 {
 }
