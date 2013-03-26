@@ -32,6 +32,7 @@ import com.rdonasco.datamanager.theme.DataManagerTheme;
  */
 public class DataViewListPanel extends VerticalLayout implements ViewWidget
 {
+	private static final long serialVersionUID = 1L;
 
     private Button refreshButton = new Button(I18NResource.localize("Refresh List"), new Button.ClickListener()
     {

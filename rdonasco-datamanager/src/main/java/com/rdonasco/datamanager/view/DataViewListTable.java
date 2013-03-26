@@ -33,6 +33,7 @@ import com.rdonasco.datamanager.theme.DataManagerTheme;
  */
 public class DataViewListTable extends Table implements ViewWidget
 {
+	private static final long serialVersionUID = 1L;
 
     private DataRetrievalStrategy dataViewListTableRefreshStrategy;
 
