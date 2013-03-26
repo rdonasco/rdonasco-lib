@@ -31,7 +31,10 @@ public interface CapabilityManager
 	ResourceVO findOrAddResourceNamedAs(String resourceName) throws CapabilityManagerException;
 	ActionVO findOrAddActionNamedAs(String name) throws CapabilityManagerException;
 	CapabilityVO createNewCapability(CapabilityVO capabilityToCreate) throws CapabilityManagerException;
-	public void addActionsToCapability(List<ActionVO> actions, CapabilityVO capabilityVO) throws CapabilityManagerException;
+	void addActionsToCapability(List<ActionVO> actions,
+			CapabilityVO capabilityVO) throws CapabilityManagerException;
+
+	List<CapabilityVO> findAllCapabilities() throws CapabilityManagerException;
 	CapabilityVO findCapabilityWithId(Long id) throws CapabilityManagerException;
 	CapabilityVO findCapabilityWithTitle(String capabilityTitle) throws CapabilityManagerException, NonExistentEntityException;
 	void updateCapability(CapabilityVO capabilityToUpdate) throws CapabilityManagerException;
