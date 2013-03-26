@@ -6,31 +6,32 @@
 package com.rdonasco.security.capability.views;
 
 import com.rdonasco.common.i18.I18NResource;
-import com.rdonasco.security.vo.CapabilityVO;
+import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.vaadin.data.util.BeanItemContainer;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public class CapabilityListContainer extends BeanItemContainer<CapabilityVO>
+public class CapabilityListContainer extends BeanItemContainer<CapabilityItemVO>
 {
 	private static final long serialVersionUID = 1L;
 
 	public CapabilityListContainer()
 	{
-		super(CapabilityVO.class);
+		super(CapabilityItemVO.class);
 	}
 	public static final Object[] DATA_COLUMNS = new Object[]
 	{
-		"id", "title", "description", "resource", "actions"
+		"id", "title", "description", "resource", "actions", "embddedIcon"
 	};
 	public static final Object[] VISIBLE_COLUMNS = new Object[]
 	{
-		"title"
+		"embeddedIcon", "title"
 	};
 	public static final String[] VISIBLE_HEADERS = new String[]
 	{
+		"x",
 		I18NResource.localize("Title")
 	};
 }

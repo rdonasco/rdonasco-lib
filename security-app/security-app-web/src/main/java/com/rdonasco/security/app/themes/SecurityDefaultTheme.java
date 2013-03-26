@@ -25,4 +25,6 @@ public final class SecurityDefaultTheme
 	public static final String ICONS_32x32_APPLICATIONS = "images/blueberry/home.png";
 	public static final String ICONS_32x32_DOMAINS = "images/blueberry/globe.png";
 	public static final String ICONS_32x32_SETTINGS = "images/blueberry/options_2.png";
+	/* 32x32 icons */
+	public static final String ICONS_16x16_DELETE = "images/silk-icons/delete.png";
 }
