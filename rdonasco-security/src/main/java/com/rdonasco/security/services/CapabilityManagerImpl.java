@@ -145,9 +145,9 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 		{
 			resourceVO = findOrAddSecuredResourceNamedAsAndPotentiallyThrowNotSecuredException(resourceName, false);
 		}
-		catch(NotSecuredResourceException e)
+		catch (NotSecuredResourceException e)
 		{
-			LOG.log(Level.SEVERE,"NotSecuredResourceException thrown despite the request not to.",e);
+			LOG.log(Level.SEVERE, "NotSecuredResourceException thrown despite the request not to.", e);
 		}
 		return resourceVO;
 	}
@@ -158,9 +158,9 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 	{
 		return findOrAddSecuredResourceNamedAsAndPotentiallyThrowNotSecuredException(resourceName, true);
 	}
-	
-	
-	private ResourceVO findOrAddSecuredResourceNamedAsAndPotentiallyThrowNotSecuredException(String resourceName,boolean throwNotSecuredException)
+
+	private ResourceVO findOrAddSecuredResourceNamedAsAndPotentiallyThrowNotSecuredException(
+			String resourceName, boolean throwNotSecuredException)
 			throws CapabilityManagerException, NotSecuredResourceException
 	{
 		Resource securedResource = null;
@@ -187,22 +187,22 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 							.createResourceVO();
 					securedResourceVO = addResource(resourceToAdd);
 				}
-			}			
+			}
 			if (null == securedResource)
 			{
 				throw new NotSecuredResourceException(String.format("Not Secured Resource {%s}. Can be accessed by anyone.", resourceName));
-			}						
+			}
 		}
 		catch (NotSecuredResourceException e)
 		{
-			if(throwNotSecuredException)
+			if (throwNotSecuredException)
 			{
 				throw e;
 			}
 			else
 			{
-				LOG.log(Level.FINE,"ignored exception {0}", e.getMessage());
-				LOG.log(Level.FINE,e.getMessage(),e);
+				LOG.log(Level.FINE, "ignored exception {0}", e.getMessage());
+				LOG.log(Level.FINE, e.getMessage(), e);
 			}
 		}
 		catch (Exception e)
@@ -356,6 +356,26 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 			throw new CapabilityManagerException(e);
 		}
 		return createdCapabilityVO;
+	}
+
+	@Override
+	public List<CapabilityVO> findAllCapabilities() throws
+			CapabilityManagerException
+	{
+		List<Capability> allCapability = capabilityDAO.findAllData();
+		List<CapabilityVO> allCapabilityVO = new ArrayList<CapabilityVO>(allCapability.size());
+		try
+		{
+			for (Capability capabilty : allCapability)
+			{
+				allCapabilityVO.add(SecurityEntityValueObjectConverter.toCapabilityVO(capabilty));
+			}
+		}
+		catch (Exception e)
+		{
+			throw new CapabilityManagerException(e);
+		}
+		return allCapabilityVO;
 	}
 
 	@Override
