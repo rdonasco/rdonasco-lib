@@ -26,15 +26,15 @@ import java.util.Map;
  * @author Roy F. Donasco
  */
 public class CapabilityVO implements Serializable
-{	
+{
+
 	private static final long serialVersionUID = 1L;
-	
 	private Long id;
 	private String title;
 	private String description;
 	private ResourceVO resource;
 	private Collection<CapabilityActionVO> actions;
-	private Map<String,CapabilityActionVO> actionsMap = new HashMap<String, CapabilityActionVO>(); 
+	private Map<String, CapabilityActionVO> actionsMap = new HashMap<String, CapabilityActionVO>();
 
 	public CapabilityVO(Long id, String title, String description,
 			ResourceVO resource,
@@ -45,8 +45,8 @@ public class CapabilityVO implements Serializable
 		this.description = description;
 		this.resource = resource;
 		this.actions = actions;
-	}	
-	
+	}
+
 	public Long getId()
 	{
 		return id;
@@ -98,7 +98,7 @@ public class CapabilityVO implements Serializable
 		this.actions = actions;
 		populateActionMap();
 	}
-	
+
 	public CapabilityActionVO findActionNamed(String actionName)
 	{
 		return actionsMap.get(actionName);
@@ -121,7 +121,14 @@ public class CapabilityVO implements Serializable
 			areEqual = false;
 		}
 		CapabilityVO other = (CapabilityVO) object;
-		if (areEqual && (this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
+		try
+		{
+			if (areEqual && (this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
+			{
+				areEqual = false;
+			}
+		}
+		catch (NullPointerException e)
 		{
 			areEqual = false;
 		}
@@ -136,11 +143,9 @@ public class CapabilityVO implements Serializable
 
 	void populateActionMap()
 	{
-		for(CapabilityActionVO action : actions)
+		for (CapabilityActionVO action : actions)
 		{
 			actionsMap.put(action.getActionVO().getName(), action);
 		}
 	}
-
-
 }
