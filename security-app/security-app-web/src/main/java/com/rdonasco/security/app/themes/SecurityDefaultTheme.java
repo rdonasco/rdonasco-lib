@@ -17,6 +17,7 @@ public final class SecurityDefaultTheme
 	public static final String CSS_TOOLBAR = "toolbar";
 	public static final String CSS_WORKSPACE = "workspace";
 	public static final String CSS_MAIN_WINDOW = "mainWindow";
+	public static final String CSS_CAPABILITY_TABLE = "capabilityTable";
 	/* start of icon entries */
 	public static final String ICON_32x32_CAPABILITIES = "images/iconarchive.com/blue-matreshka-inside-icon-icon.png";
 	public static final String ICON_32x32_ROLES = "images/danish_rf_icons/PNG/public.png";
@@ -27,4 +28,5 @@ public final class SecurityDefaultTheme
 	public static final String ICONS_32x32_SETTINGS = "images/blueberry/options_2.png";
 	/* 32x32 icons */
 	public static final String ICONS_16x16_DELETE = "images/silk-icons/delete.png";
+	public static final String ICONS_16x16_ADD = "images/silk-icons/add.png";
 }

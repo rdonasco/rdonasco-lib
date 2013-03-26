@@ -7,7 +7,6 @@ package com.rdonasco.security.capability.vo;
 import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.ResourceVO;
-import com.vaadin.terminal.Resource;
 import com.vaadin.ui.Embedded;
 import java.io.Serializable;
 import java.util.Collection;
@@ -22,6 +21,12 @@ public class CapabilityItemVO implements Serializable
 	private static final long serialVersionUID = 1L;
 	private CapabilityVO capabilityVO;
 	private Embedded embeddedIcon;
+
+	public CapabilityItemVO(CapabilityVO capabilityVO, Embedded embeddedIcon)
+	{
+		this.capabilityVO = capabilityVO;
+		this.embeddedIcon = embeddedIcon;
+	}
 
 	public CapabilityVO getCapabilityVO()
 	{

@@ -31,7 +31,7 @@ public class CapabilityListContainer extends BeanItemContainer<CapabilityItemVO>
 	};
 	public static final String[] VISIBLE_HEADERS = new String[]
 	{
-		"x",
+		"",
 		I18NResource.localize("Title")
 	};
 }

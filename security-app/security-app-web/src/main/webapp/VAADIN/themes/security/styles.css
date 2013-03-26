@@ -56,6 +56,11 @@
 	white-space: normal;
 }
 
+.capabilityTable .v-table-body
+{
+	border: none
+}
+
 .layoutDesign
 {
 	background-color: appworkspace;
