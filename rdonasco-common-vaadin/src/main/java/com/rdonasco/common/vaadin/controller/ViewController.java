@@ -17,12 +17,14 @@ package com.rdonasco.common.vaadin.controller;
 
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.vaadin.view.ControlledView;
+import java.io.Serializable;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public interface ViewController<T extends ControlledView> extends ViewRefresher
+public interface ViewController<T extends ControlledView> extends ViewRefresher,
+		Serializable
 {	
 	/**
 	 * method that wires all the event or behavior handler.
