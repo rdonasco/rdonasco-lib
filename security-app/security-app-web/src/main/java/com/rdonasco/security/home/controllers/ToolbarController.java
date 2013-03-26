@@ -17,6 +17,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.BaseTheme;
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 /**
@@ -34,6 +35,10 @@ public class ToolbarController implements ViewController<ToolbarView>
 	private Button profileLink = new Button(I18NResource.localize("Roy Donasco"));
 	private Button logoutLink = new Button(I18NResource.localize("Logout"));
 	private VerticalLayout spacer = new VerticalLayout();
+	@Inject
+	private Instance<HomeFrameViewController> homeFrameViewControllerProvider;
+	@Inject
+	private HomeViewController homeViewController;
 
 	@PostConstruct
 	@Override
@@ -48,6 +53,16 @@ public class ToolbarController implements ViewController<ToolbarView>
 			toolbarView.addRightToolbarComponent(profileLink);
 			toolbarView.addRightToolbarComponent(spacer);
 			toolbarView.addRightToolbarComponent(logoutLink);
+			homeLink.addListener(new Button.ClickListener()
+			{
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void buttonClick(Button.ClickEvent event)
+				{
+					homeFrameViewControllerProvider.get().setWorkspaceContent(homeViewController.getControlledView());
+				}
+			});
 
 		}
 		catch (WidgetInitalizeException ex)

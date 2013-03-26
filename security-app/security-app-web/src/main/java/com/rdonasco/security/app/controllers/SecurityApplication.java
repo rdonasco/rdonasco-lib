@@ -9,7 +9,6 @@ import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.utils.NotificationHelper;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.home.controllers.HomeFrameViewController;
-import com.rdonasco.security.home.controllers.HomeViewController;
 import com.vaadin.Application;
 import com.vaadin.ui.Window;
 import java.util.logging.Level;
@@ -44,6 +43,7 @@ public class SecurityApplication extends Application implements
 		notificationHelper.setApplication(this);
 		LOG.log(Level.INFO, "current theme: ", getTheme());
 		Window mainWindow = new Window("rdonasco Security");
+		mainWindow.addStyleName(SecurityDefaultTheme.CSS_MAIN_WINDOW);
 		setMainWindow(mainWindow);
 		mainWindow.addComponent(homeFrameController.getControlledView());
 		setTheme(SecurityDefaultTheme.THEME_NAME);

@@ -15,6 +15,8 @@ public final class SecurityDefaultTheme
 	/* css entries here */
 	public static final String CSS_FEATURE_BUTTON_LAYOUT = "featureButtonLayout";
 	public static final String CSS_TOOLBAR = "toolbar";
+	public static final String CSS_WORKSPACE = "workspace";
+	public static final String CSS_MAIN_WINDOW = "mainWindow";
 	/* start of icon entries */
 	public static final String ICON_32x32_CAPABILITIES = "images/iconarchive.com/blue-matreshka-inside-icon-icon.png";
 	public static final String ICON_32x32_ROLES = "images/danish_rf_icons/PNG/public.png";

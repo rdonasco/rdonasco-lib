@@ -32,8 +32,6 @@ public class ToolbarView extends HorizontalLayout implements ControlledView
 		setComponentAlignment(leftToolbarLayout, Alignment.MIDDLE_LEFT);
 		setComponentAlignment(rightToolbarLayout, Alignment.MIDDLE_RIGHT);
 		setMargin(true);
-		addStyleName(SecurityDefaultTheme.CSS_TOOLBAR);
-
 	}
 
 	public void addLeftToolbarComponent(Component componentToAdd)

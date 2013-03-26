@@ -11,6 +11,18 @@
     border-bottom-color: #ccffff;
 }
 
+.mainWindow
+{
+	height: 100%;
+	width: 100%;
+	background-color: azure;
+}
+
+.workspace
+{
+    background-color: floralwhite;
+}
+
 .featureButtonLayout
 {
     margin-top: 16px;
@@ -44,4 +56,8 @@
 	white-space: normal;
 }
 
+.layoutDesign
+{
+	background-color: appworkspace;
+}
 /* Custom Styles - END */

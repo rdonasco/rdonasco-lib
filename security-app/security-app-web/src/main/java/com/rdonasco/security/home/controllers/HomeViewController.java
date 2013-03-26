@@ -16,11 +16,13 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  *
  * @author Roy F. Donasco
  */
+@Singleton
 public class HomeViewController implements ViewController<HomeViewLayout>,
 		Serializable
 {

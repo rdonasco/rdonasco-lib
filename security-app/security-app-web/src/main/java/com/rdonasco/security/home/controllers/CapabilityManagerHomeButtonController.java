@@ -9,10 +9,12 @@ import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.security.app.controllers.ApplicationExceptionPopupProvider;
 import com.rdonasco.security.app.controllers.ApplicationPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.security.capability.controllers.CapabilityViewLayoutController;
 import com.rdonasco.security.home.views.FeatureHomeButton;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 /**
@@ -27,8 +29,12 @@ public class CapabilityManagerHomeButtonController implements
 	private FeatureHomeButton featureButton;
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
+//	@Inject
+//	private ApplicationPopupProvider popupProvider;
 	@Inject
-	private ApplicationPopupProvider popupProvider;
+	private Instance<HomeFrameViewController> homeFrameViewControllers;
+	@Inject
+	private CapabilityViewLayoutController capabilityViewLayoutController;
 
 	@PostConstruct
 	@Override
@@ -39,10 +45,11 @@ public class CapabilityManagerHomeButtonController implements
 			doTheRefresh();
 			featureButton.addListener(new Button.ClickListener()
 			{
+				private static final long serialVersionUID = 1L;
 				@Override
 				public void buttonClick(Button.ClickEvent event)
 				{
-					popupProvider.popUpInfo("Capability Manager Clicked");
+					homeFrameViewControllers.get().setWorkspaceContent(capabilityViewLayoutController.getControlledView());
 				}
 			});
 		}

@@ -9,16 +9,17 @@ import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.security.app.controllers.ApplicationExceptionPopupProvider;
 import com.rdonasco.security.home.views.HomeFrameViewLayout;
+import com.vaadin.ui.Component;
 import java.io.Serializable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  *
  * @author Roy F. Donasco
  */
+@Singleton
 public class HomeFrameViewController implements
 		ViewController<HomeFrameViewLayout>, Serializable
 {
@@ -62,6 +63,11 @@ public class HomeFrameViewController implements
 	public void refreshView() throws WidgetException
 	{
 		homeFrame.setToolbarContent(toolbarController.getControlledView());
-		homeFrame.setWorkspaceContent(homeViewController.getControlledView());
+		setWorkspaceContent(homeViewController.getControlledView());
+	}
+
+	public void setWorkspaceContent(Component workspaceContent)
+	{
+		homeFrame.setWorkspaceContent(workspaceContent);
 	}
 }
