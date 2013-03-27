@@ -16,11 +16,13 @@
 	height: 100%;
 	width: 100%;
 	background-color: azure;
+	overflow: auto;
 }
 
 .workspace
 {
-    background-color: floralwhite;
+    background-color: #ccffff;
+	height: 600px;
 }
 
 .featureButtonLayout

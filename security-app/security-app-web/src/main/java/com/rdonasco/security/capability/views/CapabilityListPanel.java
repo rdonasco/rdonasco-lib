@@ -8,29 +8,31 @@ package com.rdonasco.security.capability.views;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ControlledView;
-import com.rdonasco.datamanager.view.DataViewListTable;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.VerticalLayout;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public class CapabilityListPanel extends Panel implements ControlledView
+public class CapabilityListPanel extends Panel implements
+		ControlledView
 {
 	private static final long serialVersionUID = 1L;
-	private DataViewListTable dataViewListTable;
+	private Table dataViewListTable;
 
 	public CapabilityListPanel()
 	{
-		super(I18NResource.localize("Capabilities"));
+		setCaption(I18NResource.localize("Capabilities"));
 	}
 
-	public DataViewListTable getDataViewListTable()
+	public Table getDataViewListTable()
 	{
 		return dataViewListTable;
 	}
 
-	public void setDataViewListTable(DataViewListTable dataViewListTable)
+	public void setDataViewListTable(Table dataViewListTable)
 	{
 		this.dataViewListTable = dataViewListTable;
 	}
@@ -41,12 +43,14 @@ public class CapabilityListPanel extends Panel implements ControlledView
 	{
 		try
 		{
-			removeAllComponents();
-			setSizeFull();
+			VerticalLayout content = ((VerticalLayout) getContent());
+			content.setHeight(600, UNITS_PIXELS);
+			content.removeAllComponents();
 			if (null != getDataViewListTable())
-			{
-				addComponent(getDataViewListTable());
+			{				
 				getDataViewListTable().setSizeFull();
+				content.addComponent(getDataViewListTable());
+				content.setExpandRatio(getDataViewListTable(), 1);
 			}
 			
 		}

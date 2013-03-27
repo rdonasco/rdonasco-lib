@@ -5,34 +5,29 @@
 package com.rdonasco.security.capability.controllers;
 
 import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.datamanager.services.DataManager;
-import com.rdonasco.security.app.controllers.ApplicationExceptionPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
-import com.rdonasco.security.capability.views.CapabilityListContainer;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.capability.vo.CapabilityItemVOBuilder;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.services.CapabilityManagerLocal;
 import com.rdonasco.security.vo.CapabilityVO;
-import com.vaadin.event.MouseEvents;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Embedded;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ejb.EJB;
-import javax.inject.Inject;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public class CapabilityDataManager implements DataManager<CapabilityItemVO>
+public class CapabilityDataManagerDecorator implements DataManager<CapabilityItemVO>
 {
-	@EJB
-	private CapabilityManagerLocal capabilityManager;
-	private CapabilityListContainer capabilityListContainer;
-	@Inject
-	private ApplicationExceptionPopupProvider exceptionPopupProvider;
+
+	//@EJB
+	private CapabilityManagerLocal capabilityManager = new CapabilityManagerLocalDummy();
+	private ClickListenerProvider clickListenerProvider;
 
 	public CapabilityManagerLocal getCapabilityManager()
 	{
@@ -42,17 +37,6 @@ public class CapabilityDataManager implements DataManager<CapabilityItemVO>
 	public void setCapabilityManager(CapabilityManagerLocal capabilityManager)
 	{
 		this.capabilityManager = capabilityManager;
-	}
-
-	public CapabilityListContainer getCapabilityListContainer()
-	{
-		return capabilityListContainer;
-	}
-
-	public void setCapabilityListContainer(
-			CapabilityListContainer capabilityListContainer)
-	{
-		this.capabilityListContainer = capabilityListContainer;
 	}
 
 	@Override
@@ -89,21 +73,21 @@ public class CapabilityDataManager implements DataManager<CapabilityItemVO>
 	@Override
 	public List<CapabilityItemVO> retrieveAllData() throws DataAccessException
 	{
-		List<CapabilityItemVO> allCapabilityItems = null;
+		List<CapabilityItemVO> capabilityItems = null;
 		try
 		{
-			List<CapabilityVO> allCapabilities = capabilityManager.findAllCapabilities();
-			allCapabilityItems = new ArrayList<CapabilityItemVO>(allCapabilities.size());
-			for (CapabilityVO capability : allCapabilities)
+			List<CapabilityVO> capabilities = capabilityManager.findAllCapabilities();
+			capabilityItems = new ArrayList<CapabilityItemVO>(capabilities.size());
+			for (CapabilityVO capability : capabilities)
 			{
-				allCapabilityItems.add(convertToCapabilityItemVOandAddToContainer(capability));
+				capabilityItems.add(convertToCapabilityItemVOandAddToContainer(capability));
 			}
 		}
 		catch (CapabilityManagerException ex)
 		{
 			throw new DataAccessException(ex);
 		}
-		return allCapabilityItems;
+		return capabilityItems;
 	}
 
 	@Override
@@ -136,34 +120,33 @@ public class CapabilityDataManager implements DataManager<CapabilityItemVO>
 		}
 	}
 
+	public ClickListenerProvider getClickListenerProvider()
+	{
+		return clickListenerProvider;
+	}
+
+	public void setClickListenerProvider(
+			ClickListenerProvider clickListenerProvider)
+	{
+		this.clickListenerProvider = clickListenerProvider;
+	}
+
 	private CapabilityItemVO convertToCapabilityItemVOandAddToContainer(
 			CapabilityVO capability)
 	{
 		CapabilityItemVO itemVO;
 		Embedded icon = new Embedded(null, new ThemeResource(SecurityDefaultTheme.ICONS_16x16_DELETE));
+		icon.setDescription(I18NResource.localize("Delete"));
 		final CapabilityItemVO capabilityItem = new CapabilityItemVOBuilder()
 				.setCapabilityVO(capability)
 				.setEmbeddedIcon(icon)
 				.createCapabilityItemVO();
 		itemVO = capabilityItem;
-		icon.addListener(new MouseEvents.ClickListener()
+		if (getClickListenerProvider() != null)
 		{
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void click(MouseEvents.ClickEvent event)
-			{
-				try
-				{
-					capabilityManager.removeCapability(capabilityItem.getCapabilityVO());
-					capabilityListContainer.removeItem(capabilityItem);
-				}
-				catch (CapabilityManagerException ex)
-				{
-					exceptionPopupProvider.popUpErrorException(ex);
-				}
-			}
-		});
+			icon.addListener(getClickListenerProvider().provideClickListenerFor(capabilityItem));
+		}
 		return itemVO;
 	}
+
 }

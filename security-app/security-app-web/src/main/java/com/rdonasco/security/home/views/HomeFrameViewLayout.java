@@ -47,6 +47,7 @@ public class HomeFrameViewLayout extends VerticalLayout implements
 	{
 		workspaceView.removeAllComponents();
 		workspaceView.addComponent(workspaceContent);
+		workspaceContent.setSizeFull();
 		workspaceView.setExpandRatio(workspaceContent, 1);
 
 	}

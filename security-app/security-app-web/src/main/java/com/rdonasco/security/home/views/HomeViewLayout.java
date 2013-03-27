@@ -21,8 +21,6 @@ public class HomeViewLayout extends CssLayout implements ControlledView
 	@Override
 	public void initWidget() throws WidgetInitalizeException
 	{
-		setHeight(100f, UNITS_PERCENTAGE);
-		setWidth(100f, UNITS_PERCENTAGE);
 	}
 
 	public void addMessage(String message)
