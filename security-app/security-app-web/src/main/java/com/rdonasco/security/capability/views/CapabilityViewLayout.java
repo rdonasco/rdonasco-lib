@@ -28,17 +28,21 @@ public class CapabilityViewLayout extends HorizontalLayout implements
 	@Override
 	public void initWidget() throws WidgetInitalizeException
 	{
+		setSizeFull();
 		leftPanel.setWidth(250, UNITS_PIXELS);
-		rightPanel.setWidth(200, UNITS_PIXELS);
-		leftPanel.setMargin(true);
-		rightPanel.setMargin(true);
-		centerPanel.setSizeUndefined();
-		centerPanel.setMargin(true);
+		leftPanel.setHeight(100F, UNITS_PERCENTAGE);
+		leftPanel.setMargin(false);
 		addComponent(leftPanel);
-		addComponent(centerPanel);
-		addComponent(rightPanel);
-		setExpandRatio(centerPanel, 1); // occupy all remaining space;
-		setSizeUndefined();
+
+//		rightPanel.setWidth(200, UNITS_PIXELS);
+//		rightPanel.setMargin(true);
+//		centerPanel.setSizeUndefined();
+//		centerPanel.setMargin(true);
+
+//		addComponent(centerPanel);
+//		addComponent(rightPanel);
+//		setExpandRatio(centerPanel, 1); // occupy all remaining space;
+
 	}
 
 	public void setLeftPanelContent(Component leftComponent)
