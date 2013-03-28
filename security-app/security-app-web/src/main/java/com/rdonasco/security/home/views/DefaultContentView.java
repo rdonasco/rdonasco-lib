@@ -14,7 +14,7 @@ import com.vaadin.ui.Label;
  *
  * @author Roy F. Donasco
  */
-public class HomeViewLayout extends CssLayout implements ControlledView
+public class DefaultContentView extends CssLayout implements ControlledView
 {
 	private static final long serialVersionUID = 1L;
 

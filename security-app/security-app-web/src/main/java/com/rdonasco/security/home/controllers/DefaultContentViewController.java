@@ -9,7 +9,7 @@ import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.security.home.views.FeatureHomeButton;
-import com.rdonasco.security.home.views.HomeViewLayout;
+import com.rdonasco.security.home.views.DefaultContentView;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,16 +23,16 @@ import javax.inject.Inject;
  * @author Roy F. Donasco
  */
 @SessionScoped
-public class HomeViewController implements ViewController<HomeViewLayout>,
+public class DefaultContentViewController implements ViewController<DefaultContentView>,
 		Serializable
 {
 
 //	@EJB
 //	private SecureWorldLocal secureWorld;// = lookupSecureWorldLocal();
-	private static final Logger LOG = Logger.getLogger(HomeViewController.class.getName());
+	private static final Logger LOG = Logger.getLogger(DefaultContentViewController.class.getName());
 	private static final long serialVersionUID = 1L;
 	@Inject
-	private HomeViewLayout homeView;
+	private DefaultContentView homeView;
 	@Inject
 	private Instance<HomeViewButtonController<FeatureHomeButton>> buttonControllersProviders;
 
@@ -55,7 +55,7 @@ public class HomeViewController implements ViewController<HomeViewLayout>,
 	}
 
 	@Override
-	public HomeViewLayout getControlledView()
+	public DefaultContentView getControlledView()
 	{
 		return homeView;
 	}

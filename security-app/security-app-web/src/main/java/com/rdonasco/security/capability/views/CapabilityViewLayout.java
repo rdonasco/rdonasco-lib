@@ -33,7 +33,7 @@ public class CapabilityViewLayout extends HorizontalLayout implements
 		setSizeFull();
 		leftPanel.setWidth(250, UNITS_PIXELS);
 		leftPanel.setHeight(100F, UNITS_PERCENTAGE);
-		leftPanel.setMargin(false);
+		leftPanel.setMargin(true);
 		addComponent(leftPanel);
 
 //		rightPanel.setWidth(200, UNITS_PIXELS);

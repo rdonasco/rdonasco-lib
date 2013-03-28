@@ -30,7 +30,7 @@ public class HomeFrameViewController implements
 	@Inject
 	private HomeFrameViewLayout homeFrame;
 	@Inject
-	private HomeViewController homeViewController;
+	private DefaultContentViewController homeViewController;
 	@Inject
 	private ToolbarController toolbarController;
 
