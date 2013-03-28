@@ -11,6 +11,7 @@ import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.common.vaadin.view.ButtonUtil;
 import com.rdonasco.security.app.controllers.ApplicationExceptionPopupProvider;
+import com.rdonasco.security.app.controllers.HttpSessionProvider;
 import com.rdonasco.security.home.views.ToolbarView;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Button;
@@ -26,6 +27,7 @@ import javax.inject.Inject;
  */
 public class ToolbarController implements ViewController<ToolbarView>
 {
+	private static final long serialVersionUID = 1L;
 
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
@@ -37,6 +39,8 @@ public class ToolbarController implements ViewController<ToolbarView>
 	private VerticalLayout spacer = new VerticalLayout();
 	@Inject
 	private Instance<HomeFrameViewController> homeFrameViewControllerProvider;
+	@Inject
+	private Instance<HttpSessionProvider> httpSessionInstanceProvider;
 	@Inject
 	private HomeViewController homeViewController;
 
@@ -61,6 +65,15 @@ public class ToolbarController implements ViewController<ToolbarView>
 				public void buttonClick(Button.ClickEvent event)
 				{
 					homeFrameViewControllerProvider.get().setWorkspaceContent(homeViewController.getControlledView());
+				}
+			});
+			logoutLink.addListener(new Button.ClickListener()
+			{
+				@Override
+				public void buttonClick(Button.ClickEvent event)
+				{
+					getControlledView().getApplication().close();
+					httpSessionInstanceProvider.get().getSession().invalidate();					
 				}
 			});
 
