@@ -23,6 +23,10 @@ public final class SecurityDefaultTheme
 	public static final String CSS_CAPABILITY_WORKSPACE = "capabilityWorkspace";
 	public static final String CSS_CAPABILITY_TABLE = "capabilityTable";
 	public static final String CSS_CAPABILITY_EDITOR = "capabilityEditor";
+	public static final String CSS_PANEL_BUBBLE = "bubble";
+	public static final String CSS_PANEL_BORDERLESS_BUBBLE = "borderless bubble";
+	public static final String CSS_TABLE_SMALL_STRIPED = "small striped";
+	public static final String CSS_TABLE_BORDERLESS = "borderless";
 	/* start of icon entries */
 	public static final String ICON_32x32_CAPABILITIES = "images/iconarchive.com/blue-matreshka-inside-icon-icon.png";
 	public static final String ICON_32x32_ROLES = "images/danish_rf_icons/PNG/public.png";

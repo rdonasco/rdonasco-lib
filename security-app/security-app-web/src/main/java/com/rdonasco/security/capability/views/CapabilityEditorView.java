@@ -34,7 +34,9 @@ public class CapabilityEditorView extends VerticalLayout implements
 	public void initWidget() throws WidgetInitalizeException
 	{
 		capabilityDetailPanel.setCaption(I18NResource.localize("Capability Editor"));
+		capabilityDetailPanel.setStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
 		capabilityActionsPanel.setCaption(I18NResource.localize("Allowed Actions"));
+		capabilityActionsPanel.setStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
 		editButton.setCaption(I18NResource.localize("Edit"));
 		editButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_EDIT));
 		saveButton.setCaption(I18NResource.localize("Save"));

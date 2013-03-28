@@ -8,6 +8,7 @@ package com.rdonasco.security.capability.views;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ControlledView;
+import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
@@ -27,6 +28,7 @@ public class CapabilityListPanel extends Panel implements
 	public CapabilityListPanel()
 	{
 		setCaption(I18NResource.localize("Capabilities"));
+		setStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
 	}
 
 	public Table getDataViewListTable()
@@ -37,6 +39,8 @@ public class CapabilityListPanel extends Panel implements
 	public void setDataViewListTable(Table dataViewListTable)
 	{
 		this.dataViewListTable = dataViewListTable;
+		this.dataViewListTable.addStyleName(SecurityDefaultTheme.CSS_TABLE_SMALL_STRIPED);
+		this.dataViewListTable.addStyleName(SecurityDefaultTheme.CSS_TABLE_BORDERLESS);
 	}
 
 

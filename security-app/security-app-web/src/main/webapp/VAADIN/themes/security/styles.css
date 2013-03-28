@@ -1,7 +1,6 @@
-/*@import url(../chameleon/styles.css);*/
-@import url(./blueChameleon.css);
-/* Using the old default theme (runo) as the basis for now */
+@import "blueChameleon.css";
 
+/* START of customized style */
 .toolbar
 {
     background: #ccc url(images/hborder.png) repeat-x bottom left;
@@ -14,9 +13,6 @@
 
 .mainWindow
 {
-	height: 100%;
-	width: 100%;
-	background-color: azure;
 	overflow: auto;
 }
 
