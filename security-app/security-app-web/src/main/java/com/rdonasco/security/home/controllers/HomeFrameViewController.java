@@ -12,14 +12,14 @@ import com.rdonasco.security.home.views.HomeFrameViewLayout;
 import com.vaadin.ui.Component;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 /**
  *
  * @author Roy F. Donasco
  */
-@Singleton
+@SessionScoped
 public class HomeFrameViewController implements
 		ViewController<HomeFrameViewLayout>, Serializable
 {
