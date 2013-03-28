@@ -21,8 +21,7 @@
 
 .workspace
 {
-    background-color: #ccffff;
-	height: 600px;
+	/* put background color to see the workspace */
 }
 
 .featureButtonLayout
@@ -58,9 +57,32 @@
 	white-space: normal;
 }
 
+.capabilityWorkspace
+{
+
+}
+.capabilityWorkspace .leftPanel
+{
+
+}
+.capabilityWorkspace .centerPanel
+{
+
+}
+.capabilityWorkspace .rightPanel
+{
+
+}
+
+
 .capabilityTable .v-table-body
 {
 	border: none
+}
+
+.capabilityEditor
+{
+	padding:0px;
 }
 
 .layoutDesign
