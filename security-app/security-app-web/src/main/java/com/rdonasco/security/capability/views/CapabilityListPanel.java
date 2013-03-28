@@ -46,7 +46,7 @@ public class CapabilityListPanel extends Panel implements
 		try
 		{
 			VerticalLayout content = ((VerticalLayout) getContent());
-			content.setMargin(false);
+			content.setMargin(true);
 			content.setHeight(600, UNITS_PIXELS);
 			content.removeAllComponents();
 			if (null != getDataViewListTable())
