@@ -11,12 +11,14 @@ import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.security.app.controllers.ApplicationExceptionPopupProvider;
 import com.rdonasco.security.capability.views.CapabilityViewLayout;
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 /**
  *
  * @author Roy F. Donasco
  */
+@Dependent
 public class CapabilityViewLayoutController implements
 		ViewController<CapabilityViewLayout>
 {
@@ -27,6 +29,8 @@ public class CapabilityViewLayoutController implements
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
 	@Inject
 	private CapabilityListPanelController capabilityListPanelController;
+	@Inject
+	private CapabilityEditorViewController capabilityEditorViewController;
 
 	@PostConstruct
 	@Override
@@ -37,6 +41,7 @@ public class CapabilityViewLayoutController implements
 			// add other contents here
 			capabilityViewLayout.initWidget();
 			capabilityViewLayout.setLeftPanelContent(capabilityListPanelController.getControlledView());
+			capabilityViewLayout.setCenterPanelContent(capabilityEditorViewController.getControlledView());
 		}
 		catch (WidgetInitalizeException ex)
 		{

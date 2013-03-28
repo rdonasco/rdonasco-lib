@@ -19,11 +19,13 @@ import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.capability.vo.CapabilityItemVOBuilder;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.MouseEvents;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
@@ -31,6 +33,7 @@ import javax.inject.Inject;
  *
  * @author Roy F. Donasco
  */
+@SessionScoped
 public class CapabilityListPanelController implements
 		ViewController<CapabilityListPanel>
 {
@@ -46,7 +49,8 @@ public class CapabilityListPanelController implements
 	private Instance<ApplicationPopupProvider> popupProviderFactory;
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
 	private ApplicationPopupProvider popupProvider;
-	private DataManagerContainer capabilityItemTableContainer = new DataManagerContainer(CapabilityItemVO.class);
+	private DataManagerContainer<CapabilityItemVO> capabilityItemTableContainer = new DataManagerContainer(CapabilityItemVO.class);
+	private final Table capabilityListTable = new Table();
 
 	@PostConstruct
 	@Override
@@ -54,7 +58,6 @@ public class CapabilityListPanelController implements
 	{
 		try
 		{
-			final Table capabilityListTable = new Table();
 			capabilityListTable.addStyleName(SecurityDefaultTheme.CSS_CAPABILITY_TABLE);
 			TableHelper.setupTable(capabilityListTable);
 			capabilityItemTableContainer.setDataManager(dataManager);
@@ -168,12 +171,14 @@ public class CapabilityListPanelController implements
 	private void addNewCapability()
 	{
 		CapabilityVO newCapabilityVO = new CapabilityVOBuilder()
-				.setTitle("New capability")
-				.setDescription("New capability")
+				.setTitle("New Capability")
+				.setDescription("New Capability")
 				.createCapabilityVO();
 		CapabilityItemVO newItemVO = new CapabilityItemVOBuilder()
 				.setCapabilityVO(newCapabilityVO)
 				.createCapabilityItemVO();
-		capabilityItemTableContainer.addItem(newItemVO);
+		BeanItem<CapabilityItemVO> newItemAdded = capabilityItemTableContainer.addItem(newItemVO);
+		capabilityListTable.setCurrentPageFirstItemId(newItemAdded.getBean());
+		capabilityListTable.select(newItemAdded.getBean());
 	}
 }

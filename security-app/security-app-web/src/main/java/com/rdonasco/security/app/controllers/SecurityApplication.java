@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.rdonasco.security.app.controllers;
 
 import com.rdonasco.common.i18.I18NResource;
@@ -15,6 +14,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
@@ -47,6 +47,7 @@ public class SecurityApplication extends Application implements
 		notificationHelper.setApplication(this);
 		LOG.log(Level.INFO, "current theme: ", getTheme());
 		Window mainWindow = new Window("rdonasco Security");
+		LOG.log(Level.INFO, "new session: {0}", getSession().getId());
 		mainWindow.addStyleName(SecurityDefaultTheme.CSS_MAIN_WINDOW);
 		setMainWindow(mainWindow);
 		mainWindow.addComponent(homeFrameController.getControlledView());
@@ -113,5 +114,11 @@ public class SecurityApplication extends Application implements
 	{
 		WebApplicationContext context = (WebApplicationContext) getContext();
 		return context.getHttpSession();
+	}
+
+	@PreDestroy
+	public void beforeDestroy()
+	{
+		((WebApplicationContext) getContext()).valueUnbound(null);
 	}
 }

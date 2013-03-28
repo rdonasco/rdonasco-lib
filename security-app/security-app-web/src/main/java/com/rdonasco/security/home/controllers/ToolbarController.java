@@ -42,7 +42,7 @@ public class ToolbarController implements ViewController<ToolbarView>
 	@Inject
 	private Instance<HttpSessionProvider> httpSessionInstanceProvider;
 	@Inject
-	private HomeViewController homeViewController;
+	private DefaultContentViewController homeViewController;
 
 	@PostConstruct
 	@Override

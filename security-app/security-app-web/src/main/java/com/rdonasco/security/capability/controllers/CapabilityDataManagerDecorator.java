@@ -15,6 +15,7 @@ import com.rdonasco.security.services.CapabilityManagerLocal;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Embedded;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +23,10 @@ import java.util.List;
  *
  * @author Roy F. Donasco
  */
-public class CapabilityDataManagerDecorator implements DataManager<CapabilityItemVO>
+public class CapabilityDataManagerDecorator implements
+		DataManager<CapabilityItemVO>, Serializable
 {
+	private static final long serialVersionUID = 1L;
 
 	//@EJB
 	private CapabilityManagerLocal capabilityManager = new CapabilityManagerLocalDummy();

@@ -11,11 +11,13 @@ import com.rdonasco.common.vaadin.view.ControlledView;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
+import javax.enterprise.context.Dependent;
 
 /**
  *
  * @author Roy F. Donasco
  */
+@Dependent
 public class CapabilityListPanel extends Panel implements
 		ControlledView
 {
@@ -44,7 +46,7 @@ public class CapabilityListPanel extends Panel implements
 		try
 		{
 			VerticalLayout content = ((VerticalLayout) getContent());
-			content.setMargin(false);
+			content.setMargin(true);
 			content.setHeight(600, UNITS_PIXELS);
 			content.removeAllComponents();
 			if (null != getDataViewListTable())
