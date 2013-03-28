@@ -10,12 +10,14 @@ import com.rdonasco.common.vaadin.view.utils.NotificationHelper;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.home.controllers.HomeFrameViewController;
 import com.vaadin.Application;
+import com.vaadin.terminal.gwt.server.WebApplicationContext;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -23,7 +25,8 @@ import javax.inject.Inject;
  */
 @SessionScoped
 public class SecurityApplication extends Application implements
-		ApplicationExceptionPopupProvider, ApplicationPopupProvider
+		ApplicationExceptionPopupProvider, ApplicationPopupProvider,
+		HttpSessionProvider
 {
 
 	private static final Logger LOG = Logger.getLogger(SecurityApplication.class.getName());
@@ -103,5 +106,12 @@ public class SecurityApplication extends Application implements
 	public void showTrayNotification(String trayMessage)
 	{
 		notificationHelper.showTrayNotification(trayMessage);
+	}
+
+	@Override
+	public HttpSession getSession()
+	{
+		WebApplicationContext context = (WebApplicationContext) getContext();
+		return context.getHttpSession();
 	}
 }
