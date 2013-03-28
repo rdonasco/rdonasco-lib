@@ -29,6 +29,8 @@ public class CapabilityViewLayoutController implements
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
 	@Inject
 	private CapabilityListPanelController capabilityListPanelController;
+	@Inject
+	private CapabilityEditorViewController capabilityEditorViewController;
 
 	@PostConstruct
 	@Override
@@ -39,6 +41,7 @@ public class CapabilityViewLayoutController implements
 			// add other contents here
 			capabilityViewLayout.initWidget();
 			capabilityViewLayout.setLeftPanelContent(capabilityListPanelController.getControlledView());
+			capabilityViewLayout.setCenterPanelContent(capabilityEditorViewController.getControlledView());
 		}
 		catch (WidgetInitalizeException ex)
 		{
