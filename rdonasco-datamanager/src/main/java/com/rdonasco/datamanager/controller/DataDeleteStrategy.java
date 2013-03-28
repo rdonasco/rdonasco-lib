@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rdonasco.datamanager.view;
+package com.rdonasco.datamanager.controller;
 
 import com.rdonasco.common.exceptions.DataAccessException;
 
@@ -22,7 +22,8 @@ import com.rdonasco.common.exceptions.DataAccessException;
  *
  * @author Roy F. Donasco
  */
-public interface DataUpdateStrategy<T>
+public interface DataDeleteStrategy<T>
 {
-	void update(T dataToUpdate) throws DataAccessException;
+
+	void delete(T dataToDelete) throws DataAccessException;
 }

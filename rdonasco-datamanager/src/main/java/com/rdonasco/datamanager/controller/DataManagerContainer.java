@@ -14,18 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rdonasco.datamanager.view;
+package com.rdonasco.datamanager.controller;
 
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.datamanager.services.DataManager;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import java.util.List;
+import javax.enterprise.context.Dependent;
 
 /**
  *
  * @author Roy F. Donasco
  */
+@Dependent
 public class DataManagerContainer<T> extends BeanItemContainer<T>
 {
 
