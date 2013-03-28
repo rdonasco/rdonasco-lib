@@ -11,11 +11,13 @@ import com.rdonasco.common.vaadin.view.ControlledView;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
+import javax.enterprise.context.Dependent;
 
 /**
  *
  * @author Roy F. Donasco
  */
+@Dependent
 public class CapabilityListPanel extends Panel implements
 		ControlledView
 {

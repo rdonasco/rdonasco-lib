@@ -14,15 +14,15 @@ import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 /**
  *
  * @author Roy F. Donasco
  */
-@Singleton
+@SessionScoped
 public class HomeViewController implements ViewController<HomeViewLayout>,
 		Serializable
 {

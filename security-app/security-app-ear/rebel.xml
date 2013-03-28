@@ -5,11 +5,7 @@
              txsi:schemaLocation="http://www.zeroturnaround.com http://www.zeroturnaround.com/alderaan/rebel-2_0.xsd">
 	<classpath>
 		<dir name="/Users/rdonasco/javaproject/rdonasco-lib/rdonasco/security-app/security-app-web/target/classes"/>
-
+		<dir name="/Users/rdonasco/javaproject/rdonasco-lib/rdonasco/security-app/security-app-ejb/target/classes"/>		
 	</classpath>
-	<web>
-		<link target="/">
-			<dir name="/Users/rdonasco/javaproject/rdonasco-lib/rdonasco/security-app/security-app-web/src/main/webapp"/>
-		</link>
-	</web>  
+  
 </application>  

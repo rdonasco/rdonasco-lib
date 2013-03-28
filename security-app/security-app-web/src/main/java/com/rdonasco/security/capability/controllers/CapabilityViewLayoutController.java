@@ -11,12 +11,14 @@ import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.security.app.controllers.ApplicationExceptionPopupProvider;
 import com.rdonasco.security.capability.views.CapabilityViewLayout;
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 /**
  *
  * @author Roy F. Donasco
  */
+@Dependent
 public class CapabilityViewLayoutController implements
 		ViewController<CapabilityViewLayout>
 {

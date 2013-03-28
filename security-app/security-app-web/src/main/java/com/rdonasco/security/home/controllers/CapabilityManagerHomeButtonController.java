@@ -7,13 +7,13 @@ package com.rdonasco.security.home.controllers;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.security.app.controllers.ApplicationExceptionPopupProvider;
-import com.rdonasco.security.app.controllers.ApplicationPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.capability.controllers.CapabilityViewLayoutController;
 import com.rdonasco.security.home.views.FeatureHomeButton;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
@@ -21,9 +21,11 @@ import javax.inject.Inject;
  *
  * @author Roy F. Donasco
  */
+@Dependent
 public class CapabilityManagerHomeButtonController implements
 		HomeViewButtonController
 {
+	private static final long serialVersionUID = 1L;
 
 	@Inject
 	private FeatureHomeButton featureButton;

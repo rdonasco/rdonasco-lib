@@ -11,11 +11,13 @@ import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
+import javax.enterprise.context.Dependent;
 
 /**
  *
  * @author Roy F. Donasco
  */
+@Dependent
 public class CapabilityViewLayout extends HorizontalLayout implements
 		ControlledView
 {
