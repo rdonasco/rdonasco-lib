@@ -10,10 +10,11 @@ import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ControlledView;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.vaadin.terminal.ThemeResource;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Form;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 /**
@@ -29,12 +30,27 @@ public class CapabilityEditorView extends VerticalLayout implements
 	private HorizontalLayout buttonLayout = new HorizontalLayout();
 	private Button saveButton = new Button();
 	private Button editButton = new Button();
+	private TextField titleField = new TextField(I18NResource.localize("Title"));
+	private TextField descriptionField = new TextField(I18NResource.localize("Description"));
+	private Form editorForm;
+
+	public Form getEditorForm()
+	{
+		return editorForm;
+	}
+
+	public void setEditorForm(Form editorForm)
+	{
+		this.editorForm = editorForm;
+	}
 
 	@Override
 	public void initWidget() throws WidgetInitalizeException
 	{
 		capabilityDetailPanel.setCaption(I18NResource.localize("Capability Editor"));
 		capabilityDetailPanel.setStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
+		capabilityDetailPanel.addComponent(titleField);
+		capabilityDetailPanel.addComponent(descriptionField);
 		capabilityActionsPanel.setCaption(I18NResource.localize("Allowed Actions"));
 		capabilityActionsPanel.setStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
 		editButton.setCaption(I18NResource.localize("Edit"));

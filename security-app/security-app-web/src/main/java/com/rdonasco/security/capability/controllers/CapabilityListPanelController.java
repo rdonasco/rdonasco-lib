@@ -39,6 +39,7 @@ public class CapabilityListPanelController implements
 {
 
 	private static final long serialVersionUID = 1L;
+	protected static final long ADD_CAPABILITY_ID = -1L;
 	@Inject
 	private CapabilityListPanel capabilityListPanel;
 	@Inject
@@ -140,11 +141,12 @@ public class CapabilityListPanelController implements
 		return popupProvider;
 	}
 
+
 	private CapabilityItemVO createDummyAddRecord()
 	{
 		String caption = I18NResource.localize("Add new capability");
 		CapabilityVO capability = new CapabilityVOBuilder()
-				.setId(Long.MAX_VALUE)
+				.setId(ADD_CAPABILITY_ID)
 				.setTitle(caption)
 				.createCapabilityVO();
 		CapabilityItemVO itemVO;
@@ -180,5 +182,10 @@ public class CapabilityListPanelController implements
 		BeanItem<CapabilityItemVO> newItemAdded = capabilityItemTableContainer.addItem(newItemVO);
 		capabilityListTable.setCurrentPageFirstItemId(newItemAdded.getBean());
 		capabilityListTable.select(newItemAdded.getBean());
+	}
+
+	public Table getCapabilityListTable()
+	{
+		return capabilityListTable;
 	}
 }
