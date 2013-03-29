@@ -41,4 +41,6 @@ public interface CapabilityManager
 	void removeCapability(CapabilityVO capabilityToRemove) throws CapabilityManagerException;
 	List<CapabilityVO> findCapabilitiesWithResourceName(String resourceName)
 			throws CapabilityManagerException;
+
+	List<ResourceVO> findAllResources() throws CapabilityManagerException;
 }
