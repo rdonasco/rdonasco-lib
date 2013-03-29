@@ -76,6 +76,11 @@ public class CapabilityEditorView extends VerticalLayout implements
 		return editButton;
 	}
 
+	public TextField getTitleField()
+	{
+		return titleField;
+	}
+
 	public ComboBox getResourceField()
 	{
 		return resourceField;
@@ -117,6 +122,7 @@ public class CapabilityEditorView extends VerticalLayout implements
 		editButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_EDIT));
 		saveButton.setCaption(I18NResource.localize("Save"));
 		saveButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_SAVE));
+		saveButton.addStyleName(SecurityDefaultTheme.CSS_BUTTON_DEFAULT);
 		buttonLayout.addComponent(editButton);
 		buttonLayout.addComponent(saveButton);
 		buttonLayout.setSpacing(true);

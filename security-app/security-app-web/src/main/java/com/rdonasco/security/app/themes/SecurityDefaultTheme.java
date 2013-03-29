@@ -29,6 +29,7 @@ public final class SecurityDefaultTheme
 	public static final String CSS_TABLE_BORDERLESS = "borderless";
 	public static final String CSS_ICON_IN_A_CELL = "cellIcon";
 	public static final String CSS_FULL_WIDTH = "fullWidth";
+	public static final String CSS_BUTTON_DEFAULT = "default";
 	/* start of icon entries */
 	public static final String ICON_32x32_CAPABILITIES = "images/iconarchive.com/blue-matreshka-inside-icon-icon.png";
 	public static final String ICON_32x32_ROLES = "images/danish_rf_icons/PNG/public.png";

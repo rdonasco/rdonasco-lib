@@ -16,20 +16,17 @@ import com.rdonasco.security.capability.views.CapabilityEditorView;
 import com.rdonasco.security.capability.vo.ActionItemVO;
 import com.rdonasco.security.capability.vo.ActionItemVOBuilder;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
-import com.rdonasco.security.capability.vo.CapabilityItemVOBuilder;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.vo.ActionVO;
-import com.rdonasco.security.vo.CapabilityActionVO;
-import com.rdonasco.security.vo.CapabilityActionVOBuilder;
-import com.rdonasco.security.vo.CapabilityVO;
-import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
 import com.vaadin.data.Buffered;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
-import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.MouseEvents;
+import com.vaadin.event.ShortcutAction;
+import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.event.ShortcutListener;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
@@ -162,6 +159,7 @@ public class CapabilityEditorViewController implements
 		editorView.getActionsTable().setReadOnly(false);
 		editorView.getEditButton().setEnabled(false);
 		editorView.getSaveButton().setEnabled(true);
+		editorView.getTitleField().focus();
 	}
 
 	private void configureActionTable()
@@ -220,23 +218,58 @@ public class CapabilityEditorViewController implements
 				setViewToEditMode();
 			}
 		});
+		int[] keyModifiers = new int[]
+		{
+			ShortcutAction.ModifierKey.CTRL
+		};
+		editorView.getEditButton().addShortcutListener(
+				new ShortcutListener("Edit (ctrl+E)",
+				ShortcutAction.KeyCode.E, keyModifiers)
+		{
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void handleAction(Object sender, Object target)
+			{
+				setViewToEditMode();
+			}
+		});
+		editorView.getEditButton().setDescription("Edit (ctrl+E)");
 		editorView.getSaveButton().addListener(new Button.ClickListener()
 		{
+			private static final long serialVersionUID = 1L;
 			@Override
 			public void buttonClick(Button.ClickEvent event)
 			{
-				editorView.getEditorForm().commit();
-				List<ActionVO> actions = new ArrayList<ActionVO>();
-				for (ActionItemVO actionItem : actionsContainer.getItemIds())
-				{
-					actions.add(ActionVO.createWithIdNameAndDescription(
-							actionItem.getId(),
-							actionItem.getName(),
-							actionItem.getDescription()));
-				}
-				currentItem.getBean().setActions(actions);
-				setViewToReadOnly();
+				saveCapability();
 			}
 		});
+		editorView.getSaveButton().addShortcutListener(new ShortcutListener("Save (ctrl+S)",
+				ShortcutAction.KeyCode.S, keyModifiers)
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void handleAction(Object sender, Object target)
+			{
+				saveCapability();
+			}
+		});
+		editorView.getSaveButton().setDescription("Save (ctrl+S)");
+	}
+
+	private void saveCapability() throws Buffered.SourceException,
+			Validator.InvalidValueException
+	{
+		editorView.getEditorForm().commit();
+		List<ActionVO> actions = new ArrayList<ActionVO>();
+		for (ActionItemVO actionItem : actionsContainer.getItemIds())
+		{
+			actions.add(ActionVO.createWithIdNameAndDescription(
+					actionItem.getId(),
+					actionItem.getName(),
+					actionItem.getDescription()));
+		}
+		currentItem.getBean().setActions(actions);
+		setViewToReadOnly();
 	}
 }
