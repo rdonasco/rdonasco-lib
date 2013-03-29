@@ -75,7 +75,7 @@ public class ResourceVO implements Serializable
 	@Override
 	public String toString()
 	{
-		return "com.rdonasco.security.vo.ResourceVO[ id=" + id + " ]";
+		return getName();
 	}
 
 	public String getName()
