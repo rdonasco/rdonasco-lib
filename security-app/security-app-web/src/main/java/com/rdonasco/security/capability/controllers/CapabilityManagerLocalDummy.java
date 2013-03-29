@@ -2,14 +2,17 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.rdonasco.security.capability.controllers;
 
 import com.rdonasco.common.exceptions.NonExistentEntityException;
+import com.rdonasco.security.capability.vo.CapabilityItemVO;
+import com.rdonasco.security.capability.vo.CapabilityItemVOBuilder;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import com.rdonasco.security.services.CapabilityManagerLocal;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.CapabilityActionVO;
+import com.rdonasco.security.vo.CapabilityActionVOBuilder;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
@@ -24,6 +27,7 @@ import java.util.logging.Logger;
  */
 public class CapabilityManagerLocalDummy implements CapabilityManagerLocal
 {
+
 	private static final Logger LOG = Logger.getLogger(CapabilityManagerLocalDummy.class.getName());
 
 	@Override
@@ -125,6 +129,7 @@ public class CapabilityManagerLocalDummy implements CapabilityManagerLocal
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 	private static long idSeed = 1L;
+
 	@Override
 	public CapabilityVO createNewCapability(CapabilityVO capabilityToCreate)
 			throws CapabilityManagerException
@@ -142,25 +147,29 @@ public class CapabilityManagerLocalDummy implements CapabilityManagerLocal
 		// TODO: Complete code for method addActionsToCapability
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
+	private static Long resourceID = 1L;
+	private static List<ResourceVO> resources;
 
 	@Override
 	public List<ResourceVO> findAllResources() throws
 			CapabilityManagerException
 	{
-		final int size = 6;
-		List<ResourceVO> resources = new ArrayList<ResourceVO>();
-		for (long i = 0; i < size; i++)
+		if (null == resources)
 		{
-			final ResourceVO resource = new ResourceVOBuilder()
-					.setId(i)
-					.setName("Resource-" + i)
-					.setDescription("Description-" + i)
-					.createResourceVO();
-			resources.add(resource);
+			final int size = 6;
+			resources = new ArrayList<ResourceVO>();
+			for (long i = 0; i < size; i++)
+			{
+				final ResourceVO resource = new ResourceVOBuilder()
+						.setId(resourceID++)
+						.setName("Resource-" + resourceID)
+						.setDescription("Description-" + resourceID)
+						.createResourceVO();
+				resources.add(resource);
+			}
 		}
 		return resources;
 	}
-
 
 	@Override
 	public List<CapabilityVO> findAllCapabilities() throws
@@ -170,9 +179,7 @@ public class CapabilityManagerLocalDummy implements CapabilityManagerLocal
 		List<CapabilityVO> capabilities = new ArrayList<CapabilityVO>();
 		for (long i = 0; i < size; i++)
 		{
-			final CapabilityVO capabilityVO = new CapabilityVOBuilder()
-					.setTitle("Capability to do " + (i + 1))
-					.createCapabilityVO();
+			final CapabilityVO capabilityVO = createTestDataCapabilityVO();
 			capabilities.add(createNewCapability(capabilityVO));
 		}
 		return capabilities;
@@ -219,5 +226,31 @@ public class CapabilityManagerLocalDummy implements CapabilityManagerLocal
 		// To change body of generated methods, choose Tools | Templates.
 		// TODO: Complete code for method findCapabilitiesWithResourceName
 		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	private static Long capabilityActionKey = 1L;
+	private static Long actionKey = 1L;
+	private CapabilityVO createTestDataCapabilityVO() throws
+			CapabilityManagerException
+	{
+		List<CapabilityActionVO> actions = new ArrayList<CapabilityActionVO>();
+		CapabilityVO capability = new CapabilityVOBuilder()
+				.setTitle("Capability to do " + idSeed)
+				.setDescription("Capability to do " + idSeed)
+				.setResource(findAllResources().get(0))
+				.setActions(actions)
+				.createCapabilityVO();
+		int size = 5;
+		for (int i = 0; i < size; i++)
+		{
+			ActionVO action = ActionVO.createWithIdNameAndDescription(actionKey++, "Action " + actionKey, "Action " + actionKey);
+			CapabilityActionVO capabilityAction = new CapabilityActionVOBuilder()
+					.setActionVO(action)
+					.setId(capabilityActionKey++)
+					.createCapabilityActionVO();
+			actions.add(capabilityAction);
+			capabilityAction.setCapabilityVO(capability);
+		}	
+
+		return capability;
 	}
 }

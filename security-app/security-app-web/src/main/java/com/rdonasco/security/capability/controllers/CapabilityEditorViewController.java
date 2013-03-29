@@ -69,8 +69,7 @@ public class CapabilityEditorViewController implements
 			configureActionTable();
 			configureForm();
 			configureButtons();
-			CapabilityItemVO capability = createTestDataCapabilityVO();
-			setCurrentItem(new BeanItem<CapabilityItemVO>(capability));
+//			setCurrentItem(new BeanItem<CapabilityItemVO>(capability));
 		}
 		catch (Exception ex)
 		{
@@ -91,29 +90,29 @@ public class CapabilityEditorViewController implements
 		editorView.initWidget();
 	}
 
-	private CapabilityItemVO createTestDataCapabilityVO() throws
-			CapabilityManagerException
-	{
-		List<CapabilityActionVO> actions = new ArrayList<CapabilityActionVO>();
-		ActionVO action = ActionVO.createWithIdNameAndDescription(1L, "Edit", "Edit");
-		CapabilityActionVO capabilityAction = new CapabilityActionVOBuilder()
-				.setActionVO(action)
-				.setId(1L)
-				.createCapabilityActionVO();
-		actions.add(capabilityAction);
-		CapabilityVO capability = new CapabilityVOBuilder()
-				.setId(1L)
-				.setTitle("test title")
-				.setDescription("test description")
-				.setResource(capabilityDataManager.findAllResources().get(0))
-				.setActions(actions)
-				.createCapabilityVO();
-		capabilityAction.setCapabilityVO(capability);
-		CapabilityItemVO capabilityItemVO = new CapabilityItemVOBuilder()
-				.setCapabilityVO(capability)
-				.createCapabilityItemVO();
-		return capabilityItemVO;
-	}
+//	private CapabilityItemVO createTestDataCapabilityVO() throws
+//			CapabilityManagerException
+//	{
+//		List<CapabilityActionVO> actions = new ArrayList<CapabilityActionVO>();
+//		ActionVO action = ActionVO.createWithIdNameAndDescription(1L, "Edit", "Edit");
+//		CapabilityActionVO capabilityAction = new CapabilityActionVOBuilder()
+//				.setActionVO(action)
+//				.setId(1L)
+//				.createCapabilityActionVO();
+//		actions.add(capabilityAction);
+//		CapabilityVO capability = new CapabilityVOBuilder()
+//				.setId(1L)
+//				.setTitle("test title")
+//				.setDescription("test description")
+//				.setResource(capabilityDataManager.findAllResources().get(0))
+//				.setActions(actions)
+//				.createCapabilityVO();
+//		capabilityAction.setCapabilityVO(capability);
+//		CapabilityItemVO capabilityItemVO = new CapabilityItemVOBuilder()
+//				.setCapabilityVO(capability)
+//				.createCapabilityItemVO();
+//		return capabilityItemVO;
+//	}
 
 	private void configureResourceComboBox() throws DataAccessException
 	{
@@ -236,6 +235,7 @@ public class CapabilityEditorViewController implements
 					actions.add(ActionVO.createWithName(actionItem.getName()));
 				}
 				currentItem.getBean().setActions(actions);
+				setViewToReadOnly();
 			}
 		});
 	}
