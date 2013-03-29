@@ -58,12 +58,11 @@ public class CapabilityViewLayoutController implements
 				public void valueChange(Property.ValueChangeEvent event)
 				{
 					Table table = capabilityListPanelController.getControlledView().getDataViewListTable();
-					Form form = capabilityEditorViewController.getControlledView().getEditorForm();
 					BeanItem<CapabilityItemVO> item = (BeanItem) table.getItem(table.getValue());
 					CapabilityItemVO capability = (CapabilityItemVO) item.getBean();
 					if (!capability.getId().equals(CapabilityListPanelController.ADD_CAPABILITY_ID))
 					{
-						form.setItemDataSource(item);
+						capabilityEditorViewController.setCurrentItem(item);
 					}
 
 				}

@@ -13,6 +13,7 @@ import com.rdonasco.security.capability.vo.CapabilityItemVOBuilder;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.services.CapabilityManagerLocal;
 import com.rdonasco.security.vo.CapabilityVO;
+import com.rdonasco.security.vo.ResourceVO;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Embedded;
 import java.io.Serializable;
@@ -132,6 +133,12 @@ public class CapabilityDataManagerDecorator implements
 			ClickListenerProvider clickListenerProvider)
 	{
 		this.clickListenerProvider = clickListenerProvider;
+	}
+
+	public List<ResourceVO> findAllResources() throws
+			CapabilityManagerException
+	{
+		return capabilityManager.findAllResources();
 	}
 
 	private CapabilityItemVO convertToCapabilityItemVOandAddToContainer(

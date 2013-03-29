@@ -5,8 +5,12 @@
 
 package com.rdonasco.security.capability.vo;
 
+import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.vaadin.ui.Embedded;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CapabilityItemVOBuilder 
 {
@@ -31,7 +35,14 @@ public class CapabilityItemVOBuilder
 
 	public CapabilityItemVO createCapabilityItemVO()
 	{
-		return new CapabilityItemVO(capabilityVO, embeddedIcon);
+		List<ActionVO> actions = new ArrayList<ActionVO>();
+		for (CapabilityActionVO action : capabilityVO.getActions())
+		{
+			actions.add(action.getActionVO());
+		}
+		CapabilityItemVO capabilityItemVO = new CapabilityItemVO(capabilityVO, embeddedIcon);
+		capabilityItemVO.setActions(actions);
+		return capabilityItemVO;
 	}
 
 }

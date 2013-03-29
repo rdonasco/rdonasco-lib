@@ -9,11 +9,14 @@ import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ControlledView;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
@@ -32,6 +35,8 @@ public class CapabilityEditorView extends VerticalLayout implements
 	private Button editButton = new Button();
 	private TextField titleField = new TextField(I18NResource.localize("Title"));
 	private TextField descriptionField = new TextField(I18NResource.localize("Description"));
+	private ComboBox resourceField = new ComboBox(I18NResource.localize("Resource"));
+	private Table actionsTable = new Table();
 	private Form editorForm;
 
 	public Form getEditorForm()
@@ -47,19 +52,9 @@ public class CapabilityEditorView extends VerticalLayout implements
 	@Override
 	public void initWidget() throws WidgetInitalizeException
 	{
-		capabilityDetailPanel.setCaption(I18NResource.localize("Capability Editor"));
-		capabilityDetailPanel.setStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
-		capabilityDetailPanel.addComponent(titleField);
-		capabilityDetailPanel.addComponent(descriptionField);
-		capabilityActionsPanel.setCaption(I18NResource.localize("Allowed Actions"));
-		capabilityActionsPanel.setStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
-		editButton.setCaption(I18NResource.localize("Edit"));
-		editButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_EDIT));
-		saveButton.setCaption(I18NResource.localize("Save"));
-		saveButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_SAVE));
-		buttonLayout.addComponent(editButton);
-		buttonLayout.addComponent(saveButton);
-		buttonLayout.setSpacing(true);
+		configureCapabilityFields();
+		configureCapabilityActionFields();
+		configureEditorButtons();
 
 		addComponent(capabilityDetailPanel);
 		addComponent(capabilityActionsPanel);
@@ -81,4 +76,46 @@ public class CapabilityEditorView extends VerticalLayout implements
 		return editButton;
 	}
 
+	public ComboBox getResourceField()
+	{
+		return resourceField;
+	}
+
+	public Table getActionsTable()
+	{
+		return actionsTable;
+	}
+
+	private void configureCapabilityFields()
+	{
+		capabilityDetailPanel.setCaption(I18NResource.localize("Capability Editor"));
+		capabilityDetailPanel.setStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
+		capabilityDetailPanel.addComponent(titleField);
+		capabilityDetailPanel.addComponent(descriptionField);
+		capabilityDetailPanel.addComponent(resourceField);
+		VerticalLayout capabilityDetailLayout = (VerticalLayout) capabilityDetailPanel.getContent();
+		capabilityDetailLayout.setSpacing(true);
+	}
+
+	private void configureCapabilityActionFields()
+	{
+		capabilityActionsPanel.setCaption(I18NResource.localize("Allowed Actions"));
+		capabilityActionsPanel.setStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
+		capabilityActionsPanel.addComponent(getActionsTable());
+		getActionsTable().addStyleName(SecurityDefaultTheme.CSS_TABLE_SMALL_STRIPED);
+		getActionsTable().addStyleName(SecurityDefaultTheme.CSS_TABLE_BORDERLESS);
+		getActionsTable().setSizeFull();
+		((VerticalLayout) capabilityActionsPanel.getContent()).setExpandRatio(getActionsTable(), 1);
+	}
+
+	private void configureEditorButtons()
+	{
+		editButton.setCaption(I18NResource.localize("Edit"));
+		editButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_EDIT));
+		saveButton.setCaption(I18NResource.localize("Save"));
+		saveButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_SAVE));
+		buttonLayout.addComponent(editButton);
+		buttonLayout.addComponent(saveButton);
+		buttonLayout.setSpacing(true);
+	}
 }

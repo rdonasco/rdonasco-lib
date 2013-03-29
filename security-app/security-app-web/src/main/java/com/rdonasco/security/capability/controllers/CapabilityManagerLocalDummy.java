@@ -13,6 +13,7 @@ import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
+import com.rdonasco.security.vo.ResourceVOBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -141,6 +142,25 @@ public class CapabilityManagerLocalDummy implements CapabilityManagerLocal
 		// TODO: Complete code for method addActionsToCapability
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
+
+	@Override
+	public List<ResourceVO> findAllResources() throws
+			CapabilityManagerException
+	{
+		final int size = 6;
+		List<ResourceVO> resources = new ArrayList<ResourceVO>();
+		for (long i = 0; i < size; i++)
+		{
+			final ResourceVO resource = new ResourceVOBuilder()
+					.setId(i)
+					.setName("Resource-" + i)
+					.setDescription("Description-" + i)
+					.createResourceVO();
+			resources.add(resource);
+		}
+		return resources;
+	}
+
 
 	@Override
 	public List<CapabilityVO> findAllCapabilities() throws

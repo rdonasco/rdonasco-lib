@@ -82,6 +82,16 @@
 	padding:0px;
 }
 
+.v-table-cell-content-cellIcon
+{
+	width: 10px;
+	text-align: center;
+}
+.v-table-cell-content-fullWidth
+{
+	width: 100%;
+}
+
 .layoutDesign
 {
 	background-color: appworkspace;
