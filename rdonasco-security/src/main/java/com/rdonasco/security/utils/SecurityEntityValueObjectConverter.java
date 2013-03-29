@@ -155,6 +155,17 @@ public class SecurityEntityValueObjectConverter
 		return resource;
 	}
 
+	public static List<ResourceVO> toResourceVOList(List<Resource> resources)
+			throws IllegalAccessException, InvocationTargetException
+	{
+		List<ResourceVO> resourceVoList = new ArrayList<ResourceVO>(resources.size());
+		for (Resource resource : resources)
+		{
+			resourceVoList.add(toResourceVO(resource));
+		}
+		return resourceVoList;
+	}
+
 	public static ResourceVO toResourceVO(Resource resource) throws
 			IllegalAccessException, InvocationTargetException
 	{
