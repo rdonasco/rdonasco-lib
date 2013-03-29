@@ -7,6 +7,8 @@ package com.rdonasco.security.capability.vo;
 
 import com.rdonasco.security.vo.ActionVO;
 import com.vaadin.ui.Embedded;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -14,6 +16,8 @@ import com.vaadin.ui.Embedded;
  */
 public class ActionItemVO 
 {
+
+	private static final Logger LOG = Logger.getLogger(ActionItemVO.class.getName());
 	private Embedded icon;
 	private ActionVO action;
 
@@ -45,9 +49,23 @@ public class ActionItemVO
 	}
 
 	@Override
-	public boolean equals(Object object)
+	public boolean equals(Object obj)
 	{
-		return action.equals(object);
+		boolean equalityTest = true;
+		if (obj == null)
+		{
+			equalityTest = false;
+		}
+		if (equalityTest && getClass() != obj.getClass())
+		{
+			equalityTest = false;
+		}
+		final ActionItemVO other = (ActionItemVO) obj;
+		if (equalityTest && (this.action != other.action && (this.action == null || !this.action.equals(other.action))))
+		{
+			equalityTest = false;
+		}
+		return equalityTest;
 	}
 
 	@Override

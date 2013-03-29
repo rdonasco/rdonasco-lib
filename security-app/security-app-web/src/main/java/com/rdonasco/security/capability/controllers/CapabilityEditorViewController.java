@@ -8,6 +8,7 @@ import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ViewController;
+import com.rdonasco.common.vaadin.view.ButtonUtil;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.datamanager.controller.DataRetrieveListStrategy;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
@@ -27,6 +28,8 @@ import com.vaadin.data.Buffered;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.event.ItemClickEvent;
+import com.vaadin.event.MouseEvents;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
@@ -64,12 +67,10 @@ public class CapabilityEditorViewController implements
 		try
 		{
 			editorView.initWidget();
-
 			configureResourceComboBox();
 			configureActionTable();
 			configureForm();
 			configureButtons();
-//			setCurrentItem(new BeanItem<CapabilityItemVO>(capability));
 		}
 		catch (Exception ex)
 		{
@@ -89,30 +90,6 @@ public class CapabilityEditorViewController implements
 		editorView.removeAllComponents();
 		editorView.initWidget();
 	}
-
-//	private CapabilityItemVO createTestDataCapabilityVO() throws
-//			CapabilityManagerException
-//	{
-//		List<CapabilityActionVO> actions = new ArrayList<CapabilityActionVO>();
-//		ActionVO action = ActionVO.createWithIdNameAndDescription(1L, "Edit", "Edit");
-//		CapabilityActionVO capabilityAction = new CapabilityActionVOBuilder()
-//				.setActionVO(action)
-//				.setId(1L)
-//				.createCapabilityActionVO();
-//		actions.add(capabilityAction);
-//		CapabilityVO capability = new CapabilityVOBuilder()
-//				.setId(1L)
-//				.setTitle("test title")
-//				.setDescription("test description")
-//				.setResource(capabilityDataManager.findAllResources().get(0))
-//				.setActions(actions)
-//				.createCapabilityVO();
-//		capabilityAction.setCapabilityVO(capability);
-//		CapabilityItemVO capabilityItemVO = new CapabilityItemVOBuilder()
-//				.setCapabilityVO(capability)
-//				.createCapabilityItemVO();
-//		return capabilityItemVO;
-//	}
 
 	private void configureResourceComboBox() throws DataAccessException
 	{
@@ -141,14 +118,31 @@ public class CapabilityEditorViewController implements
 		this.currentItem = currentItem;
 		editorView.getEditorForm().setItemDataSource(currentItem);
 		actionsContainer.removeAllItems();
-		for (ActionVO action : currentItem.getBean().getActions())
+		if (null != currentItem)
 		{
-			Embedded icon = new Embedded(null, new ThemeResource(SecurityDefaultTheme.ICONS_16x16_DELETE));
-			ActionItemVO actionItemVO = new ActionItemVOBuilder()
-					.setAction(action)
-					.setIcon(icon)
-					.createActionItemVO();
-			actionsContainer.addItem(actionItemVO);
+			for (ActionVO action : currentItem.getBean().getActions())
+			{
+				Embedded icon = new Embedded(null, new ThemeResource(SecurityDefaultTheme.ICONS_16x16_DELETE));
+				icon.setDescription(I18NResource.localize("Remove action"));
+				final ActionItemVO actionItemVO = new ActionItemVOBuilder()
+						.setAction(action)
+						.setIcon(icon)
+						.createActionItemVO();
+				actionsContainer.addItem(actionItemVO);
+				icon.addListener(new MouseEvents.ClickListener()
+				{
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void click(MouseEvents.ClickEvent event)
+					{
+						if (!editorView.getEditorForm().isReadOnly() && !actionsContainer.removeItem(actionItemVO))
+						{
+							LOG.log(Level.WARNING, "Unable to remove action {0}", actionItemVO);
+						}
+					}
+				});
+			}
 		}
 		setViewToReadOnly();
 	}
@@ -159,6 +153,7 @@ public class CapabilityEditorViewController implements
 		editorView.getActionsTable().setReadOnly(true);
 		editorView.getEditButton().setEnabled(true);
 		editorView.getSaveButton().setEnabled(false);
+		editorView.getSaveButton().setComponentError(null);
 	}
 
 	public void setViewToEditMode()
@@ -172,6 +167,7 @@ public class CapabilityEditorViewController implements
 	private void configureActionTable()
 	{
 		Table actionTable = editorView.getActionsTable();
+		actionTable.setSelectable(true);
 		actionTable.setContainerDataSource(actionsContainer);
 		actionTable.setVisibleColumns(new String[]
 		{
@@ -184,6 +180,7 @@ public class CapabilityEditorViewController implements
 		actionTable.setCellStyleGenerator(new Table.CellStyleGenerator()
 		{
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			public String getStyle(Object itemId, Object propertyId)
 			{
@@ -199,7 +196,6 @@ public class CapabilityEditorViewController implements
 				return style;
 			}
 		});
-
 	}
 
 	private void configureForm() throws Buffered.SourceException,
@@ -213,6 +209,7 @@ public class CapabilityEditorViewController implements
 
 	private void configureButtons()
 	{
+		ButtonUtil.disableButtons(editorView.getEditButton(), editorView.getSaveButton());
 		editorView.getEditButton().addListener(new Button.ClickListener()
 		{
 			private static final long serialVersionUID = 1L;
@@ -232,7 +229,10 @@ public class CapabilityEditorViewController implements
 				List<ActionVO> actions = new ArrayList<ActionVO>();
 				for (ActionItemVO actionItem : actionsContainer.getItemIds())
 				{
-					actions.add(ActionVO.createWithName(actionItem.getName()));
+					actions.add(ActionVO.createWithIdNameAndDescription(
+							actionItem.getId(),
+							actionItem.getName(),
+							actionItem.getDescription()));
 				}
 				currentItem.getBean().setActions(actions);
 				setViewToReadOnly();

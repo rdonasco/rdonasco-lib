@@ -93,6 +93,9 @@ public class CapabilityEditorView extends VerticalLayout implements
 		capabilityDetailPanel.addComponent(titleField);
 		capabilityDetailPanel.addComponent(descriptionField);
 		capabilityDetailPanel.addComponent(resourceField);
+		titleField.setReadOnly(true);
+		descriptionField.setReadOnly(true);
+		resourceField.setReadOnly(true);
 		VerticalLayout capabilityDetailLayout = (VerticalLayout) capabilityDetailPanel.getContent();
 		capabilityDetailLayout.setSpacing(true);
 	}
