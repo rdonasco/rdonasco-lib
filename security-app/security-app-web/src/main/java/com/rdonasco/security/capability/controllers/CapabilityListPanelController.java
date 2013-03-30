@@ -24,6 +24,7 @@ import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.MouseEvents;
 import com.vaadin.terminal.ThemeResource;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
 import de.steinwedel.vaadin.MessageBox;
@@ -113,12 +114,22 @@ public class CapabilityListPanelController implements
 
 				}
 			});
-			capabilityItemTableContainer.setDummyAddRecord(createDummyAddRecord());
+//			capabilityItemTableContainer.setDummyAddRecord(createDummyAddRecord());
 			capabilityListTable.setContainerDataSource(capabilityItemTableContainer);
 			capabilityListTable.setVisibleColumns(Constants.TABLE_VISIBLE_COLUMNS);
 			capabilityListTable.setColumnHeaders(Constants.TABLE_VISIBLE_HEADERS);
 			capabilityListPanel.setDataViewListTable(capabilityListTable);
 			capabilityListPanel.initWidget();
+			capabilityListPanel.getAddCapabilityButton().addListener(new Button.ClickListener()
+			{
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void buttonClick(Button.ClickEvent event)
+				{
+					addNewCapability();
+				}
+			});
 			capabilityItemTableContainer.refresh();
 		}
 		catch (Exception ex)
