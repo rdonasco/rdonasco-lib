@@ -159,4 +159,21 @@ public class CapabilityDataManagerDecorator implements
 		return itemVO;
 	}
 
+	public ResourceVO addResource(ResourceVO resource) throws
+			CapabilityManagerException
+	{
+		return capabilityManager.addResource(resource);
+	}
+
+	public void updateResource(ResourceVO resource) throws
+			CapabilityManagerException
+	{
+		capabilityManager.updateResource(resource);
+	}
+
+	public void removeResource(ResourceVO resource) throws
+			CapabilityManagerException
+	{
+		capabilityManager.removeResource(resource);
+	}
 }

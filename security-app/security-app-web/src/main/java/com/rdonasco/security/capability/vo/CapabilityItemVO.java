@@ -137,21 +137,24 @@ public class CapabilityItemVO implements Serializable
 		{
 			areEqual = false;
 		}
-		if (null == obj || getClass() != obj.getClass())
+		else if (getClass() != obj.getClass())
 		{
 			areEqual = false;
 		}
-		final CapabilityItemVO other = (CapabilityItemVO) obj;
-		try
+		else
 		{
-			if (this.getId() != other.getId() && (this.getId() == null || !this.getId().equals(other.getId())))
+			final CapabilityItemVO other = (CapabilityItemVO) obj;
+			try
+			{
+				if (this.getId() != other.getId() && (this.getId() == null || !this.getId().equals(other.getId())))
+				{
+					areEqual = false;
+				}
+			}
+			catch (NullPointerException e)
 			{
 				areEqual = false;
 			}
-		}
-		catch (NullPointerException e)
-		{
-			areEqual = false;
 		}
 		return areEqual;
 	}

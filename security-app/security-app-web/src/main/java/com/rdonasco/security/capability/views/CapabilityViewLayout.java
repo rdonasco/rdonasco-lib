@@ -43,7 +43,7 @@ public class CapabilityViewLayout extends HorizontalLayout implements
 		centerPanel.addStyleName(SecurityDefaultTheme.CSS_CENTER_PANEL);
 
 		rightPanel.setWidth(250, UNITS_PIXELS);
-		rightPanel.setMargin(false, true, true, false);
+		rightPanel.setMargin(true, true, true, false);
 		rightPanel.addStyleName(SecurityDefaultTheme.CSS_RIGHT_PANEL);
 
 		addComponent(leftPanel);

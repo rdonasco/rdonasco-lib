@@ -12,7 +12,6 @@ import com.rdonasco.security.capability.views.CapabilityViewLayout;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.Property;
-import com.vaadin.ui.Form;
 import com.vaadin.ui.Table;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -37,6 +36,8 @@ public class CapabilityViewLayoutController implements
 	private CapabilityListPanelController capabilityListPanelController;
 	@Inject
 	private CapabilityEditorViewController capabilityEditorViewController;
+	@Inject
+	private ResourcesEditorAndSelectorViewController resourceEditorController;
 
 	@PostConstruct
 	@Override
@@ -48,6 +49,7 @@ public class CapabilityViewLayoutController implements
 			capabilityViewLayout.initWidget();
 			capabilityViewLayout.setLeftPanelContent(capabilityListPanelController.getControlledView());
 			capabilityViewLayout.setCenterPanelContent(capabilityEditorViewController.getControlledView().getEditorForm());
+			capabilityViewLayout.addRightPanelContent(resourceEditorController.getControlledView());
 
 			// link the two controllers
 			capabilityListPanelController.getControlledView().getDataViewListTable().addListener(new Property.ValueChangeListener()

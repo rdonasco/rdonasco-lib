@@ -5,8 +5,6 @@
 package com.rdonasco.security.capability.controllers;
 
 import com.rdonasco.common.exceptions.NonExistentEntityException;
-import com.rdonasco.security.capability.vo.CapabilityItemVO;
-import com.rdonasco.security.capability.vo.CapabilityItemVOBuilder;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import com.rdonasco.security.services.CapabilityManagerLocal;
@@ -70,27 +68,26 @@ public class CapabilityManagerLocalDummy implements CapabilityManagerLocal
 	public ResourceVO addResource(ResourceVO resource) throws
 			CapabilityManagerException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method addResource
-		throw new UnsupportedOperationException("Not supported yet.");
+		resource.setId(resourceID++);
+		resources.add(resource);
+		return resource;
 	}
 
 	@Override
 	public void updateResource(ResourceVO resource) throws
 			CapabilityManagerException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method updateResource
-		throw new UnsupportedOperationException("Not supported yet.");
+		int index = resources.indexOf(resource);
+		ResourceVO resourceToUpdate = resources.get(index);
+		resourceToUpdate.setName(resource.getName());
+		resourceToUpdate.setDescription(resource.getDescription());
 	}
 
 	@Override
 	public void removeResource(ResourceVO resource) throws
 			CapabilityManagerException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method removeResource
-		throw new UnsupportedOperationException("Not supported yet.");
+		resources.remove(resource);
 	}
 
 	@Override
