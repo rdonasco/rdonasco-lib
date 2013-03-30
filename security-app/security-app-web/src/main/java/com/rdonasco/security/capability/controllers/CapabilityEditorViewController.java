@@ -148,7 +148,9 @@ public class CapabilityEditorViewController implements
 	{
 		editorView.getEditorForm().setReadOnly(true);
 		editorView.getActionsTable().setReadOnly(true);
+		editorView.getCancelButton().setVisible(false);
 		editorView.getEditButton().setEnabled(true);
+		editorView.getEditButton().setVisible(true);
 		editorView.getSaveButton().setEnabled(false);
 		editorView.getSaveButton().setComponentError(null);
 	}
@@ -157,7 +159,9 @@ public class CapabilityEditorViewController implements
 	{
 		editorView.getEditorForm().setReadOnly(false);
 		editorView.getActionsTable().setReadOnly(false);
+		editorView.getCancelButton().setVisible(true);
 		editorView.getEditButton().setEnabled(false);
+		editorView.getEditButton().setVisible(false);
 		editorView.getSaveButton().setEnabled(true);
 		editorView.getTitleField().focus();
 	}
@@ -208,6 +212,7 @@ public class CapabilityEditorViewController implements
 	private void configureButtons()
 	{
 		ButtonUtil.disableButtons(editorView.getEditButton(), editorView.getSaveButton());
+		editorView.getCancelButton().setVisible(false);
 		editorView.getEditButton().addListener(new Button.ClickListener()
 		{
 			private static final long serialVersionUID = 1L;
@@ -227,6 +232,7 @@ public class CapabilityEditorViewController implements
 				ShortcutAction.KeyCode.E, keyModifiers)
 		{
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void handleAction(Object sender, Object target)
 			{
@@ -237,6 +243,7 @@ public class CapabilityEditorViewController implements
 		editorView.getSaveButton().addListener(new Button.ClickListener()
 		{
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void buttonClick(Button.ClickEvent event)
 			{
@@ -255,6 +262,27 @@ public class CapabilityEditorViewController implements
 			}
 		});
 		editorView.getSaveButton().setDescription("Save (ctrl+S)");
+		editorView.getCancelButton().addListener(new Button.ClickListener()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(Button.ClickEvent event)
+			{
+				setViewToReadOnly();
+			}
+		});
+		editorView.getCancelButton().setDescription("Cancel (Esc)");
+		editorView.getCancelButton().addShortcutListener(new ShortcutListener(null, KeyCode.ESCAPE, null)
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void handleAction(Object sender, Object target)
+			{
+				setViewToReadOnly();
+			}
+		});
 	}
 
 	private void saveCapability() throws Buffered.SourceException,

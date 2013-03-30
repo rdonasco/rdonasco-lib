@@ -8,7 +8,9 @@ import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ViewController;
+import com.rdonasco.common.vaadin.view.NotificationFactory;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
+import com.rdonasco.datamanager.utils.CommonConstants;
 import com.rdonasco.security.app.controllers.ApplicationExceptionPopupProvider;
 import com.rdonasco.security.app.controllers.ApplicationPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
@@ -24,6 +26,7 @@ import com.vaadin.event.MouseEvents;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
+import de.steinwedel.vaadin.MessageBox;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Instance;
@@ -75,15 +78,35 @@ public class CapabilityListPanelController implements
 						@Override
 						public void click(MouseEvents.ClickEvent event)
 						{
-							try
+							MessageBox messageBox = new MessageBox(capabilityListPanel.getWindow(),
+									I18NResource.localize("Are you sure?"),
+									MessageBox.Icon.QUESTION,
+									I18NResource.localize("Do you really want to delete this?"),
+									new MessageBox.ButtonConfig(MessageBox.ButtonType.YES, I18NResource.localize("Yes")),
+									new MessageBox.ButtonConfig(MessageBox.ButtonType.NO, I18NResource.localize("No")));
+							messageBox.show(new MessageBox.EventListener()
 							{
-								capabilityItemTableContainer.removeItem(data);
-								getPopupProvider().popUpInfo("Capability deleted");
-							}
-							catch (Exception e)
-							{
-								getExceptionPopupProvider().popUpErrorException(e);
-							}
+								private static final long serialVersionUID = 1L;
+
+								@Override
+								public void buttonClicked(
+										MessageBox.ButtonType buttonType)
+								{
+									if (MessageBox.ButtonType.YES.equals(buttonType))
+									{
+										try
+										{
+											capabilityItemTableContainer.removeItem(data);
+											getPopupProvider().popUpInfo("Capability deleted");
+										}
+										catch (Exception e)
+										{
+											getExceptionPopupProvider().popUpErrorException(e);
+										}
+
+									}
+								}
+							});
 						}
 					};
 					return clickListener;
@@ -140,7 +163,6 @@ public class CapabilityListPanelController implements
 		}
 		return popupProvider;
 	}
-
 
 	private CapabilityItemVO createDummyAddRecord()
 	{

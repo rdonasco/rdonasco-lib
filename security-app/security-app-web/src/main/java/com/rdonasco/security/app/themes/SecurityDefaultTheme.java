@@ -43,4 +43,5 @@ public final class SecurityDefaultTheme
 	public static final String ICONS_16x16_ADD = "images/silk-icons/add.png";
 	public static final String ICONS_16x16_EDIT = "images/silk-icons/pencil.png";
 	public static final String ICONS_16x16_SAVE = "images/silk-icons/disk.png";
+	public static final String ICONS_16x16_CANCEL = "images/silk-icons/cancel.png";
 }

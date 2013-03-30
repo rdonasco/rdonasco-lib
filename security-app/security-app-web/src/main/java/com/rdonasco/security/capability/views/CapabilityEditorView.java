@@ -33,6 +33,7 @@ public class CapabilityEditorView extends VerticalLayout implements
 	private HorizontalLayout buttonLayout = new HorizontalLayout();
 	private Button saveButton = new Button();
 	private Button editButton = new Button();
+	private Button cancelButton = new Button();
 	private TextField titleField = new TextField(I18NResource.localize("Title"));
 	private TextField descriptionField = new TextField(I18NResource.localize("Description"));
 	private ComboBox resourceField = new ComboBox(I18NResource.localize("Resource"));
@@ -74,6 +75,11 @@ public class CapabilityEditorView extends VerticalLayout implements
 	public Button getEditButton()
 	{
 		return editButton;
+	}
+
+	public Button getCancelButton()
+	{
+		return cancelButton;
 	}
 
 	public TextField getTitleField()
@@ -122,8 +128,12 @@ public class CapabilityEditorView extends VerticalLayout implements
 		editButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_EDIT));
 		saveButton.setCaption(I18NResource.localize("Save"));
 		saveButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_SAVE));
+		cancelButton.setCaption(I18NResource.localize("Cancel"));
+		cancelButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_CANCEL));
+
 		saveButton.addStyleName(SecurityDefaultTheme.CSS_BUTTON_DEFAULT);
 		buttonLayout.addComponent(editButton);
+		buttonLayout.addComponent(cancelButton);
 		buttonLayout.addComponent(saveButton);
 		buttonLayout.setSpacing(true);
 	}
