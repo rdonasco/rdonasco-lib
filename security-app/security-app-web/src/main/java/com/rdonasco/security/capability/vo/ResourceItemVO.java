@@ -87,11 +87,8 @@ public class ResourceItemVO
 		}
 		else
 		{
-			final ResourceItemVO other = (ResourceItemVO) obj;
-			if (!isEqual && (this.resource != other.resource && (this.resource == null || !this.resource.equals(other.resource))))
-			{
-				isEqual = false;
-			}
+			ResourceItemVO otherItem = (ResourceItemVO) obj;
+			isEqual = this.resource.equals(otherItem.resource);
 		}
 		return isEqual;
 	}

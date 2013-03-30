@@ -22,10 +22,13 @@ import com.rdonasco.security.capability.vo.ResourceItemVO;
 import com.rdonasco.security.capability.vo.ResourceItemVOBuilder;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.vo.ResourceVO;
+import com.rdonasco.security.vo.ResourceVOBuilder;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.FieldEvents;
 import com.vaadin.event.ItemClickEvent;
+import com.vaadin.event.MouseEvents;
 import com.vaadin.terminal.ThemeResource;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
@@ -55,8 +58,6 @@ public class ResourcesEditorAndSelectorViewController implements
 	private DataManagerContainer<ResourceItemVO> resourcesDataContainer = new DataManagerContainer<ResourceItemVO>(ResourceItemVO.class);
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopProvider;
-	@Inject
-	private ApplicationPopupProvider popupProvider;
 	private Map<Object, Map<Object, TextField>> fieldMap = new HashMap<Object, Map<Object, TextField>>();
 
 	@PostConstruct
@@ -97,45 +98,47 @@ public class ResourcesEditorAndSelectorViewController implements
 					return style;
 				}
 			});
+			resourcesEditorAndSelectorView.getResourceEditorTable().setReadOnly(false);
 
-			Table.ColumnGenerator columnGenerator = new Table.ColumnGenerator()
-			{
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public Object generateCell(final Table source,
-						final Object itemId,
-						final Object columnId)
-				{
-					final TextField textField = new TextField();
-					ResourceItemVO resourceItem = (ResourceItemVO) itemId;
-					textField.setValue(resourceItem.getName());
-					textField.setReadOnly(true);
-					textField.setWriteThrough(true);
-					addFieldToFieldCache(itemId, columnId, textField);
-					textField.addListener(new FieldEvents.BlurListener()
-					{
-						private static final long serialVersionUID = 1L;
-						@Override
-						public void blur(FieldEvents.BlurEvent event)
-						{
-							try
-							{
-								BeanItem<ResourceItemVO> itemToUpdate = (BeanItem) source.getItem(itemId);
-								itemToUpdate.getBean().setName((String) textField.getValue());
-								resourcesDataContainer.updateItem(itemToUpdate.getBean());
-								textField.setReadOnly(true);
-							}
-							catch (DataAccessException ex)
-							{
-								exceptionPopProvider.popUpErrorException(ex);
-							}
-						}
-					});
-					return textField;
-				}
-			};
-			resourcesEditorAndSelectorView.getResourceEditorTable().addGeneratedColumn("name", columnGenerator);
+//			Table.ColumnGenerator columnGenerator = new Table.ColumnGenerator()
+//			{
+//				private static final long serialVersionUID = 1L;
+//
+//				@Override
+//				public Object generateCell(final Table source,
+//						final Object itemId,
+//						final Object columnId)
+//				{
+//					final TextField textField = new TextField();
+//					ResourceItemVO resourceItem = (ResourceItemVO) itemId;
+//					textField.setValue(resourceItem.getName());
+//					textField.setReadOnly(true);
+//					textField.setWriteThrough(true);
+//					addFieldToFieldCache(itemId, columnId, textField);
+//					textField.addListener(new FieldEvents.BlurListener()
+//					{
+//						private static final long serialVersionUID = 1L;
+//
+//						@Override
+//						public void blur(FieldEvents.BlurEvent event)
+//						{
+//							try
+//							{
+//								BeanItem<ResourceItemVO> itemToUpdate = (BeanItem) source.getItem(itemId);
+//								itemToUpdate.getBean().setName((String) textField.getValue());
+//								resourcesDataContainer.updateItem(itemToUpdate.getBean());
+//								textField.setReadOnly(true);
+//							}
+//							catch (DataAccessException ex)
+//							{
+//								exceptionPopProvider.popUpErrorException(ex);
+//							}
+//						}
+//					});
+//					return textField;
+//				}
+//			};
+//			resourcesEditorAndSelectorView.getResourceEditorTable().addGeneratedColumn("name", columnGenerator);
 			resourcesEditorAndSelectorView.getResourceEditorTable().addListener(new ItemClickEvent.ItemClickListener()
 			{
 				private static final long serialVersionUID = 1L;
@@ -145,15 +148,24 @@ public class ResourcesEditorAndSelectorViewController implements
 				{
 					if (event.isDoubleClick())
 					{
-						Map<Object, TextField> subFieldMap = fieldMap.get(event.getItemId());
-						TextField textField = subFieldMap.get(event.getPropertyId());
+						TextField textField = getFieldFromCache(event.getItemId(), event.getPropertyId());
 						textField.setReadOnly(false);
 						textField.focus();
 					}
 				}
 			});
-			TableHelper.setupTable(resourcesEditorAndSelectorView.getResourceEditorTable());
+			resourcesEditorAndSelectorView.getAddResourceButton().addListener(new Button.ClickListener()
+			{
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void buttonClick(Button.ClickEvent event)
+				{
+					addNewResourceItemVO();
+				}
+			});
 			resourcesDataContainer.refresh();
+			TableHelper.setupTable(resourcesEditorAndSelectorView.getResourceEditorTable());
 		}
 		catch (Exception ex)
 		{
@@ -191,12 +203,13 @@ public class ResourcesEditorAndSelectorViewController implements
 					Embedded icon;
 					for (ResourceVO resource : resources)
 					{
-						icon = new Embedded(null, new ThemeResource(SecurityDefaultTheme.ICONS_16x16_DELETE));
-						icon.setDescription(I18NResource.localize("Delete"));
-						resourceItems.add(new ResourceItemVOBuilder()
+						icon = createDeleteIcon();
+						final ResourceItemVO resourceItemVO = new ResourceItemVOBuilder()
 								.setIcon(icon)
 								.setResource(resource)
-								.createResourceItemVO());
+								.createResourceItemVO();
+						setupDeleteIconClickListener(icon, resourceItemVO);
+						resourceItems.add(resourceItemVO);
 					}
 				}
 				catch (CapabilityManagerException ex)
@@ -213,7 +226,7 @@ public class ResourcesEditorAndSelectorViewController implements
 					throws
 					DataAccessException
 			{
-				ResourceVO savedData = null;
+				ResourceVO savedData;
 				try
 				{
 					savedData = capabilityManager.addResource(dataToSaveAndReturn.getResource());
@@ -270,5 +283,51 @@ public class ResourcesEditorAndSelectorViewController implements
 			fieldMap.put(itemId, subFieldMap);
 		}
 		subFieldMap.put(columnId, textField);
+	}
+
+	private TextField getFieldFromCache(Object itemId, Object propertyId)
+	{
+		Map<Object, TextField> subFieldMap = fieldMap.get(itemId);
+		TextField textField = subFieldMap.get(propertyId);
+		return textField;
+	}
+
+	private void setupDeleteIconClickListener(Embedded icon,
+			final ResourceItemVO resourceItemVO)
+	{
+		icon.addListener(new MouseEvents.ClickListener()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void click(MouseEvents.ClickEvent event)
+			{
+				resourcesDataContainer.removeItem(resourceItemVO);
+			}
+		});
+	}
+
+	private void addNewResourceItemVO()
+	{
+		ResourceVO resourceVO = new ResourceVOBuilder()
+				.setName(I18NResource.localize("New Resource"))
+				.setDescription(I18NResource.localize("New Resource"))
+				.createResourceVO();
+		Embedded icon = createDeleteIcon();
+		ResourceItemVO resourceItemVO = new ResourceItemVOBuilder()
+				.setIcon(icon)
+				.setResource(resourceVO)
+				.createResourceItemVO();
+		setupDeleteIconClickListener(icon, resourceItemVO);
+		BeanItem<ResourceItemVO> beanItem = resourcesDataContainer.addItem(resourceItemVO);
+		resourcesEditorAndSelectorView.getResourceEditorTable().setCurrentPageFirstItemId(beanItem.getBean());
+		resourcesEditorAndSelectorView.getResourceEditorTable().select(beanItem.getBean());
+	}
+
+	private Embedded createDeleteIcon()
+	{
+		Embedded icon = new Embedded(null, new ThemeResource(SecurityDefaultTheme.ICONS_16x16_DELETE));
+		icon.setDescription(I18NResource.localize("Delete"));
+		return icon;
 	}
 }

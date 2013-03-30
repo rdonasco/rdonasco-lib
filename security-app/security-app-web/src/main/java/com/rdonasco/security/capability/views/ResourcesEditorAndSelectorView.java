@@ -49,4 +49,9 @@ public class ResourcesEditorAndSelectorView extends Panel implements
 	{
 		return resourceEditorTable;
 	}
+
+	public Button getAddResourceButton()
+	{
+		return addResourceButton;
+	}
 }
