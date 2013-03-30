@@ -100,45 +100,45 @@ public class ResourcesEditorAndSelectorViewController implements
 			});
 			resourcesEditorAndSelectorView.getResourceEditorTable().setReadOnly(false);
 
-//			Table.ColumnGenerator columnGenerator = new Table.ColumnGenerator()
-//			{
-//				private static final long serialVersionUID = 1L;
-//
-//				@Override
-//				public Object generateCell(final Table source,
-//						final Object itemId,
-//						final Object columnId)
-//				{
-//					final TextField textField = new TextField();
-//					ResourceItemVO resourceItem = (ResourceItemVO) itemId;
-//					textField.setValue(resourceItem.getName());
-//					textField.setReadOnly(true);
-//					textField.setWriteThrough(true);
-//					addFieldToFieldCache(itemId, columnId, textField);
-//					textField.addListener(new FieldEvents.BlurListener()
-//					{
-//						private static final long serialVersionUID = 1L;
-//
-//						@Override
-//						public void blur(FieldEvents.BlurEvent event)
-//						{
-//							try
-//							{
-//								BeanItem<ResourceItemVO> itemToUpdate = (BeanItem) source.getItem(itemId);
-//								itemToUpdate.getBean().setName((String) textField.getValue());
-//								resourcesDataContainer.updateItem(itemToUpdate.getBean());
-//								textField.setReadOnly(true);
-//							}
-//							catch (DataAccessException ex)
-//							{
-//								exceptionPopProvider.popUpErrorException(ex);
-//							}
-//						}
-//					});
-//					return textField;
-//				}
-//			};
-//			resourcesEditorAndSelectorView.getResourceEditorTable().addGeneratedColumn("name", columnGenerator);
+			Table.ColumnGenerator columnGenerator = new Table.ColumnGenerator()
+			{
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public Object generateCell(final Table source,
+						final Object itemId,
+						final Object columnId)
+				{
+					final TextField textField = new TextField();
+					ResourceItemVO resourceItem = (ResourceItemVO) itemId;
+					textField.setValue(resourceItem.getName());
+					textField.setReadOnly(true);
+					textField.setWriteThrough(true);
+					addFieldToFieldCache(itemId, columnId, textField);
+					textField.addListener(new FieldEvents.BlurListener()
+					{
+						private static final long serialVersionUID = 1L;
+
+						@Override
+						public void blur(FieldEvents.BlurEvent event)
+						{
+							try
+							{
+								BeanItem<ResourceItemVO> itemToUpdate = (BeanItem) source.getItem(itemId);
+								itemToUpdate.getBean().setName((String) textField.getValue());
+								resourcesDataContainer.updateItem(itemToUpdate.getBean());
+								textField.setReadOnly(true);
+							}
+							catch (DataAccessException ex)
+							{
+								exceptionPopProvider.popUpErrorException(ex);
+							}
+						}
+					});
+					return textField;
+				}
+			};
+			resourcesEditorAndSelectorView.getResourceEditorTable().addGeneratedColumn("name", columnGenerator);
 			resourcesEditorAndSelectorView.getResourceEditorTable().addListener(new ItemClickEvent.ItemClickListener()
 			{
 				private static final long serialVersionUID = 1L;
