@@ -65,104 +65,10 @@ public class ResourcesEditorAndSelectorViewController implements
 		{
 			resourcesEditorAndSelectorView.initWidget();
 			configureDataContainerStrategies();
-			resourcesEditorAndSelectorView.getResourceEditorTable().setContainerDataSource(resourcesDataContainer);
-			resourcesEditorAndSelectorView.getResourceEditorTable().setVisibleColumns(new String[]
-			{
-				TABLE_PROPERTY_ICON,
-				"name"
-			});
-			resourcesEditorAndSelectorView.getResourceEditorTable().setColumnHeaders(new String[]
-			{
-				"", I18NResource.localize("Name")
-			});
-			resourcesEditorAndSelectorView.getResourceEditorTable()
-					.setCellStyleGenerator(new Table.CellStyleGenerator()
-			{
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public String getStyle(Object itemId, Object propertyId)
-				{
-					String style = null;
-					if ("icon".equals(propertyId))
-					{
-						style = SecurityDefaultTheme.CSS_ICON_IN_A_CELL;
-					}
-					else if ("name".equals(propertyId))
-					{
-						style = SecurityDefaultTheme.CSS_FULL_WIDTH;
-					}
-					return style;
-				}
-			});
-			resourcesEditorAndSelectorView.getResourceEditorTable().setReadOnly(false);
-
-			Table.ColumnGenerator columnGenerator = new Table.ColumnGenerator()
-			{
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public Object generateCell(final Table source,
-						final Object itemId,
-						final Object columnId)
-				{
-					final TextField textField = new TextField();
-					ResourceItemVO resourceItem = (ResourceItemVO) itemId;
-					textField.setValue(resourceItem.getName());
-					textField.setReadOnly(true);
-					textField.setWriteThrough(true);
-					addFieldToFieldCache(itemId, columnId, textField);
-					textField.addListener(new FieldEvents.BlurListener()
-					{
-						private static final long serialVersionUID = 1L;
-
-						@Override
-						public void blur(FieldEvents.BlurEvent event)
-						{
-							try
-							{
-								BeanItem<ResourceItemVO> itemToUpdate = (BeanItem) source.getItem(itemId);
-								itemToUpdate.getBean().setName((String) textField.getValue());
-								resourcesDataContainer.updateItem(itemToUpdate.getBean());
-								textField.setReadOnly(true);
-							}
-							catch (DataAccessException ex)
-							{
-								exceptionPopProvider.popUpErrorException(ex);
-							}
-						}
-					});
-					return textField;
-				}
-			};
-			resourcesEditorAndSelectorView.getResourceEditorTable().addGeneratedColumn("name", columnGenerator);
-			resourcesEditorAndSelectorView.getResourceEditorTable().addListener(new ItemClickEvent.ItemClickListener()
-			{
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void itemClick(ItemClickEvent event)
-				{
-					if (event.isDoubleClick())
-					{
-						TextField textField = getFieldFromCache(event.getItemId(), event.getPropertyId());
-						textField.setReadOnly(false);
-						textField.focus();
-					}
-				}
-			});
-			resourcesEditorAndSelectorView.getAddResourceButton().addListener(new Button.ClickListener()
-			{
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void buttonClick(Button.ClickEvent event)
-				{
-					addNewResourceItemVO();
-				}
-			});
+			configureEditorTableBehavior();
+			configureButtonBehavior();
 			resourcesDataContainer.refresh();
-			TableHelper.setupTable(resourcesEditorAndSelectorView.getResourceEditorTable());
+
 		}
 		catch (Exception ex)
 		{
@@ -326,5 +232,110 @@ public class ResourcesEditorAndSelectorViewController implements
 		Embedded icon = new Embedded(null, new ThemeResource(SecurityDefaultTheme.ICONS_16x16_DELETE));
 		icon.setDescription(I18NResource.localize("Delete"));
 		return icon;
+	}
+
+	private void configureEditorTableBehavior()
+	{
+		resourcesEditorAndSelectorView.getResourceEditorTable().setContainerDataSource(resourcesDataContainer);
+		resourcesEditorAndSelectorView.getResourceEditorTable().setVisibleColumns(new String[]
+		{
+			TABLE_PROPERTY_ICON,
+			"name"
+		});
+		resourcesEditorAndSelectorView.getResourceEditorTable().setColumnHeaders(new String[]
+		{
+			"", I18NResource.localize("Name")
+		});
+		resourcesEditorAndSelectorView.getResourceEditorTable()
+				.setCellStyleGenerator(new Table.CellStyleGenerator()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public String getStyle(Object itemId, Object propertyId)
+			{
+				String style = null;
+				if ("icon".equals(propertyId))
+				{
+					style = SecurityDefaultTheme.CSS_ICON_IN_A_CELL;
+				}
+				else if ("name".equals(propertyId))
+				{
+					style = SecurityDefaultTheme.CSS_FULL_WIDTH;
+				}
+				return style;
+			}
+		});
+		resourcesEditorAndSelectorView.getResourceEditorTable().setReadOnly(false);
+
+		Table.ColumnGenerator columnGenerator = new Table.ColumnGenerator()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public Object generateCell(final Table source,
+					final Object itemId,
+					final Object columnId)
+			{
+				final TextField textField = new TextField();
+				ResourceItemVO resourceItem = (ResourceItemVO) itemId;
+				textField.setValue(resourceItem.getName());
+				textField.setReadOnly(true);
+				textField.setWriteThrough(true);
+				addFieldToFieldCache(itemId, columnId, textField);
+				textField.addListener(new FieldEvents.BlurListener()
+				{
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void blur(FieldEvents.BlurEvent event)
+					{
+						try
+						{
+							BeanItem<ResourceItemVO> itemToUpdate = (BeanItem) source.getItem(itemId);
+							itemToUpdate.getBean().setName((String) textField.getValue());
+							resourcesDataContainer.updateItem(itemToUpdate.getBean());
+							textField.setReadOnly(true);
+						}
+						catch (DataAccessException ex)
+						{
+							exceptionPopProvider.popUpErrorException(ex);
+						}
+					}
+				});
+				return textField;
+			}
+		};
+		resourcesEditorAndSelectorView.getResourceEditorTable().addGeneratedColumn("name", columnGenerator);
+		resourcesEditorAndSelectorView.getResourceEditorTable().addListener(new ItemClickEvent.ItemClickListener()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void itemClick(ItemClickEvent event)
+			{
+				if (event.isDoubleClick())
+				{
+					TextField textField = getFieldFromCache(event.getItemId(), event.getPropertyId());
+					textField.setReadOnly(false);
+					textField.focus();
+				}
+			}
+		});
+		TableHelper.setupTable(resourcesEditorAndSelectorView.getResourceEditorTable());
+	}
+
+	private void configureButtonBehavior()
+	{
+		resourcesEditorAndSelectorView.getAddResourceButton().addListener(new Button.ClickListener()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(Button.ClickEvent event)
+			{
+				addNewResourceItemVO();
+			}
+		});
 	}
 }
