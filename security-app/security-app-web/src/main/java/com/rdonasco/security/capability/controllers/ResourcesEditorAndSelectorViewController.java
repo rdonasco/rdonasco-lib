@@ -14,7 +14,6 @@ import com.rdonasco.datamanager.controller.DataRetrieveListStrategy;
 import com.rdonasco.datamanager.controller.DataSaveStrategy;
 import com.rdonasco.datamanager.controller.DataUpdateStrategy;
 import com.rdonasco.security.app.controllers.ApplicationExceptionPopupProvider;
-import com.rdonasco.security.app.controllers.ApplicationPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.capability.utils.TableHelper;
 import com.rdonasco.security.capability.views.ResourcesEditorAndSelectorView;
@@ -36,8 +35,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
