@@ -12,6 +12,7 @@ import com.rdonasco.common.vaadin.view.ButtonUtil;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.datamanager.controller.DataRetrieveListStrategy;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.security.capability.utils.IconHelper;
 import com.rdonasco.security.capability.views.CapabilityEditorView;
 import com.rdonasco.security.capability.vo.ActionItemVO;
 import com.rdonasco.security.capability.vo.ActionItemVOBuilder;
@@ -119,8 +120,7 @@ public class CapabilityEditorViewController implements
 		{
 			for (ActionVO action : currentItem.getBean().getActions())
 			{
-				Embedded icon = new Embedded(null, new ThemeResource(SecurityDefaultTheme.ICONS_16x16_DELETE));
-				icon.setDescription(I18NResource.localize("Remove action"));
+				Embedded icon = IconHelper.createDeleteIcon("Remove action");
 				final ActionItemVO actionItemVO = new ActionItemVOBuilder()
 						.setAction(action)
 						.setIcon(icon)

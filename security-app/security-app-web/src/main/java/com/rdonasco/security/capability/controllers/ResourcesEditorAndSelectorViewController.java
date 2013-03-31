@@ -15,6 +15,7 @@ import com.rdonasco.datamanager.controller.DataSaveStrategy;
 import com.rdonasco.datamanager.controller.DataUpdateStrategy;
 import com.rdonasco.security.app.controllers.ApplicationExceptionPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.security.capability.utils.IconHelper;
 import com.rdonasco.security.capability.utils.TableHelper;
 import com.rdonasco.security.capability.views.ResourcesEditorAndSelectorView;
 import com.rdonasco.security.capability.vo.ResourceItemVO;
@@ -26,7 +27,6 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.FieldEvents;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.MouseEvents;
-import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
@@ -48,6 +48,7 @@ public class ResourcesEditorAndSelectorViewController implements
 
 	private static final long serialVersionUID = 1L;
 	private static final String TABLE_PROPERTY_ICON = "icon";
+	private static final String PROPERTY_NAME = "name";
 	@Inject
 	private ResourcesEditorAndSelectorView resourcesEditorAndSelectorView;
 	@Inject
@@ -106,7 +107,7 @@ public class ResourcesEditorAndSelectorViewController implements
 					Embedded icon;
 					for (ResourceVO resource : resources)
 					{
-						icon = createDeleteIcon();
+						icon = IconHelper.createDeleteIcon("Delete");
 						final ResourceItemVO resourceItemVO = new ResourceItemVOBuilder()
 								.setIcon(icon)
 								.setResource(resource)
@@ -216,7 +217,7 @@ public class ResourcesEditorAndSelectorViewController implements
 				.setName(I18NResource.localize("New Resource"))
 				.setDescription(I18NResource.localize("New Resource"))
 				.createResourceVO();
-		Embedded icon = createDeleteIcon();
+		Embedded icon = IconHelper.createDeleteIcon("Delete");
 		ResourceItemVO resourceItemVO = new ResourceItemVOBuilder()
 				.setIcon(icon)
 				.setResource(resourceVO)
@@ -225,13 +226,10 @@ public class ResourcesEditorAndSelectorViewController implements
 		BeanItem<ResourceItemVO> beanItem = resourcesDataContainer.addItem(resourceItemVO);
 		resourcesEditorAndSelectorView.getResourceEditorTable().setCurrentPageFirstItemId(beanItem.getBean());
 		resourcesEditorAndSelectorView.getResourceEditorTable().select(beanItem.getBean());
-	}
-
-	private Embedded createDeleteIcon()
-	{
-		Embedded icon = new Embedded(null, new ThemeResource(SecurityDefaultTheme.ICONS_16x16_DELETE));
-		icon.setDescription(I18NResource.localize("Delete"));
-		return icon;
+		TextField field = getFieldFromCache(beanItem.getBean(), PROPERTY_NAME);
+		field.setReadOnly(false);
+		field.focus();
+		field.selectAll();
 	}
 
 	private void configureEditorTableBehavior()
@@ -239,8 +237,7 @@ public class ResourcesEditorAndSelectorViewController implements
 		resourcesEditorAndSelectorView.getResourceEditorTable().setContainerDataSource(resourcesDataContainer);
 		resourcesEditorAndSelectorView.getResourceEditorTable().setVisibleColumns(new String[]
 		{
-			TABLE_PROPERTY_ICON,
-			"name"
+			TABLE_PROPERTY_ICON, PROPERTY_NAME
 		});
 		resourcesEditorAndSelectorView.getResourceEditorTable().setColumnHeaders(new String[]
 		{
@@ -259,7 +256,7 @@ public class ResourcesEditorAndSelectorViewController implements
 				{
 					style = SecurityDefaultTheme.CSS_ICON_IN_A_CELL;
 				}
-				else if ("name".equals(propertyId))
+				else if (PROPERTY_NAME.equals(propertyId))
 				{
 					style = SecurityDefaultTheme.CSS_FULL_WIDTH;
 				}
@@ -306,7 +303,7 @@ public class ResourcesEditorAndSelectorViewController implements
 				return textField;
 			}
 		};
-		resourcesEditorAndSelectorView.getResourceEditorTable().addGeneratedColumn("name", columnGenerator);
+		resourcesEditorAndSelectorView.getResourceEditorTable().addGeneratedColumn(PROPERTY_NAME, columnGenerator);
 		resourcesEditorAndSelectorView.getResourceEditorTable().addListener(new ItemClickEvent.ItemClickListener()
 		{
 			private static final long serialVersionUID = 1L;

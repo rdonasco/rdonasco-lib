@@ -38,6 +38,8 @@ public class CapabilityViewLayoutController implements
 	private CapabilityEditorViewController capabilityEditorViewController;
 	@Inject
 	private ResourcesEditorAndSelectorViewController resourceEditorController;
+	@Inject
+	private ActionEditorAndSelectorViewController resourceEditorAndSelectorViewController;
 
 	@PostConstruct
 	@Override
@@ -50,6 +52,7 @@ public class CapabilityViewLayoutController implements
 			capabilityViewLayout.setLeftPanelContent(capabilityListPanelController.getControlledView());
 			capabilityViewLayout.setCenterPanelContent(capabilityEditorViewController.getControlledView().getEditorForm());
 			capabilityViewLayout.addRightPanelContent(resourceEditorController.getControlledView());
+			capabilityViewLayout.addRightPanelContent(resourceEditorAndSelectorViewController.getControlledView());
 
 			// link the two controllers
 			capabilityListPanelController.getControlledView().getDataViewListTable().addListener(new Property.ValueChangeListener()

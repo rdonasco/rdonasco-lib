@@ -27,6 +27,12 @@ public class ActionItemVO
 		this.action = action;
 	}
 
+	public ActionVO getAction()
+	{
+		return action;
+	}
+
+
 	public Embedded getIcon()
 	{
 		return icon;
