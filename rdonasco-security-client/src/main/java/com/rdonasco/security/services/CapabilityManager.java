@@ -43,4 +43,6 @@ public interface CapabilityManager
 			throws CapabilityManagerException;
 
 	List<ResourceVO> findAllResources() throws CapabilityManagerException;
+
+	List<ActionVO> findAllActions() throws CapabilityManagerException;
 }
