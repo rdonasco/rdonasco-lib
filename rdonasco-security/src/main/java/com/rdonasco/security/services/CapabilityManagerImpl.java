@@ -358,6 +358,24 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 	}
 
 	@Override
+	public List<ActionVO> findAllActions() throws CapabilityManagerException
+	{
+		List<Action> actions;
+		List<ActionVO> actionVOList;
+		try
+		{
+			actions = actionDAO.findAllData();
+			actionVOList = SecurityEntityValueObjectConverter.toActionVOList(actions);
+		}
+		catch (Exception e)
+		{
+			throw new CapabilityManagerException(e);
+		}
+		return actionVOList;
+	}
+
+
+	@Override
 	public CapabilityVO createNewCapability(CapabilityVO capabilityToCreate)
 			throws CapabilityManagerException
 	{

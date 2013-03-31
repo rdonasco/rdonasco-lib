@@ -199,6 +199,17 @@ public class SecurityEntityValueObjectConverter
 		return actionVO;
 	}
 
+	public static List<ActionVO> toActionVOList(List<Action> actions) throws
+			IllegalAccessException, InvocationTargetException
+	{
+		List<ActionVO> actionVOList = new ArrayList<ActionVO>(actions.size());
+		for (Action action : actions)
+		{
+			actionVOList.add(toActionVO(action));
+		}
+		return actionVOList;
+	}
+
 	public static UserCapability toUserCapability(
 			UserCapabilityVO userCapabilityVO)
 			throws IllegalAccessException, InvocationTargetException
