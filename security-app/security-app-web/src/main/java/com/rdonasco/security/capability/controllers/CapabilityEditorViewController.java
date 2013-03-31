@@ -11,6 +11,7 @@ import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.common.vaadin.view.ButtonUtil;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.datamanager.controller.DataRetrieveListStrategy;
+import com.rdonasco.security.app.controllers.ApplicationExceptionPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.capability.utils.IconHelper;
 import com.rdonasco.security.capability.views.CapabilityEditorView;
@@ -57,6 +58,9 @@ public class CapabilityEditorViewController implements
 	private CapabilityDataManagerDecorator capabilityDataManager;
 	private BeanItemContainer<ActionItemVO> actionsContainer = new BeanItemContainer<ActionItemVO>(ActionItemVO.class);
 	private BeanItem<CapabilityItemVO> currentItem;
+	private DataManagerContainer<ResourceVO> resourceComboboxDataContainer = new DataManagerContainer<ResourceVO>(ResourceVO.class);
+	@Inject
+	private ApplicationExceptionPopupProvider exceptionPopupProvider;
 
 	@PostConstruct
 	@Override
@@ -90,9 +94,8 @@ public class CapabilityEditorViewController implements
 	}
 
 	private void configureResourceComboBox() throws DataAccessException
-	{
-		DataManagerContainer<ResourceVO> dataContainer = new DataManagerContainer<ResourceVO>(ResourceVO.class);
-		dataContainer.setDataRetrieveListStrategy(new DataRetrieveListStrategy<ResourceVO>()
+	{		
+		resourceComboboxDataContainer.setDataRetrieveListStrategy(new DataRetrieveListStrategy<ResourceVO>()
 		{
 			@Override
 			public List<ResourceVO> retrieve() throws DataAccessException
@@ -107,8 +110,8 @@ public class CapabilityEditorViewController implements
 				}
 			}
 		});
-		dataContainer.refresh();
-		editorView.getResourceField().setContainerDataSource(dataContainer);
+		resourceComboboxDataContainer.refresh();
+		editorView.getResourceField().setContainerDataSource(resourceComboboxDataContainer);
 	}
 
 	public void setCurrentItem(BeanItem<CapabilityItemVO> currentItem)
@@ -157,6 +160,14 @@ public class CapabilityEditorViewController implements
 
 	public void setViewToEditMode()
 	{
+		try
+		{
+			resourceComboboxDataContainer.refresh();
+		}
+		catch (DataAccessException ex)
+		{
+			exceptionPopupProvider.popUpErrorException(ex);
+		}
 		editorView.getEditorForm().setReadOnly(false);
 		editorView.getActionsTable().setReadOnly(false);
 		editorView.getCancelButton().setVisible(true);
