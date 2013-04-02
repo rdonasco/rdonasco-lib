@@ -27,6 +27,10 @@ public final class SecurityDefaultTheme
 	public static final String CSS_PANEL_BORDERLESS_BUBBLE = "borderless bubble";
 	public static final String CSS_TABLE_SMALL_STRIPED = "small striped";
 	public static final String CSS_TABLE_BORDERLESS = "borderless";
+	public static final String CSS_ICON_IN_A_CELL = "cellIcon";
+	public static final String CSS_FULL_WIDTH = "fullWidth";
+	public static final String CSS_BUTTON_DEFAULT = "default";
+	public static final String CSS_SMALL = "small";
 	/* start of icon entries */
 	public static final String ICON_32x32_CAPABILITIES = "images/iconarchive.com/blue-matreshka-inside-icon-icon.png";
 	public static final String ICON_32x32_ROLES = "images/danish_rf_icons/PNG/public.png";
@@ -40,4 +44,5 @@ public final class SecurityDefaultTheme
 	public static final String ICONS_16x16_ADD = "images/silk-icons/add.png";
 	public static final String ICONS_16x16_EDIT = "images/silk-icons/pencil.png";
 	public static final String ICONS_16x16_SAVE = "images/silk-icons/disk.png";
+	public static final String ICONS_16x16_CANCEL = "images/silk-icons/cancel.png";
 }

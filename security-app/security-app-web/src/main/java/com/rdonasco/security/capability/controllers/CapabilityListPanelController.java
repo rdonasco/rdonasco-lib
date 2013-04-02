@@ -22,8 +22,10 @@ import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.MouseEvents;
 import com.vaadin.terminal.ThemeResource;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
+import de.steinwedel.vaadin.MessageBox;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Instance;
@@ -39,6 +41,7 @@ public class CapabilityListPanelController implements
 {
 
 	private static final long serialVersionUID = 1L;
+	protected static final long ADD_CAPABILITY_ID = -1L;
 	@Inject
 	private CapabilityListPanel capabilityListPanel;
 	@Inject
@@ -74,27 +77,57 @@ public class CapabilityListPanelController implements
 						@Override
 						public void click(MouseEvents.ClickEvent event)
 						{
-							try
+							MessageBox messageBox = new MessageBox(capabilityListPanel.getWindow(),
+									I18NResource.localize("Are you sure?"),
+									MessageBox.Icon.QUESTION,
+									I18NResource.localize("Do you really want to delete this?"),
+									new MessageBox.ButtonConfig(MessageBox.ButtonType.YES, I18NResource.localize("Yes")),
+									new MessageBox.ButtonConfig(MessageBox.ButtonType.NO, I18NResource.localize("No")));
+							messageBox.show(new MessageBox.EventListener()
 							{
-								capabilityItemTableContainer.removeItem(data);
-								getPopupProvider().popUpInfo("Capability deleted");
-							}
-							catch (Exception e)
-							{
-								getExceptionPopupProvider().popUpErrorException(e);
-							}
+								private static final long serialVersionUID = 1L;
+
+								@Override
+								public void buttonClicked(
+										MessageBox.ButtonType buttonType)
+								{
+									if (MessageBox.ButtonType.YES.equals(buttonType))
+									{
+										try
+										{
+											capabilityItemTableContainer.removeItem(data);
+											getPopupProvider().popUpInfo("Capability deleted");
+										}
+										catch (Exception e)
+										{
+											getExceptionPopupProvider().popUpErrorException(e);
+										}
+
+									}
+								}
+							});
 						}
 					};
 					return clickListener;
 
 				}
 			});
-			capabilityItemTableContainer.setDummyAddRecord(createDummyAddRecord());
+//			capabilityItemTableContainer.setDummyAddRecord(createDummyAddRecord());
 			capabilityListTable.setContainerDataSource(capabilityItemTableContainer);
 			capabilityListTable.setVisibleColumns(Constants.TABLE_VISIBLE_COLUMNS);
 			capabilityListTable.setColumnHeaders(Constants.TABLE_VISIBLE_HEADERS);
 			capabilityListPanel.setDataViewListTable(capabilityListTable);
 			capabilityListPanel.initWidget();
+			capabilityListPanel.getAddCapabilityButton().addListener(new Button.ClickListener()
+			{
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void buttonClick(Button.ClickEvent event)
+				{
+					addNewCapability();
+				}
+			});
 			capabilityItemTableContainer.refresh();
 		}
 		catch (Exception ex)
@@ -144,7 +177,7 @@ public class CapabilityListPanelController implements
 	{
 		String caption = I18NResource.localize("Add new capability");
 		CapabilityVO capability = new CapabilityVOBuilder()
-				.setId(Long.MAX_VALUE)
+				.setId(ADD_CAPABILITY_ID)
 				.setTitle(caption)
 				.createCapabilityVO();
 		CapabilityItemVO itemVO;
@@ -180,5 +213,10 @@ public class CapabilityListPanelController implements
 		BeanItem<CapabilityItemVO> newItemAdded = capabilityItemTableContainer.addItem(newItemVO);
 		capabilityListTable.setCurrentPageFirstItemId(newItemAdded.getBean());
 		capabilityListTable.select(newItemAdded.getBean());
+	}
+
+	public Table getCapabilityListTable()
+	{
+		return capabilityListTable;
 	}
 }

@@ -47,9 +47,9 @@ public class ConfigAttribute implements Serializable, ConfigData
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_config_id", referencedColumnName = "id", nullable = true)
     private ConfigElement parentConfigElement;
-    @Column(name = "attribute_name", length = 256, unique = false)
+    @Column(name = "attribute_name", length = 255, unique = false)
     private String name;
-    @Column(name = "attribute_value", length = 256, unique = false)
+    @Column(name = "attribute_value", length = 255, unique = false)
     private String value;
     @Column(name = "xpath", length = 2048, unique = false, nullable = false)
     private String xpath;

@@ -56,7 +56,7 @@ public class Action implements Serializable
 	@Column(name = "action_name", nullable = false, length = 64, unique=true)
 	private String name;
 	@Basic(optional = true)
-	@Column(name = "action_description", nullable = false, length = 256)
+	@Column(name = "action_description", nullable = false, length = 255)
 	private String description;
 		
 	public static Action createWithName(String name)

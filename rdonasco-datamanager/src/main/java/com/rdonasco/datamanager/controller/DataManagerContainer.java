@@ -155,6 +155,11 @@ public class DataManagerContainer<T> extends BeanItemContainer<T>
 		}
 	}
 
+	public void updateItem(T itemToUpdate) throws DataAccessException
+	{
+		getDataUpdateStrategy().update(itemToUpdate);
+	}
+
 	@Override
 	public boolean removeItem(Object itemId)
 	{

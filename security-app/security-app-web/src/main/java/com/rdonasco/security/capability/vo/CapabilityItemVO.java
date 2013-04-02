@@ -4,12 +4,16 @@
  */
 package com.rdonasco.security.capability.vo;
 
+import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityActionVO;
+import com.rdonasco.security.vo.CapabilityActionVOBuilder;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.ResourceVO;
 import com.vaadin.ui.Embedded;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  *
@@ -88,15 +92,30 @@ public class CapabilityItemVO implements Serializable
 		capabilityVO.setResource(resource);
 	}
 
-	public Collection<CapabilityActionVO> getActions()
+	public Collection<ActionVO> getActions()
 	{
-		return capabilityVO.getActions();
+		List<ActionVO> actions = new ArrayList<ActionVO>();
+		for (CapabilityActionVO capabilityAction : capabilityVO.getActions())
+		{
+			actions.add(capabilityAction.getActionVO());
+		}
+		return actions;
 	}
 
 	public void setActions(
-			Collection<CapabilityActionVO> actions)
+			Collection<ActionVO> actions)
 	{
-		capabilityVO.setActions(actions);
+		capabilityVO.getActions().clear();
+		List<CapabilityActionVO> capabilityActions = new ArrayList<CapabilityActionVO>(actions.size());
+		for (ActionVO action : actions)
+		{
+			CapabilityActionVO capabilityAction = new CapabilityActionVOBuilder()
+					.setActionVO(action)
+					.setCapabilityVO(capabilityVO)
+					.createCapabilityActionVO();
+			capabilityActions.add(capabilityAction);
+		}
+		capabilityVO.setActions(capabilityActions);
 	}
 
 	public CapabilityActionVO findActionNamed(String actionName)
@@ -118,21 +137,24 @@ public class CapabilityItemVO implements Serializable
 		{
 			areEqual = false;
 		}
-		if (null == obj || getClass() != obj.getClass())
+		else if (getClass() != obj.getClass())
 		{
 			areEqual = false;
 		}
-		final CapabilityItemVO other = (CapabilityItemVO) obj;
-		try
+		else
 		{
-			if (this.getId() != other.getId() && (this.getId() == null || !this.getId().equals(other.getId())))
+			final CapabilityItemVO other = (CapabilityItemVO) obj;
+			try
+			{
+				if (this.getId() != other.getId() && (this.getId() == null || !this.getId().equals(other.getId())))
+				{
+					areEqual = false;
+				}
+			}
+			catch (NullPointerException e)
 			{
 				areEqual = false;
 			}
-		}
-		catch (NullPointerException e)
-		{
-			areEqual = false;
 		}
 		return areEqual;
 	}

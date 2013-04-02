@@ -153,6 +153,24 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 	}
 
 	@Override
+	public List<ResourceVO> findAllResources() throws
+			CapabilityManagerException
+	{
+		List<ResourceVO> resourceVoList;
+		try
+		{
+			List<Resource> resources = resourceDAO.findAllData();
+			resourceVoList = SecurityEntityValueObjectConverter.toResourceVOList(resources);
+
+		}
+		catch (Exception e)
+		{
+			throw new CapabilityManagerException(e);
+		}
+		return resourceVoList;
+	}
+
+	@Override
 	public ResourceVO findOrAddSecuredResourceNamedAs(String resourceName)
 			throws CapabilityManagerException, NotSecuredResourceException
 	{
@@ -338,6 +356,24 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 		}
 		return foundAction;
 	}
+
+	@Override
+	public List<ActionVO> findAllActions() throws CapabilityManagerException
+	{
+		List<Action> actions;
+		List<ActionVO> actionVOList;
+		try
+		{
+			actions = actionDAO.findAllData();
+			actionVOList = SecurityEntityValueObjectConverter.toActionVOList(actions);
+		}
+		catch (Exception e)
+		{
+			throw new CapabilityManagerException(e);
+		}
+		return actionVOList;
+	}
+
 
 	@Override
 	public CapabilityVO createNewCapability(CapabilityVO capabilityToCreate)

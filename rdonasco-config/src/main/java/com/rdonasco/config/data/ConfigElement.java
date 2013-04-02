@@ -50,7 +50,7 @@ public class ConfigElement implements Serializable, ConfigData
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_config_id", referencedColumnName = "id", nullable = true)
     private ConfigElement parentConfig;
-    @Column(name = "section_name", length = 256, unique = false)
+    @Column(name = "section_name", length = 255, unique = false)
     private String name;
     @Column(name= "xpath", length=2048, unique = false, nullable = false)
     private String xpath;

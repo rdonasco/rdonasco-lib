@@ -42,8 +42,14 @@ public class CapabilityViewLayout extends HorizontalLayout implements
 		centerPanel.setMargin(false, false, true, false);
 		centerPanel.addStyleName(SecurityDefaultTheme.CSS_CENTER_PANEL);
 
+		rightPanel.setWidth(250, UNITS_PIXELS);
+		rightPanel.setMargin(true, true, true, false);
+		rightPanel.addStyleName(SecurityDefaultTheme.CSS_RIGHT_PANEL);
+		rightPanel.setSpacing(true);
+
 		addComponent(leftPanel);
 		addComponent(centerPanel);
+		addComponent(rightPanel);
 
 //		rightPanel.setWidth(200, UNITS_PIXELS);
 //		rightPanel.setMargin(true);
@@ -68,5 +74,10 @@ public class CapabilityViewLayout extends HorizontalLayout implements
 		centerPanel.removeAllComponents();
 		centerPanel.addComponent(centerComponent);
 		centerPanel.setExpandRatio(centerComponent, 1);
+	}
+
+	public void addRightPanelContent(Component rightPanelContent)
+	{
+		rightPanel.addComponent(rightPanelContent);
 	}
 }

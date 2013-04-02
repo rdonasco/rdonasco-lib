@@ -155,6 +155,17 @@ public class SecurityEntityValueObjectConverter
 		return resource;
 	}
 
+	public static List<ResourceVO> toResourceVOList(List<Resource> resources)
+			throws IllegalAccessException, InvocationTargetException
+	{
+		List<ResourceVO> resourceVoList = new ArrayList<ResourceVO>(resources.size());
+		for (Resource resource : resources)
+		{
+			resourceVoList.add(toResourceVO(resource));
+		}
+		return resourceVoList;
+	}
+
 	public static ResourceVO toResourceVO(Resource resource) throws
 			IllegalAccessException, InvocationTargetException
 	{
@@ -186,6 +197,17 @@ public class SecurityEntityValueObjectConverter
 			actionVO.setId(null);
 		}
 		return actionVO;
+	}
+
+	public static List<ActionVO> toActionVOList(List<Action> actions) throws
+			IllegalAccessException, InvocationTargetException
+	{
+		List<ActionVO> actionVOList = new ArrayList<ActionVO>(actions.size());
+		for (Action action : actions)
+		{
+			actionVOList.add(toActionVO(action));
+		}
+		return actionVOList;
 	}
 
 	public static UserCapability toUserCapability(

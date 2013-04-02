@@ -36,6 +36,7 @@ public class CapabilityManagerHomeButtonController implements
 	@Inject
 	private Instance<HomeFrameViewController> homeFrameViewControllers;
 	@Inject
+	private Instance<CapabilityViewLayoutController> viewLayoutProvider;
 	private CapabilityViewLayoutController capabilityViewLayoutController;
 
 	@PostConstruct
@@ -51,7 +52,7 @@ public class CapabilityManagerHomeButtonController implements
 				@Override
 				public void buttonClick(Button.ClickEvent event)
 				{
-					homeFrameViewControllers.get().setWorkspaceContent(capabilityViewLayoutController.getControlledView());
+					homeFrameViewControllers.get().setWorkspaceContent(getCapabilityViewLayoutController().getControlledView());
 				}
 			});
 		}
@@ -77,5 +78,14 @@ public class CapabilityManagerHomeButtonController implements
 	private void doTheRefresh() throws WidgetException
 	{
 		refreshView();
+	}
+
+	protected CapabilityViewLayoutController getCapabilityViewLayoutController()
+	{
+		if (capabilityViewLayoutController == null)
+		{
+			capabilityViewLayoutController = viewLayoutProvider.get();
+		}
+		return capabilityViewLayoutController;
 	}
 }

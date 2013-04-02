@@ -9,6 +9,8 @@ import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ControlledView;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.vaadin.terminal.ThemeResource;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
@@ -24,6 +26,7 @@ public class CapabilityListPanel extends Panel implements
 {
 	private static final long serialVersionUID = 1L;
 	private Table dataViewListTable;
+	private Button addCapabilityButton = new Button();
 
 	public CapabilityListPanel()
 	{
@@ -35,6 +38,12 @@ public class CapabilityListPanel extends Panel implements
 	{
 		return dataViewListTable;
 	}
+
+	public Button getAddCapabilityButton()
+	{
+		return addCapabilityButton;
+	}
+
 
 	public void setDataViewListTable(Table dataViewListTable)
 	{
@@ -49,6 +58,10 @@ public class CapabilityListPanel extends Panel implements
 	{
 		try
 		{
+			addCapabilityButton.setCaption(I18NResource.localize("Add new capability"));
+			addCapabilityButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_ADD));
+			addCapabilityButton.setWidth(100, UNITS_PERCENTAGE);
+			addCapabilityButton.addStyleName(SecurityDefaultTheme.CSS_SMALL);
 			VerticalLayout content = ((VerticalLayout) getContent());
 			content.setMargin(true);
 			content.setHeight(600, UNITS_PIXELS);
@@ -56,8 +69,10 @@ public class CapabilityListPanel extends Panel implements
 			if (null != getDataViewListTable())
 			{				
 				getDataViewListTable().setSizeFull();
+				content.addComponent(addCapabilityButton);
 				content.addComponent(getDataViewListTable());
 				content.setExpandRatio(getDataViewListTable(), 1);
+				content.setSpacing(true);
 			}
 			
 		}

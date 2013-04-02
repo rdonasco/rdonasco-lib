@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.rdonasco.security.capability.controllers;
 
 import com.rdonasco.common.exceptions.NonExistentEntityException;
@@ -10,9 +9,12 @@ import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import com.rdonasco.security.services.CapabilityManagerLocal;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.CapabilityActionVO;
+import com.rdonasco.security.vo.CapabilityActionVOBuilder;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
+import com.rdonasco.security.vo.ResourceVOBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -23,33 +25,36 @@ import java.util.logging.Logger;
  */
 public class CapabilityManagerLocalDummy implements CapabilityManagerLocal
 {
+
 	private static final Logger LOG = Logger.getLogger(CapabilityManagerLocalDummy.class.getName());
+	private static Long resourceID = 1L;
+	private static List<ResourceVO> resources;
+	private static List<ActionVO> actions;
+	private static long idSeed = 1L;
 
 	@Override
 	public ActionVO createNewAction(ActionVO action) throws
 			CapabilityManagerException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method createNewAction
-		throw new UnsupportedOperationException("Not supported yet.");
+		action.setId(idSeed++);
+		actions.add(action);
+		return action;
 	}
 
 	@Override
 	public void updateAction(ActionVO actionToUpdate) throws
 			CapabilityManagerException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method updateAction
-		throw new UnsupportedOperationException("Not supported yet.");
+		ActionVO actionUpdated = actions.get(actions.indexOf(actionToUpdate));
+		actionUpdated.setName(actionToUpdate.getName());
+		actionUpdated.setDescription(actionToUpdate.getDescription());
 	}
 
 	@Override
 	public void removeAction(ActionVO actionToRemove) throws
 			CapabilityManagerException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method removeAction
-		throw new UnsupportedOperationException("Not supported yet.");
+		actions.remove(actionToRemove);
 	}
 
 	@Override
@@ -65,27 +70,26 @@ public class CapabilityManagerLocalDummy implements CapabilityManagerLocal
 	public ResourceVO addResource(ResourceVO resource) throws
 			CapabilityManagerException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method addResource
-		throw new UnsupportedOperationException("Not supported yet.");
+		resource.setId(resourceID++);
+		resources.add(resource);
+		return resource;
 	}
 
 	@Override
 	public void updateResource(ResourceVO resource) throws
 			CapabilityManagerException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method updateResource
-		throw new UnsupportedOperationException("Not supported yet.");
+		int index = resources.indexOf(resource);
+		ResourceVO resourceToUpdate = resources.get(index);
+		resourceToUpdate.setName(resource.getName());
+		resourceToUpdate.setDescription(resource.getDescription());
 	}
 
 	@Override
 	public void removeResource(ResourceVO resource) throws
 			CapabilityManagerException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method removeResource
-		throw new UnsupportedOperationException("Not supported yet.");
+		resources.remove(resource);
 	}
 
 	@Override
@@ -123,7 +127,7 @@ public class CapabilityManagerLocalDummy implements CapabilityManagerLocal
 		// TODO: Complete code for method findOrAddActionNamedAs
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
-	private static long idSeed = 1L;
+
 	@Override
 	public CapabilityVO createNewCapability(CapabilityVO capabilityToCreate)
 			throws CapabilityManagerException
@@ -143,6 +147,27 @@ public class CapabilityManagerLocalDummy implements CapabilityManagerLocal
 	}
 
 	@Override
+	public List<ResourceVO> findAllResources() throws
+			CapabilityManagerException
+	{
+		if (null == resources)
+		{
+			final int size = 6;
+			resources = new ArrayList<ResourceVO>();
+			for (long i = 0; i < size; i++)
+			{
+				final ResourceVO resource = new ResourceVOBuilder()
+						.setId(resourceID++)
+						.setName("Resource-" + resourceID)
+						.setDescription("Description-" + resourceID)
+						.createResourceVO();
+				resources.add(resource);
+			}
+		}
+		return resources;
+	}
+
+	@Override
 	public List<CapabilityVO> findAllCapabilities() throws
 			CapabilityManagerException
 	{
@@ -150,9 +175,7 @@ public class CapabilityManagerLocalDummy implements CapabilityManagerLocal
 		List<CapabilityVO> capabilities = new ArrayList<CapabilityVO>();
 		for (long i = 0; i < size; i++)
 		{
-			final CapabilityVO capabilityVO = new CapabilityVOBuilder()
-					.setTitle("Capability to do " + (i + 1))
-					.createCapabilityVO();
+			final CapabilityVO capabilityVO = createTestDataCapabilityVO();
 			capabilities.add(createNewCapability(capabilityVO));
 		}
 		return capabilities;
@@ -199,5 +222,47 @@ public class CapabilityManagerLocalDummy implements CapabilityManagerLocal
 		// To change body of generated methods, choose Tools | Templates.
 		// TODO: Complete code for method findCapabilitiesWithResourceName
 		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	private static Long capabilityActionKey = 1L;
+	private static Long actionKey = 1L;
+
+	private CapabilityVO createTestDataCapabilityVO() throws
+			CapabilityManagerException
+	{
+		List<CapabilityActionVO> actions = new ArrayList<CapabilityActionVO>();
+		CapabilityVO capability = new CapabilityVOBuilder()
+				.setTitle("Capability to do " + idSeed)
+				.setDescription("Capability to do " + idSeed)
+				.setResource(findAllResources().get(0))
+				.setActions(actions)
+				.createCapabilityVO();
+		int size = 5;
+		for (int i = 0; i < size; i++)
+		{
+			ActionVO action = ActionVO.createWithIdNameAndDescription(actionKey++, "Action " + actionKey, "Action " + actionKey);
+			CapabilityActionVO capabilityAction = new CapabilityActionVOBuilder()
+					.setActionVO(action)
+					.setId(capabilityActionKey++)
+					.createCapabilityActionVO();
+			actions.add(capabilityAction);
+			capabilityAction.setCapabilityVO(capability);
+		}
+
+		return capability;
+	}
+
+	@Override
+	public List<ActionVO> findAllActions() throws CapabilityManagerException
+	{
+		if (actions == null)
+		{
+			actions = new ArrayList<ActionVO>();
+			actions.add(ActionVO.createWithIdNameAndDescription(idSeed++, "View", "View"));
+			actions.add(ActionVO.createWithIdNameAndDescription(idSeed++, "Create", "Create"));
+			actions.add(ActionVO.createWithIdNameAndDescription(idSeed++, "Edit", "Edit"));
+			actions.add(ActionVO.createWithIdNameAndDescription(idSeed++, "Delete", "Delete"));
+			actions.add(ActionVO.createWithIdNameAndDescription(idSeed++, "Update", "Update"));
+		}
+		return actions;
 	}
 }

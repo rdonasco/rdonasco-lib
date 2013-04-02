@@ -54,10 +54,10 @@ public class Resource implements Serializable
 	@Column(name = "id", nullable = false)
 	private Long id;
 	@Basic(optional = false)
-	@Column(name = "resource_name", nullable = false, length = 256, unique = true)
+	@Column(name = "resource_name", nullable = false, length = 255, unique = true)
 	private String name;
 	@Basic(optional = true)
-	@Column(name = "resource_description", nullable = false, length = 256)
+	@Column(name = "resource_description", nullable = false, length = 255)
 	private String description;	
 
 	public Long getId()

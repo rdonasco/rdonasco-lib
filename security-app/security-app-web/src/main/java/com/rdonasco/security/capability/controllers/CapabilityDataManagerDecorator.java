@@ -8,11 +8,14 @@ import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.datamanager.services.DataManager;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.security.capability.utils.IconHelper;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.capability.vo.CapabilityItemVOBuilder;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.services.CapabilityManagerLocal;
+import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
+import com.rdonasco.security.vo.ResourceVO;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Embedded;
 import java.io.Serializable;
@@ -134,12 +137,17 @@ public class CapabilityDataManagerDecorator implements
 		this.clickListenerProvider = clickListenerProvider;
 	}
 
+	public List<ResourceVO> findAllResources() throws
+			CapabilityManagerException
+	{
+		return capabilityManager.findAllResources();
+	}
+
 	private CapabilityItemVO convertToCapabilityItemVOandAddToContainer(
 			CapabilityVO capability)
 	{
 		CapabilityItemVO itemVO;
-		Embedded icon = new Embedded(null, new ThemeResource(SecurityDefaultTheme.ICONS_16x16_DELETE));
-		icon.setDescription(I18NResource.localize("Delete"));
+		Embedded icon = IconHelper.createDeleteIcon("Delete");
 		final CapabilityItemVO capabilityItem = new CapabilityItemVOBuilder()
 				.setCapabilityVO(capability)
 				.setEmbeddedIcon(icon)
@@ -152,4 +160,44 @@ public class CapabilityDataManagerDecorator implements
 		return itemVO;
 	}
 
+	public ResourceVO addResource(ResourceVO resource) throws
+			CapabilityManagerException
+	{
+		return capabilityManager.addResource(resource);
+	}
+
+	public void updateResource(ResourceVO resource) throws
+			CapabilityManagerException
+	{
+		capabilityManager.updateResource(resource);
+	}
+
+	public void removeResource(ResourceVO resource) throws
+			CapabilityManagerException
+	{
+		capabilityManager.removeResource(resource);
+	}
+
+	public List<ActionVO> findAllActions() throws CapabilityManagerException
+	{
+		return capabilityManager.findAllActions();
+	}
+
+	public ActionVO createNewAction(ActionVO action) throws
+			CapabilityManagerException
+	{
+		return capabilityManager.createNewAction(action);
+	}
+
+	public void updateAction(ActionVO actionToUpdate) throws
+			CapabilityManagerException
+	{
+		capabilityManager.updateAction(actionToUpdate);
+	}
+
+	public void removeAction(ActionVO actionToRemove) throws
+			CapabilityManagerException
+	{
+		capabilityManager.removeAction(actionToRemove);
+	}
 }
