@@ -59,7 +59,7 @@ public class UserSecurityProfile implements Serializable
 	@Column(name = "logon_id", nullable = false, length = 128)
 	private String logonId;
 	@Basic(optional = false)
-	@Column(name = "password", nullable = false, length = 256)
+	@Column(name = "password", nullable = false, length = 255)
 	private String password;
 	@Basic(optional = true)
 	@Column(name = "registrationToken")
