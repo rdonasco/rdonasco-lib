@@ -39,7 +39,7 @@ public class CapabilityViewLayoutController implements
 	@Inject
 	private ResourcesEditorAndSelectorViewController resourceEditorController;
 	@Inject
-	private ActionEditorAndSelectorViewController resourceEditorAndSelectorViewController;
+	private ActionEditorAndSelectorViewController actionEditorController;
 
 	@PostConstruct
 	@Override
@@ -52,9 +52,10 @@ public class CapabilityViewLayoutController implements
 			capabilityViewLayout.setLeftPanelContent(capabilityListPanelController.getControlledView());
 			capabilityViewLayout.setCenterPanelContent(capabilityEditorViewController.getControlledView().getEditorForm());
 			capabilityViewLayout.addRightPanelContent(resourceEditorController.getControlledView());
-			capabilityViewLayout.addRightPanelContent(resourceEditorAndSelectorViewController.getControlledView());
+			capabilityViewLayout.addRightPanelContent(actionEditorController.getControlledView());
 
 			// link the two controllers
+			capabilityEditorViewController.setActionTableSource(actionEditorController.getControlledView().getActionEditorTable());
 			capabilityListPanelController.getControlledView().getDataViewListTable().addListener(new Property.ValueChangeListener()
 			{
 				private static final long serialVersionUID = 1L;

@@ -20,13 +20,8 @@ import com.rdonasco.security.capability.utils.TableHelper;
 import com.rdonasco.security.capability.views.ActionEditorAndSelectorView;
 import com.rdonasco.security.capability.vo.ActionItemVOBuilder;
 import com.rdonasco.security.capability.vo.ActionItemVO;
-import com.rdonasco.security.capability.vo.ResourceItemVO;
-import com.rdonasco.security.capability.vo.ResourceItemVOBuilder;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.vo.ActionVO;
-import com.rdonasco.security.vo.ActionVO;
-import com.rdonasco.security.vo.ActionVO;
-import com.rdonasco.security.vo.ResourceVOBuilder;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.FieldEvents;
 import com.vaadin.event.ItemClickEvent;
@@ -280,6 +275,8 @@ public class ActionEditorAndSelectorViewController implements
 			}
 		});
 		TableHelper.setupTable(editorTable);
+		editorTable.setDragMode(Table.TableDragMode.MULTIROW);
+		editorTable.setMultiSelect(true);
 	}
 
 	private void addFieldToFieldCache(Object itemId, Object columnId,

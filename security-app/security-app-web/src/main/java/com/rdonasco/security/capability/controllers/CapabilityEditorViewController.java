@@ -29,7 +29,15 @@ import com.vaadin.event.MouseEvents;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
-import com.vaadin.terminal.ThemeResource;
+import com.vaadin.event.dd.DragAndDropEvent;
+import com.vaadin.event.dd.DropHandler;
+import com.vaadin.event.dd.acceptcriteria.AcceptAll;
+import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
+import com.vaadin.event.dd.acceptcriteria.SourceIs;
+import com.vaadin.event.dd.acceptcriteria.And;
+import com.vaadin.event.dd.acceptcriteria.ClientSideCriterion;
+import com.vaadin.terminal.PaintException;
+import com.vaadin.terminal.PaintTarget;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
@@ -50,6 +58,12 @@ public class CapabilityEditorViewController implements
 		ViewController<CapabilityEditorView>, Serializable
 {
 
+	public enum EditorMode
+	{
+
+		EDIT, VIEW
+	};
+	private EditorMode editorMode = EditorMode.VIEW;
 	private static final Logger LOG = Logger.getLogger(CapabilityEditorViewController.class.getName());
 	private static final long serialVersionUID = 1L;
 	@Inject
@@ -61,6 +75,7 @@ public class CapabilityEditorViewController implements
 	private DataManagerContainer<ResourceVO> resourceComboboxDataContainer = new DataManagerContainer<ResourceVO>(ResourceVO.class);
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
+	private Table actionTableSource;
 
 	@PostConstruct
 	@Override
@@ -80,6 +95,26 @@ public class CapabilityEditorViewController implements
 		}
 	}
 
+	public Table getActionTableSource()
+	{
+		return actionTableSource;
+	}
+
+	public void setActionTableSource(Table actionTableSource)
+	{
+		this.actionTableSource = actionTableSource;
+	}
+
+	public EditorMode getEditorMode()
+	{
+		return editorMode;
+	}
+
+	public void setEditorMode(EditorMode editorMode)
+	{
+		this.editorMode = editorMode;
+	}
+
 	@Override
 	public CapabilityEditorView getControlledView()
 	{
@@ -94,7 +129,7 @@ public class CapabilityEditorViewController implements
 	}
 
 	private void configureResourceComboBox() throws DataAccessException
-	{		
+	{
 		resourceComboboxDataContainer.setDataRetrieveListStrategy(new DataRetrieveListStrategy<ResourceVO>()
 		{
 			@Override
@@ -156,10 +191,13 @@ public class CapabilityEditorViewController implements
 		editorView.getEditButton().setVisible(true);
 		editorView.getSaveButton().setEnabled(false);
 		editorView.getSaveButton().setComponentError(null);
+		editorView.getActionsTable().setDropHandler(null);
+		setEditorMode(EditorMode.VIEW);
 	}
 
 	public void setViewToEditMode()
 	{
+		setEditorMode(EditorMode.EDIT);
 		try
 		{
 			resourceComboboxDataContainer.refresh();
@@ -174,6 +212,7 @@ public class CapabilityEditorViewController implements
 		editorView.getEditButton().setEnabled(false);
 		editorView.getEditButton().setVisible(false);
 		editorView.getSaveButton().setEnabled(true);
+		editorView.getActionsTable().setDropHandler(actionDropHandler);
 		editorView.getTitleField().focus();
 	}
 
@@ -311,4 +350,25 @@ public class CapabilityEditorViewController implements
 		currentItem.getBean().setActions(actions);
 		setViewToReadOnly();
 	}
+	private DropHandler actionDropHandler = new DropHandler()
+	{
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void drop(DragAndDropEvent event)
+		{
+			if (getEditorMode() != EditorMode.EDIT)
+			{
+				setViewToEditMode();
+			}
+			LOG.info("drop event allowed");
+		}
+
+		@Override
+		public AcceptCriterion getAcceptCriterion()
+		{
+			ClientSideCriterion sourceCriterion = new SourceIs(getActionTableSource());
+			return new And(sourceCriterion);
+		}
+	};
 }
