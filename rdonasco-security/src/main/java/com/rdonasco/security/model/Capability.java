@@ -64,10 +64,10 @@ public class Capability implements Serializable
 	@Column(name = "id", nullable = false)
 	private Long id;
 	@Basic(optional = false)
-	@Column(name = "title", nullable = false, length = 255, unique = true)
+	@Column(name = "title", nullable = false, length = 256, unique = true)
 	private String title;
 	@Basic(optional = true)
-	@Column(name = "description", nullable = false, length = 255)
+	@Column(name = "description", nullable = false, length = 256)
 	private String description;
 	@JoinColumn(name = "resource_id", referencedColumnName = "id", nullable = true)
 	@ManyToOne(optional = false, fetch = FetchType.EAGER)
