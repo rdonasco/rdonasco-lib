@@ -58,8 +58,7 @@ public class CapabilityEditorView extends VerticalLayout implements
 		configureCapabilityFields();
 		configureCapabilityActionFields();
 		configureEditorButtons();
-		resourceDragAndDropWrapper = new DragAndDropWrapper(capabilityDetailPanel);
-		addComponent(resourceDragAndDropWrapper);
+		addComponent(capabilityDetailPanel);
 		addComponent(capabilityActionsPanel);
 		addComponent(buttonLayout);
 		setExpandRatio(capabilityActionsPanel, 1);
@@ -108,14 +107,18 @@ public class CapabilityEditorView extends VerticalLayout implements
 	{
 		capabilityDetailPanel.setCaption(I18NResource.localize("Capability Editor"));
 		capabilityDetailPanel.setStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
-		capabilityDetailPanel.addComponent(titleField);
-		capabilityDetailPanel.addComponent(descriptionField);
-		capabilityDetailPanel.addComponent(resourceField);
+		VerticalLayout fieldLayout = new VerticalLayout();
+		fieldLayout.addComponent(titleField);
+		fieldLayout.addComponent(descriptionField);
+		fieldLayout.addComponent(resourceField);
+		fieldLayout.setSpacing(true);
+		resourceDragAndDropWrapper = new DragAndDropWrapper(fieldLayout);
+		capabilityDetailPanel.addComponent(resourceDragAndDropWrapper);
 		titleField.setReadOnly(true);
 		descriptionField.setReadOnly(true);
 		resourceField.setReadOnly(true);
-		VerticalLayout capabilityDetailLayout = (VerticalLayout) capabilityDetailPanel.getContent();
-		capabilityDetailLayout.setSpacing(true);
+//		VerticalLayout capabilityDetailLayout = (VerticalLayout) capabilityDetailPanel.getContent();
+//		capabilityDetailLayout.setSpacing(true);
 	}
 
 	private void configureCapabilityActionFields()
