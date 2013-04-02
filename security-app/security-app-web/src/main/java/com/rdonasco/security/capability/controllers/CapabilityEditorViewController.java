@@ -224,7 +224,7 @@ public class CapabilityEditorViewController implements
 		editorView.getSaveButton().setEnabled(false);
 		editorView.getSaveButton().setComponentError(null);
 		editorView.getActionsTable().setDropHandler(null);
-		editorView.getActionDragAndDropWrapper().setDropHandler(null);
+		editorView.getResourceDragAndDropWrapper().setDropHandler(null);
 		setEditorMode(EditorMode.VIEW);
 	}
 
@@ -246,7 +246,7 @@ public class CapabilityEditorViewController implements
 		editorView.getEditButton().setVisible(false);
 		editorView.getSaveButton().setEnabled(true);
 		editorView.getActionsTable().setDropHandler(actionDropHandler);
-		editorView.getActionDragAndDropWrapper().setDropHandler(resourceDropHander);
+		editorView.getResourceDragAndDropWrapper().setDropHandler(resourceDropHander);
 		editorView.getTitleField().focus();
 	}
 
