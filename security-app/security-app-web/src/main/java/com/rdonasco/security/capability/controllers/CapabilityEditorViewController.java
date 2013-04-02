@@ -22,22 +22,23 @@ import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.ResourceVO;
 import com.vaadin.data.Buffered;
+import com.vaadin.data.Container;
+import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.event.DataBoundTransferable;
 import com.vaadin.event.MouseEvents;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
-import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.event.dd.acceptcriteria.SourceIs;
 import com.vaadin.event.dd.acceptcriteria.And;
 import com.vaadin.event.dd.acceptcriteria.ClientSideCriterion;
-import com.vaadin.terminal.PaintException;
-import com.vaadin.terminal.PaintTarget;
+import com.vaadin.ui.AbstractSelect.AbstractSelectTargetDetails;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
@@ -57,6 +58,29 @@ import org.vaadin.addon.formbinder.ViewBoundForm;
 public class CapabilityEditorViewController implements
 		ViewController<CapabilityEditorView>, Serializable
 {
+
+	private void addActionVOToContainer(ActionVO action)
+	{
+		Embedded icon = IconHelper.createDeleteIcon("Remove action");
+		final ActionItemVO actionItemVO = new ActionItemVOBuilder()
+				.setAction(action)
+				.setIcon(icon)
+				.createActionItemVO();
+		actionsContainer.addItem(actionItemVO);
+		icon.addListener(new MouseEvents.ClickListener()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void click(MouseEvents.ClickEvent event)
+			{
+				if (!editorView.getEditorForm().isReadOnly() && !actionsContainer.removeItem(actionItemVO))
+				{
+					LOG.log(Level.WARNING, "Unable to remove action {0}", actionItemVO);
+				}
+			}
+		});
+	}
 
 	public enum EditorMode
 	{
@@ -158,25 +182,7 @@ public class CapabilityEditorViewController implements
 		{
 			for (ActionVO action : currentItem.getBean().getActions())
 			{
-				Embedded icon = IconHelper.createDeleteIcon("Remove action");
-				final ActionItemVO actionItemVO = new ActionItemVOBuilder()
-						.setAction(action)
-						.setIcon(icon)
-						.createActionItemVO();
-				actionsContainer.addItem(actionItemVO);
-				icon.addListener(new MouseEvents.ClickListener()
-				{
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void click(MouseEvents.ClickEvent event)
-					{
-						if (!editorView.getEditorForm().isReadOnly() && !actionsContainer.removeItem(actionItemVO))
-						{
-							LOG.log(Level.WARNING, "Unable to remove action {0}", actionItemVO);
-						}
-					}
-				});
+				addActionVOToContainer(action);
 			}
 		}
 		setViewToReadOnly();
@@ -355,11 +361,20 @@ public class CapabilityEditorViewController implements
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void drop(DragAndDropEvent event)
+		public void drop(DragAndDropEvent dropEvent)
 		{
-			if (getEditorMode() != EditorMode.EDIT)
+			// criteria verify that this is safe
+			final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent
+					.getTransferable();
+			final Container sourceContainer = transferredData.getSourceContainer();
+			final Object sourceItemId = transferredData.getItemId();
+			addActionVOToContainer(((ActionItemVO) sourceItemId).getAction());
+			for (Object object : sourceContainer.getItemIds())
 			{
-				setViewToEditMode();
+				if (getActionTableSource().isSelected(object))
+				{
+					addActionVOToContainer(((ActionItemVO) object).getAction());
+				}
 			}
 			LOG.info("drop event allowed");
 		}
