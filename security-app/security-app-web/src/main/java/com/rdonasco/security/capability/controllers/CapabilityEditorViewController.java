@@ -18,6 +18,7 @@ import com.rdonasco.security.capability.views.CapabilityEditorView;
 import com.rdonasco.security.capability.vo.ActionItemVO;
 import com.rdonasco.security.capability.vo.ActionItemVOBuilder;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
+import com.rdonasco.security.capability.vo.ResourceItemVO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.ResourceVO;
@@ -59,6 +60,7 @@ public class CapabilityEditorViewController implements
 {
 
 	private DropHandler resourceDropHander;
+
 	private void addActionVOToContainer(ActionVO action)
 	{
 		Embedded icon = IconHelper.createDeleteIcon("Remove action");
@@ -88,10 +90,14 @@ public class CapabilityEditorViewController implements
 		resourceDropHander = new DropHandler()
 		{
 			@Override
-			public void drop(DragAndDropEvent event)
+			public void drop(DragAndDropEvent dropEvent)
 			{
 				if (getEditorMode() == EditorMode.EDIT)
 				{
+					final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent
+							.getTransferable();
+					final ResourceItemVO sourceItemId = (ResourceItemVO) transferredData.getItemId();
+					editorView.getResourceField().setValue(sourceItemId.getResource());
 					LOG.info("drop allowed at capabity field panel");
 				}
 				else
