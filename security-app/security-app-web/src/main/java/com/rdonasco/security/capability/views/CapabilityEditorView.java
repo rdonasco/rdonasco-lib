@@ -40,7 +40,7 @@ public class CapabilityEditorView extends VerticalLayout implements
 	private ComboBox resourceField = new ComboBox(I18NResource.localize("Resource"));
 	private Table actionsTable = new Table();
 	private Form editorForm;
-	private DragAndDropWrapper actionDragAndDropWrapper;
+	private DragAndDropWrapper resourceDragAndDropWrapper;
 
 	public Form getEditorForm()
 	{
@@ -58,8 +58,8 @@ public class CapabilityEditorView extends VerticalLayout implements
 		configureCapabilityFields();
 		configureCapabilityActionFields();
 		configureEditorButtons();
-		actionDragAndDropWrapper = new DragAndDropWrapper(capabilityDetailPanel);
-		addComponent(actionDragAndDropWrapper);
+		resourceDragAndDropWrapper = new DragAndDropWrapper(capabilityDetailPanel);
+		addComponent(resourceDragAndDropWrapper);
 		addComponent(capabilityActionsPanel);
 		addComponent(buttonLayout);
 		setExpandRatio(capabilityActionsPanel, 1);
@@ -69,9 +69,9 @@ public class CapabilityEditorView extends VerticalLayout implements
 		setSpacing(true);
 	}
 
-	public DragAndDropWrapper getActionDragAndDropWrapper()
+	public DragAndDropWrapper getResourceDragAndDropWrapper()
 	{
-		return actionDragAndDropWrapper;
+		return resourceDragAndDropWrapper;
 	}
 
 	public Button getSaveButton()
