@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.rdonasco.security.capability.views;
 
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
@@ -13,6 +12,7 @@ import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.DragAndDropWrapper;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
@@ -27,6 +27,7 @@ import com.vaadin.ui.VerticalLayout;
 public class CapabilityEditorView extends VerticalLayout implements
 		ControlledView
 {
+
 	private static final long serialVersionUID = 1L;
 	private Panel capabilityDetailPanel = new Panel();
 	private Panel capabilityActionsPanel = new Panel();
@@ -39,6 +40,7 @@ public class CapabilityEditorView extends VerticalLayout implements
 	private ComboBox resourceField = new ComboBox(I18NResource.localize("Resource"));
 	private Table actionsTable = new Table();
 	private Form editorForm;
+	private DragAndDropWrapper actionDragAndDropWrapper;
 
 	public Form getEditorForm()
 	{
@@ -56,8 +58,8 @@ public class CapabilityEditorView extends VerticalLayout implements
 		configureCapabilityFields();
 		configureCapabilityActionFields();
 		configureEditorButtons();
-
-		addComponent(capabilityDetailPanel);
+		actionDragAndDropWrapper = new DragAndDropWrapper(capabilityDetailPanel);
+		addComponent(actionDragAndDropWrapper);
 		addComponent(capabilityActionsPanel);
 		addComponent(buttonLayout);
 		setExpandRatio(capabilityActionsPanel, 1);
@@ -65,6 +67,11 @@ public class CapabilityEditorView extends VerticalLayout implements
 		addStyleName(SecurityDefaultTheme.CSS_CAPABILITY_EDITOR);
 		setMargin(true);
 		setSpacing(true);
+	}
+
+	public DragAndDropWrapper getActionDragAndDropWrapper()
+	{
+		return actionDragAndDropWrapper;
 	}
 
 	public Button getSaveButton()

@@ -320,6 +320,7 @@ public class ResourcesEditorAndSelectorViewController implements
 			}
 		});
 		TableHelper.setupTable(resourcesEditorAndSelectorView.getResourceEditorTable());
+		resourcesEditorAndSelectorView.getResourceEditorTable().setDragMode(Table.TableDragMode.ROW);
 	}
 
 	private void configureButtonBehavior()

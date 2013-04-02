@@ -23,7 +23,6 @@ import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.ResourceVO;
 import com.vaadin.data.Buffered;
 import com.vaadin.data.Container;
-import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
@@ -34,11 +33,11 @@ import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
+import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.event.dd.acceptcriteria.SourceIs;
 import com.vaadin.event.dd.acceptcriteria.And;
 import com.vaadin.event.dd.acceptcriteria.ClientSideCriterion;
-import com.vaadin.ui.AbstractSelect.AbstractSelectTargetDetails;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
@@ -59,6 +58,7 @@ public class CapabilityEditorViewController implements
 		ViewController<CapabilityEditorView>, Serializable
 {
 
+	private DropHandler resourceDropHander;
 	private void addActionVOToContainer(ActionVO action)
 	{
 		Embedded icon = IconHelper.createDeleteIcon("Remove action");
@@ -80,6 +80,32 @@ public class CapabilityEditorViewController implements
 				}
 			}
 		});
+	}
+
+	void setResourceTableSource(final Table resourceEditorTable)
+	{
+		final SourceIs sourceIs = new SourceIs(resourceEditorTable);
+		resourceDropHander = new DropHandler()
+		{
+			@Override
+			public void drop(DragAndDropEvent event)
+			{
+				if (getEditorMode() == EditorMode.EDIT)
+				{
+					LOG.info("drop allowed at capabity field panel");
+				}
+				else
+				{
+					LOG.info("drop not allowed at capabity field panel");
+				}
+			}
+
+			@Override
+			public AcceptCriterion getAcceptCriterion()
+			{
+				return sourceIs;
+			}
+		};
 	}
 
 	public enum EditorMode
@@ -198,6 +224,7 @@ public class CapabilityEditorViewController implements
 		editorView.getSaveButton().setEnabled(false);
 		editorView.getSaveButton().setComponentError(null);
 		editorView.getActionsTable().setDropHandler(null);
+		editorView.getActionDragAndDropWrapper().setDropHandler(null);
 		setEditorMode(EditorMode.VIEW);
 	}
 
@@ -219,6 +246,7 @@ public class CapabilityEditorViewController implements
 		editorView.getEditButton().setVisible(false);
 		editorView.getSaveButton().setEnabled(true);
 		editorView.getActionsTable().setDropHandler(actionDropHandler);
+		editorView.getActionDragAndDropWrapper().setDropHandler(resourceDropHander);
 		editorView.getTitleField().focus();
 	}
 
