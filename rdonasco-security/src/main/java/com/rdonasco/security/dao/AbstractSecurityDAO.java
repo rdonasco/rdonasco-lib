@@ -1,6 +1,6 @@
 /*
  * Copyright 2013 Roy F. Donasco.
- * File Created on: 27-Jan-2013
+ * File Created on: 04-Apr-2013
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,23 @@
 
 package com.rdonasco.security.dao;
 
-import com.rdonasco.security.model.Capability;
+import com.rdonasco.common.dao.BaseDAO;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
-
-public class CapabilityDAOJPAImpl extends AbstractSecurityDAO<Capability>
-		implements CapabilityDAO
+/**
+ *
+ * @author Roy F. Donasco
+ */
+public abstract class AbstractSecurityDAO<T> extends BaseDAO<T>
 {
-	@Override
-	public Class<Capability> getDataClass()
-	{
-		return Capability.class;
-	}
 
+	@PersistenceContext(unitName = "RDONASCO_SECURITY_PU")
+	private EntityManager entityManager;
+
+	@Override
+	public EntityManager getEntityManager()
+	{
+		return entityManager;
+	}
 }

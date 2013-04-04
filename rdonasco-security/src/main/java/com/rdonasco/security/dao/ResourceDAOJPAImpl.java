@@ -5,11 +5,11 @@
 
 package com.rdonasco.security.dao;
 
-import com.rdonasco.common.dao.BaseDAO;
 import com.rdonasco.security.model.Resource;
 
 
-public class ResourceDAOJPAImpl extends BaseDAO<Resource> implements ResourceDAO 
+public class ResourceDAOJPAImpl extends AbstractSecurityDAO<Resource> implements
+		ResourceDAO
 {
 
 	@Override

@@ -17,7 +17,6 @@
 
 package com.rdonasco.security.dao;
 
-import com.rdonasco.common.dao.BaseDAO;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.UserCapability;
@@ -31,7 +30,8 @@ import java.util.Map;
  *
  * @author Roy F. Donasco
  */
-public class UserCapabilityDAOJPAImpl extends BaseDAO<UserCapability> implements
+public class UserCapabilityDAOJPAImpl extends AbstractSecurityDAO<UserCapability>
+		implements
 		UserCapabilityDAO
 {
 
