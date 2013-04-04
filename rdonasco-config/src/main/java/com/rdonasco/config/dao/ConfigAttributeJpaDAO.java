@@ -19,14 +19,13 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import com.rdonasco.config.data.ConfigAttribute;
-import com.rdonasco.common.dao.BaseDAO;
 import com.rdonasco.common.exceptions.DataAccessException;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public class ConfigAttributeJpaDAO extends BaseDAO<ConfigAttribute>
+public class ConfigAttributeJpaDAO extends AbstractConfigDAO<ConfigAttribute>
 		implements ConfigAttributeDAO
 {
 
@@ -41,7 +40,7 @@ public class ConfigAttributeJpaDAO extends BaseDAO<ConfigAttribute>
 			String elementName, String attributeName)
 			throws DataAccessException
 	{
-		ConfigAttribute attribute = null;
+		ConfigAttribute attribute;
 
 		EntityManager em = getEntityManager();
 		TypedQuery<ConfigAttribute> query = em.createNamedQuery(

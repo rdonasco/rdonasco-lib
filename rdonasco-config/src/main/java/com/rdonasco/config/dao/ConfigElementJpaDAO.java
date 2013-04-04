@@ -18,14 +18,14 @@ package com.rdonasco.config.dao;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import com.rdonasco.config.data.ConfigElement;
-import com.rdonasco.common.dao.BaseDAO;
 import com.rdonasco.common.exceptions.DataAccessException;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public class ConfigElementJpaDAO extends BaseDAO<ConfigElement> implements ConfigElementDAO
+public class ConfigElementJpaDAO extends AbstractConfigDAO<ConfigElement>
+		implements ConfigElementDAO
 {
 
     @Override
