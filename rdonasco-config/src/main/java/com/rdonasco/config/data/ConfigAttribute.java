@@ -15,6 +15,7 @@
  */
 package com.rdonasco.config.data;
 
+import com.rdonasco.config.util.ConfigConstants;
 import java.io.Serializable;
 import javax.persistence.*;
 
@@ -38,11 +39,12 @@ public class ConfigAttribute implements Serializable, ConfigData
     public static final String QUERY_PARAM_ATTRIBUTE_NAME = "attributeName";
     public static final String QUERY_PARAM_XPATH = "xpath";
     private static final String IDGEN = "CONFIG_ATTRIBUTE_DATA_IDGEN";
+	private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = IDGEN)
-    @TableGenerator(name = IDGEN, table = "SEQUENCE")
+	@TableGenerator(name = IDGEN, table = ConfigConstants.TABLE_SEQUENCE)
     private Long id;
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_config_id", referencedColumnName = "id", nullable = true)

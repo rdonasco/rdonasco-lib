@@ -15,6 +15,7 @@
  */
 package com.rdonasco.config.data;
 
+import com.rdonasco.config.util.ConfigConstants;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,7 @@ public class ConfigElement implements Serializable, ConfigData
     @Basic(optional = false)
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = IDGEN)
-    @TableGenerator(name = IDGEN, table = "SEQUENCE")
+	@TableGenerator(name = IDGEN, table = ConfigConstants.TABLE_SEQUENCE)
     private Long id;
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_config_id", referencedColumnName = "id", nullable = true)
