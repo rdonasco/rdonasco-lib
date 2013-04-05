@@ -7,7 +7,7 @@ package com.rdonasco.security.home.controllers;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.controller.ViewController;
-import com.rdonasco.security.app.controllers.ApplicationExceptionPopupProvider;
+import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.security.home.views.HomeFrameViewLayout;
 import com.vaadin.ui.Component;
 import java.io.Serializable;

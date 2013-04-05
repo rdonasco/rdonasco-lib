@@ -10,7 +10,7 @@ import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.common.vaadin.view.ButtonUtil;
-import com.rdonasco.security.app.controllers.ApplicationExceptionPopupProvider;
+import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.security.app.controllers.HttpSessionProvider;
 import com.rdonasco.security.home.views.ToolbarView;
 import com.vaadin.terminal.Sizeable;

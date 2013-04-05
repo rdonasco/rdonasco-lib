@@ -7,7 +7,7 @@ package com.rdonasco.security.capability.controllers;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.controller.ViewController;
-import com.rdonasco.security.app.controllers.ApplicationExceptionPopupProvider;
+import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.security.capability.views.CapabilityViewLayout;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.vaadin.data.util.BeanItem;

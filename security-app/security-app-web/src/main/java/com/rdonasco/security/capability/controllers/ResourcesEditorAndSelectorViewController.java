@@ -13,7 +13,8 @@ import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.datamanager.controller.DataRetrieveListStrategy;
 import com.rdonasco.datamanager.controller.DataSaveStrategy;
 import com.rdonasco.datamanager.controller.DataUpdateStrategy;
-import com.rdonasco.security.app.controllers.ApplicationExceptionPopupProvider;
+import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
+import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.capability.utils.IconHelper;
 import com.rdonasco.security.capability.utils.TableHelper;
@@ -56,6 +57,8 @@ public class ResourcesEditorAndSelectorViewController implements
 	private DataManagerContainer<ResourceItemVO> resourcesDataContainer = new DataManagerContainer<ResourceItemVO>(ResourceItemVO.class);
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopProvider;
+	@Inject
+	private ApplicationPopupProvider popupProvider;
 	private Map<Object, Map<Object, TextField>> fieldMap = new HashMap<Object, Map<Object, TextField>>();
 
 	@PostConstruct
@@ -206,7 +209,14 @@ public class ResourcesEditorAndSelectorViewController implements
 			@Override
 			public void click(MouseEvents.ClickEvent event)
 			{
-				resourcesDataContainer.removeItem(resourceItemVO);
+				try
+				{
+					resourcesDataContainer.removeItem(resourceItemVO);
+				}
+				catch (RuntimeException e)
+				{
+					popupProvider.popUpError(I18NResource.localize("Error deleting an item"));
+				}
 			}
 		});
 	}

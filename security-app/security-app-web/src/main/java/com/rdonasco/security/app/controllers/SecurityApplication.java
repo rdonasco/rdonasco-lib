@@ -4,6 +4,8 @@
  */
 package com.rdonasco.security.app.controllers;
 
+import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
+import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.utils.NotificationHelper;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;

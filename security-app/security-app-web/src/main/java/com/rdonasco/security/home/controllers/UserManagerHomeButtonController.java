@@ -6,8 +6,8 @@ package com.rdonasco.security.home.controllers;
 
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
-import com.rdonasco.security.app.controllers.ApplicationExceptionPopupProvider;
-import com.rdonasco.security.app.controllers.ApplicationPopupProvider;
+import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
+import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.home.views.FeatureHomeButton;
 import com.vaadin.terminal.ThemeResource;
