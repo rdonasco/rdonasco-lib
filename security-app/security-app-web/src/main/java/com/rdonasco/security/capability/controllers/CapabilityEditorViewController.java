@@ -373,6 +373,8 @@ public class CapabilityEditorViewController implements
 			@Override
 			public void buttonClick(Button.ClickEvent event)
 			{
+				editorView.getEditorForm().discard();
+				setCurrentItem(currentItem);
 				setViewToReadOnly();
 			}
 		});
