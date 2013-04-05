@@ -8,6 +8,7 @@ import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.MultipleEntityFoundException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.security.dao.ActionDAO;
+import com.rdonasco.security.dao.CapabilityActionDAO;
 import com.rdonasco.security.dao.CapabilityDAO;
 import com.rdonasco.security.dao.ResourceDAO;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
@@ -40,6 +41,8 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 {
 
 	private static final Logger LOG = Logger.getLogger(CapabilityManagerImpl.class.getName());
+	@Inject
+	private CapabilityActionDAO capabilityActionDAO;
 	@Inject
 	private CapabilityDAO capabilityDAO;
 	@Inject
@@ -461,6 +464,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 			for (CapabilityAction actionToRemove : actionsToRemove)
 			{
 				existingCapability.getActions().remove(actionToRemove);
+				capabilityActionDAO.delete(CapabilityAction.class, actionToRemove.getId());
 			}
 
 			// add items
@@ -472,6 +476,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 			// update fields
 			existingCapability.setDescription(capability.getDescription());
 			existingCapability.setTitle(capability.getTitle());
+			existingCapability.setResource(capability.getResource());
 
 			capabilityDAO.update(existingCapability);
 		}
