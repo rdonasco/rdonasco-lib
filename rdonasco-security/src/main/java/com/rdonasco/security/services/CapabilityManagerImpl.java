@@ -374,7 +374,6 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 		return actionVOList;
 	}
 
-
 	@Override
 	public CapabilityVO createNewCapability(CapabilityVO capabilityToCreate)
 			throws CapabilityManagerException
