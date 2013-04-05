@@ -207,12 +207,19 @@ public class CapabilityListPanelController implements
 				.setTitle("New Capability")
 				.setDescription("New Capability")
 				.createCapabilityVO();
-		CapabilityItemVO newItemVO = new CapabilityItemVOBuilder()
-				.setCapabilityVO(newCapabilityVO)
-				.createCapabilityItemVO();
-		BeanItem<CapabilityItemVO> newItemAdded = capabilityItemTableContainer.addItem(newItemVO);
-		capabilityListTable.setCurrentPageFirstItemId(newItemAdded.getBean());
-		capabilityListTable.select(newItemAdded.getBean());
+		try
+		{
+			CapabilityItemVO newItemVO = new CapabilityItemVOBuilder()
+					.setCapabilityVO(newCapabilityVO)
+					.createCapabilityItemVO();
+			BeanItem<CapabilityItemVO> newItemAdded = capabilityItemTableContainer.addItem(newItemVO);
+			capabilityListTable.setCurrentPageFirstItemId(newItemAdded.getBean());
+			capabilityListTable.select(newItemAdded.getBean());
+		}
+		catch (RuntimeException e)
+		{
+			getPopupProvider().popUpError(I18NResource.localizeWithParameter("Unable to add new capability", newCapabilityVO.getTitle()));
+		}
 	}
 
 	public Table getCapabilityListTable()
