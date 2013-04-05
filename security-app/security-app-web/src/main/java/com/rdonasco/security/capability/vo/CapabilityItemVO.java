@@ -115,7 +115,7 @@ public class CapabilityItemVO implements Serializable
 					.createCapabilityActionVO();
 			capabilityActions.add(capabilityAction);
 		}
-		capabilityVO.setActions(capabilityActions);
+		capabilityVO.getActions().addAll(capabilityActions);
 	}
 
 	public CapabilityActionVO findActionNamed(String actionName)
