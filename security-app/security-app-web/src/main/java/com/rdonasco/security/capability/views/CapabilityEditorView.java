@@ -8,7 +8,6 @@ import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ControlledView;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
-import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
@@ -27,7 +26,6 @@ import com.vaadin.ui.VerticalLayout;
 public class CapabilityEditorView extends VerticalLayout implements
 		ControlledView
 {
-
 	private static final long serialVersionUID = 1L;
 	private Panel capabilityDetailPanel = new Panel();
 	private Panel capabilityActionsPanel = new Panel();
