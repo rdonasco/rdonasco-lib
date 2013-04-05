@@ -5,9 +5,7 @@
 package com.rdonasco.security.capability.controllers;
 
 import com.rdonasco.common.exceptions.DataAccessException;
-import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.datamanager.services.DataManager;
-import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.capability.utils.IconHelper;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.capability.vo.CapabilityItemVOBuilder;
@@ -16,11 +14,11 @@ import com.rdonasco.security.services.CapabilityManagerLocal;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.ResourceVO;
-import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Embedded;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.ejb.EJB;
 
 /**
  *
@@ -31,8 +29,8 @@ public class CapabilityDataManagerDecorator implements
 {
 	private static final long serialVersionUID = 1L;
 
-	//@EJB
-	private CapabilityManagerLocal capabilityManager = new CapabilityManagerLocalDummy();
+	@EJB
+	private CapabilityManagerLocal capabilityManager;
 	private ClickListenerProvider clickListenerProvider;
 
 	public CapabilityManagerLocal getCapabilityManager()
