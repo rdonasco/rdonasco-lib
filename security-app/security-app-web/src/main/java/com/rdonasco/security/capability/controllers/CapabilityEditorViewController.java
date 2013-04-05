@@ -12,6 +12,7 @@ import com.rdonasco.common.vaadin.view.ButtonUtil;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.datamanager.controller.DataRetrieveListStrategy;
 import com.rdonasco.security.app.controllers.ApplicationExceptionPopupProvider;
+import com.rdonasco.security.app.controllers.ApplicationPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.capability.utils.IconHelper;
 import com.rdonasco.security.capability.views.CapabilityEditorView;
@@ -34,7 +35,6 @@ import com.vaadin.event.ShortcutAction.KeyCode;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
-import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.event.dd.acceptcriteria.SourceIs;
 import com.vaadin.event.dd.acceptcriteria.And;
@@ -60,6 +60,8 @@ public class CapabilityEditorViewController implements
 {
 
 	private DropHandler resourceDropHander;
+	@Inject
+	private ApplicationPopupProvider popProvider;
 
 	private void addActionVOToContainer(ActionVO action)
 	{
@@ -228,6 +230,7 @@ public class CapabilityEditorViewController implements
 		editorView.getEditButton().setEnabled(true);
 		editorView.getEditButton().setVisible(true);
 		editorView.getSaveButton().setEnabled(false);
+		editorView.getSaveButton().setVisible(false);
 		editorView.getSaveButton().setComponentError(null);
 		editorView.getActionsTable().setDropHandler(null);
 		editorView.getResourceDragAndDropWrapper().setDropHandler(null);
@@ -251,6 +254,7 @@ public class CapabilityEditorViewController implements
 		editorView.getEditButton().setEnabled(false);
 		editorView.getEditButton().setVisible(false);
 		editorView.getSaveButton().setEnabled(true);
+		editorView.getSaveButton().setVisible(true);
 		editorView.getActionsTable().setDropHandler(actionDropHandler);
 		editorView.getResourceDragAndDropWrapper().setDropHandler(resourceDropHander);
 		editorView.getTitleField().focus();
@@ -301,8 +305,9 @@ public class CapabilityEditorViewController implements
 
 	private void configureButtons()
 	{
-		ButtonUtil.disableButtons(editorView.getEditButton(), editorView.getSaveButton());
-		editorView.getCancelButton().setVisible(false);
+		ButtonUtil.disableButtons(editorView.getEditButton(), editorView.getSaveButton(), editorView.getCancelButton());
+		ButtonUtil.hideButtons(editorView.getEditButton(), editorView.getSaveButton(), editorView.getCancelButton());
+
 		editorView.getEditButton().addListener(new Button.ClickListener()
 		{
 			private static final long serialVersionUID = 1L;
@@ -326,7 +331,10 @@ public class CapabilityEditorViewController implements
 			@Override
 			public void handleAction(Object sender, Object target)
 			{
-				setViewToEditMode();
+				if (editorView.getEditButton().isEnabled())
+				{
+					setViewToEditMode();
+				}
 			}
 		});
 		editorView.getEditButton().setDescription("Edit (ctrl+E)");
@@ -348,7 +356,10 @@ public class CapabilityEditorViewController implements
 			@Override
 			public void handleAction(Object sender, Object target)
 			{
-				saveCapability();
+				if (editorView.getSaveButton().isEnabled())
+				{
+					saveCapability();
+				}
 			}
 		});
 		editorView.getSaveButton().setDescription("Save (ctrl+S)");
@@ -370,7 +381,10 @@ public class CapabilityEditorViewController implements
 			@Override
 			public void handleAction(Object sender, Object target)
 			{
-				setViewToReadOnly();
+				if (editorView.getCancelButton().isEnabled())
+				{
+					setViewToReadOnly();
+				}
 			}
 		});
 	}
@@ -378,17 +392,27 @@ public class CapabilityEditorViewController implements
 	private void saveCapability() throws Buffered.SourceException,
 			Validator.InvalidValueException
 	{
-		editorView.getEditorForm().commit();
-		List<ActionVO> actions = new ArrayList<ActionVO>();
-		for (ActionItemVO actionItem : actionsContainer.getItemIds())
+		try
 		{
-			actions.add(ActionVO.createWithIdNameAndDescription(
-					actionItem.getId(),
-					actionItem.getName(),
-					actionItem.getDescription()));
+			editorView.getEditorForm().commit();
+			List<ActionVO> actions = new ArrayList<ActionVO>();
+			for (ActionItemVO actionItem : actionsContainer.getItemIds())
+			{
+				actions.add(ActionVO.createWithIdNameAndDescription(
+						actionItem.getId(),
+						actionItem.getName(),
+						actionItem.getDescription()));
+			}
+			currentItem.getBean().setActions(actions);
+			CapabilityItemVO capabilityItemVO = ((BeanItem<CapabilityItemVO>) editorView.getEditorForm().getItemDataSource()).getBean();
+			capabilityDataManager.updateData(capabilityItemVO);
+			setViewToReadOnly();
+			popProvider.popUpInfo(I18NResource.localizeWithParameter("Capability _ Saved", capabilityItemVO.getTitle()));
 		}
-		currentItem.getBean().setActions(actions);
-		setViewToReadOnly();
+		catch (DataAccessException ex)
+		{
+			exceptionPopupProvider.popUpErrorException(ex);
+		}
 	}
 	private DropHandler actionDropHandler = new DropHandler()
 	{
