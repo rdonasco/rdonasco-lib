@@ -437,7 +437,43 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 		try
 		{
 			Capability capability = SecurityEntityValueObjectConverter.toCapability(capabilityToUpdate);
-			capabilityDAO.update(capability);
+			Capability existingCapability = capabilityDAO.findData(Capability.class, capability.getId());
+			List<CapabilityAction> actionsToAdd = new ArrayList<CapabilityAction>();
+			// find actionst to add
+			for (CapabilityAction actionToAdd : capability.getActions())
+			{
+				if (!existingCapability.getActions().contains(actionToAdd))
+				{
+					actionsToAdd.add(actionToAdd);
+				}
+			}
+			List<CapabilityAction> actionsToRemove = new ArrayList<CapabilityAction>();
+			// find actions to delete
+			for (CapabilityAction actionToRemove : existingCapability.getActions())
+			{
+				if (!capability.getActions().contains(actionToRemove))
+				{
+					actionsToRemove.add(actionToRemove);
+				}
+			}
+
+			// remove items
+			for (CapabilityAction actionToRemove : actionsToRemove)
+			{
+				existingCapability.getActions().remove(actionToRemove);
+			}
+
+			// add items
+			for (CapabilityAction actionToAdd : actionsToAdd)
+			{
+				existingCapability.getActions().add(actionToAdd);
+			}
+
+			// update fields
+			existingCapability.setDescription(capability.getDescription());
+			existingCapability.setTitle(capability.getTitle());
+
+			capabilityDAO.update(existingCapability);
 		}
 		catch (Exception e)
 		{

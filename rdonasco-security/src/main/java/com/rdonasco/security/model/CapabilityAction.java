@@ -95,28 +95,58 @@ public class CapabilityAction implements Serializable
 	
 	
 
+//	@Override
+//	public int hashCode()
+//	{
+//		int hash = 0;
+//		hash += (id != null ? id.hashCode() : 0);
+//		return hash;
+//	}
+//
+//	@Override
+//	public boolean equals(Object object)
+//	{
+//		boolean isEqual = true;
+//		if (isEqual && !(object instanceof CapabilityAction))
+//		{
+//			isEqual = false;
+//		}
+//		CapabilityAction other = (CapabilityAction) object;
+//		if (isEqual && ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))))
+//		{
+//			isEqual = false;
+//		}
+//		return isEqual;
+//	}
 	@Override
 	public int hashCode()
 	{
-		int hash = 0;
-		hash += (id != null ? id.hashCode() : 0);
+		int hash = 3;
+		hash = 71 * hash + (this.capability != null ? this.capability.hashCode() : 0);
+		hash = 71 * hash + (this.action != null ? this.action.hashCode() : 0);
 		return hash;
 	}
 
 	@Override
-	public boolean equals(Object object)
+	public boolean equals(Object obj)
 	{
-		boolean isEqual = true;
-		if (isEqual && !(object instanceof CapabilityAction))
+		if (obj == null)
 		{
-			isEqual = false;
+			return false;
 		}
-		CapabilityAction other = (CapabilityAction) object;
-		if (isEqual && ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))))
+		if (getClass() != obj.getClass())
 		{
-			isEqual = false;
+			return false;
 		}
-		return isEqual;
+		final CapabilityAction other = (CapabilityAction) obj;
+		if (this.capability != other.capability && (this.capability == null || !this.capability.equals(other.capability)))
+		{
+			return false;
+		}
+		if (this.action != other.action && (this.action == null || !this.action.equals(other.action)))
+		{
+			return false;
+		}
+		return true;
 	}
-
 }

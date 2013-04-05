@@ -209,6 +209,31 @@ public class CapabilityManagerLocalTest
 	}
 
 	@Test
+	public void testUpdateCapabilityClearAndRemoveSameActions() throws
+			Exception
+	{
+		System.out.println("UpdateCapabilityClearAndRemoveSameActions");
+		ResourceVO resourceVO = createTestDataResourceNamed("station");
+		CapabilityVO capability = new CapabilityVOBuilder()
+				.setTitle("manage station")
+				.setDescription("manage Station")
+				.setResource(resourceVO)
+				.createCapabilityVO();
+		capability = capabilityManager.createNewCapability(capability);
+		List<ActionVO> actions = createTestDataActions("add" + (KEY++), "edit" + (KEY++), "delete" + (KEY++));
+		createAndAssociateActionsToCapability(actions, capability);
+		capabilityManager.updateCapability(capability);
+		// reassociate it as new
+		CapabilityVO updatedCapabilityWithActionsToReassociate = capabilityManager.findCapabilityWithId(capability.getId());
+		updatedCapabilityWithActionsToReassociate.getActions().clear();
+		createAndAssociateActionsToCapability(actions, updatedCapabilityWithActionsToReassociate);
+		capabilityManager.updateCapability(updatedCapabilityWithActionsToReassociate);
+		CapabilityVO updatedCapabilityWithActions = capabilityManager.findCapabilityWithId(updatedCapabilityWithActionsToReassociate.getId());
+		assertEquals(3, updatedCapabilityWithActions.getActions().size());
+
+	}
+
+	@Test
 	public void testDeleteCapability() throws Exception
 	{
 		System.out.println("deleteCapability");
@@ -298,5 +323,30 @@ public class CapabilityManagerLocalTest
 				.setCapabilityVO(capabilityVOtoUpdate)
 				.createCapabilityActionVO();
 		return capabilityActionToAdd;
+	}
+
+	private List<ActionVO> createTestDataActions(String... actionNames) throws
+			CapabilityManagerException
+	{
+		List<ActionVO> actions = new ArrayList<ActionVO>(actionNames.length);
+		for (String name : actionNames)
+		{
+			actions.add(createTestDataActionNamed(name));
+		}
+
+		return actions;
+	}
+
+	private void createAndAssociateActionsToCapability(
+			List<ActionVO> actions, CapabilityVO capability)
+	{
+		for (ActionVO actionVO : actions)
+		{
+			CapabilityActionVO capabilityActionVO = new CapabilityActionVOBuilder()
+					.setActionVO(actionVO)
+					.setCapabilityVO(capability)
+					.createCapabilityActionVO();
+			capability.getActions().add(capabilityActionVO);
+		}
 	}
 }
