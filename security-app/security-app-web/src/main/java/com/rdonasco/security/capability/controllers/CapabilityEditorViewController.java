@@ -231,6 +231,8 @@ public class CapabilityEditorViewController implements
 		editorView.getEditButton().setVisible(true);
 		editorView.getSaveButton().setEnabled(false);
 		editorView.getSaveButton().setVisible(false);
+		editorView.getCancelButton().setEnabled(false);
+		editorView.getCancelButton().setVisible(false);
 		editorView.getSaveButton().setComponentError(null);
 		editorView.getActionsTable().setDropHandler(null);
 		editorView.getResourceDragAndDropWrapper().setDropHandler(null);
@@ -251,6 +253,7 @@ public class CapabilityEditorViewController implements
 		editorView.getEditorForm().setReadOnly(false);
 		editorView.getActionsTable().setReadOnly(false);
 		editorView.getCancelButton().setVisible(true);
+		editorView.getCancelButton().setEnabled(true);
 		editorView.getEditButton().setEnabled(false);
 		editorView.getEditButton().setVisible(false);
 		editorView.getSaveButton().setEnabled(true);
