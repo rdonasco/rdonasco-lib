@@ -18,9 +18,12 @@ package com.rdonasco.datamanager.controller;
 
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.datamanager.services.DataManager;
+import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.enterprise.context.Dependent;
 
 /**
@@ -31,6 +34,7 @@ import javax.enterprise.context.Dependent;
 public class DataManagerContainer<T> extends BeanItemContainer<T>
 {
 
+	private static final Logger LOG = Logger.getLogger(DataManagerContainer.class.getName());
 	private DataManager<T> dataManager;
 	private static final long serialVersionUID = 1L;
 	private T dummyAddRecord;
@@ -145,13 +149,17 @@ public class DataManagerContainer<T> extends BeanItemContainer<T>
 	{
 
 		List<T> allData = getDataRetrieveListStrategy().retrieve();
+		BeanItem<T> item;
+		super.removeAllItems();
 		for (T data : allData)
 		{
-			super.addItem(data);
+			item = super.addItem(data);
+			configureItemPropertySetChangeListener(item);
 		}
 		if (getDummyAddRecord() != null)
 		{
-			super.addItem(getDummyAddRecord());
+			item = super.addItem(getDummyAddRecord());
+			configureItemPropertySetChangeListener(item);
 		}
 	}
 
@@ -183,14 +191,18 @@ public class DataManagerContainer<T> extends BeanItemContainer<T>
 	public BeanItem<T> addItemAfter(Object previousItemId, Object newItemId)
 			throws IllegalArgumentException
 	{
-		return super.addItemAfter(previousItemId, saveUsingSaveDataStrategy(newItemId));
+		BeanItem<T> item = super.addItemAfter(previousItemId, saveUsingSaveDataStrategy(newItemId));
+		configureItemPropertySetChangeListener(item);
+		return item;
 	}
 
 	@Override
 	public BeanItem<T> addItemAt(int index, Object newItemId) throws
 			IllegalArgumentException
 	{
-		return super.addItemAt(index, saveUsingSaveDataStrategy(newItemId));
+		BeanItem<T> item = super.addItemAt(index, saveUsingSaveDataStrategy(newItemId));
+		configureItemPropertySetChangeListener(item);
+		return item;
 	}
 
 	@Override
@@ -206,6 +218,7 @@ public class DataManagerContainer<T> extends BeanItemContainer<T>
 		{
 			addedBeanItem = super.addItem(saveUsingSaveDataStrategy(itemId));
 		}
+		configureItemPropertySetChangeListener(addedBeanItem);
 		return addedBeanItem;
 	}
 
@@ -214,7 +227,7 @@ public class DataManagerContainer<T> extends BeanItemContainer<T>
 	{
 		T savedData = null;
 		try
-		{			
+		{
 			savedData = getDataSaveStrategy().save((T) newItemId);
 		}
 		catch (DataAccessException ex)
@@ -229,6 +242,32 @@ public class DataManagerContainer<T> extends BeanItemContainer<T>
 		if (getDataManager() == null)
 		{
 			throw new NullPointerException("DataManager cannot be null for DataManagerContainer to operate properly");
+		}
+	}
+
+	private void configureItemPropertySetChangeListener(
+			BeanItem<T> addedBeanItem)
+	{
+		if (addedBeanItem != null)
+		{
+			addedBeanItem.addListener(new Item.PropertySetChangeListener()
+			{
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void itemPropertySetChange(
+						Item.PropertySetChangeEvent event)
+				{
+					try
+					{
+						updateItem(((BeanItem<T>) event.getItem()).getBean());
+					}
+					catch (DataAccessException ex)
+					{
+						LOG.log(Level.SEVERE, ex.getMessage(), ex);
+					}
+				}
+			});
 		}
 	}
 }
