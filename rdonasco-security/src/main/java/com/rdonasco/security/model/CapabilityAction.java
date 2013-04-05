@@ -106,17 +106,17 @@ public class CapabilityAction implements Serializable
 	@Override
 	public boolean equals(Object object)
 	{
-		// TODO: Warning - this method won't work in the case the id fields are not set
-		if (!(object instanceof CapabilityAction))
+		boolean isEqual = true;
+		if (isEqual && !(object instanceof CapabilityAction))
 		{
-			return false;
+			isEqual = false;
 		}
 		CapabilityAction other = (CapabilityAction) object;
-		if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
+		if (isEqual && ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))))
 		{
-			return false;
+			isEqual = false;
 		}
-		return true;
+		return isEqual;
 	}
 
 }
