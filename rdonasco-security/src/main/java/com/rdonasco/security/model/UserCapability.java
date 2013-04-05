@@ -16,6 +16,7 @@
  */
 package com.rdonasco.security.model;
 
+import com.rdonasco.security.utils.SecurityConstants;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -52,12 +53,11 @@ public class UserCapability implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 	private static final String GENERATOR_KEY = "USER_CAPABILITY_IDGEN";
-	private static final String GENERATOR_TABLE = "SEQUENCE";
 	public static final String NAMED_QUERY_FIND_CAPABILITY_BY_USER = "UserCapability.findCapabilityByUser";
 	public static final String QUERY_PARAM_USER = "user";
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = GENERATOR_KEY)
-	@TableGenerator(name = GENERATOR_KEY, table = GENERATOR_TABLE)
+	@TableGenerator(name = GENERATOR_KEY, table = SecurityConstants.TABLE_SEQUENCE)
 	@Column(name = "id", nullable = false)
 	private Long id;
 	@JoinColumn(name = "user_profile_id", referencedColumnName = "id", nullable = true)
