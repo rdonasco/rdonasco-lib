@@ -1,5 +1,12 @@
 @import "blueChameleon.css";
 
+/* overriden styles */
+.v-captiontext
+{
+	font-weight: bold;
+	font-size: small;
+}
+
 /* START of customized style */
 .toolbar
 {
@@ -95,5 +102,16 @@
 .layoutDesign
 {
 	background-color: appworkspace;
+}
+
+.fileDrop
+{
+	background-color: aqua;
+	border: 2px;
+}
+.i18nParameter
+{
+	font-weight: bold;
+	font-style: italic;
 }
 /* Custom Styles - END */
