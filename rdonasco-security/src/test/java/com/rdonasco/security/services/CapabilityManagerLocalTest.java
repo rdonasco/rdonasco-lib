@@ -5,11 +5,14 @@ import com.rdonasco.security.dao.ActionDAO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.CapabilityActionVO;
+import com.rdonasco.security.vo.CapabilityActionVOBuilder;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.ejb.EJB;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -125,9 +128,9 @@ public class CapabilityManagerLocalTest
 	private static int KEY = 0;
 
 	@Test
-	public void testUpdateCapability() throws Exception
+	public void testUpdateCapabilityDetails() throws Exception
 	{
-		System.out.println("updateCapability");
+		System.out.println("updateCapabilityDetails");
 		final String actionName = "add" + (KEY++);
 		final String resourceName = "employee" + (KEY++);
 		CapabilityVO capabilityVOtoUpdate = createTestDataCapabilityWithActionAndResourceName(actionName, resourceName);
@@ -139,6 +142,70 @@ public class CapabilityManagerLocalTest
 		assertEquals(capabilityVOtoUpdate.getDescription(), updatedCapabilityVO.getDescription());
 		assertEquals(capabilityVOtoUpdate.getTitle(), updatedCapabilityVO.getTitle());
 		assertEquals(capabilityVOtoUpdate.getActions().size(), updatedCapabilityVO.getActions().size());
+	}
+
+	@Test
+	public void testUpdateCapabilityAndAddActions() throws Exception
+	{
+		System.out.println("updateCapabilityAndAddActions");
+		final String actionName = "add" + (KEY++);
+		final String resourceName = "employee" + (KEY++);
+		CapabilityVO capabilityVOtoUpdate = createTestDataCapabilityWithActionAndResourceName(actionName, resourceName);
+		CapabilityActionVO capabilityActionToAdd = createTestDataCapabilityActionNamed("edit" + (KEY++), capabilityVOtoUpdate);
+		capabilityVOtoUpdate.getActions().add(capabilityActionToAdd);
+		capabilityManager.updateCapability(capabilityVOtoUpdate);
+		CapabilityVO updatedCapabilityVO = capabilityManager.findCapabilityWithId(capabilityVOtoUpdate.getId());
+		assertEquals(2, updatedCapabilityVO.getActions().size());
+	}
+
+	@Test
+	public void testUpdateCapabilityAndRemoveActions() throws Exception
+	{
+		System.out.println("updateCapabilityAndAddActions");
+		final String actionName = "add" + (KEY++);
+		final String resourceName = "employee" + (KEY++);
+		CapabilityVO capabilityVOtoUpdate = createTestDataCapabilityWithActionAndResourceName(actionName, resourceName);
+		CapabilityActionVO capabilityActionToAdd = createTestDataCapabilityActionNamed("edit" + (KEY++), capabilityVOtoUpdate);
+		capabilityVOtoUpdate.getActions().add(capabilityActionToAdd);
+		capabilityManager.updateCapability(capabilityVOtoUpdate);
+		CapabilityVO updatedCapabilityVO = capabilityManager.findCapabilityWithId(capabilityVOtoUpdate.getId());
+		Iterator<CapabilityActionVO> actionsToRemove = updatedCapabilityVO.getActions().iterator();
+		while (actionsToRemove.hasNext())
+		{
+			actionsToRemove.next();
+			actionsToRemove.remove();
+			break;
+		}
+		capabilityManager.updateCapability(updatedCapabilityVO);
+		CapabilityVO updatedCapabilityRemovedActionsVO = capabilityManager.findCapabilityWithId(capabilityVOtoUpdate.getId());
+		assertEquals(1, updatedCapabilityRemovedActionsVO.getActions().size());
+	}
+
+	@Test
+	public void testUpdateCapabilityWithRemovedAndAddNewActions() throws
+			Exception
+	{
+		System.out.println("updateCapabilityWithRemovedAndAddNewActions");
+		final String actionName = "add" + (KEY++);
+		final String resourceName = "employee" + (KEY++);
+		CapabilityVO capabilityVOtoUpdate = createTestDataCapabilityWithActionAndResourceName(actionName, resourceName);
+		CapabilityActionVO capabilityActionToAdd = createTestDataCapabilityActionNamed("edit" + (KEY++), capabilityVOtoUpdate);
+		capabilityVOtoUpdate.getActions().add(capabilityActionToAdd);
+		capabilityManager.updateCapability(capabilityVOtoUpdate);
+		CapabilityVO updatedCapabilityVO = capabilityManager.findCapabilityWithId(capabilityVOtoUpdate.getId());
+		Iterator<CapabilityActionVO> actionsToRemove = updatedCapabilityVO.getActions().iterator();
+		while (actionsToRemove.hasNext())
+		{
+			actionsToRemove.next();
+			actionsToRemove.remove();
+			break;
+		}
+		capabilityActionToAdd = createTestDataCapabilityActionNamed("delete" + (KEY++), capabilityVOtoUpdate);
+		updatedCapabilityVO.getActions().add(capabilityActionToAdd);
+		capabilityManager.updateCapability(updatedCapabilityVO);
+		CapabilityVO updatedCapabilityRemovedActionsVO = capabilityManager.findCapabilityWithId(capabilityVOtoUpdate.getId());
+		assertEquals(2, updatedCapabilityRemovedActionsVO.getActions().size());
+		assertNotNull(updatedCapabilityRemovedActionsVO.findActionNamed(capabilityActionToAdd.getActionVO().getName()));
 	}
 
 	@Test
@@ -166,7 +233,7 @@ public class CapabilityManagerLocalTest
 		assertNotNull(foundCapabilityVO);
 		assertEquals(savedCapabilityVO.getTitle(), foundCapabilityVO.getTitle());
 	}
-	
+
 	@Test
 	public void testAddActionsToCapability() throws Exception
 	{
@@ -178,7 +245,7 @@ public class CapabilityManagerLocalTest
 		capabilityManager.addActionsToCapability(actionsToAdd, capabilityToUpdate);
 		CapabilityVO updatedCapability = capabilityManager.findCapabilityWithId(capabilityToUpdate.getId());
 		updatedCapability.findActionNamed("missingInAction");
-		
+
 	}
 
 	//--- no more test beyond this point.
@@ -219,5 +286,17 @@ public class CapabilityManagerLocalTest
 				.createCapabilityVO();
 		CapabilityVO savedCapabilityVO = capabilityManager.createNewCapability(capabilityVO);
 		return savedCapabilityVO;
+	}
+
+	private CapabilityActionVO createTestDataCapabilityActionNamed(
+			final String actionName, CapabilityVO capabilityVOtoUpdate) throws
+			CapabilityManagerException
+	{
+		ActionVO actionVOtoAdd = createTestDataActionNamed(actionName);
+		CapabilityActionVO capabilityActionToAdd = new CapabilityActionVOBuilder()
+				.setActionVO(actionVOtoAdd)
+				.setCapabilityVO(capabilityVOtoUpdate)
+				.createCapabilityActionVO();
+		return capabilityActionToAdd;
 	}
 }
