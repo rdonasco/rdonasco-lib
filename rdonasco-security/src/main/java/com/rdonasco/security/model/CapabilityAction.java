@@ -16,6 +16,7 @@
  */
 package com.rdonasco.security.model;
 
+import com.rdonasco.security.utils.SecurityConstants;
 import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -49,10 +50,9 @@ public class CapabilityAction implements Serializable
 	public static final String QUERY_PARAM_ACTION = "action";
 	private static final long serialVersionUID = 1L;
 	private static final String GENERATOR_KEY = "ACTION_IDGEN";
-	private static final String GENERATOR_TABLE = "SEQUENCE";
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = GENERATOR_KEY)
-	@TableGenerator(name = GENERATOR_KEY, table = GENERATOR_TABLE)
+	@TableGenerator(name = GENERATOR_KEY, table = SecurityConstants.TABLE_SEQUENCE)
 	@Column(name = "id", nullable = false)
 	private Long id;
 	@JoinColumn(name = "capability_id", referencedColumnName = "id", nullable = false)
