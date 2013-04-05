@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -46,6 +48,7 @@ import javax.inject.Inject;
 public class ResourcesEditorAndSelectorViewController implements
 		ViewController<ResourcesEditorAndSelectorView>
 {
+	private static final Logger LOG = Logger.getLogger(ResourcesEditorAndSelectorViewController.class.getName());
 
 	private static final long serialVersionUID = 1L;
 	private static final String TABLE_PROPERTY_ICON = "icon";
@@ -213,8 +216,9 @@ public class ResourcesEditorAndSelectorViewController implements
 				{
 					resourcesDataContainer.removeItem(resourceItemVO);
 				}
-				catch (RuntimeException e)
+				catch (RuntimeException ex)
 				{
+					LOG.log(Level.WARNING, ex.getMessage(), ex);
 					popupProvider.popUpError(I18NResource.localize("Error deleting an item"));
 				}
 			}

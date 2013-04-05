@@ -14,6 +14,7 @@ import com.rdonasco.datamanager.controller.DataRetrieveListStrategy;
 import com.rdonasco.datamanager.controller.DataSaveStrategy;
 import com.rdonasco.datamanager.controller.DataUpdateStrategy;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
+import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.capability.utils.IconHelper;
 import com.rdonasco.security.capability.utils.TableHelper;
@@ -34,6 +35,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -45,7 +48,9 @@ public class ActionEditorAndSelectorViewController implements
 		ViewController<ActionEditorAndSelectorView>
 {
 
+	private static final Logger LOG = Logger.getLogger(ActionEditorAndSelectorViewController.class.getName());
 	private static final long serialVersionUID = 1L;
+	private static final String CONSTANT_NAME = "name";
 	@Inject
 	private ActionEditorAndSelectorView editorAndSelectorView;
 	@Inject
@@ -55,7 +60,7 @@ public class ActionEditorAndSelectorViewController implements
 	private CapabilityDataManagerDecorator capabilityManager;
 	private Map<Object, Map<Object, TextField>> fieldMap = new HashMap<Object, Map<Object, TextField>>();
 	@Inject
-	private ApplicationExceptionPopupProvider exceptionPopProvider;
+	private ApplicationPopupProvider popupProvider;
 
 	@PostConstruct
 	@Override
@@ -183,7 +188,15 @@ public class ActionEditorAndSelectorViewController implements
 			@Override
 			public void click(MouseEvents.ClickEvent event)
 			{
-				actionDataContainer.removeItem(actionItem);
+				try
+				{
+					actionDataContainer.removeItem(actionItem);
+				}
+				catch (RuntimeException ex)
+				{
+					LOG.log(Level.WARNING, ex.getMessage(), ex);
+					popupProvider.popUpError(I18NResource.localize("Error deleting an item"));
+				}
 			}
 		});
 	}
@@ -194,7 +207,7 @@ public class ActionEditorAndSelectorViewController implements
 		editorTable.setContainerDataSource(actionDataContainer);
 		editorTable.setVisibleColumns(new String[]
 		{
-			"icon", "name"
+			"icon", CONSTANT_NAME
 		});
 		editorTable.setColumnHeaders(new String[]
 		{
@@ -212,7 +225,7 @@ public class ActionEditorAndSelectorViewController implements
 				{
 					style = SecurityDefaultTheme.CSS_ICON_IN_A_CELL;
 				}
-				else if ("name".equals(propertyId))
+				else if (CONSTANT_NAME.equals(propertyId))
 				{
 					style = SecurityDefaultTheme.CSS_FULL_WIDTH;
 				}
@@ -251,14 +264,14 @@ public class ActionEditorAndSelectorViewController implements
 						}
 						catch (DataAccessException ex)
 						{
-							exceptionPopProvider.popUpErrorException(ex);
+							exceptionPopupProvider.popUpErrorException(ex);
 						}
 					}
 				});
 				return textField;
 			}
 		};
-		editorTable.addGeneratedColumn("name", columnGenerator);
+		editorTable.addGeneratedColumn(CONSTANT_NAME, columnGenerator);
 		editorTable.addListener(new ItemClickEvent.ItemClickListener()
 		{
 			private static final long serialVersionUID = 1L;
@@ -322,7 +335,7 @@ public class ActionEditorAndSelectorViewController implements
 		BeanItem<ActionItemVO> beanItem = actionDataContainer.addItem(resourceItemVO);
 		editorAndSelectorView.getActionEditorTable().setCurrentPageFirstItemId(beanItem.getBean());
 		editorAndSelectorView.getActionEditorTable().select(beanItem.getBean());
-		TextField field = getFieldFromCache(beanItem.getBean(), "name");
+		TextField field = getFieldFromCache(beanItem.getBean(), CONSTANT_NAME);
 		field.setReadOnly(false);
 		field.focus();
 		field.selectAll();
