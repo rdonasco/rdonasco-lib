@@ -102,7 +102,7 @@ public class ConfigDataValueObjectConverter
 				List<ConfigElementVO> subElements = new ArrayList<ConfigElementVO>();
 				for (ConfigElement subElement : configElement.getSubConfigElements())
 				{
-					ConfigElementVO elementVO = toConfigElementVO(subElement);
+					ConfigElementVO elementVO = toConfigElementVOIncludingAggregates(subElement);
 					subElements.add(elementVO);
 				}
 				configElementVO.setSubConfigElementVOList(subElements);

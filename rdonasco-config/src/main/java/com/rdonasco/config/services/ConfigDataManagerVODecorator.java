@@ -167,7 +167,7 @@ public class ConfigDataManagerVODecorator implements
 		List<ConfigElementVO> allConfigElementVO = new ArrayList<ConfigElementVO>();
 		for (ConfigElement element : allConfigElement)
 		{
-			allConfigElementVO.add(ConfigDataValueObjectConverter.toConfigElementVO(element));
+			allConfigElementVO.add(ConfigDataValueObjectConverter.toConfigElementVOIncludingAggregates(element));
 		}
 		return allConfigElementVO;
 	}
