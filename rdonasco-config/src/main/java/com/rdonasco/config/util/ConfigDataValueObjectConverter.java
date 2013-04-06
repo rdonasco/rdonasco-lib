@@ -59,7 +59,7 @@ public class ConfigDataValueObjectConverter
 		configAttribute.setName(configAttributeVO.getName());
 		configAttribute.setValue(configAttributeVO.getValue());
 		configAttribute.setXpath(configAttributeVO.getXpath());
-		configAttribute.setParentConfig((ConfigElement) toConfigElement(configAttributeVO.getParentConfig()));
+		configAttribute.setParentConfig((ConfigElement) toConfigElement((ConfigElementVO) configAttributeVO.getParentConfig()));
 		return configAttribute;
 	}
 

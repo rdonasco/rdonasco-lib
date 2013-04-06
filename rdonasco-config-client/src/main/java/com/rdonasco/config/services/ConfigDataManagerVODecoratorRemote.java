@@ -30,7 +30,7 @@ import javax.ejb.Remote;
  * @author Roy F. Donasco
  */
 @Remote
-public interface ConfigDataManagerProxyRemote
+public interface ConfigDataManagerVODecoratorRemote
 {
 
 	public ConfigAttributeVO saveAttribute(ConfigAttributeVO attribute) throws
@@ -48,7 +48,8 @@ public interface ConfigDataManagerProxyRemote
 	public ConfigAttributeVO findConfigAttributeWithXpath(String xpath) throws
 			DataAccessException, NonExistentEntityException;
 
-	public List<ConfigElementVO> findConfigElementsWithXpath(String xpath) throws
+	public List<ConfigElementVO> findConfigElementsWithXpath(String xpath)
+			throws
 			DataAccessException;
 
 	public List<ConfigAttributeVO> findConfigAttributesWithXpath(String xpath)
@@ -61,11 +62,23 @@ public interface ConfigDataManagerProxyRemote
 	public ConfigAttributeVO createAttributeFromXpath(String xpath, Object value)
 			throws DataAccessException, ConfigXPathException;
 
-	public ConfigElementVO saveConfigElement(ConfigElementVO configElement) 
+	public ConfigElementVO saveConfigElement(ConfigElementVO configElement)
 			throws DataAccessException;
 
 	public ConfigElementVO loadConfigElement(ConfigElementVO savedParentConfig)
 			throws DataAccessException;
 
-	public void deleteConfigElement(ConfigElementVO configElementVO) throws DataAccessException;
+	public void deleteConfigElement(ConfigElementVO configElementVO) throws
+			DataAccessException;
+
+	public List<ConfigElementVO> retrieveAllData() throws DataAccessException;
+
+	public void updateData(ConfigElementVO configElementVO) throws
+			DataAccessException;
+
+	public ConfigElementVO saveData(ConfigElementVO configElement) throws
+			DataAccessException;
+
+	public void deleteData(ConfigElementVO configElement) throws
+			DataAccessException;
 }

@@ -15,6 +15,7 @@
  */
 package com.rdonasco.config.data;
 
+import com.rdonasco.config.data.XPathAttributeHolder;
 import java.io.Serializable;
 
 /**

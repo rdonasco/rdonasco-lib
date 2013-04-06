@@ -23,14 +23,16 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import com.rdonasco.config.data.ConfigAttribute;
-import com.rdonasco.config.data.ConfigData;
-import com.rdonasco.config.data.ConfigElement;
-import com.rdonasco.config.services.ConfigDataManagerLocal;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.view.ViewWidget;
 import com.rdonasco.common.i18.I18NResource;
+import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
+import com.rdonasco.config.vo.ConfigAttributeVO;
+import com.rdonasco.config.vo.ConfigAttributeVOBuilder;
+import com.rdonasco.config.vo.ConfigDataVO;
+import com.rdonasco.config.vo.ConfigElementVO;
+import com.rdonasco.config.vo.ConfigElementVOBuilder;
 
 /**
  *
@@ -42,7 +44,7 @@ public class ConfigDataContainer extends HierarchicalContainer implements
 
 	private static final long serialVersionUID = 1L;
 	@EJB
-	private ConfigDataManagerLocal dataManager;
+	private ConfigDataManagerVODecoratorRemote dataManager;
 	protected static final String PROPERTY_CONFIG_NAME = "name";
 	protected static final String PROPERTY_CONFIG_VALUE = "value";
 	protected static final String PROPERTY_CONFIG_VALUE_FIELD = "field";
@@ -79,28 +81,29 @@ public class ConfigDataContainer extends HierarchicalContainer implements
 
 	private void loadConfigFromDatabase() throws DataAccessException
 	{
-		List<ConfigElement> configElements = dataManager.retrieveAllData();
+		List<ConfigElementVO> configElements = dataManager.retrieveAllData();
 
 		addConfigElementsToTreeTable(configElements, null);
 
 	}
 
-	private void addConfigElementsToTreeTable(List<ConfigElement> configElements,
-			ConfigElement parentElement)
+	private void addConfigElementsToTreeTable(
+			List<ConfigElementVO> configElements,
+			ConfigElementVO parentElement)
 	{
-		for (ConfigElement configElement : configElements)
+		for (ConfigElementVO configElement : configElements)
 		{
 			addConfigElementToTreeTable(configElement, parentElement);
-			List<ConfigAttribute> configAttributes = configElement.getAttributes();
+			List<ConfigAttributeVO> configAttributes = configElement.getAttributeVOList();
 			if (configAttributes != null && !configAttributes.isEmpty())
 			{
-				for (ConfigAttribute configAttribute : configAttributes)
+				for (ConfigAttributeVO configAttribute : configAttributes)
 				{
 					addConfigAttributeToTreeTable(configAttribute, configElement);
 				}
 			}
-			List<ConfigElement> subConfigElements = configElement.
-					getSubConfigElements();
+			List<ConfigElementVO> subConfigElements = configElement.
+					getSubConfigElementVOList();
 			if (subConfigElements != null && !subConfigElements.isEmpty())
 			{
 				addConfigElementsToTreeTable(subConfigElements, configElement);
@@ -108,8 +111,8 @@ public class ConfigDataContainer extends HierarchicalContainer implements
 		}
 	}
 
-	private Item addConfigElementToTreeTable(ConfigElement configElement,
-			ConfigElement parentConfigElement)
+	private Item addConfigElementToTreeTable(ConfigElementVO configElement,
+			ConfigElementVO parentConfigElement)
 	{
 		Item configElementItem = addItem(configElement);
 		bindConfigElementToItem(configElementItem, configElement);
@@ -123,7 +126,7 @@ public class ConfigDataContainer extends HierarchicalContainer implements
 	}
 
 	private void bindConfigElementToItem(final Item configElementItem,
-			final ConfigElement configElement)
+			final ConfigElementVO configElement)
 	{
 		configElementItem.getItemProperty(PROPERTY_CONFIG_NAME).setValue(
 				configElement.getName());
@@ -153,18 +156,19 @@ public class ConfigDataContainer extends HierarchicalContainer implements
 	}
 	private static long elementID = 0;
 
-	private ConfigElement createConfigElement(ConfigElement parent) throws
+	private ConfigElementVO createConfigElement(ConfigElementVO parent) throws
 			DataAccessException
 	{
-		ConfigElement element = new ConfigElement();
-		element.setAttributes(new ArrayList<ConfigAttribute>());
+		ConfigElementVO element = new ConfigElementVOBuilder()
+				.setAttributeVOList(new ArrayList<ConfigAttributeVO>())
+				.createConfigElementVO();
 		element.setName(I18NResource.localizeWithParameter(
 				"New Element Name", elementID++));
-		element.setSubConfigElements(new ArrayList<ConfigElement>());
+		element.setSubConfigElementVOList(new ArrayList<ConfigElementVO>());
 		if (parent != null)
 		{
 			element.setParentConfig(parent);
-			parent.getSubConfigElements().add(element);
+			parent.getSubConfigElementVOList().add(element);
 		}
 		element = dataManager.saveData(element);
 
@@ -173,10 +177,13 @@ public class ConfigDataContainer extends HierarchicalContainer implements
 	}
 	private static long attributeID = 0;
 
-	private ConfigAttribute createConfigAttribute(ConfigElement parent) throws
+	private ConfigAttributeVO createConfigAttribute(ConfigElementVO parent)
+			throws
 			DataAccessException
 	{
-		ConfigAttribute attribute = new ConfigAttribute();
+		ConfigAttributeVO attribute = new ConfigAttributeVOBuilder()
+				.setName(PROPERTY_CONFIG_NAME)
+				.createConfigAttributeVO();
 
 		attribute.setName(I18NResource.localizeWithParameter(
 				"New Attribute Name", attribute.getId()));
@@ -188,8 +195,8 @@ public class ConfigDataContainer extends HierarchicalContainer implements
 		return attribute;
 	}
 
-	private Item addConfigAttributeToTreeTable(ConfigAttribute configAttribute,
-			ConfigElement configElement)
+	private Item addConfigAttributeToTreeTable(ConfigAttributeVO configAttribute,
+			ConfigElementVO configElement)
 	{
 		Item configAttributeItem = addItem(configAttribute);
 		if (null != configAttributeItem)
@@ -202,7 +209,7 @@ public class ConfigDataContainer extends HierarchicalContainer implements
 	}
 
 	private void bindConfigAttributeToItem(final Item configAttributeItem,
-			final ConfigAttribute configAttribute)
+			final ConfigAttributeVO configAttribute)
 	{
 		configAttributeItem.getItemProperty(PROPERTY_CONFIG_NAME).setValue(
 				configAttribute.getName());
@@ -231,26 +238,27 @@ public class ConfigDataContainer extends HierarchicalContainer implements
 		});
 	}
 
-	public ConfigElement createNewConfigElement() throws DataAccessException
+	public ConfigElementVO createNewConfigElement() throws DataAccessException
 	{
-		ConfigElement configElement = createConfigElement(null);
+		ConfigElementVO configElement = createConfigElement(null);
 		addConfigElementToTreeTable(configElement, null);
 		return configElement;
 	}
 
-	public ConfigElement createNewSubConfigElement(ConfigElement parentElement)
+	public ConfigElementVO createNewSubConfigElement(
+			ConfigElementVO parentElement)
 			throws DataAccessException
 	{
-		ConfigElement configElement = createConfigElement(parentElement);
+		ConfigElementVO configElement = createConfigElement(parentElement);
 		addConfigElementToTreeTable(configElement, parentElement);
 		setParent(configElement, parentElement);
 		return configElement;
 	}
 
-	public ConfigAttribute createNewAttribute(ConfigElement parentElement)
+	public ConfigAttributeVO createNewAttribute(ConfigElementVO parentElement)
 			throws DataAccessException
 	{
-		ConfigAttribute configAttribute = createConfigAttribute(parentElement);
+		ConfigAttributeVO configAttribute = createConfigAttribute(parentElement);
 		addConfigAttributeToTreeTable(configAttribute, parentElement);
 		return configAttribute;
 	}
@@ -262,15 +270,15 @@ public class ConfigDataContainer extends HierarchicalContainer implements
 		return removed;
 	}
 
-	void removeConfigData(ConfigData configData) throws DataAccessException
+	void removeConfigData(ConfigDataVO configData) throws DataAccessException
 	{
-		if (configData instanceof ConfigElement)
+		if (configData instanceof ConfigElementVO)
 		{
-			dataManager.deleteData((ConfigElement) configData);
+			dataManager.deleteData((ConfigElementVO) configData);
 		}
-		else if (configData instanceof ConfigAttribute)
+		else if (configData instanceof ConfigAttributeVO)
 		{
-			dataManager.deleteAttribute((ConfigAttribute) configData);
+			dataManager.deleteAttribute((ConfigAttributeVO) configData);
 		}
 		removeItemRecursively(configData);
 	}

@@ -49,16 +49,16 @@ import org.junit.runner.RunWith;
  * @author Roy F. Donasco
  */
 @RunWith(Arquillian.class)
-public class ConfigDataManagerProxyTest
+public class ConfigDataManagerVODecoratorProxyTest
 {
-	private static final Logger LOG = Logger.getLogger(ConfigDataManagerProxyTest.class.getName());
+	private static final Logger LOG = Logger.getLogger(ConfigDataManagerVODecoratorProxyTest.class.getName());
 	private static final String VALUE_BALIGYA = "baligya";
 
-	public ConfigDataManagerProxyTest()
+	public ConfigDataManagerVODecoratorProxyTest()
 	{
 	}
 	@EJB
-	private ConfigDataManagerProxyRemote configDataManagerProxyUnderTest;
+	private ConfigDataManagerVODecoratorRemote configDataManagerProxyUnderTest;
 	private static int rootElementSeed;
 
 	@Deployment

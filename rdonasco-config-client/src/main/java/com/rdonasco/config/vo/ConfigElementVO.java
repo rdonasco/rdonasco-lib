@@ -28,7 +28,7 @@ import java.util.Map;
  *
  * @author Roy F. Donasco
  */
-public class ConfigElementVO implements Serializable
+public class ConfigElementVO implements ConfigDataVO
 {
 
 	private static final long serialVersionUID = 1L;
@@ -60,56 +60,61 @@ public class ConfigElementVO implements Serializable
 		this.version = version;
 	}
 
+	@Override
 	public Long getId()
 	{
 		return id;
 	}
 
+	@Override
 	public void setId(Long id)
 	{
 		this.id = id;
 	}
 
+	@Override
 	public String getName()
 	{
 		return name;
 	}
 
+	@Override
 	public void setName(String name)
 	{
 		this.name = name;
 	}
 
+	@Override
 	public ConfigElementVO getParentConfig()
 	{
 		return parentConfig;
 	}
 
-	public void setParentConfig(ConfigElementVO parentConfig)
-	{
-		this.parentConfig = parentConfig;
-	}
-
+	@Override
 	public String getValue()
 	{
 		return value;
 	}
 
+	@Override
 	public void setValue(String value)
 	{
 		this.value = value;
 	}
 
+	@Override
 	public String getXpath()
 	{
 		return xpath;
 	}
 
+	@Override
 	public void setXpath(String xpath)
 	{
 		this.xpath = xpath;
 	}
 
+	@Override
 	public boolean isRoot()
 	{
 		return root;
@@ -155,21 +160,20 @@ public class ConfigElementVO implements Serializable
 	@Override
 	public boolean equals(Object obj)
 	{
-		boolean returnValue = true;
 		if (obj == null)
 		{
-			returnValue = false;
+			return false;
 		}
 		if (getClass() != obj.getClass())
 		{
-			returnValue = false;
+			return false;
 		}
 		final ConfigElementVO other = (ConfigElementVO) obj;
 		if (this.id != other.id && (this.id == null || !this.id.equals(other.id)))
 		{
-			returnValue = false;
+			return false;
 		}
-		return returnValue;
+		return true;
 	}
 
 	@Override
@@ -225,6 +229,7 @@ public class ConfigElementVO implements Serializable
 		subElementsMap.clear();
 		Comparator<ConfigElementVO> elementComparator = new Comparator<ConfigElementVO>()
 		{
+			@Override
 			public int compare(ConfigElementVO elementA,
 					ConfigElementVO elementB)
 			{
@@ -243,5 +248,24 @@ public class ConfigElementVO implements Serializable
 			}
 			subElements.add(subElement);
 		}
+
+
+	}
+
+	@Override
+	public void setParentConfig(ConfigDataVO config)
+	{
+		this.parentConfig = (ConfigElementVO) config;
+	}
+
+	@Override
+	public String getParentXpath()
+	{
+		String parentXpath = null;
+		if (!isRoot())
+		{
+			parentXpath = getParentConfig().getXpath();
+		}
+		return parentXpath;
 	}
 }

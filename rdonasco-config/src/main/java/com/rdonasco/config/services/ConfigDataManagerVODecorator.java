@@ -35,7 +35,8 @@ import javax.ejb.Stateless;
  * @author Roy F. Donasco
  */
 @Stateless
-public class ConfigDataManagerProxy implements ConfigDataManagerProxyRemote
+public class ConfigDataManagerVODecorator implements
+		ConfigDataManagerVODecoratorRemote
 {
 
 	@EJB
@@ -158,6 +159,38 @@ public class ConfigDataManagerProxy implements ConfigDataManagerProxyRemote
 		ConfigElement elementToDelete = ConfigDataValueObjectConverter.toConfigElement(configElementVO);
 		configDataManager.deleteData(elementToDelete);		
 	}
-	
-	
+
+	@Override
+	public List<ConfigElementVO> retrieveAllData() throws DataAccessException
+	{
+		List<ConfigElement> allConfigElement = configDataManager.retrieveAllData();
+		List<ConfigElementVO> allConfigElementVO = new ArrayList<ConfigElementVO>();
+		for (ConfigElement element : allConfigElement)
+		{
+			allConfigElementVO.add(ConfigDataValueObjectConverter.toConfigElementVO(element));
+		}
+		return allConfigElementVO;
+	}
+
+	@Override
+	public void updateData(ConfigElementVO configElementVO) throws
+			DataAccessException
+	{
+		configDataManager.updateData(ConfigDataValueObjectConverter.toConfigElement(configElementVO));
+	}
+
+	@Override
+	public ConfigElementVO saveData(ConfigElementVO configElement) throws
+			DataAccessException
+	{
+		ConfigElement saveData = configDataManager.saveData(ConfigDataValueObjectConverter.toConfigElement(configElement));
+		return ConfigDataValueObjectConverter.toConfigElementVO(saveData);
+	}
+
+	@Override
+	public void deleteData(ConfigElementVO configElement) throws
+			DataAccessException
+	{
+		configDataManager.deleteData(ConfigDataValueObjectConverter.toConfigElement(configElement));
+	}
 }

@@ -19,7 +19,7 @@ package com.rdonasco.security.services;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.config.exceptions.ConfigXPathException;
-import com.rdonasco.config.services.ConfigDataManagerProxyRemote;
+import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
 import com.rdonasco.config.vo.ConfigAttributeVO;
 import com.rdonasco.config.vo.ConfigElementVO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
@@ -46,7 +46,7 @@ public class SystemSecurityInitializer implements SystemSecurityInitializerLocal
 
 	private static final Logger LOG = Logger.getLogger(SystemSecurityInitializer.class.getName());
 	@EJB
-	private ConfigDataManagerProxyRemote configDataManager;
+	private ConfigDataManagerVODecoratorRemote configDataManager;
 	@EJB
 	private CapabilityManagerLocal capabilityManager;
 

@@ -38,16 +38,20 @@ public interface ConfigDataManagerLocal extends DataManager<ConfigElement>
     void setConfigElementDAO(ConfigElementDAO unitOfMeasureDAO);
 
     @Override
-    public ConfigElement loadData(ConfigElement ConfigElement) throws DataAccessException;
+	public ConfigElement loadData(ConfigElement configElement) throws
+			DataAccessException;
 
     @Override
-    public ConfigElement saveData(ConfigElement ConfigElement) throws DataAccessException;
+	public ConfigElement saveData(ConfigElement configElement) throws
+			DataAccessException;
 
     @Override
-    public void updateData(ConfigElement ConfigElement) throws DataAccessException;
+	public void updateData(ConfigElement configElement) throws
+			DataAccessException;
 
     @Override
-    public void deleteData(ConfigElement ConfigElement) throws DataAccessException;
+	public void deleteData(ConfigElement configElement) throws
+			DataAccessException;
     
     public ConfigAttribute saveAttribute(ConfigAttribute attribute) throws DataAccessException;
     public void updateAttribute(ConfigAttribute attribute) throws DataAccessException;

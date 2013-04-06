@@ -7,7 +7,7 @@ import com.rdonasco.config.dao.ConfigElementDAO;
 import com.rdonasco.config.data.ConfigElement;
 import com.rdonasco.config.parsers.ValueParser;
 import com.rdonasco.config.services.ConfigDataManagerLocal;
-import com.rdonasco.config.services.ConfigDataManagerProxyRemote;
+import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
 import com.rdonasco.config.util.ConfigDataValueObjectConverter;
 import com.rdonasco.config.vo.ConfigAttributeVO;
 import com.rdonasco.datamanager.services.DataManager;
@@ -51,7 +51,7 @@ public class SystemSecurityInitializerLocalTest
 	@EJB
 	private SystemSecurityInitializerLocal systemSecurityInitializer;
 	@EJB
-	private ConfigDataManagerProxyRemote configDataManagerProxyUnderTest;
+	private ConfigDataManagerVODecoratorRemote configDataManagerProxyUnderTest;
 	@EJB
 	private CapabilityManagerLocal capabilityManager;
 

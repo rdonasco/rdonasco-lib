@@ -16,13 +16,11 @@
  */
 package com.rdonasco.config.vo;
 
-import java.io.Serializable;
-
 /**
  *
  * @author Roy F. Donasco
  */
-public class ConfigAttributeVO implements Serializable
+public class ConfigAttributeVO implements ConfigDataVO
 {
 	private static final long serialVersionUID = 1L;
 
@@ -45,56 +43,78 @@ public class ConfigAttributeVO implements Serializable
 	}
 
 	
+	@Override
 	public Long getId()
 	{
 		return id;
 	}
 
+	@Override
 	public void setId(Long id)
 	{
 		this.id = id;
 	}
 
+	@Override
 	public String getName()
 	{
 		return name;
 	}
 
+	@Override
 	public void setName(String name)
 	{
 		this.name = name;
 	}
 
-	public ConfigElementVO getParentConfig()
+	@Override
+	public ConfigDataVO getParentConfig()
 	{
 		return parentConfig;
 	}
 
-	public void setParentConfig(ConfigElementVO parentConfig)
+	@Override
+	public void setParentConfig(ConfigDataVO parentConfig)
 	{
-		this.parentConfig = parentConfig;
+		this.parentConfig = (ConfigElementVO) parentConfig;
 	}
 
+	@Override
 	public String getValue()
 	{
 		return value;
 	}
 
+	@Override
 	public void setValue(String value)
 	{
 		this.value = value;
 	}
 
+	@Override
 	public String getXpath()
 	{
 		return xpath;
 	}
 
+	@Override
 	public void setXpath(String xpath)
 	{
 		this.xpath = xpath;
 	}
 
+	@Override
+	public String getParentXpath()
+	{
+		String parentXpath = null;
+		if (!isRoot())
+		{
+			parentXpath = getParentConfig().getXpath();
+		}
+		return parentXpath;
+	}
+
+	@Override
 	public boolean isRoot()
 	{
 		return root;

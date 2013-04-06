@@ -24,7 +24,12 @@
     </dependency>
 	<dependency>
 		<groupId>${project.groupId}</groupId>
-		<artifactId>rdonasco-config</artifactId>
+		<artifactId>rdonasco-common-vaadin</artifactId>
+		<version>${project.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>${project.groupId}</groupId>
+		<artifactId>rdonasco-config-client</artifactId>
 		<version>${project.version}</version>
 	</dependency>
   </dependencies>
