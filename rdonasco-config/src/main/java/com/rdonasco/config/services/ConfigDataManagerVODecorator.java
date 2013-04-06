@@ -46,8 +46,8 @@ public class ConfigDataManagerVODecorator implements
 	public ConfigAttributeVO saveAttribute(ConfigAttributeVO attribute) throws
 			DataAccessException
 	{
-		ConfigAttribute attibuteToSave = ConfigDataValueObjectConverter.toConfigAttribute(attribute);
-		ConfigAttribute savedAttribute = configDataManager.saveAttribute(attibuteToSave);
+		ConfigAttribute attributeToSave = ConfigDataValueObjectConverter.toConfigAttribute(attribute);
+		ConfigAttribute savedAttribute = configDataManager.saveAttribute(attributeToSave);
 		return ConfigDataValueObjectConverter.toConfigAttributeVO(savedAttribute);
 	}
 
@@ -55,14 +55,16 @@ public class ConfigDataManagerVODecorator implements
 	public void updateAttribute(ConfigAttributeVO attribute) throws
 			DataAccessException
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		ConfigAttribute attributeToUpdate = ConfigDataValueObjectConverter.toConfigAttribute(attribute);
+		configDataManager.updateAttribute(attributeToUpdate);
 	}
 
 	@Override
 	public void deleteAttribute(ConfigAttributeVO configAttribute) throws
 			DataAccessException
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		ConfigAttribute attributeToDelete = ConfigDataValueObjectConverter.toConfigAttribute(configAttribute);
+		configDataManager.deleteAttribute(attributeToDelete);
 	}
 
 	@Override
