@@ -5,6 +5,7 @@
 package com.rdonasco.security.capability.controllers;
 
 import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.common.exceptions.InvalidBuilderParameter;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ViewController;
@@ -20,9 +21,11 @@ import com.rdonasco.security.capability.vo.ActionItemVO;
 import com.rdonasco.security.capability.vo.ActionItemVOBuilder;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.capability.vo.ResourceItemVO;
+import com.rdonasco.security.captcha.builders.EmbeddedCaptchaBuilder;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.ResourceVO;
+import com.vaadin.Application;
 import com.vaadin.data.Buffered;
 import com.vaadin.data.Container;
 import com.vaadin.data.Validator;
@@ -39,9 +42,17 @@ import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.event.dd.acceptcriteria.SourceIs;
 import com.vaadin.event.dd.acceptcriteria.And;
 import com.vaadin.event.dd.acceptcriteria.ClientSideCriterion;
+import com.vaadin.terminal.StreamResource;
+import com.vaadin.terminal.StreamResource.StreamSource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
+import java.awt.Font;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +60,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import nl.jamiecraane.imagegenerator.TextImage;
+import nl.jamiecraane.imagegenerator.imageexporter.ImageType;
+import nl.jamiecraane.imagegenerator.imageexporter.ImageWriter;
+import nl.jamiecraane.imagegenerator.imageexporter.ImageWriterFactory;
 import org.vaadin.addon.formbinder.ViewBoundForm;
 
 /**
@@ -61,7 +76,66 @@ public class CapabilityEditorViewController implements
 
 	private DropHandler resourceDropHander;
 	@Inject
-	private ApplicationPopupProvider popProvider;
+	private ApplicationPopupProvider popupProvider;
+	@Inject
+	private ApplicationExceptionPopupProvider exceptionPopupProvider;
+
+	public enum EditorMode
+	{
+
+		EDIT, VIEW
+	};
+	private EditorMode editorMode = EditorMode.VIEW;
+	private static final Logger LOG = Logger.getLogger(CapabilityEditorViewController.class.getName());
+	private static final long serialVersionUID = 1L;
+	@Inject
+	private CapabilityEditorView editorView;
+	@Inject
+	private CapabilityDataManagerDecorator capabilityDataManager;
+	private BeanItemContainer<ActionItemVO> actionsContainer = new BeanItemContainer<ActionItemVO>(ActionItemVO.class);
+	private BeanItem<CapabilityItemVO> currentItem;
+	private DataManagerContainer<ResourceVO> resourceComboboxDataContainer = new DataManagerContainer<ResourceVO>(ResourceVO.class);
+	private Table actionTableSource;
+	@Inject
+	private Application application;
+
+	@PostConstruct
+	@Override
+	public void initializeControlledViewBehavior()
+	{
+		try
+		{
+			editorView.initWidget();
+			configureResourceComboBox();
+			configureActionTable();
+			configureForm();
+			configureButtons();
+			Button captchaButton = new Button("start of embedded Here");
+			captchaButton.addListener(new Button.ClickListener()
+			{
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void buttonClick(Button.ClickEvent event)
+				{
+					try
+					{
+						createCaptchaImage();
+					}
+					catch (Exception ex)
+					{
+						exceptionPopupProvider.popUpErrorException(ex);
+					}
+				}
+			});
+			editorView.addComponent(captchaButton);
+			editorView.addComponent(new Label("end of embedded Here"));
+		}
+		catch (Exception ex)
+		{
+			LOG.log(Level.SEVERE, ex.getMessage(), ex);
+		}
+	}
 
 	private void addActionVOToContainer(ActionVO action)
 	{
@@ -116,41 +190,14 @@ public class CapabilityEditorViewController implements
 		};
 	}
 
-	public enum EditorMode
+	private void createCaptchaImage() throws IOException,
+			InvalidBuilderParameter
 	{
-
-		EDIT, VIEW
-	};
-	private EditorMode editorMode = EditorMode.VIEW;
-	private static final Logger LOG = Logger.getLogger(CapabilityEditorViewController.class.getName());
-	private static final long serialVersionUID = 1L;
-	@Inject
-	private CapabilityEditorView editorView;
-	@Inject
-	private CapabilityDataManagerDecorator capabilityDataManager;
-	private BeanItemContainer<ActionItemVO> actionsContainer = new BeanItemContainer<ActionItemVO>(ActionItemVO.class);
-	private BeanItem<CapabilityItemVO> currentItem;
-	private DataManagerContainer<ResourceVO> resourceComboboxDataContainer = new DataManagerContainer<ResourceVO>(ResourceVO.class);
-	@Inject
-	private ApplicationExceptionPopupProvider exceptionPopupProvider;
-	private Table actionTableSource;
-
-	@PostConstruct
-	@Override
-	public void initializeControlledViewBehavior()
-	{
-		try
-		{
-			editorView.initWidget();
-			configureResourceComboBox();
-			configureActionTable();
-			configureForm();
-			configureButtons();
-		}
-		catch (Exception ex)
-		{
-			LOG.log(Level.SEVERE, ex.getMessage(), ex);
-		}
+		Embedded embedded = new EmbeddedCaptchaBuilder()
+				.setFont(new Font("Sans-Serif", Font.BOLD, 16))
+				.setApplication(application)
+				.createEmbeddedCaptcha();
+		editorView.addComponent(embedded);
 	}
 
 	public Table getActionTableSource()
@@ -412,7 +459,7 @@ public class CapabilityEditorViewController implements
 			CapabilityItemVO capabilityItemVO = ((BeanItem<CapabilityItemVO>) editorView.getEditorForm().getItemDataSource()).getBean();
 			capabilityDataManager.updateData(capabilityItemVO);
 			setViewToReadOnly();
-			popProvider.popUpInfo(I18NResource.localizeWithParameter("Capability _ Saved", capabilityItemVO.getTitle()));
+			popupProvider.popUpInfo(I18NResource.localizeWithParameter("Capability _ Saved", capabilityItemVO.getTitle()));
 		}
 		catch (DataAccessException ex)
 		{

@@ -71,6 +71,11 @@
 			<version>2.1.2</version>
 		</dependency>
 		<dependency>
+			<groupId>org.capaxit.textimage</groupId>
+			<artifactId>TextImageGen</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-web-api</artifactId>
 			<version>6.0</version>
