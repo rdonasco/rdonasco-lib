@@ -37,7 +37,6 @@ import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -194,6 +193,8 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			profileToUpdate.setRegistrationToken(profileUpdateDetails.getRegistrationToken());
 			profileToUpdate.setRegistrationTokenExpiration(profileUpdateDetails.getRegistrationTokenExpiration());
 			profileToUpdate.setPassword(profileUpdateDetails.getPassword());
+			
+			userSecurityProfileDAO.update(profileToUpdate);
 		}
 		catch (Exception ex)
 		{
