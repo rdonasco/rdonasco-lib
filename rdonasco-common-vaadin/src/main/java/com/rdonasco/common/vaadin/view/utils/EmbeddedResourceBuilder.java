@@ -95,6 +95,13 @@ public class EmbeddedResourceBuilder
 		return this;
 	}
 
+	public EmbeddedResourceBuilder setWidth(float width, int units)
+	{
+		this.width = width;
+		this.units = units;
+		return this;
+	}
+
 	public Embedded createEmbedded() throws InvalidBuilderParameter
 	{
 		if (null == application)
