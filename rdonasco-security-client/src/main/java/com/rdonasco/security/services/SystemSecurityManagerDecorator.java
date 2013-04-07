@@ -82,5 +82,11 @@ public class SystemSecurityManagerDecorator implements SystemSecurityManager
 	{
 		systemSecurityManager.addCapabilityForUser(userSecurityProfile, capability);
 	}
-	
+
+	@Override
+	public void updateSecurityProfile(UserSecurityProfileVO userSecurityProfile)
+			throws SecurityManagerException
+	{
+		systemSecurityManager.updateSecurityProfile(userSecurityProfile);
+	}
 }

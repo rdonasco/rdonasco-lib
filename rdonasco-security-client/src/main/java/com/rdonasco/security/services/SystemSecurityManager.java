@@ -35,6 +35,9 @@ public interface SystemSecurityManager
 			UserSecurityProfileVO userSecurityProfile) throws
 			SecurityManagerException;
 
+	void updateSecurityProfile(UserSecurityProfileVO userSecurityProfile) throws
+			SecurityManagerException;
+
 	void setupDefaultCapabilitiesForUser(
 			UserSecurityProfileVO userSecurityProfile)
 			throws SecurityManagerException;

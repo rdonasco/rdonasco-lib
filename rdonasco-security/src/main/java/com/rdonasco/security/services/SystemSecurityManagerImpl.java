@@ -30,7 +30,6 @@ import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
-import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
@@ -38,6 +37,7 @@ import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -96,9 +96,9 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			Set<AccessRightsVO> accessRightsSet = new HashSet<AccessRightsVO>();
 			boolean capabilitiesNotFound = (capabilities == null || capabilities.isEmpty());
 			capabilityManager.findOrAddActionNamedAs(requestedAccessRight.getAction().getName());
-			ResourceVO securedResourceVO = ensureThatResourceExistsAndIsSecured(requestedAccessRight.getResource().getName());			
+			ResourceVO securedResourceVO = ensureThatResourceExistsAndIsSecured(requestedAccessRight.getResource().getName());
 			if (capabilitiesNotFound)
-			{								
+			{
 				if (null != securedResourceVO)
 				{
 					throwSecurityAuthorizationExceptionFor(requestedAccessRight);
@@ -180,6 +180,26 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			throw new SecurityManagerException(e);
 		}
 		return createdProfile;
+	}
+
+	@Override
+	public void updateSecurityProfile(UserSecurityProfileVO userSecurityProfile)
+			throws SecurityManagerException
+	{
+		try
+		{
+			UserSecurityProfile profileUpdateDetails = SecurityEntityValueObjectConverter.toUserProfile(userSecurityProfile);
+			UserSecurityProfile profileToUpdate = userSecurityProfileDAO.findData(UserSecurityProfile.class, profileUpdateDetails.getId());
+			profileToUpdate.setLogonId(profileUpdateDetails.getLogonId());
+			profileToUpdate.setRegistrationToken(profileUpdateDetails.getRegistrationToken());
+			profileToUpdate.setRegistrationTokenExpiration(profileUpdateDetails.getRegistrationTokenExpiration());
+			profileToUpdate.setPassword(profileUpdateDetails.getPassword());
+		}
+		catch (Exception ex)
+		{
+			throw new SecurityManagerException(ex);
+		}
+
 	}
 
 	@Override
@@ -311,7 +331,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	}
 
 	private void createDefaultCapabilityBasedOnRequestedAccessRight(
-			AccessRightsVO requestedAccessRight) 
+			AccessRightsVO requestedAccessRight)
 	{
 		try
 		{
