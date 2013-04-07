@@ -69,6 +69,17 @@ public class EncryptionUtilTest
 		assertNotSame(stringToEncrypt, result);
 	}
 
+	@Test
+	public void testEncryptSameStringAsPassword() throws Exception
+	{
+		System.out.println("EncryptSameStringAsPassword");
+		String stringToEncrypt = "password to encrypt";
+		String password = "password to encrypt";
+		String result = EncryptionUtil.encryptWithPassword(stringToEncrypt, password);
+		System.out.println("result = " + result);
+		assertNotSame(stringToEncrypt, result);
+	}
+
 	/**
 	 * Test of decryptWithPassword method, of class EncryptionUtil.
 	 */
