@@ -4,6 +4,7 @@
  */
 package com.rdonasco.security.captcha.builders;
 
+import com.rdonasco.common.utils.NumberUtilities;
 import com.rdonasco.security.captcha.exceptions.InvalidCaptchaParameterException;
 import com.rdonasco.security.captcha.views.EmbeddedCaptcha;
 import com.rdonasco.security.utils.PasswordGenerator;
@@ -16,6 +17,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import nl.jamiecraane.imagegenerator.Alignment;
 import nl.jamiecraane.imagegenerator.Margin;
@@ -31,17 +34,31 @@ import nl.jamiecraane.imagegenerator.impl.TextImageImpl;
 public class EmbeddedCaptchaBuilder
 {
 
+	private static final Logger LOG = Logger.getLogger(EmbeddedCaptchaBuilder.class.getName());
 	@SuppressWarnings("deprecation")
 	private TextWrapper textWrapper = new GreedyTextWrapper();
 	private String caption = "captcha";
 	private Application application;
-	private Integer width = 150;
-	private Integer height = 22;
+	private Integer width = 170;
+	private Integer height = 26;
 //	private Font font = new Font("Sans-Serif", Font.BOLD, 24);
 	private Font font = new Font("Courier-New", Font.BOLD, 24);
-	private Color fontColor = Color.BLUE;
 	private Style fontStyle = Style.PLAIN;
-	private Margin margin = new Margin(4, 4, 4, 4);
+	private Margin margin = new Margin(8, 8, 8, 8);
+	private Color[] fontColors =
+	{
+		Color.BLACK,
+		Color.BLUE,
+		Color.CYAN,
+		Color.DARK_GRAY,
+		Color.GRAY,
+		Color.GREEN,
+		Color.LIGHT_GRAY,
+		Color.MAGENTA,
+		Color.ORANGE,
+		Color.PINK,
+		Color.RED
+	};
 
 	public EmbeddedCaptchaBuilder()
 	{
@@ -65,9 +82,9 @@ public class EmbeddedCaptchaBuilder
 		return this;
 	}
 
-	public EmbeddedCaptchaBuilder setFontColor(Color fontColor)
+	public EmbeddedCaptchaBuilder setFontColors(Color[] fontColors)
 	{
-		this.fontColor = fontColor;
+		this.fontColors = fontColors;
 		return this;
 	}
 
@@ -110,18 +127,24 @@ public class EmbeddedCaptchaBuilder
 			{
 				if (i > 0)
 				{
-					captchaStatement.append(" ");
+					captchaStatement.append("   ");
 				}
 				captchaStatement.append(captchaWords[i]);
 			}
 			TextImage textImage = new TextImageImpl(width, height, margin);
 			textImage.useFont(font);
-			textImage.useColor(fontColor);
 			textImage.useFontStyle(fontStyle);
 			textImage.setTextAligment(Alignment.JUSTIFY);
 			textImage.useTextWrapper(textWrapper);
-			textImage.wrap(true).write(captchaStatement.toString());
-			addWaterMark("../images/watermark.png", textImage);
+			addWaterMark("../images/brick.png", textImage);
+			int xCharWidth = 2;
+			for (int charNo = 0; charNo < captchaStatement.length(); charNo++)
+			{
+				textImage.useColor(getNextColor());
+				String stringToWrite = captchaStatement.substring(charNo, charNo + 1);
+				LOG.log(Level.INFO, "char: {0}", stringToWrite);
+				textImage.addHSpace(xCharWidth).write(stringToWrite);
+			}
 			final ByteArrayOutputStream output = new ByteArrayOutputStream();
 			ImageWriter imageWriter = ImageWriterFactory.getImageWriter(ImageType.PNG);
 			imageWriter.writeImageToOutputStream(textImage, output);
@@ -160,5 +183,11 @@ public class EmbeddedCaptchaBuilder
 			}
 		}
 
+	}
+
+	private Color getNextColor()
+	{
+		int colorIndex = NumberUtilities.generateRandomIntValue(0, fontColors.length - 1);
+		return fontColors[colorIndex];
 	}
 }

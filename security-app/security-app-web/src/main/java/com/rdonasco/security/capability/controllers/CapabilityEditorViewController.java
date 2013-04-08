@@ -194,7 +194,9 @@ public class CapabilityEditorViewController implements
 			InvalidBuilderParameter
 	{
 		Embedded embedded = new EmbeddedCaptchaBuilder()
-				.setFont(new Font("Sans-Serif", Font.BOLD, 16))
+				.setFont(new Font("Sans-Serif", Font.BOLD, 24))
+				.setWidth(220)
+				.setHeight(34)
 				.setApplication(application)
 				.createEmbeddedCaptcha();
 		editorView.addComponent(embedded);
