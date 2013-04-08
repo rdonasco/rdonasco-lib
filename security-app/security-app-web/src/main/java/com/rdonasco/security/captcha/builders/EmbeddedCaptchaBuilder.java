@@ -4,7 +4,6 @@
  */
 package com.rdonasco.security.captcha.builders;
 
-import com.rdonasco.security.captcha.builders.TextImageBuilder;
 import com.rdonasco.security.captcha.exceptions.InvalidCaptchaParameterException;
 import com.rdonasco.security.captcha.views.EmbeddedCaptcha;
 import com.rdonasco.security.utils.PasswordGenerator;
@@ -12,27 +11,37 @@ import com.vaadin.Application;
 import com.vaadin.terminal.StreamResource;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import javax.imageio.ImageIO;
+import nl.jamiecraane.imagegenerator.Alignment;
 import nl.jamiecraane.imagegenerator.Margin;
 import nl.jamiecraane.imagegenerator.Style;
 import nl.jamiecraane.imagegenerator.TextImage;
+import nl.jamiecraane.imagegenerator.TextWrapper;
 import nl.jamiecraane.imagegenerator.imageexporter.ImageType;
 import nl.jamiecraane.imagegenerator.imageexporter.ImageWriter;
 import nl.jamiecraane.imagegenerator.imageexporter.ImageWriterFactory;
+import nl.jamiecraane.imagegenerator.impl.GreedyTextWrapper;
+import nl.jamiecraane.imagegenerator.impl.TextImageImpl;
 
 public class EmbeddedCaptchaBuilder
 {
 
+	@SuppressWarnings("deprecation")
+	private TextWrapper textWrapper = new GreedyTextWrapper();
 	private String caption = "captcha";
 	private Application application;
-	private Font font;
-	private Color fontColor;
-	private Style fontStyle;
-	private Integer height;
-	private Margin margin;
-	private Integer width;
+	private Integer width = 150;
+	private Integer height = 22;
+//	private Font font = new Font("Sans-Serif", Font.BOLD, 24);
+	private Font font = new Font("Courier-New", Font.BOLD, 24);
+	private Color fontColor = Color.BLUE;
+	private Style fontStyle = Style.PLAIN;
+	private Margin margin = new Margin(4, 4, 4, 4);
 
 	public EmbeddedCaptchaBuilder()
 	{
@@ -42,7 +51,7 @@ public class EmbeddedCaptchaBuilder
 	{
 		this.caption = caption;
 		return this;
-	}	
+	}
 
 	public EmbeddedCaptchaBuilder setApplication(Application application)
 	{
@@ -105,15 +114,14 @@ public class EmbeddedCaptchaBuilder
 				}
 				captchaStatement.append(captchaWords[i]);
 			}
-			TextImageBuilder textBuilder = new TextImageBuilder()
-					.setFont(font)
-					.setFontColor(fontColor)
-					.setFontStyle(fontStyle)
-					.setHeight(height)
-					.setWidth(width)
-					.setMargin(margin)
-					.setText(captchaStatement.toString());
-			TextImage textImage = textBuilder.createTextImage();
+			TextImage textImage = new TextImageImpl(width, height, margin);
+			textImage.useFont(font);
+			textImage.useColor(fontColor);
+			textImage.useFontStyle(fontStyle);
+			textImage.setTextAligment(Alignment.JUSTIFY);
+			textImage.useTextWrapper(textWrapper);
+			textImage.wrap(true).write(captchaStatement.toString());
+			addWaterMark("../images/watermark.png", textImage);
 			final ByteArrayOutputStream output = new ByteArrayOutputStream();
 			ImageWriter imageWriter = ImageWriterFactory.getImageWriter(ImageType.PNG);
 			imageWriter.writeImageToOutputStream(textImage, output);
@@ -137,5 +145,20 @@ public class EmbeddedCaptchaBuilder
 			throw new InvalidCaptchaParameterException(ex);
 		}
 		return embeddedCaptcha;
+	}
+
+	private void addWaterMark(String resourceRelativePath, TextImage textImage)
+			throws IOException
+	{
+		InputStream waterMarkStream = getClass().getResourceAsStream(resourceRelativePath);
+		BufferedImage waterMark = ImageIO.read(waterMarkStream);
+		for (int x = 0; x < this.width; x += waterMark.getWidth())
+		{
+			for (int y = 0; y < height; y += waterMark.getHeight())
+			{
+				textImage.write(waterMark, x, y);
+			}
+		}
+
 	}
 }
