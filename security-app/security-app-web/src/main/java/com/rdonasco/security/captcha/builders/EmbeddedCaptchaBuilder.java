@@ -39,12 +39,11 @@ public class EmbeddedCaptchaBuilder
 	private TextWrapper textWrapper = new GreedyTextWrapper();
 	private String caption = "captcha";
 	private Application application;
-	private Integer width = 170;
-	private Integer height = 26;
-//	private Font font = new Font("Sans-Serif", Font.BOLD, 24);
-	private Font font = new Font("Courier-New", Font.BOLD, 24);
+	private Integer width = 300;
+	private Integer height = 44;
+	private Font font = new Font("Courier", Font.BOLD, 36);
 	private Style fontStyle = Style.PLAIN;
-	private Margin margin = new Margin(8, 8, 8, 8);
+	private Margin margin = new Margin(18, 14, 10, 14);
 	private Color[] fontColors =
 	{
 		Color.BLACK,
@@ -127,7 +126,7 @@ public class EmbeddedCaptchaBuilder
 			{
 				if (i > 0)
 				{
-					captchaStatement.append("   ");
+					captchaStatement.append(" ");
 				}
 				captchaStatement.append(captchaWords[i]);
 			}
@@ -158,7 +157,7 @@ public class EmbeddedCaptchaBuilder
 					return new ByteArrayInputStream(output.toByteArray());
 				}
 			};
-			StreamResource resource = new StreamResource(source, captchaStatement.toString(), application);
+			StreamResource resource = new StreamResource(source, String.valueOf(NumberUtilities.generateRandomLongValue()), application);
 			embeddedCaptcha = new EmbeddedCaptcha(caption, resource);
 			embeddedCaptcha.setType(EmbeddedCaptcha.TYPE_IMAGE);
 

@@ -60,6 +60,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import nl.jamiecraane.imagegenerator.Margin;
 import nl.jamiecraane.imagegenerator.TextImage;
 import nl.jamiecraane.imagegenerator.imageexporter.ImageType;
 import nl.jamiecraane.imagegenerator.imageexporter.ImageWriter;
@@ -194,9 +195,6 @@ public class CapabilityEditorViewController implements
 			InvalidBuilderParameter
 	{
 		Embedded embedded = new EmbeddedCaptchaBuilder()
-				.setFont(new Font("Sans-Serif", Font.BOLD, 24))
-				.setWidth(220)
-				.setHeight(34)
 				.setApplication(application)
 				.createEmbeddedCaptcha();
 		editorView.addComponent(embedded);
