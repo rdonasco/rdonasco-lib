@@ -114,4 +114,15 @@
 	font-weight: bold;
 	font-style: italic;
 }
+
+/*config screen*/
+.configCellName
+{
+
+}
+.configCellValue
+{
+	width: 100%;
+}
+
 /* Custom Styles - END */
