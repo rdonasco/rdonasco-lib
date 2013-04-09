@@ -148,7 +148,7 @@ public class EmbeddedCaptchaBuilder
 			{
 				textImage.useColor(getNextColor());
 				String stringToWrite = captchaStatement.substring(charNo, charNo + 1);
-				LOG.log(Level.INFO, "char: {0}", stringToWrite);
+				LOG.log(Level.FINE, "char: {0}", stringToWrite);
 				textImage.addHSpace(xCharWidth).write(stringToWrite);
 			}
 			final ByteArrayOutputStream output = new ByteArrayOutputStream();
