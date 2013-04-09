@@ -27,9 +27,11 @@ import com.rdonasco.common.vaadin.view.ControlledView;
 import com.rdonasco.common.vaadin.view.NotificationFactory;
 import com.rdonasco.datamanager.utils.CommonConstants;
 import com.rdonasco.common.i18.I18NResource;
+import com.rdonasco.config.view.themes.ConfigTheme;
 import com.rdonasco.config.vo.ConfigAttributeVO;
 import com.rdonasco.config.vo.ConfigDataVO;
 import com.rdonasco.config.vo.ConfigElementVO;
+import static com.vaadin.terminal.Sizeable.UNITS_PERCENTAGE;
 
 /**
  *
@@ -100,6 +102,25 @@ public class ConfigDataView extends VerticalLayout implements ControlledView
 	private void configureTreeTableAttributes()
 	{
 		getConfigTreeTable().setContainerDataSource(getConfigDataContainer());
+		getConfigTreeTable().setCellStyleGenerator(new Table.CellStyleGenerator()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public String getStyle(Object itemId, Object propertyId)
+			{
+				String style;
+				if (ConfigDataContainer.PROPERTY_CONFIG_NAME.equals(propertyId))
+				{
+					style = ConfigTheme.CSS_CONFIG_NAME;
+				}
+				else
+				{
+					style = ConfigTheme.CSS_CONFIG_VALUE;
+				}
+				return style;
+			}
+		});
 		getConfigTreeTable().setVisibleColumns(
 				new String[]
 		{
@@ -113,6 +134,7 @@ public class ConfigDataView extends VerticalLayout implements ControlledView
 			ConfigDataContainer.PROPERTY_CONFIG_NAME), I18NResource.
 			localize(ConfigDataContainer.PROPERTY_CONFIG_VALUE)
 		});
+		getConfigTreeTable().addStyleName(ConfigTheme.CSS_STRIPED);
 	}
 
 	private void configureTreeTableActionHandlers()
@@ -267,6 +289,8 @@ public class ConfigDataView extends VerticalLayout implements ControlledView
 					field.setReadOnly(ConfigDataContainer.PROPERTY_CONFIG_VALUE.
 							equals(propertyId));
 				}
+				field.setWidth(100f, UNITS_PERCENTAGE);
+				field.addStyleName(ConfigTheme.CSS_CONFIG_FIELD);
 				return field;
 			}
 
@@ -296,6 +320,8 @@ public class ConfigDataView extends VerticalLayout implements ControlledView
 
 				field.addListener(new FieldEvents.BlurListener()
 				{
+					private static final long serialVersionUID = 1L;
+
 					@Override
 					public void blur(BlurEvent event)
 					{
@@ -304,6 +330,8 @@ public class ConfigDataView extends VerticalLayout implements ControlledView
 				});
 				field.addListener(new Property.ValueChangeListener()
 				{
+					private static final long serialVersionUID = 1L;
+
 					@Override
 					public void valueChange(ValueChangeEvent event)
 					{
@@ -334,7 +362,8 @@ public class ConfigDataView extends VerticalLayout implements ControlledView
 						}
 					}
 				});
-
+				field.setWidth(100f, UNITS_PERCENTAGE);
+				field.addStyleName(ConfigTheme.CSS_CONFIG_FIELD);
 				return field;
 			}
 		};
