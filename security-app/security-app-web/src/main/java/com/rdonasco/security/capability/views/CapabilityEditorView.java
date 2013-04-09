@@ -8,7 +8,7 @@ import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ControlledView;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
-import com.rdonasco.security.captcha.views.CaptchaField;
+import com.rdonasco.common.vaadin.captcha.views.CaptchaField;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;

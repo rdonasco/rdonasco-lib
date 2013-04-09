@@ -21,7 +21,7 @@ import com.rdonasco.security.capability.vo.ActionItemVO;
 import com.rdonasco.security.capability.vo.ActionItemVOBuilder;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.capability.vo.ResourceItemVO;
-import com.rdonasco.security.captcha.builders.EmbeddedCaptchaBuilder;
+import com.rdonasco.common.vaadin.captcha.builders.EmbeddedCaptchaBuilder;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.ResourceVO;
