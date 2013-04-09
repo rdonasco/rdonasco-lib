@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rdonasco.security.captcha.views;
+package com.rdonasco.common.vaadin.captcha.views;
 
 import com.rdonasco.common.i18.I18NResource;
-import com.rdonasco.security.captcha.builders.EmbeddedCaptchaBuilder;
+import com.rdonasco.common.vaadin.captcha.builders.EmbeddedCaptchaBuilder;
 import com.vaadin.data.Validator;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;

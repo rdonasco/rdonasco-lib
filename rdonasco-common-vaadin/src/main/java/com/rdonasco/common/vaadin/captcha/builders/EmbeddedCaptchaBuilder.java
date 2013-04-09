@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.rdonasco.security.captcha.builders;
+package com.rdonasco.common.vaadin.captcha.builders;
 
 import com.rdonasco.common.utils.NumberUtilities;
 import com.rdonasco.common.utils.RandomTextGenerator;
-import com.rdonasco.security.captcha.exceptions.InvalidCaptchaParameterException;
-import com.rdonasco.security.captcha.views.EmbeddedCaptcha;
+import com.rdonasco.common.vaadin.captcha.exceptions.InvalidCaptchaParameterException;
+import com.rdonasco.common.vaadin.captcha.views.EmbeddedCaptcha;
 import com.vaadin.Application;
 import com.vaadin.terminal.StreamResource;
 import java.awt.Color;
@@ -142,7 +142,7 @@ public class EmbeddedCaptchaBuilder
 			textImage.useFontStyle(fontStyle);
 			textImage.setTextAligment(Alignment.JUSTIFY);
 			textImage.useTextWrapper(textWrapper);
-			addWaterMark("../images/brick.png", textImage);
+			addWaterMark("images/brick.png", textImage);
 			int xCharWidth = 2;
 			for (int charNo = 0; charNo < captchaStatement.length(); charNo++)
 			{

@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package com.rdonasco.security.captcha.views;
+package com.rdonasco.common.vaadin.captcha.views;
 
 import com.vaadin.terminal.Resource;
 import com.vaadin.ui.Embedded;

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.rdonasco.security.captcha.exceptions;
+package com.rdonasco.common.vaadin.captcha.exceptions;
 
 /**
  *
