@@ -19,8 +19,14 @@ package com.rdonasco.common.vaadin.captcha.views;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.captcha.builders.EmbeddedCaptchaBuilder;
 import com.vaadin.data.Validator;
+import com.vaadin.terminal.Resource;
+import com.vaadin.terminal.StreamResource;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.BaseTheme;
+import java.io.InputStream;
 
 /**
  *
@@ -33,12 +39,12 @@ public class CaptchaField extends VerticalLayout
 	private TextField captchaTextField;
 	private EmbeddedCaptchaBuilder captchaBuilder = new EmbeddedCaptchaBuilder();
 	private VerticalLayout captchaHolder = new VerticalLayout();
+	private Button refreshButton = new Button();
 
 	public CaptchaField()
 	{
 		setCaption(I18NResource.localize("Captcha"));
 		captchaTextField = new TextField();
-		wireCatpchaImageAndTextField();
 	}
 
 	public CaptchaField(TextField textField)
@@ -46,14 +52,17 @@ public class CaptchaField extends VerticalLayout
 		this.captchaTextField = textField;
 		setCaption(captchaTextField.getCaption());
 		textField.setCaption(null);
-		wireCatpchaImageAndTextField();
 	}
 
 	private void wireCatpchaImageAndTextField()
 	{
+		configureRefreshButton();
 		captchaBuilder.setApplication(getApplication());
 		addComponent(captchaHolder);
-		addComponent(captchaTextField);
+		HorizontalLayout fieldLayout = new HorizontalLayout();
+		fieldLayout.addComponent(captchaTextField);
+		fieldLayout.addComponent(refreshButton);
+		addComponent(fieldLayout);
 		captchaTextField.setNullRepresentation("");
 		captchaTextField.setDescription(I18NResource.localize("Please type the words printed in the captcha image"));
 		this.captchaTextField.addValidator(new Validator()
@@ -95,7 +104,47 @@ public class CaptchaField extends VerticalLayout
 	public void attach()
 	{
 		super.attach();
+		wireCatpchaImageAndTextField();
 		generateCaptchaImage();
 
+	}
+
+	private Resource getRefreshIconResource()
+	{
+		StreamResource.StreamSource source = new StreamResource.StreamSource()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public InputStream getStream()
+			{
+				return getIconResourceInputStream();
+			}
+		};
+		StreamResource resource = new StreamResource(source, "captchaRefresh.png", getApplication());
+
+		return resource;
+	}
+
+	private InputStream getIconResourceInputStream()
+	{
+		return getClass().getResourceAsStream("images/refresh.png");
+	}
+
+	private void configureRefreshButton()
+	{
+		refreshButton.setIcon(getRefreshIconResource());
+		refreshButton.setStyleName(BaseTheme.BUTTON_LINK);
+		refreshButton.setDescription(I18NResource.localize("Refresh Captcha Image"));
+		refreshButton.addListener(new Button.ClickListener()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(Button.ClickEvent event)
+			{
+				generateCaptchaImage();
+			}
+		});
 	}
 }
