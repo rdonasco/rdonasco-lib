@@ -42,17 +42,10 @@ import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.event.dd.acceptcriteria.SourceIs;
 import com.vaadin.event.dd.acceptcriteria.And;
 import com.vaadin.event.dd.acceptcriteria.ClientSideCriterion;
-import com.vaadin.terminal.StreamResource;
-import com.vaadin.terminal.StreamResource.StreamSource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
-import java.awt.Font;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,11 +53,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import nl.jamiecraane.imagegenerator.Margin;
-import nl.jamiecraane.imagegenerator.TextImage;
-import nl.jamiecraane.imagegenerator.imageexporter.ImageType;
-import nl.jamiecraane.imagegenerator.imageexporter.ImageWriter;
-import nl.jamiecraane.imagegenerator.imageexporter.ImageWriterFactory;
 import org.vaadin.addon.formbinder.ViewBoundForm;
 
 /**
@@ -111,26 +99,7 @@ public class CapabilityEditorViewController implements
 			configureActionTable();
 			configureForm();
 			configureButtons();
-			Button captchaButton = new Button("start of embedded Here");
-			captchaButton.addListener(new Button.ClickListener()
-			{
-				private static final long serialVersionUID = 1L;
 
-				@Override
-				public void buttonClick(Button.ClickEvent event)
-				{
-					try
-					{
-						createCaptchaImage();
-					}
-					catch (Exception ex)
-					{
-						exceptionPopupProvider.popUpErrorException(ex);
-					}
-				}
-			});
-			editorView.addComponent(captchaButton);
-			editorView.addComponent(new Label("end of embedded Here"));
 		}
 		catch (Exception ex)
 		{

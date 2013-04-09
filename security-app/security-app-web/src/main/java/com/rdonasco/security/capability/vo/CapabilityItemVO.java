@@ -25,6 +25,7 @@ public class CapabilityItemVO implements Serializable
 	private static final long serialVersionUID = 1L;
 	private CapabilityVO capabilityVO;
 	private Embedded embeddedIcon;
+	private String captcha;
 
 	public CapabilityItemVO(CapabilityVO capabilityVO, Embedded embeddedIcon)
 	{
@@ -163,5 +164,15 @@ public class CapabilityItemVO implements Serializable
 	public String toString()
 	{
 		return capabilityVO.toString();
+	}
+
+	public String getCaptcha()
+	{
+		return captcha;
+	}
+
+	public void setCaptcha(String captcha)
+	{
+		this.captcha = captcha;
 	}
 }

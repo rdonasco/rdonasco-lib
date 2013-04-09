@@ -44,6 +44,7 @@ public class EmbeddedCaptchaBuilder
 	private Font font = new Font("Courier", Font.BOLD, 36);
 	private Style fontStyle = Style.PLAIN;
 	private Margin margin = new Margin(18, 14, 10, 14);
+	private String captchaValue;
 	private Color[] fontColors =
 	{
 		Color.BLACK,
@@ -111,6 +112,11 @@ public class EmbeddedCaptchaBuilder
 		return this;
 	}
 
+	public String getCaptchaValue()
+	{
+		return captchaValue;
+	}
+
 	public EmbeddedCaptcha createEmbeddedCaptcha()
 	{
 		EmbeddedCaptcha embeddedCaptcha = null;
@@ -130,6 +136,7 @@ public class EmbeddedCaptchaBuilder
 				}
 				captchaStatement.append(captchaWords[i]);
 			}
+			captchaValue = captchaStatement.toString();
 			TextImage textImage = new TextImageImpl(width, height, margin);
 			textImage.useFont(font);
 			textImage.useFontStyle(fontStyle);

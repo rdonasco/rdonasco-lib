@@ -8,6 +8,7 @@ import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ControlledView;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.security.captcha.views.CaptchaField;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
@@ -26,6 +27,7 @@ import com.vaadin.ui.VerticalLayout;
 public class CapabilityEditorView extends VerticalLayout implements
 		ControlledView
 {
+
 	private static final long serialVersionUID = 1L;
 	private Panel capabilityDetailPanel = new Panel();
 	private Panel capabilityActionsPanel = new Panel();
@@ -36,6 +38,7 @@ public class CapabilityEditorView extends VerticalLayout implements
 	private TextField titleField = new TextField(I18NResource.localize("Title"));
 	private TextField descriptionField = new TextField(I18NResource.localize("Description"));
 	private ComboBox resourceField = new ComboBox(I18NResource.localize("Resource"));
+	private TextField captchaField = new TextField(I18NResource.localize("Captcha"));
 	private Table actionsTable = new Table();
 	private Form editorForm;
 	private DragAndDropWrapper resourceDragAndDropWrapper;
@@ -109,6 +112,7 @@ public class CapabilityEditorView extends VerticalLayout implements
 		fieldLayout.addComponent(titleField);
 		fieldLayout.addComponent(descriptionField);
 		fieldLayout.addComponent(resourceField);
+		fieldLayout.addComponent(new CaptchaField(captchaField));
 		fieldLayout.setSpacing(true);
 		resourceDragAndDropWrapper = new DragAndDropWrapper(fieldLayout);
 		capabilityDetailPanel.addComponent(resourceDragAndDropWrapper);
