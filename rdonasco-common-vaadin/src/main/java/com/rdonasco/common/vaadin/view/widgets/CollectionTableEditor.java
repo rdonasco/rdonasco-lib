@@ -24,7 +24,6 @@ import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.FieldEvents;
 import com.vaadin.event.FieldEvents.FocusEvent;
 import com.vaadin.event.FieldEvents.FocusNotifier;
-import com.vaadin.terminal.Resource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.DefaultFieldFactory;
@@ -295,11 +294,11 @@ public class CollectionTableEditor<T> extends CustomField implements
 
 	public CollectionTableDecorator getDecoratedTable()
 	{
-		if(null == decoratedTable)
+		if (null == decoratedTable)
 		{
 			decoratedTable = new CollectionTableDecorator();
 		}
 		return decoratedTable;
-		
+
 	}
 }
