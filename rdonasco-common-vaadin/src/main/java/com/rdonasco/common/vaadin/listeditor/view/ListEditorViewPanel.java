@@ -44,7 +44,6 @@ public class ListEditorViewPanel extends Panel implements ControlledView
 		setStyleName(ListEditorTheme.CSS_PANEL_BUBBLE);
 		addItemButton.setCaption(I18NResource.localize("Add new item"));
 		addItemButton.setWidth(100f, UNITS_PERCENTAGE);
-		addItemButton.setIcon(getAddItemButtonIcon());
 		addItemButton.addStyleName(ListEditorTheme.CSS_SMALL);
 		editorTable.addStyleName(ListEditorTheme.CSS_TABLE_SMALL_STRIPED);
 		editorTable.addStyleName(ListEditorTheme.CSS_TABLE_BORDERLESS);
@@ -74,5 +73,12 @@ public class ListEditorViewPanel extends Panel implements ControlledView
 				.setRelativeResourcePath(buttonIcon)
 				.setApplication(getApplication())
 				.createStreamResource();
+	}
+
+	@Override
+	public void attach()
+	{
+		super.attach();
+		addItemButton.setIcon(getAddItemButtonIcon());
 	}
 }
