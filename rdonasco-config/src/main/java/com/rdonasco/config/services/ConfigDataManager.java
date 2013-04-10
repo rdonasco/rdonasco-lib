@@ -110,8 +110,7 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 	{
 		try
 		{
-			return getConfigElementDAO().findFreshData(ConfigElement.class,
-					configElement.getId());
+			return getConfigElementDAO().findFreshData(configElement.getId());
 		}
 		catch (Exception e)
 		{
@@ -130,8 +129,7 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 			getConfigElementDAO().create(configElement);
 			if (parent != null)
 			{
-				parent = getConfigElementDAO().findData(ConfigElement.class,
-						parent.getId());
+				parent = getConfigElementDAO().findData(parent.getId());
 				parent.getSubConfigElements().add(configElement);
 				getConfigElementDAO().update(parent);
 
@@ -169,8 +167,7 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 	{
 		try
 		{
-			getConfigElementDAO().delete(ConfigElement.class, configElement.
-					getId());
+			getConfigElementDAO().delete(configElement.getId());
 		}
 		catch (Exception e)
 		{
@@ -186,9 +183,7 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 	{
 		try
 		{
-			ConfigElement configElement = getConfigElementDAO().findData(
-					ConfigElement.class,
-					attribute.getParentConfig().getId());
+			ConfigElement configElement = getConfigElementDAO().findData(attribute.getParentConfig().getId());
 			configElement.addConfigAttribute(attribute);
 			configureXpath(attribute);
 			getConfigAttributeDAO().create(attribute);
@@ -224,8 +219,7 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 	{
 		try
 		{
-			getConfigAttributeDAO().delete(ConfigAttribute.class,
-					configAttribute.getId());
+			getConfigAttributeDAO().delete(configAttribute.getId());
 		}
 		catch (Exception e)
 		{
@@ -273,7 +267,7 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 			attribute = getConfigAttributeDAO().findUniqueDataUsingNamedQuery(
 					ConfigAttribute.NAMED_QUERY_FIND_BY_XPATH, parameters);
 		}
-		catch(NonExistentEntityException e)
+		catch (NonExistentEntityException e)
 		{
 			throw e;
 		}
@@ -296,7 +290,7 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 			configElement = getConfigElementDAO().findUniqueDataUsingNamedQuery(
 					ConfigElement.NAMED_QUERY_FIND_BY_XPATH, parameters);
 		}
-		catch(NonExistentEntityException e)
+		catch (NonExistentEntityException e)
 		{
 			throw e;
 		}

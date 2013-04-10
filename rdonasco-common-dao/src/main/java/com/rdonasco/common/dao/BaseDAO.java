@@ -35,214 +35,215 @@ import javax.persistence.criteria.CriteriaQuery;
  */
 public abstract class BaseDAO<T> implements DataAccess<T>
 {
-    public BaseDAO()
-    {
-    }
+
+	public BaseDAO()
+	{
+	}
 
 	public abstract EntityManager getEntityManager();
 
-    @Override
-    public void create(T data) throws PreexistingEntityException, Exception
-    {
-        try
-        {
-            getEntityManager().persist(data);
-        }
-        catch (Exception ex)
-        {
-            try
-            {
-                checkIfAlreadyExist(data, ex);
-            }
-            catch(PreexistingEntityException e)
-            {
-                throw e;
-            }
-            catch(Exception e)
-            {
-                throw ex;
-            }            
-        }
-    }
+	@Override
+	public void create(T data) throws PreexistingEntityException, Exception
+	{
+		try
+		{
+			getEntityManager().persist(data);
+		}
+		catch (Exception ex)
+		{
+			try
+			{
+				checkIfAlreadyExist(data, ex);
+			}
+			catch (PreexistingEntityException e)
+			{
+				throw e;
+			}
+			catch (Exception e)
+			{
+				throw ex;
+			}
+		}
+	}
 
-    protected void checkIfAlreadyExist(T data, Exception ex) throws
-            IllegalAccessException, IllegalArgumentException,
-            PreexistingEntityException
-    {
-        Long id = (Long) extractIdentifier(data);
-        String canonicalName = data.getClass().getCanonicalName();
-        Class<T> objectClass = (Class<T>) data.getClass();
-        if (findData(objectClass, id) != null)
-        {
-            throw new PreexistingEntityException(I18NResource.
-                    localizeWithParameter(canonicalName + " _ already exists.",
-                    data), ex);
-        }
-    }
+	protected void checkIfAlreadyExist(T data, Exception ex) throws
+			IllegalAccessException, IllegalArgumentException,
+			PreexistingEntityException
+	{
+		Object id = extractIdentifier(data);
+		String canonicalName = data.getClass().getCanonicalName();
+		if (findData(id) != null)
+		{
+			throw new PreexistingEntityException(I18NResource.
+					localizeWithParameter(canonicalName + " _ already exists.",
+					data), ex);
+		}
+	}
 
-    @Override
-    public void delete(Class<T> classObject, Long id) throws
-            IllegalOrphanException, NonExistentEntityException
-    {
-        EntityManager em = getEntityManager();
-        T data;
-        try
-        {
-            data = em.find(classObject, id);
-        }
-        catch (EntityNotFoundException enfe)
-        {
+	@Override
+	public void delete(Object id) throws
+			IllegalOrphanException, NonExistentEntityException
+	{
+		EntityManager em = getEntityManager();
+		T data;
+		try
+		{
+			data = em.find(getDataClass(), id);
+		}
+		catch (EntityNotFoundException enfe)
+		{
 			throw new NonExistentEntityException(I18NResource
-					.localizeWithParameter(DAOCommonConstants.ID_NO_LONGER_EXIST
-					,classObject.getCanonicalName(),id), enfe);
-        }
-        em.remove(data);
+					.localizeWithParameter(DAOCommonConstants.ID_NO_LONGER_EXIST, getDataClass().getCanonicalName(), id), enfe);
+		}
+		em.remove(data);
 
-    }
+	}
 
-    @Override
-    public void update(T data) throws IllegalOrphanException,
-            NonExistentEntityException, Exception
-    {     
-        try
-        {
-            EntityManager em = getEntityManager();
-            em.merge(data);
-        }
-        catch (Exception ex)
-        {
-            String msg = ex.getLocalizedMessage();
-            if (msg == null || msg.length() == 0)
-            {
-                Long id = (Long) extractIdentifier(data);
-                if (findData((Class<T>) data.getClass(), id) == null)
-                {                    
+	@Override
+	public void update(T data) throws IllegalOrphanException,
+			NonExistentEntityException, Exception
+	{
+		try
+		{
+			EntityManager em = getEntityManager();
+			em.merge(data);
+		}
+		catch (Exception ex)
+		{
+			String msg = ex.getLocalizedMessage();
+			if (msg == null || msg.length() == 0)
+			{
+				Long id = (Long) extractIdentifier(data);
+				if (findData(id) == null)
+				{
 					throw new NonExistentEntityException(I18NResource
-					.localizeWithParameter(DAOCommonConstants.ID_NO_LONGER_EXIST
-					,data.getClass().getCanonicalName(),id), ex);					
-                }
-            }
-            throw ex;
-        }
-    }
+							.localizeWithParameter(DAOCommonConstants.ID_NO_LONGER_EXIST, data.getClass().getCanonicalName(), id), ex);
+				}
+			}
+			throw ex;
+		}
+	}
 
-    private Object extractIdentifier(T data) throws IllegalArgumentException,
-            IllegalAccessException
-    {
-        Object id = null;
-        for (Field field : data.getClass().getFields())
-        {
-            Id idField = field.getAnnotation(Id.class);
-            if (idField != null)
-            {
-                id = field.get(data);
-                break;
-            }
-        }
+	private Object extractIdentifier(T data) throws IllegalArgumentException,
+			IllegalAccessException
+	{
+		Object id = null;
+		for (Field field : data.getClass().getFields())
+		{
+			Id idField = field.getAnnotation(Id.class);
+			if (idField != null)
+			{
+				id = field.get(data);
+				break;
+			}
+		}
 
-        return id;
-    }
+		return id;
+	}
 
-    @Override
-    public List<T> findAllData()
-    {
-        return findAllData(true, -1, -1);
-    }
+	@Override
+	public List<T> findAllData()
+	{
+		return findAllData(true, -1, -1);
+	}
 
-    @Override
-    public List<T> findAllData(int maxResults, int firstResult)
-    {
-        return findAllData(false, maxResults, firstResult);
-    }
+	@Override
+	public List<T> findAllData(int maxResults, int firstResult)
+	{
+		return findAllData(false, maxResults, firstResult);
+	}
 
-    private List<T> findAllData(boolean all, int maxResults, int firstResult)
-    {
-        EntityManager em = getEntityManager();
-        CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-        cq.select(cq.from(getDataClass()));
-        Query q = em.createQuery(cq);
-        if (!all)
-        {
-            q.setMaxResults(maxResults);
-            q.setFirstResult(firstResult);
-        }
-        return q.getResultList();
-    }
+	private List<T> findAllData(boolean all, int maxResults, int firstResult)
+	{
+		EntityManager em = getEntityManager();
+		CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
+		cq.select(cq.from(getDataClass()));
+		Query q = em.createQuery(cq);
+		if (!all)
+		{
+			q.setMaxResults(maxResults);
+			q.setFirstResult(firstResult);
+		}
+		return q.getResultList();
+	}
 
-    @Override
-    public T findData(Class<T> objectClass, Long id)
-    {
-        EntityManager em = getEntityManager();
-        T data = em.find(objectClass, id);
-        return data;
-    }
+	@Override
+	public T findData(Object id)
+	{
+		EntityManager em = getEntityManager();
+		T data = em.find(getDataClass(), id);
+		return data;
+	}
 
-    @Override
-    public T findFreshData(Class<T> objectClass, Long id)
-    {
-        EntityManager em = getEntityManager();
-        T data = em.find(objectClass, id);
-        if (null != data)
-        {
-            em.refresh(data);
-        }
+	@Override
+	public T findFreshData(Object id)
+	{
+		EntityManager em = getEntityManager();
+		T data = em.find(getDataClass(), id);
+		if (null != data)
+		{
+			em.refresh(data);
+		}
 
-        return data;
-    }
+		return data;
+	}
 
-    @Override
-    public List<T> findAllDataUsingNamedQuery(String namedQuery, Map<String, Object> parameters)
-            throws DataAccessException
-    {
-        List<T> dataList = null;
-        try
-        {
-            EntityManager em = getEntityManager();
-            TypedQuery<T> query = em.createNamedQuery(namedQuery, getDataClass());
-            if (parameters != null)
-            {
-                for (String paramName : parameters.keySet())
-                {
-                    query.setParameter(paramName, parameters.get(paramName));
-                }
-            }
+	@Override
+	public List<T> findAllDataUsingNamedQuery(String namedQuery,
+			Map<String, Object> parameters)
+			throws DataAccessException
+	{
+		List<T> dataList = null;
+		try
+		{
+			EntityManager em = getEntityManager();
+			TypedQuery<T> query = em.createNamedQuery(namedQuery, getDataClass());
+			if (parameters != null)
+			{
+				for (String paramName : parameters.keySet())
+				{
+					query.setParameter(paramName, parameters.get(paramName));
+				}
+			}
 
-            dataList = query.getResultList();
-        }
-        catch (Exception e)
-        {
-            throw new DataAccessException(e);
-        }
-        return dataList;
-    }
+			dataList = query.getResultList();
+		}
+		catch (Exception e)
+		{
+			throw new DataAccessException(e);
+		}
+		return dataList;
+	}
 
-    @Override
-    public T findUniqueDataUsingNamedQuery(String namedQuery, Map<String, Object> parameters)
-            throws DataAccessException, NonExistentEntityException, MultipleEntityFoundException
-    {
-        T foundData = null;
-        try
-        {
-            EntityManager em = getEntityManager();
-            TypedQuery<T> query = em.createNamedQuery(namedQuery, getDataClass());
-            if (parameters != null)
-            {
-                for (String paramName : parameters.keySet())
-                {
-                    query.setParameter(paramName, parameters.get(paramName));
-                }
-            }
+	@Override
+	public T findUniqueDataUsingNamedQuery(String namedQuery,
+			Map<String, Object> parameters)
+			throws DataAccessException, NonExistentEntityException,
+			MultipleEntityFoundException
+	{
+		T foundData = null;
+		try
+		{
+			EntityManager em = getEntityManager();
+			TypedQuery<T> query = em.createNamedQuery(namedQuery, getDataClass());
+			if (parameters != null)
+			{
+				for (String paramName : parameters.keySet())
+				{
+					query.setParameter(paramName, parameters.get(paramName));
+				}
+			}
 
-            foundData = query.getSingleResult();
-        }
+			foundData = query.getSingleResult();
+		}
 		catch (NoResultException e)
 		{
 			throw new NonExistentEntityException(e);
 		}
-        catch (Exception e)
-        {
-            throw new DataAccessException(e);
-        }
-        return foundData;
-    }
+		catch (Exception e)
+		{
+			throw new DataAccessException(e);
+		}
+		return foundData;
+	}
 }

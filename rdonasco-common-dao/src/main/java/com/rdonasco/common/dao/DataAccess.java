@@ -30,26 +30,30 @@ import com.rdonasco.common.exceptions.PreexistingEntityException;
 public interface DataAccess<T>
 {
 
-    void create(T data) throws PreexistingEntityException, Exception;
+	void create(T data) throws PreexistingEntityException, Exception;
 
-    void delete(Class<T> objectClass, Long id) throws IllegalOrphanException,
-            NonExistentEntityException;
+	void delete(Object id) throws IllegalOrphanException,
+			NonExistentEntityException;
 
-    void update(T data) throws IllegalOrphanException,
-            NonExistentEntityException, Exception;
+	void update(T data) throws IllegalOrphanException,
+			NonExistentEntityException, Exception;
 
-    T findData(Class<T> objectClass, Long id);
-    
-    T findFreshData(Class<T> objectClass, Long id);
+	T findData(Object id);
 
-    List<T> findAllData();
+	T findFreshData(Object id);
 
-    List<T> findAllData(int maxResults, int firstResult);
+	List<T> findAllData();
 
-    Class<T> getDataClass();
+	List<T> findAllData(int maxResults, int firstResult);
 
-    List<T> findAllDataUsingNamedQuery(String namedQuery, Map<String, Object> parameters)
-            throws DataAccessException;
-    T findUniqueDataUsingNamedQuery(String namedQuery, Map<String, Object> parameters)
-            throws DataAccessException, NonExistentEntityException,MultipleEntityFoundException;
+	Class<T> getDataClass();
+
+	List<T> findAllDataUsingNamedQuery(String namedQuery,
+			Map<String, Object> parameters)
+			throws DataAccessException;
+
+	T findUniqueDataUsingNamedQuery(String namedQuery,
+			Map<String, Object> parameters)
+			throws DataAccessException, NonExistentEntityException,
+			MultipleEntityFoundException;
 }

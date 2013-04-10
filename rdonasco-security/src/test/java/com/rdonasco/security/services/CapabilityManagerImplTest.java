@@ -37,8 +37,8 @@ import org.mockito.stubbing.Answer;
  */
 public class CapabilityManagerImplTest
 {
-	private static final Logger LOG = Logger.getLogger(CapabilityManagerImplTest.class.getName());
 
+	private static final Logger LOG = Logger.getLogger(CapabilityManagerImplTest.class.getName());
 	private static CapabilityDAO capabilityDAOMock;// =mock(CapabilityDAO.class);
 	private static ResourceDAO resourceDAOMock;
 	private static ActionDAO actionDAOMock;
@@ -83,7 +83,7 @@ public class CapabilityManagerImplTest
 		ResourceVO resourceVO = createTestDataResourceVO();
 		CapabilityManagerImpl instance = prepareCapabilityManagerInstanceToTest();
 		instance.removeResource(resourceVO);
-		verify(resourceDAOMock, times(1)).delete(Resource.class, resourceVO.getId());
+		verify(resourceDAOMock, times(1)).delete(resourceVO.getId());
 	}
 
 	/**
@@ -114,11 +114,11 @@ public class CapabilityManagerImplTest
 				return returnValue;
 			}
 		})
-		.when(actionDAOMock).create(SecurityEntityValueObjectConverter.toAction(action));
-		
+				.when(actionDAOMock).create(SecurityEntityValueObjectConverter.toAction(action));
+
 		ActionVO result = instance.createNewAction(action);
 		assertNotNull(result.getId());
-		assertEquals(100,result.getId().longValue());
+		assertEquals(100, result.getId().longValue());
 		assertEquals(action.getName(), result.getName());
 		assertEquals(action.getDescription(), result.getDescription());
 	}
@@ -151,7 +151,7 @@ public class CapabilityManagerImplTest
 	}
 
 	private List<Capability> getCapabilityOnEditingUser()
-	{		
+	{
 		List<Capability> capabilities = new ArrayList<Capability>();
 		capabilities.add(SecurityEntityValueObjectDataUtility.createTestDataCapabilityOnResourceAndAction("User", "Edit"));
 		return capabilities;
@@ -217,9 +217,8 @@ public class CapabilityManagerImplTest
 		verify(actionDAOMock, times(1)).findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class));
 		assertEquals("action.id did not match", action.getId(), foundAction.getId());
 	}
-	
-	///---- no more test beyond this line
 
+	///---- no more test beyond this line
 	private CapabilityManagerImpl prepareCapabilityManagerInstanceToTest()
 	{
 		CapabilityManagerImpl capabilityManager = new CapabilityManagerImpl();

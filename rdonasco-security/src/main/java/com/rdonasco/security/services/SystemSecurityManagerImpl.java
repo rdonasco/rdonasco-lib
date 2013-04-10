@@ -188,12 +188,12 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		try
 		{
 			UserSecurityProfile profileUpdateDetails = SecurityEntityValueObjectConverter.toUserProfile(userSecurityProfile);
-			UserSecurityProfile profileToUpdate = userSecurityProfileDAO.findData(UserSecurityProfile.class, profileUpdateDetails.getId());
+			UserSecurityProfile profileToUpdate = userSecurityProfileDAO.findData(profileUpdateDetails.getId());
 			profileToUpdate.setLogonId(profileUpdateDetails.getLogonId());
 			profileToUpdate.setRegistrationToken(profileUpdateDetails.getRegistrationToken());
 			profileToUpdate.setRegistrationTokenExpiration(profileUpdateDetails.getRegistrationTokenExpiration());
 			profileToUpdate.setPassword(profileUpdateDetails.getPassword());
-			
+
 			userSecurityProfileDAO.update(profileToUpdate);
 		}
 		catch (Exception ex)
@@ -234,7 +234,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	{
 		try
 		{
-			this.userSecurityProfileDAO.delete(UserSecurityProfile.class, securityProfileToRemove.getId());
+			this.userSecurityProfileDAO.delete(securityProfileToRemove.getId());
 			LOG.log(Level.INFO, "Security profile {0} removed", securityProfileToRemove.toString());
 		}
 		catch (Exception e)

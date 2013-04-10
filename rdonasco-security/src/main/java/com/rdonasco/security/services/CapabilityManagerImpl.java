@@ -108,7 +108,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 	{
 		try
 		{
-			resourceDAO.delete(Resource.class, resource.getId());
+			resourceDAO.delete(resource.getId());
 		}
 		catch (Exception e)
 		{
@@ -317,7 +317,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 	{
 		try
 		{
-			actionDAO.delete(Action.class, actionToRemove.getId());
+			actionDAO.delete(actionToRemove.getId());
 		}
 		catch (Exception e)
 		{
@@ -423,7 +423,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 		CapabilityVO foundCapabilityVO = null;
 		try
 		{
-			Capability capability = capabilityDAO.findData(Capability.class, id);
+			Capability capability = capabilityDAO.findData(id);
 			foundCapabilityVO = SecurityEntityValueObjectConverter.toCapabilityVO(capability);
 		}
 		catch (Exception e)
@@ -440,7 +440,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 		try
 		{
 			Capability capability = SecurityEntityValueObjectConverter.toCapability(capabilityToUpdate);
-			Capability existingCapability = capabilityDAO.findData(Capability.class, capability.getId());
+			Capability existingCapability = capabilityDAO.findData(capability.getId());
 			List<CapabilityAction> actionsToAdd = new ArrayList<CapabilityAction>();
 			// find actionst to add
 			for (CapabilityAction actionToAdd : capability.getActions())
@@ -464,7 +464,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 			for (CapabilityAction actionToRemove : actionsToRemove)
 			{
 				existingCapability.getActions().remove(actionToRemove);
-				capabilityActionDAO.delete(CapabilityAction.class, actionToRemove.getId());
+				capabilityActionDAO.delete(actionToRemove.getId());
 			}
 
 			// add items
@@ -492,7 +492,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 	{
 		try
 		{
-			capabilityDAO.delete(Capability.class, capabilityToRemove.getId());
+			capabilityDAO.delete(capabilityToRemove.getId());
 		}
 		catch (Exception e)
 		{
@@ -568,7 +568,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 	{
 		try
 		{
-			Capability capability = capabilityDAO.findData(Capability.class, capabilityVO.getId());
+			Capability capability = capabilityDAO.findData(capabilityVO.getId());
 			List<CapabilityAction> actionsToAdd = new ArrayList<CapabilityAction>();
 			Action action;
 			CapabilityAction capabilityAction;
