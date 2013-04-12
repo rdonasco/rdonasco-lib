@@ -63,6 +63,7 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 	private static final Logger LOG = Logger.getLogger(ListEditorViewPanelController.class.getName());
 	private static final long serialVersionUID = 1L;
 	@Inject
+	private Instance<ListEditorView> editorViewFactory;
 	private ListEditorView editorViewPanel;
 	private static final String TABLE_PROPERTY_ICON = "icon";
 //	private static final String PROPERTY_NAME = "name";
@@ -84,7 +85,7 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 	{
 		try
 		{
-			editorViewPanel.initWidget();
+			getEditorViewPanel().initWidget();
 			setupEditorViewListeners();
 			configureDataContainerStrategies();
 			configureEditorTableBehavior();
@@ -98,7 +99,7 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 	@Override
 	public ListEditorView getControlledView()
 	{
-		return editorViewPanel;
+		return getEditorViewPanel();
 	}
 
 	@Override
@@ -124,7 +125,6 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 		this.itemListDescription = itemListDescription;
 	}
 
-
 	private void configureDataContainerStrategies()
 	{
 		dataContainer.setDataRetrieveListStrategy(new DataRetrieveListStrategy<VO>()
@@ -140,7 +140,7 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 					icon = new Embedded(null, new StreamResourceBuilder()
 							.setReferenceClass(this.getClass())
 							.setRelativeResourcePath("images/delete.png")
-							.setApplication(editorViewPanel.getApplication())
+							.setApplication(getEditorViewPanel().getApplication())
 							.createStreamResource());
 					icon.setDescription(I18NResource.localize("Delete Item"));
 					listItem.setIcon(icon);
@@ -204,7 +204,7 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 
 	private void setupEditorViewListeners()
 	{
-		editorViewPanel.addListener(new ComponentContainer.ComponentAttachListener()
+		getEditorViewPanel().addListener(new ComponentContainer.ComponentAttachListener()
 		{
 			@Override
 			public void componentAttachedToContainer(
@@ -232,17 +232,17 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 		{
 			throw new IllegalStateException("columnHeaders not yet set");
 		}
-		editorViewPanel.getEditorTable().setContainerDataSource(dataContainer);
+		getEditorViewPanel().getEditorTable().setContainerDataSource(dataContainer);
 		List<String> realVisibleColumns = new ArrayList<String>();
 		realVisibleColumns.add(TABLE_PROPERTY_ICON);
 		realVisibleColumns.addAll(Arrays.asList(getVisibleColumns()));
-		editorViewPanel.getEditorTable().setVisibleColumns(realVisibleColumns.toArray(new String[0]));
+		getEditorViewPanel().getEditorTable().setVisibleColumns(realVisibleColumns.toArray(new String[0]));
 		List<String> realColumnHeaders = new ArrayList<String>();
 		realColumnHeaders.add(""); // empty header for the icon
 		realColumnHeaders.addAll(Arrays.asList(getColumnHeaders()));
-		editorViewPanel.getEditorTable().setColumnHeaders(realColumnHeaders.toArray(new String[0]));
+		getEditorViewPanel().getEditorTable().setColumnHeaders(realColumnHeaders.toArray(new String[0]));
 		setupDefaultCellStyleGenerator();
-		editorViewPanel.getEditorTable().setReadOnly(false);
+		getEditorViewPanel().getEditorTable().setReadOnly(false);
 
 		Table.ColumnGenerator columnGenerator = new Table.ColumnGenerator()
 		{
@@ -290,9 +290,9 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 		};
 		for (String propertyName : getVisibleColumns())
 		{
-			editorViewPanel.getEditorTable().addGeneratedColumn(propertyName, columnGenerator);
+			getEditorViewPanel().getEditorTable().addGeneratedColumn(propertyName, columnGenerator);
 		}
-		editorViewPanel.getEditorTable().addListener(new ItemClickEvent.ItemClickListener()
+		getEditorViewPanel().getEditorTable().addListener(new ItemClickEvent.ItemClickListener()
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -307,8 +307,8 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 				}
 			}
 		});
-		TableHelper.setupTable(editorViewPanel.getEditorTable());
-		editorViewPanel.getEditorTable().setDragMode(Table.TableDragMode.ROW);
+		TableHelper.setupTable(getEditorViewPanel().getEditorTable());
+		getEditorViewPanel().getEditorTable().setDragMode(Table.TableDragMode.ROW);
 	}
 
 	public String[] getColumnHeaders()
@@ -333,7 +333,7 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 
 	private void setupDefaultCellStyleGenerator()
 	{
-		editorViewPanel.getEditorTable()
+		getEditorViewPanel().getEditorTable()
 				.setCellStyleGenerator(new Table.CellStyleGenerator()
 		{
 			private static final long serialVersionUID = 1L;
@@ -390,5 +390,14 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 			popupProvider = popupProviderFactory.get();
 		}
 		return popupProvider;
+	}
+
+	protected ListEditorView getEditorViewPanel()
+	{
+		if (null == editorViewPanel)
+		{
+			editorViewPanel = editorViewFactory.get();
+		}
+		return editorViewPanel;
 	}
 }
