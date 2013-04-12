@@ -32,7 +32,6 @@ import com.rdonasco.datamanager.controller.DataUpdateStrategy;
 import com.rdonasco.datamanager.listeditor.view.ListEditorItem;
 import com.rdonasco.datamanager.listeditor.view.ListEditorTheme;
 import com.rdonasco.datamanager.listeditor.view.ListEditorView;
-import com.rdonasco.datamanager.services.DataManager;
 import com.rdonasco.datamanager.utils.TableHelper;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.FieldEvents;
@@ -40,7 +39,6 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.MouseEvents;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
@@ -163,6 +161,7 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 					DataAccessException
 			{
 				dataContainer.getDataManager().updateData(dataToUpdate);
+
 			}
 		});
 		dataContainer.setDataDeleteStrategy(new DataDeleteStrategy<VO>()
@@ -276,9 +275,14 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 							dataContainer.updateItem(itemToUpdate.getBean());
 							textField.setReadOnly(true);
 						}
-						catch (DataAccessException ex)
+						catch (Exception ex)
 						{
-							getExceptionPopupProvider().popUpErrorException(ex);
+							LOG.log(Level.SEVERE, ex.getMessage(), ex);
+							getPopupProvider().popUpError(I18NResource
+									.localizeWithParameter("unable.to.update.record._", getItemName()));
+							textField.focus();
+							textField.selectAll();
+
 						}
 					}
 				});
@@ -423,7 +427,7 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 		catch (RuntimeException e)
 		{
 			LOG.log(Level.SEVERE, e.getMessage(), e);
-			getPopupProvider().popUpInfo(I18NResource.
+			getPopupProvider().popUpError(I18NResource.
 					localizeWithParameter("unable to add new item on", getListName()));
 		}
 
