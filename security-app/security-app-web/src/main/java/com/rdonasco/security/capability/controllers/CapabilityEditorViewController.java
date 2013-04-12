@@ -160,15 +160,6 @@ public class CapabilityEditorViewController implements
 		};
 	}
 
-	private void createCaptchaImage() throws IOException,
-			InvalidBuilderParameter
-	{
-		Embedded embedded = new EmbeddedCaptchaBuilder()
-				.setApplication(application)
-				.createEmbeddedCaptcha();
-		editorView.addComponent(embedded);
-	}
-
 	public Table getActionTableSource()
 	{
 		return actionTableSource;
