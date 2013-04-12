@@ -17,7 +17,7 @@ import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.capability.utils.IconHelper;
-import com.rdonasco.security.capability.utils.TableHelper;
+import com.rdonasco.datamanager.utils.TableHelper;
 import com.rdonasco.security.capability.views.ResourcesEditorAndSelectorView;
 import com.rdonasco.security.capability.vo.ResourceItemVO;
 import com.rdonasco.security.capability.vo.ResourceItemVOBuilder;
@@ -48,8 +48,8 @@ import javax.inject.Inject;
 public class ResourcesEditorAndSelectorViewController implements
 		ViewController<ResourcesEditorAndSelectorView>
 {
-	private static final Logger LOG = Logger.getLogger(ResourcesEditorAndSelectorViewController.class.getName());
 
+	private static final Logger LOG = Logger.getLogger(ResourcesEditorAndSelectorViewController.class.getName());
 	private static final long serialVersionUID = 1L;
 	private static final String TABLE_PROPERTY_ICON = "icon";
 	private static final String PROPERTY_NAME = "name";
@@ -289,8 +289,8 @@ public class ResourcesEditorAndSelectorViewController implements
 					final Object columnId)
 			{
 				final TextField textField = new TextField();
-				ResourceItemVO resourceItem = (ResourceItemVO) itemId;
-				textField.setValue(resourceItem.getName());
+//				ResourceItemVO resourceItem = (ResourceItemVO) itemId;
+				textField.setPropertyDataSource(source.getContainerProperty(itemId, columnId));
 				textField.setReadOnly(true);
 				textField.setWriteThrough(true);
 				addFieldToFieldCache(itemId, columnId, textField);
@@ -304,8 +304,8 @@ public class ResourcesEditorAndSelectorViewController implements
 						try
 						{
 							BeanItem<ResourceItemVO> itemToUpdate = (BeanItem) source.getItem(itemId);
-							itemToUpdate.getBean().setName((String) textField.getValue());
 							resourcesDataContainer.updateItem(itemToUpdate.getBean());
+							textField.commit();
 							textField.setReadOnly(true);
 						}
 						catch (DataAccessException ex)
