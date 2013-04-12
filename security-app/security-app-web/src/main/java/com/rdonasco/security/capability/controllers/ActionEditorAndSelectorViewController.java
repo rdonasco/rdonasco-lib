@@ -17,7 +17,7 @@ import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.capability.utils.IconHelper;
-import com.rdonasco.security.capability.utils.TableHelper;
+import com.rdonasco.datamanager.utils.TableHelper;
 import com.rdonasco.security.capability.views.ActionEditorAndSelectorView;
 import com.rdonasco.security.capability.vo.ActionItemVOBuilder;
 import com.rdonasco.security.capability.vo.ActionItemVO;
@@ -315,6 +315,7 @@ public class ActionEditorAndSelectorViewController implements
 	{
 		editorAndSelectorView.getAddActionButton().addListener(new Button.ClickListener()
 		{
+			private static final long serialVersionUID = 1L;
 			@Override
 			public void buttonClick(Button.ClickEvent event)
 			{
