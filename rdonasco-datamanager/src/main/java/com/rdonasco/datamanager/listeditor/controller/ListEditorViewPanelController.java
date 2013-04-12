@@ -38,6 +38,8 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.FieldEvents;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.MouseEvents;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.ComponentContainer;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
@@ -56,18 +58,14 @@ import javax.inject.Inject;
  *
  * @author Roy F. Donasco
  */
-public class ListEditorViewPanelController<VO extends ListEditorItem> implements
-		ViewController<ListEditorView>
+public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
+		implements ViewController<ListEditorView>
 {
 
 	private static final Logger LOG = Logger.getLogger(ListEditorViewPanelController.class.getName());
 	private static final long serialVersionUID = 1L;
-	@Inject
-	private Instance<ListEditorView> editorViewFactory;
-	private ListEditorView editorViewPanel;
+	private ListEditorView editorViewPanel = new ListEditorView();
 	private static final String TABLE_PROPERTY_ICON = "icon";
-//	private static final String PROPERTY_NAME = "name";
-	private DataManager<VO> dataManager;
 	private DataManagerContainer<VO> dataContainer;
 	@Inject
 	private Instance<ApplicationExceptionPopupProvider> exceptionPopupProviderInstances;
@@ -76,9 +74,12 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 	private Instance<ApplicationPopupProvider> popupProviderFactory;
 	private ApplicationPopupProvider popupProvider;
 	private Map<Object, Map<Object, TextField>> fieldMap = new HashMap<Object, Map<Object, TextField>>();
-	private String itemListDescription = I18NResource.localize("List Editor Items");
-	private String[] visibleColumns;
-	private String[] columnHeaders;
+
+	public void setDataContainer(
+			DataManagerContainer<VO> dataContainer)
+	{
+		this.dataContainer = dataContainer;
+	}
 
 	@Override
 	public void initializeControlledViewBehavior()
@@ -86,9 +87,11 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 		try
 		{
 			getEditorViewPanel().initWidget();
+			getEditorViewPanel().setCaption(getListName());
 			setupEditorViewListeners();
-			configureDataContainerStrategies();
+			configureDataContainerDefaultStrategies();
 			configureEditorTableBehavior();
+			configureButtonBehavior();
 		}
 		catch (WidgetInitalizeException ex)
 		{
@@ -115,33 +118,27 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 		}
 	}
 
-	public String getItemListDescription()
+	public void configureDataContainerDefaultStrategies()
 	{
-		return itemListDescription;
-	}
-
-	public void setItemListDescription(String itemListDescription)
-	{
-		this.itemListDescription = itemListDescription;
-	}
-
-	private void configureDataContainerStrategies()
-	{
+		if (null == dataContainer)
+		{
+			throw new NullPointerException("dataContainer cannot be null");
+		}
+		if (dataContainer.getDataManager() == null)
+		{
+			LOG.log(Level.WARNING, "dataContainer.dataManager is null, defaultStrategies may fail if it is not set properly. An alternative is to use custom strategies");
+		}
 		dataContainer.setDataRetrieveListStrategy(new DataRetrieveListStrategy<VO>()
 		{
 			@Override
 			public List<VO> retrieve() throws DataAccessException
 			{
 				List<VO> listItems;
-				listItems = dataManager.retrieveAllData();
+				listItems = dataContainer.getDataManager().retrieveAllData();
 				Embedded icon;
 				for (VO listItem : listItems)
 				{
-					icon = new Embedded(null, new StreamResourceBuilder()
-							.setReferenceClass(this.getClass())
-							.setRelativeResourcePath("images/delete.png")
-							.setApplication(getEditorViewPanel().getApplication())
-							.createStreamResource());
+					icon = createDeleteIcon();
 					icon.setDescription(I18NResource.localize("Delete Item"));
 					listItem.setIcon(icon);
 					setupDeleteIconClickListener(icon, listItem);
@@ -156,7 +153,7 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 					throws
 					DataAccessException
 			{
-				return dataManager.saveData(dataToSaveAndReturn);
+				return dataContainer.getDataManager().saveData(dataToSaveAndReturn);
 			}
 		});
 		dataContainer.setDataUpdateStrategy(new DataUpdateStrategy<VO>()
@@ -165,7 +162,7 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 			public void update(VO dataToUpdate) throws
 					DataAccessException
 			{
-				dataManager.updateData(dataToUpdate);
+				dataContainer.getDataManager().updateData(dataToUpdate);
 			}
 		});
 		dataContainer.setDataDeleteStrategy(new DataDeleteStrategy<VO>()
@@ -174,7 +171,7 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 			public void delete(VO dataToDelete) throws
 					DataAccessException
 			{
-				dataManager.deleteData(dataToDelete);
+				dataContainer.getDataManager().deleteData(dataToDelete);
 			}
 		});
 	}
@@ -204,11 +201,10 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 
 	private void setupEditorViewListeners()
 	{
-		getEditorViewPanel().addListener(new ComponentContainer.ComponentAttachListener()
+		getEditorViewPanel().setAttachStrategy(new ListEditorAttachStrategy()
 		{
 			@Override
-			public void componentAttachedToContainer(
-					ComponentContainer.ComponentAttachEvent event)
+			public void attached(Component component)
 			{
 				try
 				{
@@ -218,6 +214,7 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 				{
 					getExceptionPopupProvider().popUpErrorException(ex);
 				}
+
 			}
 		});
 	}
@@ -311,25 +308,15 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 		getEditorViewPanel().getEditorTable().setDragMode(Table.TableDragMode.ROW);
 	}
 
-	public String[] getColumnHeaders()
-	{
-		return columnHeaders;
-	}
+	public abstract String[] getColumnHeaders();
 
-	public void setColumnHeaders(String[] columnHeaders)
-	{
-		this.columnHeaders = columnHeaders;
-	}
+	public abstract String[] getVisibleColumns();
 
-	public String[] getVisibleColumns()
-	{
-		return visibleColumns;
-	}
+	public abstract VO createNewListEditorItem();
 
-	public void setVisibleColumns(String[] visibleColumns)
-	{
-		this.visibleColumns = visibleColumns;
-	}
+	public abstract String getItemName();
+
+	public abstract String getListName();
 
 	private void setupDefaultCellStyleGenerator()
 	{
@@ -367,6 +354,11 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 		subFieldMap.put(columnId, textField);
 	}
 
+	private TextField getFirstFieldFromCacheFor(ListEditorItem item)
+	{
+		return fieldMap.get(item).values().iterator().next();
+	}
+
 	private TextField getFieldFromCache(Object itemId, Object propertyId)
 	{
 		Map<Object, TextField> subFieldMap = fieldMap.get(itemId);
@@ -394,10 +386,57 @@ public class ListEditorViewPanelController<VO extends ListEditorItem> implements
 
 	protected ListEditorView getEditorViewPanel()
 	{
-		if (null == editorViewPanel)
-		{
-			editorViewPanel = editorViewFactory.get();
-		}
 		return editorViewPanel;
+	}
+
+	private void configureButtonBehavior()
+	{
+		getEditorViewPanel().getAddItemButton().setCaption(I18NResource.localizeWithParameter("add new _", getItemName()));
+		getEditorViewPanel().getAddItemButton().addListener(new Button.ClickListener()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(Button.ClickEvent event)
+			{
+				addNewResourceItemVO();
+			}
+		});
+	}
+
+	private void addNewResourceItemVO()
+	{
+		try
+		{
+			Embedded icon = createDeleteIcon();
+			VO resourceItemVO = createNewListEditorItem();
+			setupDeleteIconClickListener(icon, resourceItemVO);
+			resourceItemVO.setIcon(icon);
+			BeanItem<VO> beanItem = dataContainer.addItem(resourceItemVO);
+			getEditorViewPanel().getEditorTable().setCurrentPageFirstItemId(beanItem.getBean());
+			getEditorViewPanel().getEditorTable().select(resourceItemVO);
+			TextField field = getFirstFieldFromCacheFor(resourceItemVO);
+			field.setReadOnly(false);
+			field.focus();
+			field.selectAll();
+		}
+		catch (RuntimeException e)
+		{
+			LOG.log(Level.SEVERE, e.getMessage(), e);
+			getPopupProvider().popUpInfo(I18NResource.
+					localizeWithParameter("unable to add new item on", getListName()));
+		}
+
+	}
+
+	private Embedded createDeleteIcon()
+	{
+		Embedded icon;
+		icon = new Embedded(null, new StreamResourceBuilder()
+				.setReferenceClass(ListEditorView.class)
+				.setRelativeResourcePath("images/delete.png")
+				.setApplication(getEditorViewPanel().getApplication())
+				.createStreamResource());
+		return icon;
 	}
 }

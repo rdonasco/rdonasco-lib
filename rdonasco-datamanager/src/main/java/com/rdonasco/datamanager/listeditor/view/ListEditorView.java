@@ -21,6 +21,7 @@ import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ControlledView;
 import com.rdonasco.common.vaadin.view.terminal.StreamResourceBuilder;
+import com.rdonasco.datamanager.listeditor.controller.ListEditorAttachStrategy;
 import com.vaadin.terminal.Resource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Panel;
@@ -36,6 +37,7 @@ public class ListEditorView extends Panel implements ControlledView
 	private static final long serialVersionUID = 1L;
 	private Table editorTable = new Table();
 	private Button addItemButton = new Button();
+	private ListEditorAttachStrategy attachStrategy;
 
 	@Override
 	public void initWidget() throws WidgetInitalizeException
@@ -75,10 +77,20 @@ public class ListEditorView extends Panel implements ControlledView
 				.createStreamResource();
 	}
 
+	public void setAttachStrategy(ListEditorAttachStrategy attachStrategy)
+	{
+		this.attachStrategy = attachStrategy;
+	}
+
+
 	@Override
 	public void attach()
 	{
 		super.attach();
 		addItemButton.setIcon(getAddItemButtonIcon());
+		if (null != attachStrategy)
+		{
+			attachStrategy.attached(this);
+		}
 	}
 }
