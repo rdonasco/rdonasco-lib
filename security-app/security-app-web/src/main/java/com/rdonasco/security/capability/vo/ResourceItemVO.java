@@ -4,6 +4,7 @@
  */
 package com.rdonasco.security.capability.vo;
 
+import com.rdonasco.datamanager.listeditor.view.ListEditorItem;
 import com.rdonasco.security.vo.ResourceVO;
 import com.vaadin.ui.Embedded;
 
@@ -11,7 +12,7 @@ import com.vaadin.ui.Embedded;
  *
  * @author Roy F. Donasco
  */
-public class ResourceItemVO
+public class ResourceItemVO implements ListEditorItem
 {
 
 	Embedded icon;
@@ -23,11 +24,13 @@ public class ResourceItemVO
 		this.resource = resource;
 	}
 
+	@Override
 	public Embedded getIcon()
 	{
 		return icon;
 	}
 
+	@Override
 	public void setIcon(Embedded icon)
 	{
 		this.icon = icon;
@@ -43,11 +46,13 @@ public class ResourceItemVO
 		resource.setId(id);
 	}
 
+	@Override
 	public int hashCode()
 	{
 		return resource.hashCode();
 	}
 
+	@Override
 	public String toString()
 	{
 		return resource.toString();
@@ -76,7 +81,7 @@ public class ResourceItemVO
 	@Override
 	public boolean equals(Object obj)
 	{
-		boolean isEqual = true;
+		boolean isEqual;
 		if (obj == null)
 		{
 			isEqual = false;
