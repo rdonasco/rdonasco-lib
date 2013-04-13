@@ -93,7 +93,7 @@ public class CapabilityManagerImplTest
 	public void testCreateNewAction() throws Exception
 	{
 		System.out.println("createNewAction");
-		ActionVO action = ActionVO.createWithNameAndDescription("testName", "testDescription");
+		ActionVO action = ActionVO.createWithName("testName");
 		CapabilityManagerImpl instance = prepareCapabilityManagerInstanceToTest();
 		doAnswer(new Answer()
 		{
@@ -120,7 +120,6 @@ public class CapabilityManagerImplTest
 		assertNotNull(result.getId());
 		assertEquals(100, result.getId().longValue());
 		assertEquals(action.getName(), result.getName());
-		assertEquals(action.getDescription(), result.getDescription());
 	}
 
 	@Test
@@ -195,7 +194,6 @@ public class CapabilityManagerImplTest
 		String actionName = "Edit";
 		Action action = new Action();
 		action.setName(actionName);
-		action.setDescription(actionName);
 		when(actionDAOMock.findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class))).thenThrow(NonExistentEntityException.class);
 		instance.findOrAddActionNamedAs(actionName);
 		verify(actionDAOMock, times(1)).create(action);
@@ -211,7 +209,6 @@ public class CapabilityManagerImplTest
 		Action action = new Action();
 		action.setId(Long.MIN_VALUE);
 		action.setName(actionName);
-		action.setDescription(actionName);
 		when(actionDAOMock.findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class))).thenReturn(action);
 		ActionVO foundAction = instance.findOrAddActionNamedAs(actionName);
 		verify(actionDAOMock, times(1)).findUniqueDataUsingNamedQuery(anyString(), anyMapOf(String.class, Object.class));

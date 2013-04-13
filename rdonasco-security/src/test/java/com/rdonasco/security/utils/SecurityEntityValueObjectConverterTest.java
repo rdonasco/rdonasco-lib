@@ -198,11 +198,9 @@ public class SecurityEntityValueObjectConverterTest
 		Action expResult = new Action();
 		expResult.setId(actionVO.getId());
 		expResult.setName(actionVO.getName());
-		expResult.setDescription(actionVO.getDescription());
 		Action result = SecurityEntityValueObjectConverter.toAction(actionVO);
 		assertEquals("result.id did not match",expResult.getId(), result.getId());
 		assertEquals("result.name did not match",expResult.getName(), result.getName());
-		assertEquals("result.description did not match",expResult.getDescription(), result.getDescription());		
 		
 	}
 	
@@ -214,11 +212,9 @@ public class SecurityEntityValueObjectConverterTest
 		ActionVO expResult = new ActionVO();
 		expResult.setId(action.getId());
 		expResult.setName(action.getName());
-		expResult.setDescription(action.getDescription());
 		ActionVO result = SecurityEntityValueObjectConverter.toActionVO(action);	
 		assertEquals("result.id did not match",expResult.getId(), result.getId());
 		assertEquals("result.name did not match",expResult.getName(), result.getName());
-		assertEquals("result.description did not match",expResult.getDescription(), result.getDescription());				
 	}
 	
 	@Test

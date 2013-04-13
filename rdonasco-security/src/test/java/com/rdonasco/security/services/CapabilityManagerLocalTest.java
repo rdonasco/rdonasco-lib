@@ -49,7 +49,6 @@ public class CapabilityManagerLocalTest
 	public void testAddAction() throws Exception
 	{
 		ActionVO action = new ActionVO();
-		action.setDescription("test");
 		action.setName("test");
 		ActionVO savedAction = capabilityManager.createNewAction(action);
 		assertNotNull(savedAction.getId());
@@ -65,13 +64,10 @@ public class CapabilityManagerLocalTest
 		ActionVO foundAction = capabilityManager.findActionNamed(actionName);
 		assertNotNull(foundAction);
 		assertEquals(savedAction.getId(), foundAction.getId());
-		assertEquals(savedAction.getDescription(), foundAction.getDescription());
-		foundAction.setDescription("edited action");
 		capabilityManager.updateAction(foundAction);
 		ActionVO updatedAction = capabilityManager.findActionNamed(actionName);
 		assertNotNull(foundAction);
 		assertEquals(foundAction.getId(), updatedAction.getId());
-		assertEquals(foundAction.getDescription(), updatedAction.getDescription());
 	}
 
 	@Test(expected = NonExistentEntityException.class)
@@ -278,7 +274,6 @@ public class CapabilityManagerLocalTest
 			CapabilityManagerException
 	{
 		ActionVO action = new ActionVO();
-		action.setDescription(name + " description");
 		action.setName(name);
 		ActionVO savedAction = capabilityManager.createNewAction(action);
 		return savedAction;

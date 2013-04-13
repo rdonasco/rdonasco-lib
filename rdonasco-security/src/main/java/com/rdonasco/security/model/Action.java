@@ -55,9 +55,6 @@ public class Action implements Serializable
 	@Basic(optional = false)
 	@Column(name = "action_name", nullable = false, length = 64, unique=true)
 	private String name;
-	@Basic(optional = true)
-	@Column(name = "action_description", nullable = false, length = 256)
-	private String description;
 		
 	public static Action createWithName(String name)
 	{
@@ -116,13 +113,4 @@ public class Action implements Serializable
 		this.name = name;
 	}
 
-	public String getDescription()
-	{
-		return description;
-	}
-
-	public void setDescription(String description)
-	{
-		this.description = description;
-	}
 }

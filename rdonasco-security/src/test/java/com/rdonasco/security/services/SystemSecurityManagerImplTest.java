@@ -299,7 +299,6 @@ public class SystemSecurityManagerImplTest
 	private Action createTestDataForActionNamed(String name)
 	{
 		Action action = new Action();
-		action.setDescription(name);
 		action.setName(name);
 		action.setId(Long.MIN_VALUE);
 		return action;

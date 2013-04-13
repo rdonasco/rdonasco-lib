@@ -250,7 +250,6 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 			LOG.log(Level.FINE, e.getMessage(), e);
 			action = new Action();
 			action.setName(name);
-			action.setDescription(name);
 			try
 			{
 				actionDAO.create(action);

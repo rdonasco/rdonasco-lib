@@ -69,7 +69,6 @@ public class SecurityEntityValueObjectDataUtility
 			action = new Action();
 			action.setId(Long.MIN_VALUE + i);
 			action.setName("action name " + i);
-			action.setDescription("action description " + i);
 
 			capabilityAction = new CapabilityAction();
 			capabilityAction.setId(Long.MIN_VALUE + i);
@@ -88,7 +87,6 @@ public class SecurityEntityValueObjectDataUtility
 		action = new Action();
 		action.setId(generateRandomID());
 		action.setName(actionName);
-		action.setDescription("action description for " + actionName);
 		capabilityAction = new CapabilityAction();
 		capabilityAction.setId(generateRandomID());
 		capabilityAction.setAction(action);
@@ -154,7 +152,6 @@ public class SecurityEntityValueObjectDataUtility
 		ActionVO action = new ActionVO();
 		action.setId(Long.MIN_VALUE);
 		action.setName("action");
-		action.setDescription("action");
 		return action;
 	}
 
@@ -257,7 +254,6 @@ public class SecurityEntityValueObjectDataUtility
 	public static Action createTestDataAction()
 	{
 		Action action = new Action();
-		action.setDescription("test action");
 		action.setName("action");
 		Long randomID = generateRandomID();
 		LOG.log(Level.INFO, "generated random ID={0}", randomID);

@@ -28,7 +28,6 @@ public class ActionVO implements Serializable
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String name;
-	private String description;
 			
 	public static ActionVO createWithName(String name)
 	{
@@ -36,24 +35,15 @@ public class ActionVO implements Serializable
 		action.setName(name);
 		return action;
 	}
-	
-	public static ActionVO createWithNameAndDescription(String name, String description)
-	{
-		ActionVO action = new ActionVO();
-		action.setName(name);
-		action.setDescription(description);
-		return action;		
-	}
-	
-	public static ActionVO createWithIdNameAndDescription(Long id,String name, String description)
+
+	public static ActionVO createWithIdAndName(Long id, String name)
 	{
 		ActionVO action = new ActionVO();
 		action.setId(id);
 		action.setName(name);
-		action.setDescription(description);
-		return action;				
+		return action;
 	}
-	
+
 	public Long getId()
 	{
 		return id;
@@ -91,7 +81,7 @@ public class ActionVO implements Serializable
 	@Override
 	public String toString()
 	{
-		return "ActionVO{" + "id=" + id + ", name=" + name + ", description=" + description + '}';
+		return "ActionVO{" + "id=" + id + ", name=" + name + '}';
 	}
 
 	public String getName()
@@ -102,15 +92,5 @@ public class ActionVO implements Serializable
 	public void setName(String name)
 	{
 		this.name = name;
-	}
-
-	public String getDescription()
-	{
-		return description;
-	}
-
-	public void setDescription(String description)
-	{
-		this.description = description;
 	}
 }
