@@ -10,7 +10,6 @@ public class ResourceVOBuilder
 {
 	private Long id;
 	private String name;
-	private String description;
 
 	public ResourceVOBuilder()
 	{
@@ -28,15 +27,9 @@ public class ResourceVOBuilder
 		return this;
 	}
 
-	public ResourceVOBuilder setDescription(String description)
-	{
-		this.description = description;
-		return this;
-	}
-
 	public ResourceVO createResourceVO()
 	{
-		return new ResourceVO(id, name, description);
+		return new ResourceVO(id, name);
 	}
 
 }

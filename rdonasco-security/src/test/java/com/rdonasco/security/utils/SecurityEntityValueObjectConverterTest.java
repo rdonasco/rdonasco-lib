@@ -103,7 +103,6 @@ public class SecurityEntityValueObjectConverterTest
 		assertEquals("capability.actions.size did not match", capability.getActions().size(), resultUserCapability.getCapability().getActions().size());
 		assertEquals("capability.resource.id did not match", capability.getResource().getId(), resultUserCapability.getCapability().getResource().getId());
 		assertEquals("capability.resource.name did not match", capability.getResource().getName(), resultUserCapability.getCapability().getResource().getName());
-		assertEquals("capability.resource.description did not match", capability.getResource().getDescription(), resultUserCapability.getCapability().getResource().getDescription());
 		
 	}
 
@@ -166,11 +165,9 @@ public class SecurityEntityValueObjectConverterTest
 		Resource expResult = new Resource();
 		expResult.setId(resourceVO.getId());
 		expResult.setName(resourceVO.getName());
-		expResult.setDescription(resourceVO.getDescription());
 		Resource result = SecurityEntityValueObjectConverter.toResource(resourceVO);
 		assertEquals("result.id did not match",expResult.getId(), result.getId());
 		assertEquals("result.name did not match",expResult.getName(), result.getName());
-		assertEquals("result.description did not match",expResult.getDescription(), result.getDescription());
 
 	}
 	
@@ -182,12 +179,10 @@ public class SecurityEntityValueObjectConverterTest
 		ResourceVO expResult = new ResourceVOBuilder()
 				.setId(resource.getId())
 				.setName(resource.getName())
-				.setDescription(resource.getDescription())
 				.createResourceVO();
 		ResourceVO result = SecurityEntityValueObjectConverter.toResourceVO(resource);
 		assertEquals("result.id did not match",expResult.getId(), result.getId());
 		assertEquals("result.name did not match",expResult.getName(), result.getName());
-		assertEquals("result.description did not match",expResult.getDescription(), result.getDescription());		
 	}
 	
 	@Test

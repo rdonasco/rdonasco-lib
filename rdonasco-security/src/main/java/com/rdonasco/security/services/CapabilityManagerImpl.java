@@ -204,7 +204,6 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 				{
 					ResourceVO resourceToAdd = new ResourceVOBuilder()
 							.setName(resourceName)
-							.setDescription(resourceName)
 							.createResourceVO();
 					securedResourceVO = addResource(resourceToAdd);
 				}

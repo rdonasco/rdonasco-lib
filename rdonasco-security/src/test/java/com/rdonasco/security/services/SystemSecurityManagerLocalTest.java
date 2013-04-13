@@ -235,7 +235,6 @@ public class SystemSecurityManagerLocalTest
 	{
 		ResourceVO resourceToAdd = new ResourceVOBuilder()
 				.setName(name)
-				.setDescription(name + "description")
 				.createResourceVO();
 
 		ResourceVO resourceAdded = capabilityManager.addResource(resourceToAdd);

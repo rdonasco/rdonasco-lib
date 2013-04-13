@@ -94,12 +94,9 @@ public class CapabilityManagerLocalTest
 	{
 		System.out.println("editResource");
 		ResourceVO resourceToEdit = createTestDataResourceNamed("resourceToEdit");
-		final String editedDescription = "editedResource";
-		resourceToEdit.setDescription(editedDescription);
 		capabilityManager.updateResource(resourceToEdit);
 		ResourceVO updatedResource = capabilityManager.findResourceNamedAs(resourceToEdit.getName());
 		assertEquals(resourceToEdit, updatedResource);
-		assertEquals(resourceToEdit.getDescription(), updatedResource.getDescription());
 	}
 
 	@Test(expected = NonExistentEntityException.class)
@@ -284,7 +281,6 @@ public class CapabilityManagerLocalTest
 	{
 		ResourceVO resourceToAdd = new ResourceVOBuilder()
 				.setName(name)
-				.setDescription(name + "description")
 				.createResourceVO();
 
 		ResourceVO resourceAdded = capabilityManager.addResource(resourceToAdd);

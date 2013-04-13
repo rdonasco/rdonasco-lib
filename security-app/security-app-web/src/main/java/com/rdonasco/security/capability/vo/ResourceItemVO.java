@@ -68,16 +68,6 @@ public class ResourceItemVO implements ListEditorItem
 		resource.setName(name);
 	}
 
-	public String getDescription()
-	{
-		return resource.getDescription();
-	}
-
-	public void setDescription(String description)
-	{
-		resource.setDescription(description);
-	}
-
 	@Override
 	public boolean equals(Object obj)
 	{

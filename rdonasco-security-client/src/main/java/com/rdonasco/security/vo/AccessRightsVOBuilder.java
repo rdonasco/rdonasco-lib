@@ -43,7 +43,6 @@ public class AccessRightsVOBuilder
 	{
 		ResourceVO securedResource = new ResourceVOBuilder()
 				.setName(stringResource)
-				.setDescription(stringResource)
 				.createResourceVO();
 		this.resource = securedResource;
 		return this;

@@ -56,7 +56,6 @@ public class ResourceEditorController extends ListEditorViewPanelController<Reso
 		return new ResourceItemVOBuilder()
 				.setResource(new ResourceVOBuilder()
 				.setName("new resource")
-				.setDescription("new resource")
 				.createResourceVO())
 				.createResourceItemVO();
 	}

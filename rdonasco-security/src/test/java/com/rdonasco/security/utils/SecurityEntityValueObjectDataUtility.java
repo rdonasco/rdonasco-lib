@@ -168,7 +168,6 @@ public class SecurityEntityValueObjectDataUtility
 		ResourceVO resourceVO = new ResourceVOBuilder()
 				.setId(Long.MIN_VALUE)
 				.setName("resource")
-				.setDescription("resource")
 				.createResourceVO();
 		ActionVO actionVO = createTestDataActionVO();
 		CapabilityVO capability = new CapabilityVOBuilder()
@@ -285,7 +284,6 @@ public class SecurityEntityValueObjectDataUtility
 	{
 		Resource resource = new Resource();
 		resource.setId(generateRandomID());
-		resource.setDescription("test resource");
 		resource.setName(resourceName == null ? "test resource" : resourceName);
 		return resource;
 	}
@@ -295,7 +293,6 @@ public class SecurityEntityValueObjectDataUtility
 		ResourceVO resourceVO = new ResourceVOBuilder()
 				.setId(generateRandomID())
 				.setName("test resourceVO")
-				.setDescription("test resourceVO description")
 				.createResourceVO();
 		return resourceVO;
 	}

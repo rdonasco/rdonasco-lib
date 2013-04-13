@@ -56,9 +56,6 @@ public class Resource implements Serializable
 	@Basic(optional = false)
 	@Column(name = "resource_name", nullable = false, length = 256, unique = true)
 	private String name;
-	@Basic(optional = true)
-	@Column(name = "resource_description", nullable = false, length = 256)
-	private String description;	
 
 	public Long getId()
 	{
@@ -108,15 +105,5 @@ public class Resource implements Serializable
 	public void setName(String name)
 	{
 		this.name = name;
-	}
-
-	public String getDescription()
-	{
-		return description;
-	}
-
-	public void setDescription(String description)
-	{
-		this.description = description;
 	}
 }

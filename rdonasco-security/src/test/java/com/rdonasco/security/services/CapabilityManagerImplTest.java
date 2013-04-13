@@ -230,7 +230,6 @@ public class CapabilityManagerImplTest
 		ResourceVO resourceVO = new ResourceVOBuilder()
 				.setId(Long.MIN_VALUE)
 				.setName("test name")
-				.setDescription("test description")
 				.createResourceVO();
 		return resourceVO;
 	}

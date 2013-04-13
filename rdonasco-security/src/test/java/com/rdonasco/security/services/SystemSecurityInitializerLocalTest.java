@@ -155,7 +155,6 @@ public class SystemSecurityInitializerLocalTest
 	{
 		ResourceVO resourceToAdd = new ResourceVOBuilder()
 				.setName(name)
-				.setDescription(name + "description")
 				.createResourceVO();
 
 		ResourceVO resourceAdded = capabilityManager.addResource(resourceToAdd);
