@@ -32,7 +32,7 @@ import java.io.InputStream;
  *
  * @author Roy F. Donasco
  */
-public class CaptchaField extends VerticalLayout
+public class CaptchaFieldLayout extends VerticalLayout
 {
 
 	private static final long serialVersionUID = 1L;
@@ -41,13 +41,13 @@ public class CaptchaField extends VerticalLayout
 	private VerticalLayout captchaHolder = new VerticalLayout();
 	private Button refreshButton = new Button();
 
-	public CaptchaField()
+	public CaptchaFieldLayout()
 	{
 		setCaption(I18NResource.localize("Captcha"));
 		captchaTextField = new TextField();
 	}
 
-	public CaptchaField(TextField textField)
+	public CaptchaFieldLayout(TextField textField)
 	{
 		this.captchaTextField = textField;
 		setCaption(captchaTextField.getCaption());
