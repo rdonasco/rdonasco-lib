@@ -7,25 +7,25 @@ package com.rdonasco.security.capability.controllers;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
-import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.datamanager.listeditor.controller.ListEditorViewPanelController;
 import com.rdonasco.datamanager.services.DataManager;
 import com.rdonasco.security.capability.views.CapabilityViewLayout;
+import com.rdonasco.security.capability.vo.ActionItemVO;
+import com.rdonasco.security.capability.vo.ActionItemVOBuilder;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.capability.vo.ResourceItemVO;
 import com.rdonasco.security.capability.vo.ResourceItemVOBuilder;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
+import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.ResourceVO;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.Property;
 import com.vaadin.ui.Table;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
@@ -49,15 +49,16 @@ public class CapabilityViewLayoutController implements
 	private CapabilityListPanelController capabilityListPanelController;
 	@Inject
 	private CapabilityEditorViewController capabilityEditorViewController;
-//	@Inject
-//	private ResourcesEditorAndSelectorViewController resourceEditorController;
 	@Inject
 	private Instance<ResourceEditorController> listEditorViewControllerInstances;
 	private ResourceEditorController resourceEditorController;
 	@Inject
-	private CapabilityDataManagerDecorator capabilityManager;
+	private Instance<ActionEditorController> actionEditorControllerInstances;
+	private ActionEditorController actionEditorController;
 	@Inject
-	private ActionEditorAndSelectorViewController actionEditorController;
+	private CapabilityDataManagerDecorator capabilityManager;
+//	@Inject
+//	private ActionEditorAndSelectorViewController actionEditorController;
 
 	@PostConstruct
 	@Override
@@ -71,10 +72,11 @@ public class CapabilityViewLayoutController implements
 			capabilityViewLayout.setCenterPanelContent(capabilityEditorViewController.getControlledView().getEditorForm());
 			configureResourceEditor();
 			capabilityViewLayout.addRightPanelContent(getResourceEditorController().getControlledView());
+			configureActionEditor();
 			capabilityViewLayout.addRightPanelContent(actionEditorController.getControlledView());
 
 			// link the two controllers
-			capabilityEditorViewController.setActionTableSource(actionEditorController.getControlledView().getActionEditorTable());
+			capabilityEditorViewController.setActionTableSource(actionEditorController.getControlledView().getEditorTable());
 			capabilityListPanelController.getControlledView().getDataViewListTable().addListener(new Property.ValueChangeListener()
 			{
 				private static final long serialVersionUID = 1L;
@@ -112,6 +114,89 @@ public class CapabilityViewLayoutController implements
 		// To change body of generated methods, choose Tools | Templates.
 		// TODO: Complete code for method refreshView
 		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	private void configureActionEditor()
+	{
+		DataManagerContainer<ActionItemVO> actionsDataContainer = new DataManagerContainer(ActionItemVO.class);
+		getActionEditorController().setDataContainer(actionsDataContainer);
+		actionsDataContainer.setDataManager(new DataManager<ActionItemVO>()
+		{
+			@Override
+			public void deleteData(ActionItemVO data) throws DataAccessException
+			{
+				try
+				{
+					capabilityManager.removeAction(data.getAction());
+				}
+				catch (Exception ex)
+				{
+					throw new DataAccessException(ex);
+				}
+			}
+
+			@Override
+			public ActionItemVO loadData(ActionItemVO data) throws
+					DataAccessException
+			{
+				throw new UnsupportedOperationException("Not supported yet.");
+			}
+
+			@Override
+			public List<ActionItemVO> retrieveAllData() throws
+					DataAccessException
+			{
+				List<ActionItemVO> actionItems = null;
+				try
+				{
+					List<ActionVO> actionVOs = capabilityManager.findAllActions();
+					actionItems = new ArrayList<ActionItemVO>(actionVOs.size());
+					for (ActionVO action : actionVOs)
+					{
+						actionItems.add(new ActionItemVOBuilder()
+								.setAction(action)
+								.createActionItemVO());
+					}
+				}
+				catch (Exception ex)
+				{
+					throw new DataAccessException(ex);
+				}
+				return actionItems;
+
+			}
+
+			@Override
+			public ActionItemVO saveData(ActionItemVO data) throws
+					DataAccessException
+			{
+				try
+				{
+					data.setId(capabilityManager.createNewAction(data.getAction()).getId());
+				}
+				catch (Exception e)
+				{
+					throw new DataAccessException(e);
+				}
+				return data;
+			}
+
+			@Override
+			public void updateData(ActionItemVO data) throws DataAccessException
+			{
+				try
+				{
+					capabilityManager.updateAction(data.getAction());
+				}
+				catch (Exception e)
+				{
+					throw new DataAccessException(e);
+				}
+			}
+		});
+
+		getActionEditorController().initializeControlledViewBehavior();
+		getActionEditorController().getControlledView().getEditorTable().setDragMode(Table.TableDragMode.ROW);
 	}
 
 	private void configureResourceEditor()
@@ -207,5 +292,14 @@ public class CapabilityViewLayoutController implements
 			resourceEditorController = listEditorViewControllerInstances.get();
 		}
 		return resourceEditorController;
+	}
+
+	protected ListEditorViewPanelController getActionEditorController()
+	{
+		if (null == actionEditorController)
+		{
+			actionEditorController = actionEditorControllerInstances.get();
+		}
+		return actionEditorController;
 	}
 }

@@ -5,19 +5,16 @@
 
 package com.rdonasco.security.capability.vo;
 
+import com.rdonasco.datamanager.listeditor.view.ListEditorItem;
 import com.rdonasco.security.vo.ActionVO;
 import com.vaadin.ui.Embedded;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public class ActionItemVO 
+public class ActionItemVO implements ListEditorItem
 {
-
-	private static final Logger LOG = Logger.getLogger(ActionItemVO.class.getName());
 	private Embedded icon;
 	private ActionVO action;
 
@@ -33,6 +30,7 @@ public class ActionItemVO
 	}
 
 
+	@Override
 	public Embedded getIcon()
 	{
 		return icon;
@@ -90,13 +88,9 @@ public class ActionItemVO
 		action.setName(name);
 	}
 
-	public String getDescription()
+	@Override
+	public void setIcon(Embedded icon)
 	{
-		return action.getDescription();
-	}
-
-	public void setDescription(String description)
-	{
-		action.setDescription(description);
+		this.icon = icon;
 	}
 }

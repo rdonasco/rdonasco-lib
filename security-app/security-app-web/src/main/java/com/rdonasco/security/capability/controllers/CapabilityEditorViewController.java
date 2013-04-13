@@ -410,10 +410,9 @@ public class CapabilityEditorViewController implements
 			List<ActionVO> actions = new ArrayList<ActionVO>();
 			for (ActionItemVO actionItem : actionsContainer.getItemIds())
 			{
-				actions.add(ActionVO.createWithIdNameAndDescription(
+				actions.add(ActionVO.createWithIdAndName(
 						actionItem.getId(),
-						actionItem.getName(),
-						actionItem.getDescription()));
+						actionItem.getName()));
 			}
 			currentItem.getBean().setActions(actions);
 			CapabilityItemVO capabilityItemVO = ((BeanItem<CapabilityItemVO>) editorView.getEditorForm().getItemDataSource()).getBean();
