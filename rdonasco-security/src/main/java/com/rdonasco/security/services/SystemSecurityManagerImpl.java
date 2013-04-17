@@ -359,4 +359,21 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			LOG.log(Level.WARNING, ex.getMessage(), ex);
 		}
 	}
+
+	@Override
+	public List<UserSecurityProfileVO> findAllProfiles() throws
+			SecurityManagerException
+	{
+		List<UserSecurityProfileVO> allProfileVOList;
+		try
+		{
+			List<UserSecurityProfile> allProfiles = userSecurityProfileDAO.findAllData();
+			allProfileVOList = SecurityEntityValueObjectConverter.toUserProfileVOList(allProfiles);
+		}
+		catch (Exception e)
+		{
+			throw new SecurityManagerException(e);
+		}
+		return allProfileVOList;
+	}
 }

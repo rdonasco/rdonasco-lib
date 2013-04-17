@@ -284,4 +284,15 @@ public class SecurityEntityValueObjectConverter
 				.createUserCapabilityVO();
 		return userCapabilityVO;
 	}
+
+	public static List<UserSecurityProfileVO> toUserProfileVOList(
+			List<UserSecurityProfile> allProfiles) throws IllegalAccessException, InvocationTargetException
+	{
+		List<UserSecurityProfileVO> convertedList = new ArrayList<UserSecurityProfileVO>(allProfiles.size());
+		for(UserSecurityProfile profile : allProfiles)
+		{
+			convertedList.add(toUserProfileVO(profile));
+		}
+		return convertedList;
+	}
 }
