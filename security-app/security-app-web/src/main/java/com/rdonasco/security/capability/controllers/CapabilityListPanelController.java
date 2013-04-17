@@ -4,6 +4,7 @@
  */
 package com.rdonasco.security.capability.controllers;
 
+import com.rdonasco.security.common.controllers.ClickListenerProvider;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
@@ -12,11 +13,12 @@ import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
-import com.rdonasco.security.capability.utils.Constants;
+import com.rdonasco.security.capability.utils.CapabilityConstants;
 import com.rdonasco.datamanager.utils.TableHelper;
 import com.rdonasco.security.capability.views.CapabilityListPanel;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.capability.vo.CapabilityItemVOBuilder;
+import com.rdonasco.security.i18n.MessageKeys;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.vaadin.data.util.BeanItem;
@@ -59,7 +61,7 @@ public class CapabilityListPanelController implements
 	{
 		try
 		{
-			capabilityListTable.addStyleName(SecurityDefaultTheme.CSS_CAPABILITY_TABLE);
+			capabilityListTable.addStyleName(SecurityDefaultTheme.CSS_DATA_TABLE);
 			TableHelper.setupTable(capabilityListTable);
 			capabilityItemTableContainer.setDataManager(dataManager);
 			dataManager.setClickListenerProvider(new ClickListenerProvider<CapabilityItemVO>()
@@ -76,11 +78,11 @@ public class CapabilityListPanelController implements
 						public void click(MouseEvents.ClickEvent event)
 						{
 							MessageBox messageBox = new MessageBox(capabilityListPanel.getWindow(),
-									I18NResource.localize("Are you sure?"),
+									I18NResource.localize(MessageKeys.ARE_YOU_SURE),
 									MessageBox.Icon.QUESTION,
-									I18NResource.localize("Do you really want to delete this?"),
-									new MessageBox.ButtonConfig(MessageBox.ButtonType.YES, I18NResource.localize("Yes")),
-									new MessageBox.ButtonConfig(MessageBox.ButtonType.NO, I18NResource.localize("No")));
+									I18NResource.localize(MessageKeys.DO_YOU_REALLY_WANT_TO_DELETE_THIS),
+									new MessageBox.ButtonConfig(MessageBox.ButtonType.YES, I18NResource.localize(MessageKeys.YES)),
+									new MessageBox.ButtonConfig(MessageBox.ButtonType.NO, I18NResource.localize(MessageKeys.NO)));
 							messageBox.show(new MessageBox.EventListener()
 							{
 								private static final long serialVersionUID = 1L;
@@ -94,7 +96,7 @@ public class CapabilityListPanelController implements
 										try
 										{
 											capabilityItemTableContainer.removeItem(data);
-											getPopupProvider().popUpInfo("Capability deleted");
+											getPopupProvider().popUpInfo(I18NResource.localize(MessageKeys.CAPABILITY_DELETED));
 										}
 										catch (Exception e)
 										{
@@ -112,8 +114,8 @@ public class CapabilityListPanelController implements
 			});
 //			capabilityItemTableContainer.setDummyAddRecord(createDummyAddRecord());
 			capabilityListTable.setContainerDataSource(capabilityItemTableContainer);
-			capabilityListTable.setVisibleColumns(Constants.TABLE_VISIBLE_COLUMNS);
-			capabilityListTable.setColumnHeaders(Constants.TABLE_VISIBLE_HEADERS);
+			capabilityListTable.setVisibleColumns(CapabilityConstants.TABLE_VISIBLE_COLUMNS);
+			capabilityListTable.setColumnHeaders(CapabilityConstants.TABLE_VISIBLE_HEADERS);
 			capabilityListPanel.setDataViewListTable(capabilityListTable);
 			capabilityListPanel.initWidget();
 			capabilityListPanel.getAddCapabilityButton().addListener(new Button.ClickListener()
@@ -188,7 +190,7 @@ public class CapabilityListPanelController implements
 		}
 		catch (RuntimeException e)
 		{
-			getPopupProvider().popUpError(I18NResource.localizeWithParameter("Unable to add new capability", newCapabilityVO.getTitle()));
+			getPopupProvider().popUpError(I18NResource.localizeWithParameter(MessageKeys.UNABLE_TO_ADD_NEW_CAPABILITY, newCapabilityVO.getTitle()));
 		}
 	}
 

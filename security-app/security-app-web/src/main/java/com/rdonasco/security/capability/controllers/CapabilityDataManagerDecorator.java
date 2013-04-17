@@ -4,7 +4,9 @@
  */
 package com.rdonasco.security.capability.controllers;
 
+import com.rdonasco.security.common.controllers.ClickListenerProvider;
 import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.datamanager.services.DataManager;
 import com.rdonasco.security.capability.utils.IconHelper;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
@@ -27,8 +29,8 @@ import javax.ejb.EJB;
 public class CapabilityDataManagerDecorator implements
 		DataManager<CapabilityItemVO>, Serializable
 {
-	private static final long serialVersionUID = 1L;
 
+	private static final long serialVersionUID = 1L;
 	@EJB
 	private CapabilityManagerLocal capabilityManager;
 	private ClickListenerProvider clickListenerProvider;
@@ -64,7 +66,7 @@ public class CapabilityDataManagerDecorator implements
 		try
 		{
 			CapabilityVO capability = capabilityManager.findCapabilityWithId(data.getId());
-			itemVO = convertToCapabilityItemVOandAddToContainer(capability);
+			itemVO = convertToCapabilityItemVOWithListener(capability);
 		}
 		catch (CapabilityManagerException ex)
 		{
@@ -84,7 +86,7 @@ public class CapabilityDataManagerDecorator implements
 			capabilityItems = new ArrayList<CapabilityItemVO>(capabilities.size());
 			for (CapabilityVO capability : capabilities)
 			{
-				capabilityItems.add(convertToCapabilityItemVOandAddToContainer(capability));
+				capabilityItems.add(convertToCapabilityItemVOWithListener(capability));
 			}
 		}
 		catch (CapabilityManagerException ex)
@@ -102,7 +104,7 @@ public class CapabilityDataManagerDecorator implements
 		try
 		{
 			CapabilityVO createdCapability = capabilityManager.createNewCapability(data.getCapabilityVO());
-			itemVO = convertToCapabilityItemVOandAddToContainer(createdCapability);
+			itemVO = convertToCapabilityItemVOWithListener(createdCapability);
 		}
 		catch (CapabilityManagerException ex)
 		{
@@ -141,19 +143,18 @@ public class CapabilityDataManagerDecorator implements
 		return capabilityManager.findAllResources();
 	}
 
-	private CapabilityItemVO convertToCapabilityItemVOandAddToContainer(
+	private CapabilityItemVO convertToCapabilityItemVOWithListener(
 			CapabilityVO capability)
 	{
-		CapabilityItemVO itemVO;
-		Embedded icon = IconHelper.createDeleteIcon("Delete");
-		final CapabilityItemVO capabilityItem = new CapabilityItemVOBuilder()
+
+		Embedded icon = IconHelper.createDeleteIcon(I18NResource.localize("Delete"));
+		CapabilityItemVO itemVO = new CapabilityItemVOBuilder()
 				.setCapabilityVO(capability)
 				.setEmbeddedIcon(icon)
 				.createCapabilityItemVO();
-		itemVO = capabilityItem;
 		if (getClickListenerProvider() != null)
 		{
-			icon.addListener(getClickListenerProvider().provideClickListenerFor(capabilityItem));
+			icon.addListener(getClickListenerProvider().provideClickListenerFor(itemVO));
 		}
 		return itemVO;
 	}

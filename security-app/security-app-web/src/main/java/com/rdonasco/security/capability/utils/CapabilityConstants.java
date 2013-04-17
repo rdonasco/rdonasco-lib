@@ -10,7 +10,7 @@ import com.rdonasco.common.i18.I18NResource;
  *
  * @author Roy F. Donasco
  */
-public interface Constants
+public interface CapabilityConstants
 {
 
 	public static final Object[] TABLE_VISIBLE_COLUMNS = new Object[]

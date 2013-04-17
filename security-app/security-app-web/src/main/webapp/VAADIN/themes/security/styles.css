@@ -61,19 +61,19 @@
 	white-space: normal;
 }
 
-.capabilityWorkspace
+.threeColumnViewLayout
 {
 
 }
-.capabilityWorkspace .leftPanel
+.threeColumnViewLayout .leftPanel
 {
 
 }
-.capabilityWorkspace .centerPanel
+.threeColumnViewLayout .centerPanel
 {
 
 }
-.capabilityWorkspace .rightPanel
+.threeColumnViewLayout .rightPanel
 {
 
 }
@@ -89,6 +89,10 @@
 	padding:0px;
 }
 
+.userProfileWorkspace
+{
+
+}
 .v-table-cell-content-cellIcon
 {
 	width: 10px;
@@ -99,16 +103,6 @@
 	width: 100%;
 }
 
-.layoutDesign
-{
-	background-color: appworkspace;
-}
-
-.fileDrop
-{
-	background-color: aqua;
-	border: 2px;
-}
 .i18nParameter
 {
 	font-weight: bold;

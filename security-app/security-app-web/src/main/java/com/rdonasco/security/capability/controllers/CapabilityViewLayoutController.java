@@ -12,12 +12,12 @@ import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.datamanager.listeditor.controller.ListEditorViewPanelController;
 import com.rdonasco.datamanager.services.DataManager;
-import com.rdonasco.security.capability.views.CapabilityViewLayout;
 import com.rdonasco.security.capability.vo.ActionItemVO;
 import com.rdonasco.security.capability.vo.ActionItemVOBuilder;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.capability.vo.ResourceItemVO;
 import com.rdonasco.security.capability.vo.ResourceItemVOBuilder;
+import com.rdonasco.security.common.views.ThreeColumnFlexibleCenterViewLayout;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.ResourceVO;
@@ -37,12 +37,12 @@ import javax.inject.Inject;
  */
 @Dependent
 public class CapabilityViewLayoutController implements
-		ViewController<CapabilityViewLayout>
+		ViewController<ThreeColumnFlexibleCenterViewLayout>
 {
 
 	private static final long serialVersionUID = 1L;
 	@Inject
-	private CapabilityViewLayout capabilityViewLayout;
+	private ThreeColumnFlexibleCenterViewLayout capabilityViewLayout;
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
 	@Inject
@@ -103,7 +103,7 @@ public class CapabilityViewLayoutController implements
 	}
 
 	@Override
-	public CapabilityViewLayout getControlledView()
+	public ThreeColumnFlexibleCenterViewLayout getControlledView()
 	{
 		return capabilityViewLayout;
 	}

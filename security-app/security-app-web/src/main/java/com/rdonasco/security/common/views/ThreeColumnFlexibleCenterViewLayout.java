@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.rdonasco.security.capability.views;
+package com.rdonasco.security.common.views;
 
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.view.ControlledView;
@@ -19,7 +19,7 @@ import javax.enterprise.context.Dependent;
  * @author Roy F. Donasco
  */
 @Dependent
-public class CapabilityViewLayout extends HorizontalLayout implements
+public class ThreeColumnFlexibleCenterViewLayout extends HorizontalLayout implements
 		ControlledView
 {
 
@@ -31,7 +31,7 @@ public class CapabilityViewLayout extends HorizontalLayout implements
 	@Override
 	public void initWidget() throws WidgetInitalizeException
 	{
-		addStyleName(SecurityDefaultTheme.CSS_CAPABILITY_WORKSPACE);
+		addStyleName(SecurityDefaultTheme.CSS_THREE_COLUMN_VIEW_LAYOUT);
 		setSizeFull();
 		leftPanel.setWidth(250, UNITS_PIXELS);
 		leftPanel.setHeight(100F, UNITS_PERCENTAGE);
