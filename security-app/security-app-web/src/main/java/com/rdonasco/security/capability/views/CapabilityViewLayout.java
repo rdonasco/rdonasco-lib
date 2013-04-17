@@ -51,13 +51,6 @@ public class CapabilityViewLayout extends HorizontalLayout implements
 		addComponent(centerPanel);
 		addComponent(rightPanel);
 
-//		rightPanel.setWidth(200, UNITS_PIXELS);
-//		rightPanel.setMargin(true);
-//		centerPanel.setSizeUndefined();
-//		centerPanel.setMargin(true);
-
-//		addComponent(centerPanel);
-//		addComponent(rightPanel);
 		setExpandRatio(centerPanel, 1); // occupy all remaining space;
 
 	}
