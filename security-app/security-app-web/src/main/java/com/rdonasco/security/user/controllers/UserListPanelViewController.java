@@ -16,26 +16,37 @@
  */
 package com.rdonasco.security.user.controllers;
 
+import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
+import com.rdonasco.common.utils.RandomTextGenerator;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
+import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.datamanager.utils.TableHelper;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
+import com.rdonasco.security.common.builders.DeletePromptBuilder;
 import com.rdonasco.security.common.controllers.ClickListenerProvider;
 import com.rdonasco.security.i18n.MessageKeys;
+import com.rdonasco.security.user.utils.UserConfigConstants;
 import com.rdonasco.security.user.utils.UserConstants;
 import com.rdonasco.security.user.views.UserListPanelView;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
+import com.rdonasco.security.user.vo.UserSecurityProfileItemVOBuilder;
+import com.rdonasco.security.vo.UserSecurityProfileVO;
+import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import com.vaadin.event.MouseEvents;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Table;
 import de.steinwedel.vaadin.MessageBox;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.inject.Inject;
 
 /**
@@ -46,11 +57,14 @@ public class UserListPanelViewController implements
 		ViewController<UserListPanelView>
 {
 
+	private static final Logger LOG = Logger.getLogger(UserListPanelViewController.class.getName());
 	private static final long serialVersionUID = 1L;
 	@Inject
 	private UserListPanelView userListPanelView;
 	@Inject
 	private UserDataManagerDecorator userDataManager;
+	@EJB
+	private ConfigDataManagerVODecoratorRemote configDataManager;
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
 	@Inject
@@ -71,22 +85,13 @@ public class UserListPanelViewController implements
 			userListTable.addStyleName(SecurityDefaultTheme.CSS_DATA_TABLE);
 			TableHelper.setupTable(userListTable);
 			userItemTableContainer.setDataManager(userDataManager);
-			setupDeleteClickListener();
 			userListTable.setContainerDataSource(userItemTableContainer);
 			userListTable.setVisibleColumns(UserConstants.TABLE_VISIBLE_COLUMNS);
 			userListTable.setColumnHeaders(UserConstants.TABLE_VISIBLE_HEADERS);
 			userListPanelView.setDataViewListTable(userListTable);
 			userListPanelView.initWidget();
-			userListPanelView.getAddUserButton().addListener(new Button.ClickListener()
-			{
-				@Override
-				public void buttonClick(Button.ClickEvent event)
-				{
-					// To change body of generated methods, choose Tools | Templates.
-					// TODO: Complete code for method buttonClick
-					throw new UnsupportedOperationException("Not supported yet.");
-				}
-			});
+			userListPanelView.getAddUserButton().addListener(new AddNewUserClickListener());
+			setupDeleteClickListener();
 		}
 		catch (WidgetInitalizeException ex)
 		{
@@ -103,60 +108,118 @@ public class UserListPanelViewController implements
 	@Override
 	public void refreshView() throws WidgetException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method refreshView
-		throw new UnsupportedOperationException("Not supported yet.");
+		try
+		{
+			userItemTableContainer.refresh();
+		}
+		catch (DataAccessException ex)
+		{
+			throw new WidgetException(ex);
+		}
 	}
 
 	private void setupDeleteClickListener()
 	{
-		userDataManager.setClickListenerProvider(new ClickListenerProvider<CapabilityItemVO>()
+		userDataManager.setClickListenerProvider(new ClickListenerProvider<UserSecurityProfileItemVO>()
 		{
 			@Override
 			public MouseEvents.ClickListener provideClickListenerFor(
-					final CapabilityItemVO data)
+					final UserSecurityProfileItemVO data)
 			{
-				MouseEvents.ClickListener clickListener = new MouseEvents.ClickListener()
-				{
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void click(MouseEvents.ClickEvent event)
-					{
-						MessageBox messageBox = new MessageBox(userListPanelView.getWindow(),
-								I18NResource.localize(MessageKeys.ARE_YOU_SURE),
-								MessageBox.Icon.QUESTION,
-								I18NResource.localize(MessageKeys.DO_YOU_REALLY_WANT_TO_DELETE_THIS),
-								new MessageBox.ButtonConfig(MessageBox.ButtonType.YES, I18NResource.localize(MessageKeys.YES)),
-								new MessageBox.ButtonConfig(MessageBox.ButtonType.NO, I18NResource.localize(MessageKeys.NO)));
-						messageBox.show(new MessageBox.EventListener()
-						{
-							private static final long serialVersionUID = 1L;
-
-							@Override
-							public void buttonClicked(
-									MessageBox.ButtonType buttonType)
-							{
-								if (MessageBox.ButtonType.YES.equals(buttonType))
-								{
-									try
-									{
-										userItemTableContainer.removeItem(data);
-										popupProvider.popUpInfo(I18NResource.localize(MessageKeys.USER_PROFILE_DELETED));
-									}
-									catch (Exception e)
-									{
-										exceptionPopupProvider.popUpErrorException(e);
-									}
-
-								}
-							}
-						});
-					}
-				};
+				MessageBox deletePrompt = new DeletePromptBuilder()
+						.setParentWindow(getControlledView().getWindow())
+						.createDeletePrompt();
+				MouseEvents.ClickListener clickListener = new DeleteUserClickListener(deletePrompt, data);
 				return clickListener;
-
 			}
 		});
+	}
+
+	private void addNewUser()
+	{
+		int defaultPasswordLength = configDataManager.loadValue(UserConfigConstants.XPATH_DEFAULT_PASSWORD_LENGTH, Integer.class, 8);
+		UserSecurityProfileVO newUserProfile = new UserSecurityProfileVOBuilder()
+				.setLoginId(I18NResource.localize("new logon id"))
+				.setPassword(RandomTextGenerator.generate(defaultPasswordLength))
+				.createUserSecurityProfileVO();
+		try
+		{
+			UserSecurityProfileItemVO newItemVO = new UserSecurityProfileItemVOBuilder()
+					.setUserSecurityProfileVO(newUserProfile)
+					.createUserSecurityProfileItemVO();
+			userItemTableContainer.addItem(newItemVO);
+			userListTable.setCurrentPageFirstItemId(newItemVO);
+			userListTable.select(newItemVO);
+		}
+		catch (Exception e)
+		{
+			LOG.log(Level.WARNING, e.getMessage(), e);
+			popupProvider.popUpError(I18NResource.localizeWithParameter(MessageKeys.UNABLE_TO_ADD_NEW_USER, newUserProfile.getLogonId()));
+		}
+	}
+
+	public Table getUserListTable()
+	{
+		return userListTable;
+	}
+
+	private class AddNewUserClickListener implements Button.ClickListener
+	{
+
+		private static final long serialVersionUID = 1L;
+
+		public AddNewUserClickListener()
+		{
+		}
+
+		@Override
+		public void buttonClick(Button.ClickEvent event)
+		{
+			addNewUser();
+		}
+	}
+
+	class DeleteUserClickListener implements MouseEvents.ClickListener
+	{
+
+		private static final long serialVersionUID = 1L;
+		private final MessageBox deletePrompt;
+		private final UserSecurityProfileItemVO data;
+
+		public DeleteUserClickListener(MessageBox deletePrompt,
+				UserSecurityProfileItemVO data)
+		{
+			this.deletePrompt = deletePrompt;
+			this.data = data;
+		}
+
+		@Override
+		public void click(MouseEvents.ClickEvent event)
+		{
+			deletePrompt.show(new MessageBox.EventListener()
+			{
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void buttonClicked(
+						MessageBox.ButtonType buttonType)
+				{
+					if (MessageBox.ButtonType.YES.equals(buttonType))
+					{
+						try
+						{
+							userItemTableContainer.removeItem(data);
+							popupProvider.popUpInfo(I18NResource.localize(MessageKeys.USER_PROFILE_DELETED));
+
+						}
+						catch (Exception e)
+						{
+							exceptionPopupProvider.popUpErrorException(e);
+						}
+
+					}
+				}
+			});
+		}
 	}
 }

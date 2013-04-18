@@ -1,6 +1,6 @@
 /*
  * Copyright 2013 Roy F. Donasco.
- * File Created on: 17-Apr-2013
+ * File Created on: 18-Apr-2013
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rdonasco.security.user.utils;
 
-import com.rdonasco.common.i18.I18NResource;
+package com.rdonasco.security.user.utils;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public interface UserConstants
+public final class UserConfigConstants
 {
 
-	public static final Object[] TABLE_VISIBLE_COLUMNS = new Object[]
+	public static final String XPATH_MODULE_ROOT = "/security";
+	public static final String XPATH_DEFAULT_PASSWORD_LENGTH = XPATH_MODULE_ROOT + "/user/default/password length";
+
+	public static String getXPath(String configXPath)
 	{
-		"icon", "logonId"
-	};
-	public static final String[] TABLE_VISIBLE_HEADERS = new String[]
-	{
-		"",
-		I18NResource.localize("Logon ID")
-	};
+		return new StringBuilder(XPATH_MODULE_ROOT).append(configXPath).toString();
+	}
 }

@@ -24,7 +24,7 @@ import com.rdonasco.security.capability.utils.IconHelper;
 import com.rdonasco.security.common.controllers.ClickListenerProvider;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.services.SystemSecurityManager;
-import com.rdonasco.security.services.SystemSecurityManagerDecorator;
+import com.rdonasco.security.services.SystemSecurityManagerLocal;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.inject.Inject;
+import javax.ejb.EJB;
 
 /**
  *
@@ -42,8 +42,8 @@ import javax.inject.Inject;
 public class UserDataManagerDecorator implements
 		DataManager<UserSecurityProfileItemVO>
 {
-	@Inject
-	private SystemSecurityManagerDecorator securityManager;
+	@EJB
+	private SystemSecurityManagerLocal securityManager;
 	private ClickListenerProvider clickListenerProvider;
 
 	public ClickListenerProvider getClickListenerProvider()
