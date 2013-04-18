@@ -17,11 +17,11 @@
 
 package com.rdonasco.security.services;
 
-import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
+import java.util.List;
 import javax.ejb.EJB;
 
 /**
@@ -88,5 +88,12 @@ public class SystemSecurityManagerDecorator implements SystemSecurityManager
 			throws SecurityManagerException
 	{
 		systemSecurityManager.updateSecurityProfile(userSecurityProfile);
+	}
+
+	@Override
+	public List<UserSecurityProfileVO> findAllProfiles() throws
+			SecurityManagerException
+	{
+		return systemSecurityManager.findAllProfiles();
 	}
 }

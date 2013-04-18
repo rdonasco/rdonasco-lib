@@ -16,11 +16,11 @@
  */
 package com.rdonasco.security.services;
 
-import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
+import java.util.List;
 
 /**
  *
@@ -44,8 +44,9 @@ public interface SystemSecurityManager
 
 	void addCapabilityForUser(UserSecurityProfileVO userSecurityProfile,
 			CapabilityVO capability) throws SecurityManagerException;
-	
+
 	void removeSecurityProfile(UserSecurityProfileVO securityProfileToRemove) throws SecurityManagerException;
 	UserSecurityProfileVO findSecurityProfileWithLogonID(String logonID) throws SecurityManagerException;
 	boolean isSecuredResource(String resource);
+	List<UserSecurityProfileVO> findAllProfiles() throws SecurityManagerException;
 }
