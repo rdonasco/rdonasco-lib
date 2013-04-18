@@ -18,6 +18,7 @@ import com.rdonasco.datamanager.utils.TableHelper;
 import com.rdonasco.security.capability.views.CapabilityListPanel;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.capability.vo.CapabilityItemVOBuilder;
+import com.rdonasco.security.common.builders.DeletePromptBuilder;
 import com.rdonasco.security.i18n.MessageKeys;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
@@ -64,54 +65,7 @@ public class CapabilityListPanelController implements
 			capabilityListTable.addStyleName(SecurityDefaultTheme.CSS_DATA_TABLE);
 			TableHelper.setupTable(capabilityListTable);
 			capabilityItemTableContainer.setDataManager(dataManager);
-			dataManager.setClickListenerProvider(new ClickListenerProvider<CapabilityItemVO>()
-			{
-				@Override
-				public MouseEvents.ClickListener provideClickListenerFor(
-						final CapabilityItemVO data)
-				{
-					MouseEvents.ClickListener clickListener = new MouseEvents.ClickListener()
-					{
-						private static final long serialVersionUID = 1L;
-
-						@Override
-						public void click(MouseEvents.ClickEvent event)
-						{
-							MessageBox messageBox = new MessageBox(capabilityListPanel.getWindow(),
-									I18NResource.localize(MessageKeys.ARE_YOU_SURE),
-									MessageBox.Icon.QUESTION,
-									I18NResource.localize(MessageKeys.DO_YOU_REALLY_WANT_TO_DELETE_THIS),
-									new MessageBox.ButtonConfig(MessageBox.ButtonType.YES, I18NResource.localize(MessageKeys.YES)),
-									new MessageBox.ButtonConfig(MessageBox.ButtonType.NO, I18NResource.localize(MessageKeys.NO)));
-							messageBox.show(new MessageBox.EventListener()
-							{
-								private static final long serialVersionUID = 1L;
-
-								@Override
-								public void buttonClicked(
-										MessageBox.ButtonType buttonType)
-								{
-									if (MessageBox.ButtonType.YES.equals(buttonType))
-									{
-										try
-										{
-											capabilityItemTableContainer.removeItem(data);
-											getPopupProvider().popUpInfo(I18NResource.localize(MessageKeys.CAPABILITY_DELETED));
-										}
-										catch (Exception e)
-										{
-											getExceptionPopupProvider().popUpErrorException(e);
-										}
-
-									}
-								}
-							});
-						}
-					};
-					return clickListener;
-
-				}
-			});
+			setupDeleteClickListener();
 //			capabilityItemTableContainer.setDummyAddRecord(createDummyAddRecord());
 			capabilityListTable.setContainerDataSource(capabilityItemTableContainer);
 			capabilityListTable.setVisibleColumns(CapabilityConstants.TABLE_VISIBLE_COLUMNS);
@@ -197,5 +151,53 @@ public class CapabilityListPanelController implements
 	public Table getCapabilityListTable()
 	{
 		return capabilityListTable;
+	}
+
+	private void setupDeleteClickListener()
+	{
+		dataManager.setClickListenerProvider(new ClickListenerProvider<CapabilityItemVO>()
+		{
+			@Override
+			public MouseEvents.ClickListener provideClickListenerFor(
+					final CapabilityItemVO data)
+			{
+				MouseEvents.ClickListener clickListener = new MouseEvents.ClickListener()
+				{
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void click(MouseEvents.ClickEvent event)
+					{
+						new DeletePromptBuilder().setParentWindow(getControlledView().getWindow())
+								.createDeletePrompt()
+								.show(new MessageBox.EventListener()
+						{
+							private static final long serialVersionUID = 1L;
+
+							@Override
+							public void buttonClicked(
+									MessageBox.ButtonType buttonType)
+							{
+								if (MessageBox.ButtonType.YES.equals(buttonType))
+								{
+									try
+									{
+										capabilityItemTableContainer.removeItem(data);
+										getPopupProvider().popUpInfo(I18NResource.localize(MessageKeys.CAPABILITY_DELETED));
+									}
+									catch (Exception e)
+									{
+										getExceptionPopupProvider().popUpErrorException(e);
+									}
+
+								}
+							}
+						});
+					}
+				};
+				return clickListener;
+
+			}
+		});
 	}
 }
