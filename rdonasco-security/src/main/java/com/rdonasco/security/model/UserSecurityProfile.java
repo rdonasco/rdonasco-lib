@@ -56,7 +56,7 @@ public class UserSecurityProfile implements Serializable
 	@Column(name = "id", nullable = false)
 	private Long id;
 	@Basic(optional = false)
-	@Column(name = "logon_id", nullable = false, length = 128)
+	@Column(name = "logon_id", nullable = false, length = 128, unique = true)
 	private String logonId;
 	@Basic(optional = false)
 	@Column(name = "password", nullable = false)
@@ -70,7 +70,7 @@ public class UserSecurityProfile implements Serializable
 	private Date registrationTokenExpiration;
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile", fetch = FetchType.EAGER)
 	private Collection<UserCapability> capabilities;
-	
+
 	public Long getId()
 	{
 		return id;
@@ -133,7 +133,7 @@ public class UserSecurityProfile implements Serializable
 		{
 			capability.setUserProfile(this);
 		}
-	}	
+	}
 
 	@Override
 	public int hashCode()
