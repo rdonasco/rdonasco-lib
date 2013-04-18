@@ -19,10 +19,13 @@ package com.rdonasco.security.user.views;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ControlledView;
+import com.rdonasco.datamanager.listeditor.controller.ListEditorAttachStrategy;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import static com.vaadin.terminal.Sizeable.UNITS_PERCENTAGE;
 import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
@@ -37,6 +40,8 @@ public class UserListPanelView extends Panel implements ControlledView
 	private static final long serialVersionUID = 1L;
 	private Table dataViewListTable;
 	private Button addUserButton = new Button();
+	private Button refreshButton = new Button();
+	private ListEditorAttachStrategy attachStrategy;
 
 	public UserListPanelView()
 	{
@@ -54,6 +59,12 @@ public class UserListPanelView extends Panel implements ControlledView
 		return addUserButton;
 	}
 
+	public Button getRefreshButton()
+	{
+		return refreshButton;
+	}
+
+
 	public void setDataViewListTable(Table dataViewListTable)
 	{
 		this.dataViewListTable = dataViewListTable;
@@ -68,6 +79,9 @@ public class UserListPanelView extends Panel implements ControlledView
 		getAddUserButton().setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_ADD));
 		getAddUserButton().setWidth(100, UNITS_PERCENTAGE);
 		getAddUserButton().addStyleName(SecurityDefaultTheme.CSS_SMALL);
+		getRefreshButton().setCaption("Refresh");
+		getRefreshButton().setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_REFRESH));
+		getRefreshButton().addStyleName(SecurityDefaultTheme.CSS_SMALL);
 		VerticalLayout content = ((VerticalLayout) getContent());
 		content.setMargin(true);
 		content.setHeight(600, UNITS_PIXELS);
@@ -75,10 +89,31 @@ public class UserListPanelView extends Panel implements ControlledView
 		if (null != getDataViewListTable())
 		{
 			getDataViewListTable().setSizeFull();
-			content.addComponent(getAddUserButton());
+			HorizontalLayout buttonLayout = new HorizontalLayout();
+			buttonLayout.setSpacing(true);
+			buttonLayout.setWidth(100F, UNITS_PERCENTAGE);
+			buttonLayout.addComponent(getAddUserButton());
+			buttonLayout.addComponent(getRefreshButton());
+			buttonLayout.setExpandRatio(getAddUserButton(), 1);
+			content.addComponent(buttonLayout);
 			content.addComponent(getDataViewListTable());
 			content.setExpandRatio(getDataViewListTable(), 1);
 			content.setSpacing(true);
+		}
+	}
+
+	public void setAttachStrategy(ListEditorAttachStrategy attachStrategy)
+	{
+		this.attachStrategy = attachStrategy;
+	}
+
+	@Override
+	public void attach()
+	{
+		super.attach();
+		if (attachStrategy != null)
+		{
+			attachStrategy.attached(this);
 		}
 	}
 }

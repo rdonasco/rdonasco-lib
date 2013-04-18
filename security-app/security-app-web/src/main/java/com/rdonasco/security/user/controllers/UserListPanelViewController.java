@@ -18,7 +18,6 @@ package com.rdonasco.security.user.controllers;
 
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.WidgetException;
-import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.utils.RandomTextGenerator;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
@@ -26,9 +25,9 @@ import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
+import com.rdonasco.datamanager.listeditor.controller.ListEditorAttachStrategy;
 import com.rdonasco.datamanager.utils.TableHelper;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
-import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.common.builders.DeletePromptBuilder;
 import com.rdonasco.security.common.controllers.ClickListenerProvider;
 import com.rdonasco.security.i18n.MessageKeys;
@@ -41,6 +40,7 @@ import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import com.vaadin.event.MouseEvents;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
 import de.steinwedel.vaadin.MessageBox;
 import java.util.logging.Level;
@@ -91,9 +91,25 @@ public class UserListPanelViewController implements
 			userListPanelView.setDataViewListTable(userListTable);
 			userListPanelView.initWidget();
 			userListPanelView.getAddUserButton().addListener(new AddNewUserClickListener());
+			userListPanelView.setAttachStrategy(new ListEditorAttachStrategy()
+			{
+				@Override
+				public void attached(Component component)
+				{
+					try
+					{
+						refreshView();
+					}
+					catch (WidgetException ex)
+					{
+						exceptionPopupProvider.popUpErrorException(ex);
+					}
+				}
+			});
 			setupDeleteClickListener();
+
 		}
-		catch (WidgetInitalizeException ex)
+		catch (Exception ex)
 		{
 			exceptionPopupProvider.popUpErrorException(ex);
 		}
