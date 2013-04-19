@@ -1,6 +1,6 @@
 /*
  * Copyright 2013 Roy F. Donasco.
- * File Created on: 17-Apr-2013
+ * File Created on: 19-Apr-2013
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.rdonasco.security.user.controllers;
 
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
-import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
-import com.rdonasco.security.common.views.TwoColumnFlexibleRightColumnViewLayout;
-import com.vaadin.data.Property;
-import com.vaadin.ui.Table;
+import com.rdonasco.security.user.views.UserEditorView;
+import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
+import com.vaadin.data.Item;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -31,21 +31,13 @@ import javax.inject.Inject;
  *
  * @author Roy F. Donasco
  */
-public class UserViewLayoutController implements
-		ViewController<TwoColumnFlexibleRightColumnViewLayout>
+public class UserEditorViewController implements ViewController<UserEditorView>
 {
-
 	private static final long serialVersionUID = 1L;
 	@Inject
-	private TwoColumnFlexibleRightColumnViewLayout userViewLayout;
+	private UserEditorView editorView;
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
-	@Inject
-	private ApplicationPopupProvider popProvider;
-	@Inject
-	private UserListPanelViewController userListPanelController;
-	@Inject
-	private UserEditorViewController userEditorViewController;
 
 	@PostConstruct
 	@Override
@@ -53,18 +45,8 @@ public class UserViewLayoutController implements
 	{
 		try
 		{
-			userViewLayout.initWidget();
-			userViewLayout.setLeftPanelContent(userListPanelController.getControlledView());
-			userViewLayout.setCenterPanelContent(userEditorViewController.getControlledView().getForm());
-			userListPanelController.getUserListTable().addListener(new Property.ValueChangeListener()
-			{
-				@Override
-				public void valueChange(Property.ValueChangeEvent event)
-				{
-					Table tableSource = userListPanelController.getUserListTable();
-					userEditorViewController.getControlledView().getForm().setItemDataSource(tableSource.getItem(tableSource.getValue()));
-				}
-			});
+			editorView.initWidget();
+
 		}
 		catch (WidgetInitalizeException ex)
 		{
@@ -73,9 +55,14 @@ public class UserViewLayoutController implements
 	}
 
 	@Override
-	public TwoColumnFlexibleRightColumnViewLayout getControlledView()
+	public UserEditorView getControlledView()
 	{
-		return userViewLayout;
+		return editorView;
+	}
+
+	public void setItemDataSource(Item itemDataSource)
+	{
+		getControlledView().getForm().setItemDataSource(itemDataSource);
 	}
 
 	@Override

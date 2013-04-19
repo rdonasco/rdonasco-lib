@@ -45,7 +45,7 @@ public class TwoColumnFlexibleRightColumnViewLayout extends HorizontalLayout imp
 		leftPanel.addStyleName(SecurityDefaultTheme.CSS_LEFT_PANEL);
 
 		centerPanel.setSizeFull();
-		centerPanel.setMargin(false, false, true, false);
+		centerPanel.setMargin(true, true, true, true);
 		centerPanel.addStyleName(SecurityDefaultTheme.CSS_CENTER_PANEL);
 
 		addComponent(leftPanel);

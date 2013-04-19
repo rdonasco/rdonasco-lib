@@ -34,6 +34,7 @@ public class UserSecurityProfileItemVO implements ListEditorItem, Serializable
 	private static final long serialVersionUID = 1L;
 	private Embedded icon;
 	private UserSecurityProfileVO userSecurityProfileVO;
+	private String retypedPassword;
 
 	public UserSecurityProfileItemVO(Embedded icon,
 			UserSecurityProfileVO userSecurityProfileVO)
@@ -134,6 +135,16 @@ public class UserSecurityProfileItemVO implements ListEditorItem, Serializable
 	public void setIcon(Embedded icon)
 	{
 		this.icon = icon;
+	}
+
+	public String getRetypedPassword()
+	{
+		return retypedPassword;
+	}
+
+	public void setRetypedPassword(String retypedPassword)
+	{
+		this.retypedPassword = retypedPassword;
 	}
 
 	@Override
