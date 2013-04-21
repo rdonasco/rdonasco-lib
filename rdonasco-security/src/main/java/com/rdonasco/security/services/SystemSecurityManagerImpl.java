@@ -130,7 +130,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		}
 		catch (Exception e)
 		{
-			LOG.log(Level.SEVERE, e.getMessage(), e);
+			LOG.log(Level.FINE, e.getMessage(), e);
 			throw new SecurityAuthorizationException(e);
 		}
 	}
