@@ -16,9 +16,6 @@
  */
 package com.rdonasco.security.services;
 
-import com.rdonasco.security.exceptions.SecurityAuthenticationException;
-import com.rdonasco.security.exceptions.SecurityAuthorizationException;
-
 /**
  *
  * @author Roy F. Donasco
