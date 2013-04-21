@@ -41,8 +41,6 @@ public class UserViewLayoutController implements
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
 	@Inject
-	private ApplicationPopupProvider popProvider;
-	@Inject
 	private UserListPanelViewController userListPanelController;
 	@Inject
 	private UserEditorViewController userEditorViewController;
@@ -62,7 +60,7 @@ public class UserViewLayoutController implements
 				public void valueChange(Property.ValueChangeEvent event)
 				{
 					Table tableSource = userListPanelController.getUserListTable();
-					userEditorViewController.getControlledView().getForm().setItemDataSource(tableSource.getItem(tableSource.getValue()));
+					userEditorViewController.setItemDataSource(tableSource.getItem(tableSource.getValue()));
 				}
 			});
 		}
