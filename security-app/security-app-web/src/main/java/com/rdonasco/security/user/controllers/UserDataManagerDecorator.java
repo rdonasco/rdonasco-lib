@@ -27,6 +27,7 @@ import com.rdonasco.security.services.SystemSecurityManager;
 import com.rdonasco.security.services.SystemSecurityManagerLocal;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVOBuilder;
+import com.rdonasco.security.utils.EncryptionUtil;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.vaadin.ui.Embedded;
 import java.util.ArrayList;
@@ -122,9 +123,14 @@ public class UserDataManagerDecorator implements
 	{
 		try
 		{
+			String password = data.getUserSecurityProfileVO().getPassword();
+			if (password != null && !password.isEmpty())
+			{
+				data.getUserSecurityProfileVO().setPassword(EncryptionUtil.encryptWithPassword(password, password));
+			}
 			getSecurityManager().updateSecurityProfile(data.getUserSecurityProfileVO());
 		}
-		catch (SecurityManagerException ex)
+		catch (Exception ex)
 		{
 			throw new DataAccessException(ex);
 		}
@@ -139,6 +145,8 @@ public class UserDataManagerDecorator implements
 				.setIcon(icon)
 				.setUserSecurityProfileVO(userSecurityProfile)
 				.createUserSecurityProfileItemVO();
+		userSecurityProfileItemVO.setPassword(null);
+		userSecurityProfileItemVO.setRetypedPassword(null);
 		if(getClickListenerProvider() != null)
 		{
 			icon.addListener(getClickListenerProvider().provideClickListenerFor(userSecurityProfileItemVO));
