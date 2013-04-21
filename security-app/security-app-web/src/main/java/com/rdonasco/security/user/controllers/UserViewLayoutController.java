@@ -19,7 +19,6 @@ package com.rdonasco.security.user.controllers;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
-import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.security.common.views.TwoColumnFlexibleRightColumnViewLayout;
 import com.vaadin.data.Property;
