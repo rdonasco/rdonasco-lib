@@ -62,6 +62,7 @@ public class UserViewLayoutController implements
 					userEditorViewController.setItemDataSource(tableSource.getItem(tableSource.getValue()));
 				}
 			});
+			userEditorViewController.setUserItemTableContainer(userListPanelController.getUserItemTableContainer());
 		}
 		catch (WidgetInitalizeException ex)
 		{

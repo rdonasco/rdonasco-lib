@@ -38,6 +38,7 @@ import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.MouseEvents;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -75,6 +76,12 @@ public class UserListPanelViewController implements
 	public UserListPanelViewController()
 	{
 	}
+
+	public DataManagerContainer<UserSecurityProfileItemVO> getUserItemTableContainer()
+	{
+		return userItemTableContainer;
+	}
+
 
 	@PostConstruct
 	@Override
@@ -162,10 +169,11 @@ public class UserListPanelViewController implements
 		{
 			UserSecurityProfileItemVO newItemVO = new UserSecurityProfileItemVOBuilder()
 					.setUserSecurityProfileVO(newUserProfile)
+					.setRequirePasswordChange(true)
 					.createUserSecurityProfileItemVO();
-			userItemTableContainer.addItem(newItemVO);
-			userListTable.setCurrentPageFirstItemId(newItemVO);
-			userListTable.select(newItemVO);
+			BeanItem<UserSecurityProfileItemVO> item = userItemTableContainer.addItem(newItemVO);
+			userListTable.setCurrentPageFirstItemId(item.getBean());
+			userListTable.select(item.getBean());
 		}
 		catch (Exception e)
 		{

@@ -35,12 +35,15 @@ public class UserSecurityProfileItemVO implements ListEditorItem, Serializable
 	private Embedded icon;
 	private UserSecurityProfileVO userSecurityProfileVO;
 	private String retypedPassword;
+	private boolean requirePasswordChange;
 
 	public UserSecurityProfileItemVO(Embedded icon,
-			UserSecurityProfileVO userSecurityProfileVO)
+			UserSecurityProfileVO userSecurityProfileVO,
+			boolean requirePasswordChange)
 	{
 		this.icon = icon;
 		this.userSecurityProfileVO = userSecurityProfileVO;
+		this.requirePasswordChange = requirePasswordChange;
 	}
 
 	public UserSecurityProfileVO getUserSecurityProfileVO()
@@ -145,6 +148,16 @@ public class UserSecurityProfileItemVO implements ListEditorItem, Serializable
 	public void setRetypedPassword(String retypedPassword)
 	{
 		this.retypedPassword = retypedPassword;
+	}
+
+	public boolean isRequirePasswordChange()
+	{
+		return requirePasswordChange;
+	}
+
+	public void setRequirePasswordChange(boolean requirePasswordChange)
+	{
+		this.requirePasswordChange = requirePasswordChange;
 	}
 
 	@Override

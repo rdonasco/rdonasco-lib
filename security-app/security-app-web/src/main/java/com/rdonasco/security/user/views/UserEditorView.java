@@ -20,6 +20,7 @@ import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ControlledView;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.common.vaadin.validators.FieldMatchedValueValidator;
 import com.vaadin.data.Validator;
 import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.terminal.ThemeResource;
@@ -111,6 +112,7 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 		addComponent(buttonsLayout);
 		getForm().setReadOnly(true);
 		getForm().setWriteThrough(true);
+		changeModeToViewOnly();
 	}
 
 	private void configureUserDetailFields()
@@ -124,37 +126,14 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 		logonIdField.setWidth(200f, UNITS_PIXELS);
 
 		passwordField.setCaption(I18NResource.localize("Password"));
-		passwordField.setRequired(true);
-		passwordField.setRequiredError(I18NResource.localize("Password is required"));
+		passwordField.addValidator(FieldMatchedValueValidator.createFieldMatchValidatorWithErrorMessage(retypedPasswordField, I18NResource.localize("Password mismatch")));
+//		passwordField.setRequired(true);
+//		passwordField.setRequiredError(I18NResource.localize("Password is required"));
 
 		retypedPasswordField.setCaption(I18NResource.localize("Retype Password"));
-		retypedPasswordField.setRequired(true);
-		retypedPasswordField.setRequiredError(I18NResource.localize("Retyped Password is required"));
-		retypedPasswordField.addValidator(new Validator()
-		{
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public void validate(Object value) throws
-					Validator.InvalidValueException
-			{
-				if (!isValid(value))
-				{
-					throw new InvalidValueException(I18NResource.localize("Password mismatch"));
-				}
-			}
-
-			@Override
-			public boolean isValid(Object value)
-			{
-				boolean itIsValid = true;
-				if (passwordField.getValue() != null)
-				{
-					itIsValid = passwordField.getValue().equals(retypedPasswordField.getValue());
-				}
-				return itIsValid;
-			}
-		});
+//		retypedPasswordField.setRequired(true);
+//		retypedPasswordField.setRequiredError(I18NResource.localize("Retyped Password is required"));
+		retypedPasswordField.addValidator(FieldMatchedValueValidator.createFieldMatchValidatorWithErrorMessage(passwordField, I18NResource.localize("Password mismatch")));
 		employeeDetailPanel.addComponent(logonIdField);
 		employeeDetailPanel.addComponent(passwordField);
 		employeeDetailPanel.addComponent(retypedPasswordField);
@@ -177,5 +156,28 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 		logonIdField.setReadOnly(readOnly);
 		passwordField.setReadOnly(readOnly);
 		retypedPasswordField.setReadOnly(readOnly);
+		getSaveButton().setReadOnly(readOnly);
+		getEditButton().setReadOnly(!readOnly);
+		getCancelButton().setReadOnly(!readOnly);
+	}
+
+	public void changeModeToEdit()
+	{
+		setReadOnly(false);
+		getSaveButton().setVisible(true);
+		getCancelButton().setVisible(true);
+		getEditButton().setVisible(false);
+		passwordField.setVisible(true);
+		retypedPasswordField.setVisible(true);
+	}
+
+	public void changeModeToViewOnly()
+	{
+		setReadOnly(true);
+		getSaveButton().setVisible(false);
+		getCancelButton().setVisible(false);
+		getEditButton().setVisible(true);
+		passwordField.setVisible(false);
+		retypedPasswordField.setVisible(false);
 	}
 }

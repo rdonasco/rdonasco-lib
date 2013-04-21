@@ -25,6 +25,7 @@ public class UserSecurityProfileItemVOBuilder
 {
 	private Embedded icon;
 	private UserSecurityProfileVO userSecurityProfileVO;
+	private boolean requirePasswordChange;
 
 	public UserSecurityProfileItemVOBuilder()
 	{
@@ -43,9 +44,16 @@ public class UserSecurityProfileItemVOBuilder
 		return this;
 	}
 
+	public UserSecurityProfileItemVOBuilder setRequirePasswordChange(
+			boolean requirePasswordChange)
+	{
+		this.requirePasswordChange = requirePasswordChange;
+		return this;
+	}
+
 	public UserSecurityProfileItemVO createUserSecurityProfileItemVO()
 	{
-		return new UserSecurityProfileItemVO(icon, userSecurityProfileVO);
+		return new UserSecurityProfileItemVO(icon, userSecurityProfileVO, requirePasswordChange);
 	}
 
 }
