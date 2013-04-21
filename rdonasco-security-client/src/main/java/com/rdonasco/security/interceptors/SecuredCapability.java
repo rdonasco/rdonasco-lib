@@ -38,5 +38,7 @@ public @interface SecuredCapability
 
 	String action() default "";
 
+	boolean useExceptionHandler() default true;
+
 	InvocationEventType invocationEventType() default InvocationEventType.BEFORE;
 }

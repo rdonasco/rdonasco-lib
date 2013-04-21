@@ -192,7 +192,11 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			profileToUpdate.setLogonId(profileUpdateDetails.getLogonId());
 			profileToUpdate.setRegistrationToken(profileUpdateDetails.getRegistrationToken());
 			profileToUpdate.setRegistrationTokenExpiration(profileUpdateDetails.getRegistrationTokenExpiration());
-			profileToUpdate.setPassword(profileUpdateDetails.getPassword());
+			if (profileUpdateDetails.getPassword() != null && !profileUpdateDetails.getPassword().isEmpty())
+			{
+
+				profileToUpdate.setPassword(profileUpdateDetails.getPassword());
+			}
 
 			userSecurityProfileDAO.update(profileToUpdate);
 		}

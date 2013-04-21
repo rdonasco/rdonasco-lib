@@ -42,7 +42,8 @@ public class SecuredInterceptor
 {
 
 	private static final Logger LOG = Logger.getLogger(SecuredInterceptor.class.getName());
-	private SystemSecurityManager systemSecurityManager;
+	@EJB
+	private SystemSecurityManagerRemote systemSecurityManager;
 	private LoggedOnSessionProvider loggedOnSessionProvider;
 	private SecurityExceptionHandler securityExceptionHandler;
 
@@ -86,7 +87,14 @@ public class SecuredInterceptor
 		}
 		catch (Exception e)
 		{
-			if (null != securityExceptionHandler)
+			boolean useExceptionHandler = true;
+			SecuredCapability securedCapabilityMethodAnnotation = joinPoint.getMethod().getAnnotation(SecuredCapability.class);
+			if (securedCapabilityMethodAnnotation != null)
+			{
+				useExceptionHandler = securedCapabilityMethodAnnotation.useExceptionHandler();
+			}
+
+			if (useExceptionHandler && null != securityExceptionHandler)
 			{
 				Throwable cause = e.getCause();
 				if (null != cause)
@@ -198,7 +206,6 @@ public class SecuredInterceptor
 		this.securityExceptionHandler = exceptionHandler;
 	}
 
-	@EJB
 	void setSystemSecurityManager(
 			SystemSecurityManagerRemote systemSecurityManager)
 	{
