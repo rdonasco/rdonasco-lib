@@ -83,15 +83,15 @@ public class SystemSecurityInitializer implements SystemSecurityInitializerLocal
 				CapabilityVO capability;
 				try
 				{
-					capability = capabilityManager.findCapabilityWithTitle(capabilityConfig.getName());
+					capabilityManager.findCapabilityWithTitle(capabilityConfig.getName());
 				}
 				catch (NonExistentEntityException e)
 				{
 					LOG.warning("Default capability not found. Creating one");
 					capability = createDefaultCapability(configResourceXpath, capabilityConfig);
+					List<ConfigAttributeVO> actions = loadDefaultActionsFromConfig(configDefaultCapabilityXPath, configInitString);
+					addMissingActionsToCapability(actions, capability);
 				}
-				List<ConfigAttributeVO> actions = loadDefaultActionsFromConfig(configDefaultCapabilityXPath, configInitString);
-				addMissingActionsToCapability(actions, capability);
 			}
 			catch (DataAccessException ex)
 			{
