@@ -82,7 +82,6 @@ public class UserListPanelViewController implements
 		return userItemTableContainer;
 	}
 
-
 	@PostConstruct
 	@Override
 	public void initializeControlledViewBehavior()
@@ -103,14 +102,16 @@ public class UserListPanelViewController implements
 				@Override
 				public void attached(Component component)
 				{
-					try
-					{
-						refreshView();
-					}
-					catch (WidgetException ex)
-					{
-						exceptionPopupProvider.popUpErrorException(ex);
-					}
+					refreshList();
+				}
+			});
+			userListPanelView.getRefreshButton().addListener(new Button.ClickListener()
+			{
+				@Override
+				public void buttonClick(Button.ClickEvent event)
+				{
+					LOG.log(Level.FINE, "refresh button clicked");
+					refreshList();
 				}
 			});
 			setupDeleteClickListener();
@@ -244,6 +245,18 @@ public class UserListPanelViewController implements
 					}
 				}
 			});
+		}
+	}
+
+	private void refreshList()
+	{
+		try
+		{
+			refreshView();
+		}
+		catch (WidgetException ex)
+		{
+			exceptionPopupProvider.popUpErrorException(ex);
 		}
 	}
 }
