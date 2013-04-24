@@ -57,24 +57,28 @@ public class ConfigDataView extends VerticalLayout implements ControlledView
 			localize("Expand all"));
 	private static final Action ACTION_COLLAPSE_ALL = new Action(I18NResource.
 			localize("Collapse all"));
+	private static final Action ACTION_REFRESH = new Action(I18NResource
+			.localize("Refresh"));
 	private static final Action[] ACTIONS_ON_ROOT_ELEMENT = new Action[]
 	{
-		ACTION_EXPAND_ALL, ACTION_COLLAPSE_ALL, ACTION_ADD_ELEMENT,
+		ACTION_REFRESH, ACTION_EXPAND_ALL, ACTION_COLLAPSE_ALL,
+		ACTION_ADD_ELEMENT,
 		ACTION_ADD_SUB_ELEMENT, ACTION_ADD_ATTRIBUTE,
 		ACTION_DELETE_ITEM
 	};
 	private static final Action[] ACTIONS_ON_ELEMENT = new Action[]
 	{
-		ACTION_EXPAND_ALL, ACTION_COLLAPSE_ALL, ACTION_ADD_SUB_ELEMENT,
+		ACTION_REFRESH, ACTION_EXPAND_ALL, ACTION_COLLAPSE_ALL,
+		ACTION_ADD_SUB_ELEMENT,
 		ACTION_ADD_ATTRIBUTE, ACTION_DELETE_ITEM
 	};
 	private static final Action[] ACTIONS_ON_ATTRIBUTE = new Action[]
 	{
-		ACTION_DELETE_ITEM
+		ACTION_REFRESH, ACTION_DELETE_ITEM
 	};
 	private static final Action[] ACTIONS_ON_TABLE = new Action[]
 	{
-		ACTION_ADD_ELEMENT
+		ACTION_REFRESH, ACTION_ADD_ELEMENT
 	};
 
 	@Override
@@ -204,6 +208,10 @@ public class ConfigDataView extends VerticalLayout implements ControlledView
 					else if (action == ACTION_COLLAPSE_ALL && target instanceof ConfigElementVO)
 					{
 						getConfigTreeTable().setCollapsed(target, true);
+					}
+					else if (action == ACTION_REFRESH)
+					{
+						getConfigDataContainer().refreshData();
 					}
 
 				}
