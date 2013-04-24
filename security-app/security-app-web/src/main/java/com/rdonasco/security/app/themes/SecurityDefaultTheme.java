@@ -33,9 +33,9 @@ public final class SecurityDefaultTheme
 	public static final String CSS_SMALL = "small";
 	public static final String CSS_USER_PROFILE_WORKSPACE = "userProfileWorkspace";
 	/* start of icon entries */
-	public static final String ICON_32x32_CAPABILITIES = "images/iconarchive.com/blue-matreshka-inside-icon-icon.png";
-	public static final String ICON_32x32_ROLES = "images/danish_rf_icons/PNG/public.png";
-	public static final String ICON_32x32_GROUPS = "images/blueberry/friends_group.png";
+	public static final String ICON_32x32_CAPABILITIES = "images/silk-icons/shield.png";
+	public static final String ICON_32x32_ROLES = "images/silk-icons/user_suit.png";
+	public static final String ICON_32x32_GROUPS = "images/silk-icons/group.png";
 	public static final String ICON_32x32_USERS = "images/blueberry/user_friend.png";
 	public static final String ICONS_32x32_APPLICATIONS = "images/blueberry/home.png";
 	public static final String ICONS_32x32_DOMAINS = "images/blueberry/globe.png";
