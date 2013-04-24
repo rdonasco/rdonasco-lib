@@ -21,7 +21,6 @@ import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ControlledView;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.common.vaadin.validators.FieldMatchedValueValidator;
-import com.vaadin.data.Validator;
 import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
@@ -30,6 +29,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TabSheet;
+import com.vaadin.ui.TabSheet.Tab;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import org.vaadin.addon.formbinder.ViewBoundForm;
@@ -91,7 +91,9 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 	{
 		configureUserDetailFields();
 
-		otherDetailTab.addTab(capabilitiesLayout, I18NResource.localize("Capabilities"), new ThemeResource(SecurityDefaultTheme.ICON_32x32_CAPABILITIES));
+		Tab capabilitiesTab = otherDetailTab.addTab(capabilitiesLayout, I18NResource.localize("Capabilities"), new ThemeResource(SecurityDefaultTheme.ICON_32x32_CAPABILITIES));
+		capabilitiesTab.getComponent().setSizeFull();
+
 		otherDetailTab.addTab(rolesLayout, I18NResource.localize("Roles"), new ThemeResource(SecurityDefaultTheme.ICON_32x32_ROLES));
 		otherDetailTab.addTab(groupsLayout, I18NResource.localize("Groups"), new ThemeResource(SecurityDefaultTheme.ICON_32x32_GROUPS));
 
@@ -179,5 +181,10 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 		getEditButton().setVisible(true);
 		passwordField.setVisible(false);
 		retypedPasswordField.setVisible(false);
+	}
+
+	public HorizontalLayout getCapabilitiesLayout()
+	{
+		return capabilitiesLayout;
 	}
 }

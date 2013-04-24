@@ -45,6 +45,10 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
 	private DataManagerContainer<UserSecurityProfileItemVO> userItemTableContainer;
+	@Inject
+	private UserCapabilitiesViewController userCapabilitiesViewController;
+	@Inject
+	private AvailableCapabilitiesViewController availableCapabilitiesViewController;
 
 	public void setUserItemTableContainer(
 			DataManagerContainer<UserSecurityProfileItemVO> userItemTableContainer)
@@ -62,6 +66,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 			configureFieldValidators();
 			configureButtonListeners();
 			configureInitialButtonState();
+			configureCapabilitiesTab();
 
 		}
 		catch (WidgetInitalizeException ex)
@@ -178,5 +183,21 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	private void configureInitialButtonState()
 	{
 		ButtonUtil.hideButtons(editorView.getSaveButton(), editorView.getEditButton(), editorView.getCancelButton());
+	}
+
+	private void configureCapabilitiesTab()
+	{
+		getControlledView().getCapabilitiesLayout().setSpacing(true);
+		getControlledView().getCapabilitiesLayout().setMargin(true, true, true, true);
+		getControlledView().getCapabilitiesLayout()
+				.addComponent(userCapabilitiesViewController.getControlledView());
+		getControlledView().getCapabilitiesLayout()
+				.addComponent(availableCapabilitiesViewController.getControlledView());
+		getControlledView().getCapabilitiesLayout()
+				.setExpandRatio(userCapabilitiesViewController.getControlledView(), 0.5f);
+		getControlledView().getCapabilitiesLayout()
+				.setExpandRatio(availableCapabilitiesViewController.getControlledView(), 0.5f);
+
+
 	}
 }
