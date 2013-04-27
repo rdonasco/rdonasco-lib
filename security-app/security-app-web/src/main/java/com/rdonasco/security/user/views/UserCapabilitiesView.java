@@ -21,8 +21,9 @@ import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ControlledView;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.VerticalLayout;
 
 /**
  *
@@ -31,6 +32,18 @@ import com.vaadin.ui.Panel;
 public class UserCapabilitiesView extends Panel implements ControlledView
 {
 	private static final long serialVersionUID = 1L;
+	private Table userCapabilitiesTable;
+
+	public UserCapabilitiesView()
+	{
+		userCapabilitiesTable = new Table();
+	}
+
+	public Table getUserCapabilitiesTable()
+	{
+		return userCapabilitiesTable;
+	}
+
 
 	@Override
 	public void initWidget() throws WidgetInitalizeException
@@ -38,6 +51,10 @@ public class UserCapabilitiesView extends Panel implements ControlledView
 		setCaption(I18NResource.localize("User Capabilities"));
 		setStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
 		setHeight(100f, UNITS_PERCENTAGE);
-		addComponent(new Label("dummy content"));
+		getUserCapabilitiesTable().addStyleName(SecurityDefaultTheme.CSS_TABLE_SMALL_STRIPED);
+		getUserCapabilitiesTable().addStyleName(SecurityDefaultTheme.CSS_TABLE_BORDERLESS);
+		getUserCapabilitiesTable().setSizeFull();
+		addComponent(getUserCapabilitiesTable());
+		((VerticalLayout) getContent()).setExpandRatio(getUserCapabilitiesTable(), 1);
 	}
 }

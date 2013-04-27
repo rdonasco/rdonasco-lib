@@ -101,9 +101,9 @@ public class UserSecurityProfileItemVO implements ListEditorItem, Serializable
 		userSecurityProfileVO.setRegistrationTokenExpiration(registrationTokenExpiration);
 	}
 
-	public Collection<UserCapabilityVO> getCapabilityVOList()
+	public Collection<UserCapabilityVO> getCapabilities()
 	{
-		return userSecurityProfileVO.getCapabilityVOList();
+		return userSecurityProfileVO.getCapabilities();
 	}
 
 	public void setCapabilities(

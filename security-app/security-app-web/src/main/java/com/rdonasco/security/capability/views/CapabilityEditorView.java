@@ -116,8 +116,6 @@ public class CapabilityEditorView extends VerticalLayout implements
 		titleField.setReadOnly(true);
 		descriptionField.setReadOnly(true);
 		resourceField.setReadOnly(true);
-//		VerticalLayout capabilityDetailLayout = (VerticalLayout) capabilityDetailPanel.getContent();
-//		capabilityDetailLayout.setSpacing(true);
 	}
 
 	private void configureCapabilityActionFields()

@@ -18,9 +18,20 @@ package com.rdonasco.security.user.controllers;
 
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
+import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
+import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
+import com.rdonasco.security.capability.utils.IconHelper;
 import com.rdonasco.security.user.views.UserCapabilitiesView;
+import com.vaadin.data.util.BeanItemContainer;
+import com.rdonasco.security.user.vo.UserCapabilityItemVO;
+import com.rdonasco.security.user.vo.UserCapabilityItemVOBuilder;
+import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
+import com.rdonasco.security.vo.UserCapabilityVO;
+import com.vaadin.event.MouseEvents;
+import com.vaadin.ui.Embedded;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -39,6 +50,10 @@ public class UserCapabilitiesViewController implements
 	private UserCapabilitiesView userCapabilitiesView;
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
+	@Inject
+	private ApplicationPopupProvider popupProvider;
+	private BeanItemContainer<UserCapabilityItemVO> userCapabilityItemContainer = new BeanItemContainer(UserCapabilityItemVO.class);
+	private UserSecurityProfileItemVO currentProfile;
 
 	@PostConstruct
 	@Override
@@ -47,12 +62,26 @@ public class UserCapabilitiesViewController implements
 		try
 		{
 			userCapabilitiesView.initWidget();
+			configureUserCapabilitiesTable();
 		}
 		catch (WidgetInitalizeException ex)
 		{
 			exceptionPopupProvider.popUpErrorException(ex);
 		}
 
+	}
+
+	public void setCurrentProfile(UserSecurityProfileItemVO profile)
+	{
+		currentProfile = profile;
+		try
+		{
+			refreshView();
+		}
+		catch (WidgetException ex)
+		{
+			exceptionPopupProvider.popUpErrorException(ex);
+		}
 	}
 
 	@Override
@@ -64,8 +93,54 @@ public class UserCapabilitiesViewController implements
 	@Override
 	public void refreshView() throws WidgetException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method refreshView
-		throw new UnsupportedOperationException("Not supported yet.");
+		populateItemContainer();
+	}
+
+	private void configureUserCapabilitiesTable()
+	{
+		getControlledView().getUserCapabilitiesTable().setContainerDataSource(userCapabilityItemContainer);
+		userCapabilityItemContainer.addNestedContainerProperty("capability.title");
+		getControlledView().getUserCapabilitiesTable().setVisibleColumns(new String[]
+		{
+			"icon", "capability.title"
+		});
+		getControlledView().getUserCapabilitiesTable().setColumnHeaders(new String[]
+		{
+			"", I18NResource.localize("Title")
+		});
+	}
+
+	private void populateItemContainer()
+	{
+		userCapabilityItemContainer.removeAllItems();
+		for (UserCapabilityVO userCapability : currentProfile.getCapabilities())
+		{
+			Embedded icon = IconHelper.createDeleteIcon("Remove capability");
+			final UserCapabilityItemVO userCapabilityItemVO = new UserCapabilityItemVOBuilder()
+					.setIcon(icon)
+					.setUserCapabilityVO(userCapability)
+					.createUserCapabilityItemVO();
+			userCapabilityItemVO.getCapability().getTitle();
+			userCapabilityItemContainer.addItem(userCapabilityItemVO);
+			icon.addListener(new MouseEvents.ClickListener()
+			{
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void click(MouseEvents.ClickEvent event)
+				{
+					if (!getControlledView().isReadOnly() && !userCapabilityItemContainer.removeItem(userCapabilityItemVO))
+					{
+						popupProvider.popUpError(I18NResource.localizeWithParameter("Unable to remove action _", userCapabilityItemVO));
+
+					}
+				}
+			});
+		}
+	}
+
+	void discardChanges()
+	{
+		getControlledView().getUserCapabilitiesTable().discard();
 	}
 }

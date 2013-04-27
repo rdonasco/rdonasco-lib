@@ -5,7 +5,6 @@
 package com.rdonasco.security.capability.controllers;
 
 import com.rdonasco.common.exceptions.DataAccessException;
-import com.rdonasco.common.exceptions.InvalidBuilderParameter;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ViewController;
@@ -21,7 +20,6 @@ import com.rdonasco.security.capability.vo.ActionItemVO;
 import com.rdonasco.security.capability.vo.ActionItemVOBuilder;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.capability.vo.ResourceItemVO;
-import com.rdonasco.common.vaadin.captcha.builders.EmbeddedCaptchaBuilder;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.ResourceVO;
@@ -45,7 +43,6 @@ import com.vaadin.event.dd.acceptcriteria.ClientSideCriterion;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -109,7 +106,7 @@ public class CapabilityEditorViewController implements
 
 	private void addActionVOToContainer(ActionVO action)
 	{
-		Embedded icon = IconHelper.createDeleteIcon("Remove action");
+		Embedded icon = IconHelper.createDeleteIcon(I18NResource.localize("Remove action"));
 		final ActionItemVO actionItemVO = new ActionItemVOBuilder()
 				.setAction(action)
 				.setIcon(icon)
@@ -124,7 +121,8 @@ public class CapabilityEditorViewController implements
 			{
 				if (!editorView.getEditorForm().isReadOnly() && !actionsContainer.removeItem(actionItemVO))
 				{
-					LOG.log(Level.WARNING, "Unable to remove action {0}", actionItemVO);
+					popupProvider.popUpError(I18NResource.localizeWithParameter("Unable to remove action _", actionItemVO));
+
 				}
 			}
 		});
@@ -135,6 +133,8 @@ public class CapabilityEditorViewController implements
 		final SourceIs sourceIs = new SourceIs(resourceEditorTable);
 		resourceDropHander = new DropHandler()
 		{
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void drop(DragAndDropEvent dropEvent)
 			{
@@ -380,9 +380,7 @@ public class CapabilityEditorViewController implements
 			@Override
 			public void buttonClick(Button.ClickEvent event)
 			{
-				editorView.getEditorForm().discard();
-				setCurrentItem(currentItem);
-				setViewToReadOnly();
+				discardChanges();
 			}
 		});
 		editorView.getCancelButton().setDescription("Cancel (Esc)");
@@ -395,10 +393,17 @@ public class CapabilityEditorViewController implements
 			{
 				if (editorView.getCancelButton().isEnabled())
 				{
-					setViewToReadOnly();
+					discardChanges();
 				}
 			}
 		});
+	}
+
+	private void discardChanges() throws Buffered.SourceException
+	{
+		editorView.getEditorForm().discard();
+		setCurrentItem(currentItem);
+		setViewToReadOnly();
 	}
 
 	private void saveCapability() throws Buffered.SourceException,

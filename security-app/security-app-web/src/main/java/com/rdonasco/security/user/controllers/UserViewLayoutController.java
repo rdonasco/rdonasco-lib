@@ -51,7 +51,6 @@ public class UserViewLayoutController implements
 		try
 		{
 			userViewLayout.initWidget();
-			userViewLayout.setLeftPanelContent(userListPanelController.getControlledView());
 			userViewLayout.setCenterPanelContent(userEditorViewController.getControlledView().getForm());
 			userListPanelController.getUserListTable().addListener(new Property.ValueChangeListener()
 			{
@@ -63,6 +62,7 @@ public class UserViewLayoutController implements
 				}
 			});
 			userEditorViewController.setUserItemTableContainer(userListPanelController.getUserItemTableContainer());
+			userViewLayout.setLeftPanelContent(userListPanelController.getControlledView());
 		}
 		catch (WidgetInitalizeException ex)
 		{

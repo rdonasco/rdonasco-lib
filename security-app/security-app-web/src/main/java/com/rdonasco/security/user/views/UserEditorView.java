@@ -21,6 +21,8 @@ import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ControlledView;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.common.vaadin.validators.FieldMatchedValueValidator;
+import com.rdonasco.common.vaadin.view.ButtonUtil;
+import com.rdonasco.common.vaadin.controller.OnAttachStrategy;
 import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
@@ -32,6 +34,7 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.Tab;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import java.util.logging.Logger;
 import org.vaadin.addon.formbinder.ViewBoundForm;
 
 /**
@@ -42,19 +45,49 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 {
 
 	private static final long serialVersionUID = 1L;
-	private Panel employeeDetailPanel = new Panel();
-	private TextField logonIdField = new TextField();
-	private PasswordField passwordField = new PasswordField();
-	private PasswordField retypedPasswordField = new PasswordField();
-	private TabSheet otherDetailTab = new TabSheet();
-	private HorizontalLayout buttonsLayout = new HorizontalLayout();
-	private HorizontalLayout capabilitiesLayout = new HorizontalLayout();
-	private HorizontalLayout rolesLayout = new HorizontalLayout();
-	private HorizontalLayout groupsLayout = new HorizontalLayout();
-	private Button editButton = new Button();
-	private Button saveButton = new Button();
-	private Button cancelButton = new Button();
+	private Panel employeeDetailPanel;
+	private TextField logonIdField;
+	private PasswordField passwordField;
+	private PasswordField retypedPasswordField;
+	private TabSheet otherDetailTab;
+	private HorizontalLayout buttonsLayout;
+	private HorizontalLayout capabilitiesLayout;
+	private HorizontalLayout rolesLayout;
+	private HorizontalLayout groupsLayout;
+	private Button cancelButton;// = new Button();
+	private Button editButton;
+	private Button saveButton;
 	private Form form;
+	private OnAttachStrategy onAttachStrategy;
+
+	public UserEditorView()
+	{
+
+		this.retypedPasswordField = new PasswordField();
+		this.passwordField = new PasswordField();
+		this.logonIdField = new TextField();
+
+		this.employeeDetailPanel = new Panel();
+		this.otherDetailTab = new TabSheet();
+		this.capabilitiesLayout = new HorizontalLayout();
+		this.rolesLayout = new HorizontalLayout();
+		this.groupsLayout = new HorizontalLayout();
+		this.buttonsLayout = new HorizontalLayout();
+
+		this.cancelButton = new Button();
+		this.saveButton = new Button();
+		this.editButton = new Button();
+	}
+
+	public OnAttachStrategy getOnAttachStrategy()
+	{
+		return onAttachStrategy;
+	}
+
+	public void setOnAttachStrategy(OnAttachStrategy onAttachStrategy)
+	{
+		this.onAttachStrategy = onAttachStrategy;
+	}
 
 	public Button getEditButton()
 	{
@@ -91,11 +124,11 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 	{
 		configureUserDetailFields();
 
-		Tab capabilitiesTab = otherDetailTab.addTab(capabilitiesLayout, I18NResource.localize("Capabilities"), new ThemeResource(SecurityDefaultTheme.ICON_32x32_CAPABILITIES));
+		Tab capabilitiesTab = otherDetailTab.addTab(capabilitiesLayout, I18NResource.localize("Capabilities"), new ThemeResource(SecurityDefaultTheme.ICON_16x16_CAPABILITIES));
 		capabilitiesTab.getComponent().setSizeFull();
 
-		otherDetailTab.addTab(rolesLayout, I18NResource.localize("Roles"), new ThemeResource(SecurityDefaultTheme.ICON_32x32_ROLES));
-		otherDetailTab.addTab(groupsLayout, I18NResource.localize("Groups"), new ThemeResource(SecurityDefaultTheme.ICON_32x32_GROUPS));
+		otherDetailTab.addTab(rolesLayout, I18NResource.localize("Roles"), new ThemeResource(SecurityDefaultTheme.ICON_16x16_ROLES));
+		otherDetailTab.addTab(groupsLayout, I18NResource.localize("Groups"), new ThemeResource(SecurityDefaultTheme.ICON_16x16_GROUPS));
 
 		editButton.setCaption(I18NResource.localize("Edit"));
 		editButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_EDIT));
@@ -103,6 +136,7 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 		saveButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_SAVE));
 		cancelButton.setCaption(I18NResource.localize("Cancel"));
 		cancelButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_CANCEL));
+
 		buttonsLayout.setSpacing(true);
 		buttonsLayout.addComponent(editButton);
 		buttonsLayout.addComponent(saveButton);
@@ -129,13 +163,10 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 
 		passwordField.setCaption(I18NResource.localize("Password"));
 		passwordField.addValidator(FieldMatchedValueValidator.createFieldMatchValidatorWithErrorMessage(retypedPasswordField, I18NResource.localize("Password mismatch")));
-//		passwordField.setRequired(true);
-//		passwordField.setRequiredError(I18NResource.localize("Password is required"));
 
 		retypedPasswordField.setCaption(I18NResource.localize("Retype Password"));
-//		retypedPasswordField.setRequired(true);
-//		retypedPasswordField.setRequiredError(I18NResource.localize("Retyped Password is required"));
 		retypedPasswordField.addValidator(FieldMatchedValueValidator.createFieldMatchValidatorWithErrorMessage(passwordField, I18NResource.localize("Password mismatch")));
+
 		employeeDetailPanel.addComponent(logonIdField);
 		employeeDetailPanel.addComponent(passwordField);
 		employeeDetailPanel.addComponent(retypedPasswordField);
@@ -159,8 +190,8 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 		passwordField.setReadOnly(readOnly);
 		retypedPasswordField.setReadOnly(readOnly);
 		getSaveButton().setReadOnly(readOnly);
+		getCancelButton().setReadOnly(readOnly);
 		getEditButton().setReadOnly(!readOnly);
-		getCancelButton().setReadOnly(!readOnly);
 	}
 
 	public void changeModeToEdit()
@@ -186,5 +217,20 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 	public HorizontalLayout getCapabilitiesLayout()
 	{
 		return capabilitiesLayout;
+	}
+
+	public void hideButtons()
+	{
+		ButtonUtil.hideButtons(getSaveButton(), getEditButton(), getCancelButton());
+	}
+
+	@Override
+	public void attach()
+	{
+		super.attach();;
+		if (getOnAttachStrategy() != null)
+		{
+			getOnAttachStrategy().onAttachOf(this);
+		}
 	}
 }

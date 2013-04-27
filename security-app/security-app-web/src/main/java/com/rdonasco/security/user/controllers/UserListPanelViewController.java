@@ -103,6 +103,7 @@ public class UserListPanelViewController implements
 				public void attached(Component component)
 				{
 					refreshList();
+					selectTheFirstRecord();
 				}
 			});
 			userListPanelView.getRefreshButton().addListener(new Button.ClickListener()
@@ -257,6 +258,15 @@ public class UserListPanelViewController implements
 		catch (WidgetException ex)
 		{
 			exceptionPopupProvider.popUpErrorException(ex);
+		}
+	}
+
+	private void selectTheFirstRecord()
+	{
+		final Object firstItemId = getControlledView().getDataViewListTable().firstItemId();
+		if (null != firstItemId)
+		{
+			getControlledView().getDataViewListTable().select(firstItemId);
 		}
 	}
 }

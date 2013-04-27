@@ -21,14 +21,18 @@ import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
-import com.rdonasco.common.vaadin.view.ButtonUtil;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
+import com.rdonasco.common.vaadin.controller.OnAttachStrategy;
 import com.rdonasco.security.user.views.UserEditorView;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
+import com.vaadin.data.Buffered;
 import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -39,6 +43,7 @@ import javax.inject.Inject;
 public class UserEditorViewController implements ViewController<UserEditorView>
 {
 
+	private static final Logger LOG = Logger.getLogger(UserEditorViewController.class.getName());
 	private static final long serialVersionUID = 1L;
 	@Inject
 	private UserEditorView editorView;
@@ -49,6 +54,17 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	private UserCapabilitiesViewController userCapabilitiesViewController;
 	@Inject
 	private AvailableCapabilitiesViewController availableCapabilitiesViewController;
+	private BeanItem<UserSecurityProfileItemVO> currentItem;
+	private Button.ClickListener cancelClickListener = new Button.ClickListener()
+	{
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void buttonClick(Button.ClickEvent event)
+		{
+			discardChanges();
+		}
+	};
 
 	public void setUserItemTableContainer(
 			DataManagerContainer<UserSecurityProfileItemVO> userItemTableContainer)
@@ -63,23 +79,36 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		try
 		{
 			editorView.initWidget();
-			configureFieldValidators();
-			configureButtonListeners();
-			configureInitialButtonState();
-			configureCapabilitiesTab();
 
 		}
 		catch (WidgetInitalizeException ex)
 		{
 			exceptionPopupProvider.popUpErrorException(ex);
 		}
+		editorView.setOnAttachStrategy(new OnAttachStrategy()
+		{
+			@Override
+			public void onAttachOf(Component componentAttached)
+			{
+				configureButtonListeners();
+				configureFieldValidators();
+				configureInitialButtonState();
+				configureCapabilitiesTab();
+
+			}
+		});
 	}
 
-	private UserSecurityProfileItemVO getCurrentData()
+	private BeanItem<UserSecurityProfileItemVO> getCurrentItem()
 	{
-		BeanItem<UserSecurityProfileItemVO> item = (BeanItem) getControlledView().getForm().getItemDataSource();
-		UserSecurityProfileItemVO currentData = item.getBean();
-		return currentData;
+		return currentItem;
+	}
+
+	private void setCurrentItem(BeanItem<UserSecurityProfileItemVO> currentItem)
+	{
+		this.currentItem = currentItem;
+		userCapabilitiesViewController.setCurrentProfile(getCurrentItem().getBean());
+		getControlledView().changeModeToViewOnly();
 	}
 
 	@Override
@@ -91,7 +120,8 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	public void setItemDataSource(Item itemDataSource)
 	{
 		getControlledView().getForm().setItemDataSource(itemDataSource);
-		getControlledView().changeModeToViewOnly();
+		BeanItem<UserSecurityProfileItemVO> item = (BeanItem) getControlledView().getForm().getItemDataSource();
+		setCurrentItem(item);
 	}
 
 	@Override
@@ -121,7 +151,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 			@Override
 			public boolean isValid(Object value)
 			{
-				return (!(getCurrentData().isRequirePasswordChange() && (value == null || value.toString().isEmpty())));
+				return (!(getCurrentItem().getBean().isRequirePasswordChange() && (value == null || value.toString().isEmpty())));
 			}
 		});
 		editorView.getRetypedPasswordField().addValidator(new Validator()
@@ -148,28 +178,30 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 
 	private void configureButtonListeners()
 	{
-		editorView.getEditButton().addListener(new Button.ClickListener()
+		getControlledView().getCancelButton().addListener(cancelClickListener);
+		getControlledView().getEditButton().addListener(new Button.ClickListener()
 		{
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void buttonClick(Button.ClickEvent event)
 			{
-				editorView.changeModeToEdit();
+				getControlledView().changeModeToEdit();
 			}
 		});
-		editorView.getSaveButton().addListener(new Button.ClickListener()
+		getControlledView().getSaveButton().addListener(new Button.ClickListener()
 		{
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void buttonClick(Button.ClickEvent event)
 			{
+				LOG.log(Level.FINE, "saveButton clicked");
 				try
 				{
 					getControlledView().getForm().commit();
 					getControlledView().changeModeToViewOnly();
-					userItemTableContainer.updateItem(getCurrentData());
+					userItemTableContainer.updateItem(getCurrentItem().getBean());
 				}
 				catch (Exception ex)
 				{
@@ -178,11 +210,21 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 
 			}
 		});
+
+
+	}
+
+	private void discardChanges() throws Buffered.SourceException
+	{
+		getControlledView().getForm().discard();
+		userCapabilitiesViewController.discardChanges();
+		setCurrentItem(currentItem);
+		getControlledView().changeModeToViewOnly();
 	}
 
 	private void configureInitialButtonState()
 	{
-		ButtonUtil.hideButtons(editorView.getSaveButton(), editorView.getEditButton(), editorView.getCancelButton());
+		getControlledView().hideButtons();
 	}
 
 	private void configureCapabilitiesTab()
