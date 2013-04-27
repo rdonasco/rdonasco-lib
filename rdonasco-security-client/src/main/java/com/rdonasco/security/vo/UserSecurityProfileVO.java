@@ -105,7 +105,7 @@ public class UserSecurityProfileVO implements Serializable
 		this.registrationTokenExpiration = registrationTokenExpiration;
 	}
 
-	public Collection<UserCapabilityVO> getCapabilityVOList()
+	public Collection<UserCapabilityVO> getCapabilities()
 	{
 		return capabilities;
 	}
