@@ -16,9 +16,13 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.common.exceptions.CollectionMergeException;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.common.exceptions.IllegalOrphanException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
+import com.rdonasco.common.utils.CollectionsUtility;
+import com.rdonasco.common.utils.CollectionsUtility.CollectionItemDeleteStrategy;
 import com.rdonasco.security.dao.UserCapabilityDAO;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
@@ -27,6 +31,7 @@ import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
 import com.rdonasco.security.model.Capability;
+import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
@@ -198,7 +203,25 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 				profileToUpdate.setPassword(profileUpdateDetails.getPassword());
 			}
 
-
+			profileToUpdate.setCapabilities(CollectionsUtility.updateCollection(
+					profileUpdateDetails.getCapabilities(),
+					profileToUpdate.getCapabilities(),
+					new CollectionItemDeleteStrategy<UserCapability>()
+			{
+				@Override
+				public void delete(UserCapability itemToDelete) throws
+						CollectionMergeException
+				{
+					try
+					{
+						userCapabilityDAO.delete(itemToDelete.getId());
+					}
+					catch (Exception e)
+					{
+						throw new CollectionMergeException(e);
+					}
+				}
+			}));
 
 			userSecurityProfileDAO.update(profileToUpdate);
 		}
