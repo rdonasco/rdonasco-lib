@@ -72,6 +72,27 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 	private Instance<ApplicationPopupProvider> popupProviderFactory;
 	private ApplicationPopupProvider popupProvider;
 	private Map<Object, Map<Object, TextField>> fieldMap = new HashMap<Object, Map<Object, TextField>>();
+	private ItemClickEvent.ItemClickListener tableClickListener;
+	List<String> realVisibleColumns = new ArrayList<String>();
+
+	public ListEditorViewPanelController()
+	{
+		this.tableClickListener = new ItemClickEvent.ItemClickListener()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void itemClick(ItemClickEvent event)
+			{
+				if (event.isDoubleClick())
+				{
+					TextField textField = getFieldFromCache(event.getItemId(), event.getPropertyId());
+					textField.setReadOnly(false);
+					textField.focus();
+				}
+			}
+		};
+	}
 
 	public void setDataContainer(
 			DataManagerContainer<VO> dataContainer)
@@ -90,6 +111,15 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 			configureDataContainerDefaultStrategies();
 			configureEditorTableBehavior();
 			configureButtonBehavior();
+			try
+			{
+				createNewListEditorItem();
+			}
+			catch (UnsupportedOperationException e)
+			{
+				LOG.log(Level.FINE, "creation of record not supported", e);
+				setReadOnlyBehavior();
+			}
 		}
 		catch (WidgetInitalizeException ex)
 		{
@@ -229,7 +259,6 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 			throw new IllegalStateException("columnHeaders not yet set");
 		}
 		getEditorViewPanel().getEditorTable().setContainerDataSource(dataContainer);
-		List<String> realVisibleColumns = new ArrayList<String>();
 		realVisibleColumns.add(TABLE_PROPERTY_ICON);
 		realVisibleColumns.addAll(Arrays.asList(getVisibleColumns()));
 		getEditorViewPanel().getEditorTable().setVisibleColumns(realVisibleColumns.toArray(new String[0]));
@@ -293,21 +322,8 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 		{
 			getEditorViewPanel().getEditorTable().addGeneratedColumn(propertyName, columnGenerator);
 		}
-		getEditorViewPanel().getEditorTable().addListener(new ItemClickEvent.ItemClickListener()
-		{
-			private static final long serialVersionUID = 1L;
 
-			@Override
-			public void itemClick(ItemClickEvent event)
-			{
-				if (event.isDoubleClick())
-				{
-					TextField textField = getFieldFromCache(event.getItemId(), event.getPropertyId());
-					textField.setReadOnly(false);
-					textField.focus();
-				}
-			}
-		});
+		getEditorViewPanel().getEditorTable().addListener(tableClickListener);
 		TableHelper.setupTable(getEditorViewPanel().getEditorTable());
 		getEditorViewPanel().getEditorTable().setDragMode(Table.TableDragMode.ROW);
 	}
@@ -442,5 +458,27 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 				.setApplication(getEditorViewPanel().getApplication())
 				.createStreamResource());
 		return icon;
+	}
+
+	private void setReadOnlyBehavior()
+	{
+		getControlledView().getAddItemButton().setReadOnly(true);
+		getControlledView().getAddItemButton().setVisible(false);
+		getEditorViewPanel().getEditorTable().removeListener(tableClickListener);
+		getEditorViewPanel().getEditorTable().setVisibleColumns(getReadOnlyVisibleColumns());
+	}
+
+	private String[] getReadOnlyVisibleColumns()
+	{
+		String[] readOnlyColumns = new String[realVisibleColumns.size() - 1];
+		int columnID = 0;
+		for (String column : realVisibleColumns)
+		{
+			if (!TABLE_PROPERTY_ICON.equals(column))
+			{
+				readOnlyColumns[columnID++] = column;
+			}
+		}
+		return readOnlyColumns;
 	}
 }
