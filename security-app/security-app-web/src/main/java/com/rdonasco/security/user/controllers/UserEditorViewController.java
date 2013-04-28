@@ -79,24 +79,16 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		try
 		{
 			editorView.initWidget();
+			configureInitialButtonState();
+			configureButtonListeners();
+			configureFieldValidators();
+			configureCapabilitiesTab();
 
 		}
 		catch (WidgetInitalizeException ex)
 		{
 			exceptionPopupProvider.popUpErrorException(ex);
 		}
-		editorView.setOnAttachStrategy(new OnAttachStrategy()
-		{
-			@Override
-			public void onAttachOf(Component componentAttached)
-			{
-				configureButtonListeners();
-				configureFieldValidators();
-				configureInitialButtonState();
-				configureCapabilitiesTab();
-
-			}
-		});
 	}
 
 	private BeanItem<UserSecurityProfileItemVO> getCurrentItem()
