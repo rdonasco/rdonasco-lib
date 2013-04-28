@@ -54,10 +54,10 @@ public class SecurityEntityValueObjectConverter
 		{
 			userSecurityProfile.setId(userSecurityProfileVO.getId());
 		}
-		userSecurityProfile.setCapabilities(new ArrayList<UserCapability>(userSecurityProfileVO.getCapabilityVOList().size()));
+		userSecurityProfile.setCapabilities(new ArrayList<UserCapability>(userSecurityProfileVO.getCapabilities().size()));
 		UserCapability userCapability = null;
 		Capability capability = null;
-		for (UserCapabilityVO userCapabilityVO : userSecurityProfileVO.getCapabilityVOList())
+		for (UserCapabilityVO userCapabilityVO : userSecurityProfileVO.getCapabilities())
 		{
 			userCapability = new UserCapability();
 			capability = new Capability();
