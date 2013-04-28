@@ -43,10 +43,10 @@ public class Action implements Serializable
 {
 	public static final String NAMED_QUERY_FIND_ACTION_BY_NAME = "findActionByName";
 	public static final String QUERY_PARAM_NAME = "name";
-	
+
 	private static final long serialVersionUID = 1L;
 	private static final String GENERATOR_KEY = "ACTION_IDGEN";
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator =  GENERATOR_KEY)
 	@TableGenerator(name = GENERATOR_KEY, table = SecurityConstants.TABLE_SEQUENCE)
@@ -55,14 +55,14 @@ public class Action implements Serializable
 	@Basic(optional = false)
 	@Column(name = "action_name", nullable = false, length = 64, unique=true)
 	private String name;
-		
+
 	public static Action createWithName(String name)
 	{
 		Action action = new Action();
 		action.setName(name);
 		return action;
 	}
-	
+
 	public Long getId()
 	{
 		return id;
@@ -71,7 +71,7 @@ public class Action implements Serializable
 	public void setId(Long id)
 	{
 		this.id = id;
-	}		
+	}
 
 	@Override
 	public int hashCode()
@@ -100,7 +100,7 @@ public class Action implements Serializable
 	@Override
 	public String toString()
 	{
-		return "com.rdonasco.security.model.Resource[ id=" + id + " ]";
+		return "Action{" + "id=" + id + ", name=" + name + '}';
 	}
 
 	public String getName()

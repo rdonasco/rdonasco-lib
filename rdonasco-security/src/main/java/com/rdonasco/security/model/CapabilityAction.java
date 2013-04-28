@@ -61,7 +61,7 @@ public class CapabilityAction implements Serializable
 	@JoinColumn(name = "action_id", referencedColumnName = "id", nullable = false)
 	@ManyToOne(cascade= CascadeType.REFRESH ,optional = false, fetch= FetchType.EAGER)
 	private Action action;
-	
+
 
 	public Long getId()
 	{
@@ -92,8 +92,8 @@ public class CapabilityAction implements Serializable
 	{
 		this.action = action;
 	}
-	
-	
+
+
 
 //	@Override
 //	public int hashCode()
@@ -148,5 +148,11 @@ public class CapabilityAction implements Serializable
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "CapabilityAction{" + "id=" + id + ", capability=" + capability + ", action=" + action + '}';
 	}
 }

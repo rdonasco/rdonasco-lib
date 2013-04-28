@@ -10,6 +10,7 @@ import com.rdonasco.common.exceptions.MultipleEntityFoundException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.common.utils.CollectionsUtility;
 import com.rdonasco.common.utils.CollectionsUtility.CollectionItemDeleteStrategy;
+import com.rdonasco.common.utils.CollectionsUtility.CollectionItemUpdateStrategy;
 import com.rdonasco.security.dao.ActionDAO;
 import com.rdonasco.security.dao.CapabilityActionDAO;
 import com.rdonasco.security.dao.CapabilityDAO;
@@ -460,6 +461,16 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 						throw new CollectionMergeException(ex);
 					}
 
+				}
+			}, new CollectionItemUpdateStrategy<CapabilityAction>()
+			{
+				@Override
+				public void update(CapabilityAction itemToUpdate,
+						CapabilityAction itemToCopy) throws
+						CollectionMergeException
+				{
+					itemToUpdate.setAction(itemToCopy.getAction());
+					itemToUpdate.setCapability(itemToCopy.getCapability());
 				}
 			}));
 

@@ -31,17 +31,37 @@ import org.apache.commons.beanutils.BeanUtils;
 public class CollectionsUtility
 {
 
-	public static <T extends Collection> T updateCollection(T updatedCollection,
-			T currentCollection) throws
+	public static <T extends Collection> T updateCollection(
+			final T updatedCollection,
+			final T currentCollection) throws
 			CollectionMergeException
 	{
-		return updateCollection(updatedCollection, currentCollection, null);
+		return updateCollection(updatedCollection, currentCollection, null, null);
+	}
+
+	public static <T extends Collection> T updateCollection(
+			final T updatedCollection,
+			final T currentCollection,
+			CollectionItemDeleteStrategy deleteStrategy) throws
+			CollectionMergeException
+	{
+		return updateCollection(updatedCollection, currentCollection, deleteStrategy, null);
+	}
+
+	public static <T extends Collection> T updateCollection(
+			final T updatedCollection,
+			final T currentCollection,
+			CollectionItemUpdateStrategy updateStrategy) throws
+			CollectionMergeException
+	{
+		return updateCollection(updatedCollection, currentCollection, null, updateStrategy);
 	}
 
 	public static <T extends Collection> T updateCollection(
 			final T updatedCollection,
 			final T existingCollection,
-			final CollectionItemDeleteStrategy deleteStrategy) throws
+			final CollectionItemDeleteStrategy deleteStrategy,
+			final CollectionItemUpdateStrategy updateStrategy) throws
 			CollectionMergeException
 	{
 		try
@@ -79,10 +99,15 @@ public class CollectionsUtility
 			for (Object updatedObject : updatedCollection)
 			{
 				Object objectToUpdate = objectsToUpdate.get(updatedObject);
-				if (null != objectToUpdate)
+				if (null != objectToUpdate && null == updateStrategy)
 				{
 					BeanUtils.copyProperties(objectToUpdate, updatedObject);
 				}
+				else if (null != objectToUpdate && null != updateStrategy)
+				{
+					updateStrategy.update(objectToUpdate, updatedObject);
+				}
+
 			}
 
 			// remove items
@@ -112,5 +137,12 @@ public class CollectionsUtility
 	{
 
 		void delete(T itemToDelete) throws CollectionMergeException;
+	}
+
+	public interface CollectionItemUpdateStrategy<T>
+	{
+
+		void update(T itemToUpdate, T itemToCopy) throws
+				CollectionMergeException;
 	}
 }
