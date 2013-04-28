@@ -221,6 +221,16 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 						throw new CollectionMergeException(e);
 					}
 				}
+			}, new CollectionsUtility.CollectionItemUpdateStrategy<UserCapability>()
+			{
+				@Override
+				public void update(UserCapability itemToUpdate,
+						UserCapability itemToCopy) throws
+						CollectionMergeException
+				{
+					itemToUpdate.setCapability(itemToCopy.getCapability());
+					itemToUpdate.setUserProfile(itemToCopy.getUserProfile());
+				}
 			}));
 
 			userSecurityProfileDAO.update(profileToUpdate);
