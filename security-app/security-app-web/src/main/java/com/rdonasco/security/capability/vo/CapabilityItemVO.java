@@ -4,6 +4,7 @@
  */
 package com.rdonasco.security.capability.vo;
 
+import com.rdonasco.datamanager.listeditor.view.ListEditorItem;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityActionVOBuilder;
@@ -19,13 +20,25 @@ import java.util.List;
  *
  * @author Roy F. Donasco
  */
-public class CapabilityItemVO implements Serializable
+public class CapabilityItemVO implements Serializable, ListEditorItem
 {
 
 	private static final long serialVersionUID = 1L;
 	private CapabilityVO capabilityVO;
 	private Embedded embeddedIcon;
 	private String captcha;
+
+	@Override
+	public Embedded getIcon()
+	{
+		return embeddedIcon;
+	}
+
+	@Override
+	public void setIcon(Embedded icon)
+	{
+		this.embeddedIcon = icon;
+	}
 
 	public CapabilityItemVO(CapabilityVO capabilityVO, Embedded embeddedIcon)
 	{
@@ -36,16 +49,6 @@ public class CapabilityItemVO implements Serializable
 	public CapabilityVO getCapabilityVO()
 	{
 		return capabilityVO;
-	}
-
-	public Embedded getEmbeddedIcon()
-	{
-		return embeddedIcon;
-	}
-
-	public void setEmbeddedIcon(Embedded embeddedIcon)
-	{
-		this.embeddedIcon = embeddedIcon;
 	}
 
 	public void setCapabilityVO(CapabilityVO capabilityVO)

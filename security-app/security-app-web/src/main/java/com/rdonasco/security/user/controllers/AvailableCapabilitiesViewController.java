@@ -17,54 +17,58 @@
 
 package com.rdonasco.security.user.controllers;
 
-import com.rdonasco.common.exceptions.WidgetException;
-import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
-import com.rdonasco.common.vaadin.controller.ViewController;
-import com.rdonasco.security.user.views.AvailableCapabilitiesView;
+import com.rdonasco.datamanager.listeditor.controller.ListEditorViewPanelController;
+import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import java.util.logging.Logger;
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public class AvailableCapabilitiesViewController implements
-		ViewController<AvailableCapabilitiesView>
+public class AvailableCapabilitiesViewController extends ListEditorViewPanelController<CapabilityItemVO>
 {
 
 	private static final Logger LOG = Logger.getLogger(AvailableCapabilitiesViewController.class.getName());
 	private static final long serialVersionUID = 1L;
-	@Inject
-	private AvailableCapabilitiesView availableCapabilitiesView;
-	@Inject
-	private ApplicationExceptionPopupProvider exceptionPopupProvider;
-
-	@PostConstruct
-	@Override
-	public void initializeControlledViewBehavior()
-	{
-		try
-		{
-			availableCapabilitiesView.initWidget();
-		}
-		catch (WidgetException e)
-		{
-			exceptionPopupProvider.popUpErrorException(e);
-		}
-	}
+	private static final String CONSTANT_TITLE = "title";
 
 	@Override
-	public AvailableCapabilitiesView getControlledView()
-	{
-		return availableCapabilitiesView;
-	}
-
-	@Override
-	public void refreshView() throws WidgetException
+	public String[] getColumnHeaders()
 	{
 		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method refreshView
+		// TODO: Complete code for method getColumnHeaders
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public String[] getVisibleColumns()
+	{
+		// To change body of generated methods, choose Tools | Templates.
+		// TODO: Complete code for method getVisibleColumns
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public CapabilityItemVO createNewListEditorItem()
+	{
+		// To change body of generated methods, choose Tools | Templates.
+		// TODO: Complete code for method createNewListEditorItem
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public String getItemName()
+	{
+		// To change body of generated methods, choose Tools | Templates.
+		// TODO: Complete code for method getItemName
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public String getListName()
+	{
+		// To change body of generated methods, choose Tools | Templates.
+		// TODO: Complete code for method getListName
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }
