@@ -23,7 +23,13 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>javax</groupId>
+		<groupId>commons-beanutils</groupId>
+		<artifactId>commons-beanutils</artifactId>
+		<version>1.8.3</version>
+		<type>jar</type>
+	</dependency>
+	<dependency>
+		<groupId>javax</groupId>
       <artifactId>javaee-api</artifactId>
       <version>6.0</version>
       <type>jar</type>

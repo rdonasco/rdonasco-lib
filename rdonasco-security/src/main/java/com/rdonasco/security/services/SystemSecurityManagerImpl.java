@@ -198,6 +198,8 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 				profileToUpdate.setPassword(profileUpdateDetails.getPassword());
 			}
 
+
+
 			userSecurityProfileDAO.update(profileToUpdate);
 		}
 		catch (Exception ex)

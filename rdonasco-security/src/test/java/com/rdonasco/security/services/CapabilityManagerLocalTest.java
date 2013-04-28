@@ -1,6 +1,8 @@
 package com.rdonasco.security.services;
 
+import com.rdonasco.common.exceptions.CollectionMergeException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
+import com.rdonasco.common.utils.CollectionsUtility;
 import com.rdonasco.security.dao.ActionDAO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.model.Action;
@@ -40,7 +42,10 @@ public class CapabilityManagerLocalTest
 				.addPackage(ActionDAO.class.getPackage())
 				.addPackage(SystemSecurityManagerRemote.class.getPackage())
 				.addPackage(ActionVO.class.getPackage())
-				.addPackage(Action.class.getPackage());
+				.addPackage(Action.class.getPackage())
+				.addClass(CollectionsUtility.class)
+				.addClass(CollectionsUtility.CollectionItemDeleteStrategy.class)
+				.addClass(CollectionMergeException.class);
 
 		return archive;
 	}
