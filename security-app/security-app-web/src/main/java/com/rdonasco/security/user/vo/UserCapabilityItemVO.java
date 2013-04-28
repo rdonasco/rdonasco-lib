@@ -39,6 +39,11 @@ public class UserCapabilityItemVO implements Serializable, ListEditorItem
 		this.userCapabilityVO = userCapabilityVO;
 	}
 
+	public UserCapabilityVO getUserCapabilityVO()
+	{
+		return userCapabilityVO;
+	}
+
 	@Override
 	public Embedded getIcon()
 	{

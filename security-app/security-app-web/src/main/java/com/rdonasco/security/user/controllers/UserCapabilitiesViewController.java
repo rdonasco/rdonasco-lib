@@ -29,9 +29,11 @@ import com.rdonasco.security.user.vo.UserCapabilityItemVO;
 import com.rdonasco.security.user.vo.UserCapabilityItemVOBuilder;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
 import com.rdonasco.security.vo.UserCapabilityVO;
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.MouseEvents;
 import com.vaadin.ui.Embedded;
-import java.util.logging.Level;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -53,7 +55,7 @@ public class UserCapabilitiesViewController implements
 	@Inject
 	private ApplicationPopupProvider popupProvider;
 	private BeanItemContainer<UserCapabilityItemVO> userCapabilityItemContainer = new BeanItemContainer(UserCapabilityItemVO.class);
-	private UserSecurityProfileItemVO currentProfile;
+	private BeanItem<UserSecurityProfileItemVO> currentProfile;
 
 	@PostConstruct
 	@Override
@@ -71,7 +73,7 @@ public class UserCapabilitiesViewController implements
 
 	}
 
-	public void setCurrentProfile(UserSecurityProfileItemVO profile)
+	public void setCurrentProfile(BeanItem<UserSecurityProfileItemVO> profile)
 	{
 		currentProfile = profile;
 		try
@@ -113,7 +115,7 @@ public class UserCapabilitiesViewController implements
 	private void populateItemContainer()
 	{
 		userCapabilityItemContainer.removeAllItems();
-		for (UserCapabilityVO userCapability : currentProfile.getCapabilities())
+		for (UserCapabilityVO userCapability : currentProfile.getBean().getCapabilities())
 		{
 			Embedded icon = IconHelper.createDeleteIcon("Remove capability");
 			final UserCapabilityItemVO userCapabilityItemVO = new UserCapabilityItemVOBuilder()
@@ -142,5 +144,15 @@ public class UserCapabilitiesViewController implements
 	void discardChanges()
 	{
 		getControlledView().getUserCapabilitiesTable().discard();
+	}
+
+	public void commit()
+	{
+		List<UserCapabilityVO> editedCapabilities = new ArrayList<UserCapabilityVO>();
+		for (UserCapabilityItemVO capabilityItem : userCapabilityItemContainer.getItemIds())
+		{
+			editedCapabilities.add(capabilityItem.getUserCapabilityVO());
+		}
+		currentProfile.getItemProperty("capabilities").setValue(editedCapabilities);
 	}
 }

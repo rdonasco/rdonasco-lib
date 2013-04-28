@@ -107,7 +107,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	private void setCurrentItem(BeanItem<UserSecurityProfileItemVO> currentItem)
 	{
 		this.currentItem = currentItem;
-		userCapabilitiesViewController.setCurrentProfile(getCurrentItem().getBean());
+		userCapabilitiesViewController.setCurrentProfile(getCurrentItem());
 		getControlledView().changeModeToViewOnly();
 	}
 
@@ -199,6 +199,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 				LOG.log(Level.FINE, "saveButton clicked");
 				try
 				{
+					userCapabilitiesViewController.commit();
 					getControlledView().getForm().commit();
 					getControlledView().changeModeToViewOnly();
 					userItemTableContainer.updateItem(getCurrentItem().getBean());
