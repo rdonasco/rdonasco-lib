@@ -140,8 +140,8 @@ public class CapabilityEditorView extends VerticalLayout implements
 
 		saveButton.addStyleName(SecurityDefaultTheme.CSS_BUTTON_DEFAULT);
 		buttonLayout.addComponent(editButton);
-		buttonLayout.addComponent(cancelButton);
 		buttonLayout.addComponent(saveButton);
+		buttonLayout.addComponent(cancelButton);
 		buttonLayout.setSpacing(true);
 	}
 }
