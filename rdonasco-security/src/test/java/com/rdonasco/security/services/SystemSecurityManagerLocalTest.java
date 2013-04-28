@@ -85,9 +85,9 @@ public class SystemSecurityManagerLocalTest
 
 		assertNotNull("user not created", createdUser);
 		assertNotNull("id is null", createdUser.getId());
-		assertNotNull("capabilities is not null", createdUser.getCapabilityVOList());
-		assertTrue("capabilities.size() is zero", createdUser.getCapabilityVOList().size() > 0);
-		for (UserCapabilityVO savedUserCapabilityVO : createdUser.getCapabilityVOList())
+		assertNotNull("capabilities is not null", createdUser.getCapabilities());
+		assertTrue("capabilities.size() is zero", createdUser.getCapabilities().size() > 0);
+		for (UserCapabilityVO savedUserCapabilityVO : createdUser.getCapabilities())
 		{
 			assertNotNull(savedUserCapabilityVO.getId());
 			System.out.println("savedUserCapabilityVO.toString()=" + savedUserCapabilityVO.toString());

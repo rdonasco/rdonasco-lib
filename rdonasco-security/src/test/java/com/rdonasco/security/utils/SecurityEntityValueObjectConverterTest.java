@@ -92,7 +92,7 @@ public class SecurityEntityValueObjectConverterTest
 		assertEquals("id did not match", userProfileVO.getId(), resultingUserSecurityProfile.getId());
 		assertEquals("login id did not match", userProfileVO.getLogonId(), resultingUserSecurityProfile.getLogonId());
 		assertEquals("password did not match", userProfileVO.getPassword(), resultingUserSecurityProfile.getPassword());
-		assertEquals("user capabilities did not match", userProfileVO.getCapabilityVOList().size(), resultingUserSecurityProfile.getCapabilities().size());
+		assertEquals("user capabilities did not match", userProfileVO.getCapabilities().size(), resultingUserSecurityProfile.getCapabilities().size());
 		UserCapability resultUserCapability = resultingUserSecurityProfile.getCapabilities().iterator().next();
 		assertEquals("userCapability.id did not match", userCapability.getId(), resultUserCapability.getId());
 		assertEquals("userCapability.userProfile.id did not match", userCapability.getUserProfile().getId(),resultUserCapability.getUserProfile().getId());
