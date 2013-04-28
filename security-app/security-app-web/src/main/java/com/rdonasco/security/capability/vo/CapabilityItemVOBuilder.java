@@ -12,10 +12,10 @@ import com.vaadin.ui.Embedded;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CapabilityItemVOBuilder 
+public class CapabilityItemVOBuilder
 {
 	private CapabilityVO capabilityVO;
-	private Embedded embeddedIcon;
+	private Embedded icon;
 
 	public CapabilityItemVOBuilder()
 	{
@@ -27,9 +27,9 @@ public class CapabilityItemVOBuilder
 		return this;
 	}
 
-	public CapabilityItemVOBuilder setEmbeddedIcon(Embedded embeddedIcon)
+	public CapabilityItemVOBuilder setIcon(Embedded icon)
 	{
-		this.embeddedIcon = embeddedIcon;
+		this.icon = icon;
 		return this;
 	}
 
@@ -40,7 +40,7 @@ public class CapabilityItemVOBuilder
 		{
 			actions.add(action.getActionVO());
 		}
-		CapabilityItemVO capabilityItemVO = new CapabilityItemVO(capabilityVO, embeddedIcon);
+		CapabilityItemVO capabilityItemVO = new CapabilityItemVO(capabilityVO, icon);
 		capabilityItemVO.setActions(actions);
 		return capabilityItemVO;
 	}

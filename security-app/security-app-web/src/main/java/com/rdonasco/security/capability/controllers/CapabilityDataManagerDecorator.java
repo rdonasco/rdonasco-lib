@@ -150,7 +150,7 @@ public class CapabilityDataManagerDecorator implements
 		Embedded icon = IconHelper.createDeleteIcon(I18NResource.localize("Delete"));
 		CapabilityItemVO itemVO = new CapabilityItemVOBuilder()
 				.setCapabilityVO(capability)
-				.setEmbeddedIcon(icon)
+				.setIcon(icon)
 				.createCapabilityItemVO();
 		if (getClickListenerProvider() != null)
 		{

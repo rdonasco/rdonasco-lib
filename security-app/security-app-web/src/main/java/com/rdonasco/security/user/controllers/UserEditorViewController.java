@@ -16,13 +16,16 @@
  */
 package com.rdonasco.security.user.controllers;
 
+import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
-import com.rdonasco.common.vaadin.controller.OnAttachStrategy;
+import com.rdonasco.datamanager.services.DataManager;
+import com.rdonasco.security.capability.controllers.CapabilityDataManagerDecorator;
+import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.user.views.UserEditorView;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
 import com.vaadin.data.Buffered;
@@ -30,7 +33,7 @@ import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -55,6 +58,8 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	@Inject
 	private AvailableCapabilitiesViewController availableCapabilitiesViewController;
 	private BeanItem<UserSecurityProfileItemVO> currentItem;
+	@Inject
+	private CapabilityDataManagerDecorator capabilityManager;
 	private Button.ClickListener cancelClickListener = new Button.ClickListener()
 	{
 		private static final long serialVersionUID = 1L;
@@ -224,6 +229,52 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	{
 		getControlledView().getCapabilitiesLayout().setSpacing(true);
 		getControlledView().getCapabilitiesLayout().setMargin(true, true, true, true);
+		DataManagerContainer capabilityDataContainer = new DataManagerContainer(CapabilityItemVO.class);
+		availableCapabilitiesViewController.setDataContainer(capabilityDataContainer);
+		capabilityDataContainer.setDataManager(new DataManager<CapabilityItemVO>()
+		{
+			@Override
+			public void deleteData(CapabilityItemVO data) throws
+					DataAccessException
+			{
+				LOG.log(Level.FINE, "deleteData not supported");
+			}
+
+			@Override
+			public CapabilityItemVO loadData(CapabilityItemVO data) throws
+					DataAccessException
+			{
+				// To change body of generated methods, choose Tools | Templates.
+				// TODO: Complete code for method loadData
+				throw new UnsupportedOperationException("Not supported yet.");
+			}
+
+			@Override
+			public List<CapabilityItemVO> retrieveAllData() throws
+					DataAccessException
+			{
+				return capabilityManager.retrieveAllData();
+			}
+
+			@Override
+			public CapabilityItemVO saveData(CapabilityItemVO data) throws
+					DataAccessException
+			{
+				// To change body of generated methods, choose Tools | Templates.
+				// TODO: Complete code for method saveData
+				throw new UnsupportedOperationException("Not supported yet.");
+			}
+
+			@Override
+			public void updateData(CapabilityItemVO data) throws
+					DataAccessException
+			{
+				// To change body of generated methods, choose Tools | Templates.
+				// TODO: Complete code for method updateData
+				throw new UnsupportedOperationException("Not supported yet.");
+			}
+		});
+		availableCapabilitiesViewController.initializeControlledViewBehavior();
 		getControlledView().getCapabilitiesLayout()
 				.addComponent(userCapabilitiesViewController.getControlledView());
 		getControlledView().getCapabilitiesLayout()
@@ -232,7 +283,6 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 				.setExpandRatio(userCapabilitiesViewController.getControlledView(), 0.5f);
 		getControlledView().getCapabilitiesLayout()
 				.setExpandRatio(availableCapabilitiesViewController.getControlledView(), 0.5f);
-
 
 	}
 }

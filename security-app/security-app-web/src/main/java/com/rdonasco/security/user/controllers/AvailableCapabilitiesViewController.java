@@ -17,9 +17,9 @@
 
 package com.rdonasco.security.user.controllers;
 
+import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.datamanager.listeditor.controller.ListEditorViewPanelController;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
-import java.util.logging.Logger;
 
 /**
  *
@@ -28,24 +28,25 @@ import java.util.logging.Logger;
 public class AvailableCapabilitiesViewController extends ListEditorViewPanelController<CapabilityItemVO>
 {
 
-	private static final Logger LOG = Logger.getLogger(AvailableCapabilitiesViewController.class.getName());
 	private static final long serialVersionUID = 1L;
 	private static final String CONSTANT_TITLE = "title";
 
 	@Override
 	public String[] getColumnHeaders()
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method getColumnHeaders
-		throw new UnsupportedOperationException("Not supported yet.");
+		return new String[]
+		{
+			I18NResource.localize(CONSTANT_TITLE)
+		};
 	}
 
 	@Override
 	public String[] getVisibleColumns()
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method getVisibleColumns
-		throw new UnsupportedOperationException("Not supported yet.");
+		return new String[]
+		{
+			CONSTANT_TITLE
+		};
 	}
 
 	@Override
@@ -59,16 +60,12 @@ public class AvailableCapabilitiesViewController extends ListEditorViewPanelCont
 	@Override
 	public String getItemName()
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method getItemName
-		throw new UnsupportedOperationException("Not supported yet.");
+		return I18NResource.localize("Capability");
 	}
 
 	@Override
 	public String getListName()
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method getListName
-		throw new UnsupportedOperationException("Not supported yet.");
+		return I18NResource.localize("Capabilities");
 	}
 }

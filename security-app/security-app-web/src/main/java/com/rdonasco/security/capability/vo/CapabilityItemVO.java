@@ -25,25 +25,25 @@ public class CapabilityItemVO implements Serializable, ListEditorItem
 
 	private static final long serialVersionUID = 1L;
 	private CapabilityVO capabilityVO;
-	private Embedded embeddedIcon;
+	private Embedded icon;
 	private String captcha;
 
 	@Override
 	public Embedded getIcon()
 	{
-		return embeddedIcon;
+		return icon;
 	}
 
 	@Override
 	public void setIcon(Embedded icon)
 	{
-		this.embeddedIcon = icon;
+		this.icon = icon;
 	}
 
-	public CapabilityItemVO(CapabilityVO capabilityVO, Embedded embeddedIcon)
+	public CapabilityItemVO(CapabilityVO capabilityVO, Embedded icon)
 	{
 		this.capabilityVO = capabilityVO;
-		this.embeddedIcon = embeddedIcon;
+		this.icon = icon;
 	}
 
 	public CapabilityVO getCapabilityVO()

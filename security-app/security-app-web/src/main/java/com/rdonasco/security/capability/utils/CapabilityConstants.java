@@ -15,7 +15,7 @@ public interface CapabilityConstants
 
 	public static final Object[] TABLE_VISIBLE_COLUMNS = new Object[]
 	{
-		"embeddedIcon", "title"
+		"icon", "title"
 	};
 	public static final String[] TABLE_VISIBLE_HEADERS = new String[]
 	{
