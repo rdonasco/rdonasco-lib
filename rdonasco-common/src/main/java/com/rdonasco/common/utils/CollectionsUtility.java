@@ -14,13 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.rdonasco.common.utils;
 
 import com.rdonasco.common.exceptions.CollectionMergeException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import org.apache.commons.beanutils.BeanUtils;
 
 /**
  *
@@ -28,6 +30,7 @@ import java.util.List;
  */
 public class CollectionsUtility
 {
+
 	public static <T extends Collection> T updateCollection(T updatedCollection,
 			T currentCollection) throws
 			CollectionMergeException
@@ -36,50 +39,68 @@ public class CollectionsUtility
 	}
 
 	public static <T extends Collection> T updateCollection(
-			final T updatedActions,
-			final T actionsToUpdate,
+			final T updatedCollection,
+			final T existingCollection,
 			final CollectionItemDeleteStrategy deleteStrategy) throws
 			CollectionMergeException
 	{
 		try
 		{
-			T currentActions = (T) updatedActions.getClass().newInstance();
-			currentActions.addAll(actionsToUpdate);
+			T mergedCollection = (T) updatedCollection.getClass().newInstance();
+			mergedCollection.addAll(existingCollection);
 			// find actionst to add
-			List actionsToAdd = new ArrayList();
-			for (Object actionToAdd : updatedActions)
+			List objectsToAdd = new ArrayList();
+			for (Object objectToAdd : updatedCollection)
 			{
-				if (!currentActions.contains(actionToAdd))
+				if (!mergedCollection.contains(objectToAdd))
 				{
-					actionsToAdd.add(actionToAdd);
+					objectsToAdd.add(objectToAdd);
 				}
 			}
-			List actionsToRemove = new ArrayList();
+			List objectsToRemove = new ArrayList();
 			// find actions to delete
-			for (Object actionToRemove : currentActions)
+			for (Object objectToRemove : mergedCollection)
 			{
-				if (!updatedActions.contains(actionToRemove))
+				if (!updatedCollection.contains(objectToRemove))
 				{
-					actionsToRemove.add(actionToRemove);
+					objectsToRemove.add(objectToRemove);
+				}
+			}
+
+			// collect objects to update
+			Map objectsToUpdate = new HashMap();
+			for (Object objectToUpdate : mergedCollection)
+			{
+				if (updatedCollection.contains(objectToUpdate))
+				{
+					objectsToUpdate.put(objectToUpdate, objectToUpdate);
+				}
+			}
+			for (Object updatedObject : updatedCollection)
+			{
+				Object objectToUpdate = objectsToUpdate.get(updatedObject);
+				if (null != objectToUpdate)
+				{
+					BeanUtils.copyProperties(objectToUpdate, updatedObject);
 				}
 			}
 
 			// remove items
-			for (Object actionToRemove : actionsToRemove)
+			for (Object objectToRemove : objectsToRemove)
 			{
-				currentActions.remove(actionToRemove);
+				mergedCollection.remove(objectToRemove);
 				if (null != deleteStrategy)
 				{
-					deleteStrategy.delete(actionToRemove);
+					deleteStrategy.delete(objectToRemove);
 				}
 			}
 
 			// add items
-			for (Object actionToAdd : actionsToAdd)
+			for (Object objectToAdd : objectsToAdd)
 			{
-				currentActions.add(actionToAdd);
+				mergedCollection.add(objectToAdd);
 			}
-			return currentActions;
+			return mergedCollection;
 		}
 		catch (Exception ex)
 		{

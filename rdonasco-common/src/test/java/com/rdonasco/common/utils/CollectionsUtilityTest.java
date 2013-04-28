@@ -96,13 +96,13 @@ public class CollectionsUtilityTest extends TestCase
 		assertTrue("failed to find " + elementToUpdate, result.contains(elementToUpdate));
 		assertEquals("invalid size", 3, result.size());
 		printCollectionContents(result);
-//		for (DataElement data : result)
-//		{
-//			if (elementToUpdate.equals(data))
-//			{
-//				assertEquals("failed to update to " + elementToUpdate.getName(), elementToUpdate.getName(), data.getName());
-//			}
-//		}
+		for (DataElement data : result)
+		{
+			if (elementToUpdate.equals(data))
+			{
+				assertEquals("failed to update to " + elementToUpdate.getName(), elementToUpdate.getName(), data.getName());
+			}
+		}
 	}
 
 	private Collection prepareCurrentCollection()
