@@ -89,7 +89,7 @@ public class CollectionsUtilityTest extends TestCase
 		DataElement elementToUpdate = new DataElement(200, "Heidi");
 		ArrayList updatedCollection = new ArrayList(currentCollection);
 		updatedCollection.remove(elementToUpdate);
-		elementToUpdate.setName("Larissa");
+		elementToUpdate.setName("Ma. Heidi");
 		updatedCollection.add(elementToUpdate);
 		Collection<DataElement> result = CollectionsUtility.updateCollection(updatedCollection, currentCollection);
 		assertFalse("failed to update collection", result.isEmpty());
