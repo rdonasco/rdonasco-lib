@@ -443,7 +443,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 			Capability existingCapability = capabilityDAO.findData(capability.getId());
 			final Collection<CapabilityAction> updatedActions = capability.getActions();
 			final Collection<CapabilityAction> currentActions = existingCapability.getActions();
-			mergeUpdatedActions(updatedActions, currentActions, new AdditionalDeleteActionStrategy<CapabilityAction>()
+			updateCollection(updatedActions, currentActions, new AdditionalDeleteActionStrategy<CapabilityAction>()
 			{
 				@Override
 				public void delete(CapabilityAction objectTodelete) throws
@@ -569,7 +569,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 		}
 	}
 
-	private void mergeUpdatedActions(
+	private void updateCollection(
 			final Collection<CapabilityAction> updatedActions,
 			final Collection<CapabilityAction> currentActions,
 			final AdditionalDeleteActionStrategy deleteStrategy) throws
