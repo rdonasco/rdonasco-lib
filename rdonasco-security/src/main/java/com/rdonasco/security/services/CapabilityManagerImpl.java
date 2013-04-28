@@ -5,6 +5,7 @@
 package com.rdonasco.security.services;
 
 import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.common.exceptions.IllegalOrphanException;
 import com.rdonasco.common.exceptions.MultipleEntityFoundException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.security.dao.ActionDAO;
@@ -23,6 +24,7 @@ import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -439,37 +441,17 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 		{
 			Capability capability = SecurityEntityValueObjectConverter.toCapability(capabilityToUpdate);
 			Capability existingCapability = capabilityDAO.findData(capability.getId());
-			List<CapabilityAction> actionsToAdd = new ArrayList<CapabilityAction>();
-			// find actionst to add
-			for (CapabilityAction actionToAdd : capability.getActions())
+			final Collection<CapabilityAction> updatedActions = capability.getActions();
+			final Collection<CapabilityAction> currentActions = existingCapability.getActions();
+			mergeUpdatedActions(updatedActions, currentActions, new AdditionalDeleteActionStrategy<CapabilityAction>()
 			{
-				if (!existingCapability.getActions().contains(actionToAdd))
+				@Override
+				public void delete(CapabilityAction objectTodelete) throws
+						NonExistentEntityException, IllegalOrphanException
 				{
-					actionsToAdd.add(actionToAdd);
+					capabilityActionDAO.delete(objectTodelete.getId());
 				}
-			}
-			List<CapabilityAction> actionsToRemove = new ArrayList<CapabilityAction>();
-			// find actions to delete
-			for (CapabilityAction actionToRemove : existingCapability.getActions())
-			{
-				if (!capability.getActions().contains(actionToRemove))
-				{
-					actionsToRemove.add(actionToRemove);
-				}
-			}
-
-			// remove items
-			for (CapabilityAction actionToRemove : actionsToRemove)
-			{
-				existingCapability.getActions().remove(actionToRemove);
-				capabilityActionDAO.delete(actionToRemove.getId());
-			}
-
-			// add items
-			for (CapabilityAction actionToAdd : actionsToAdd)
-			{
-				existingCapability.getActions().add(actionToAdd);
-			}
+			});
 
 			// update fields
 			existingCapability.setDescription(capability.getDescription());
@@ -585,5 +567,54 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 		{
 			throw new CapabilityManagerException(e);
 		}
+	}
+
+	private void mergeUpdatedActions(
+			final Collection<CapabilityAction> updatedActions,
+			final Collection<CapabilityAction> currentActions,
+			final AdditionalDeleteActionStrategy deleteStrategy) throws
+			NonExistentEntityException, IllegalOrphanException
+	{
+		// find actionst to add
+		List<CapabilityAction> actionsToAdd = new ArrayList<CapabilityAction>();
+		for (CapabilityAction actionToAdd : updatedActions)
+		{
+			if (!currentActions.contains(actionToAdd))
+			{
+				actionsToAdd.add(actionToAdd);
+			}
+		}
+		List<CapabilityAction> actionsToRemove = new ArrayList<CapabilityAction>();
+		// find actions to delete
+		for (CapabilityAction actionToRemove : currentActions)
+		{
+			if (!updatedActions.contains(actionToRemove))
+			{
+				actionsToRemove.add(actionToRemove);
+			}
+		}
+
+		// remove items
+		for (CapabilityAction actionToRemove : actionsToRemove)
+		{
+			currentActions.remove(actionToRemove);
+			if (null != deleteStrategy)
+			{
+				deleteStrategy.delete(actionToRemove);
+			}
+		}
+
+		// add items
+		for (CapabilityAction actionToAdd : actionsToAdd)
+		{
+			currentActions.add(actionToAdd);
+		}
+	}
+
+	public interface AdditionalDeleteActionStrategy<T>
+	{
+
+		void delete(T objectTodelete) throws
+				NonExistentEntityException, IllegalOrphanException;
 	}
 }
