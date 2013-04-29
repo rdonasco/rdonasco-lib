@@ -37,8 +37,8 @@ public class UserCapabilityVO implements Serializable
 		this.userProfile = userProfile;
 		this.capability = capability;
 	}
-	
-	
+
+
 	public Long getId()
 	{
 		return id;
@@ -69,31 +69,40 @@ public class UserCapabilityVO implements Serializable
 		this.capability = capability;
 	}
 
-	
-
 	@Override
 	public int hashCode()
 	{
-		int hash = 0;
-		hash += (id != null ? id.hashCode() : 0);
+		int hash = 3;
+		hash = 59 * hash + (this.userProfile != null ? this.userProfile.hashCode() : 0);
+		hash = 59 * hash + (this.capability != null ? this.capability.hashCode() : 0);
 		return hash;
 	}
 
 	@Override
-	public boolean equals(Object object)
+	public boolean equals(Object obj)
 	{
-		// TODO: Warning - this method won't work in the case the id fields are not set
-		if (!(object instanceof UserCapabilityVO))
+		if (obj == null)
 		{
 			return false;
 		}
-		UserCapabilityVO other = (UserCapabilityVO) object;
-		if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
+		if (getClass() != obj.getClass())
+		{
+			return false;
+		}
+		final UserCapabilityVO other = (UserCapabilityVO) obj;
+		if (this.userProfile != other.userProfile && (this.userProfile == null || !this.userProfile.equals(other.userProfile)))
+		{
+			return false;
+		}
+		if (this.capability != other.capability && (this.capability == null || !this.capability.equals(other.capability)))
 		{
 			return false;
 		}
 		return true;
 	}
+
+
+	
 
 	@Override
 	public String toString()

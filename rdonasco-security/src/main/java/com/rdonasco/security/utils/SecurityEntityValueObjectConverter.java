@@ -65,7 +65,10 @@ public class SecurityEntityValueObjectConverter
 			userCapability.setUserProfile(userSecurityProfile);
 			userCapability.setId(userCapabilityVO.getId());
 			Resource resource = new Resource();
-			BEAN_UTILS.copyProperties(resource, userCapabilityVO.getCapability().getResource());
+			if (null != userCapabilityVO.getCapability().getResource())
+			{
+				BEAN_UTILS.copyProperties(resource, userCapabilityVO.getCapability().getResource());
+			}
 			capability.setResource(resource);
 			capability.setDescription(userCapabilityVO.getCapability().getDescription());
 			capability.setId(userCapabilityVO.getCapability().getId());

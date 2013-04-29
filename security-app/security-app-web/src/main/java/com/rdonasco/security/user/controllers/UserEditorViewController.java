@@ -32,7 +32,10 @@ import com.vaadin.data.Buffered;
 import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.event.dd.acceptcriteria.SourceIs;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.DragAndDropWrapper;
+import com.vaadin.ui.Table;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -83,11 +86,12 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	{
 		try
 		{
-			editorView.initWidget();
+			getControlledView().initWidget();
 			configureInitialButtonState();
 			configureButtonListeners();
 			configureFieldValidators();
 			configureCapabilitiesTab();
+			changeViewToViewMode();
 
 		}
 		catch (WidgetInitalizeException ex)
@@ -105,7 +109,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	{
 		this.currentItem = currentItem;
 		userCapabilitiesViewController.setCurrentProfile(getCurrentItem());
-		getControlledView().changeModeToViewOnly();
+		changeViewToViewMode();
 	}
 
 	@Override
@@ -183,7 +187,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 			@Override
 			public void buttonClick(Button.ClickEvent event)
 			{
-				getControlledView().changeModeToEdit();
+				changeViewToEditMode();
 			}
 		});
 		getControlledView().getSaveButton().addListener(new Button.ClickListener()
@@ -198,7 +202,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 				{
 					userCapabilitiesViewController.commit();
 					getControlledView().getForm().commit();
-					getControlledView().changeModeToViewOnly();
+					changeViewToViewMode();
 					userItemTableContainer.updateItem(getCurrentItem().getBean());
 				}
 				catch (Exception ex)
@@ -217,7 +221,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		getControlledView().getForm().discard();
 		userCapabilitiesViewController.discardChanges();
 		setCurrentItem(currentItem);
-		getControlledView().changeModeToViewOnly();
+		changeViewToViewMode();
 	}
 
 	private void configureInitialButtonState()
@@ -231,7 +235,59 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		getControlledView().getCapabilitiesLayout().setMargin(true, true, true, true);
 		DataManagerContainer capabilityDataContainer = new DataManagerContainer(CapabilityItemVO.class);
 		availableCapabilitiesViewController.setDataContainer(capabilityDataContainer);
-		capabilityDataContainer.setDataManager(new DataManager<CapabilityItemVO>()
+		capabilityDataContainer.setDataManager(createAvailableCapabilitiesDataManager());
+		availableCapabilitiesViewController.initializeControlledViewBehavior();
+
+		getControlledView().getCapabilitiesLayout()
+				.addComponent(userCapabilitiesViewController.getControlledView());
+		getControlledView().getCapabilitiesLayout()
+				.addComponent(availableCapabilitiesViewController.getControlledView());
+		getControlledView().getCapabilitiesLayout()
+				.setExpandRatio(userCapabilitiesViewController.getControlledView(), 0.5f);
+		getControlledView().getCapabilitiesLayout()
+				.setExpandRatio(availableCapabilitiesViewController.getControlledView(), 0.5f);
+
+		// configure drag and drop of capabilities
+		userCapabilitiesViewController.setValidDraggedObjectSource(new SourceIs(availableCapabilitiesViewController.getControlledView().getEditorTable()));
+
+	}
+
+	private void setViewToReadOnly(boolean readOnly)
+	{
+		getControlledView().setReadOnly(readOnly);
+		getControlledView().getLogonIdField().setReadOnly(readOnly);
+		getControlledView().getPasswordField().setReadOnly(readOnly);
+		getControlledView().getRetypedPasswordField().setReadOnly(readOnly);
+		getControlledView().getSaveButton().setReadOnly(readOnly);
+		getControlledView().getCancelButton().setReadOnly(readOnly);
+		getControlledView().getEditButton().setReadOnly(!readOnly);
+	}
+
+	public void changeViewToEditMode()
+	{
+		setViewToReadOnly(false);
+		getControlledView().getSaveButton().setVisible(true);
+		getControlledView().getCancelButton().setVisible(true);
+		getControlledView().getEditButton().setVisible(false);
+		getControlledView().getPasswordField().setVisible(true);
+		getControlledView().getRetypedPasswordField().setVisible(true);
+		userCapabilitiesViewController.enableEditing();
+	}
+
+	public void changeViewToViewMode()
+	{
+		setViewToReadOnly(true);
+		getControlledView().getSaveButton().setVisible(false);
+		getControlledView().getCancelButton().setVisible(false);
+		getControlledView().getEditButton().setVisible(true);
+		getControlledView().getPasswordField().setVisible(false);
+		getControlledView().getRetypedPasswordField().setVisible(false);
+		userCapabilitiesViewController.disableEditing();
+	}
+
+	private DataManager<CapabilityItemVO> createAvailableCapabilitiesDataManager()
+	{
+		return new DataManager<CapabilityItemVO>()
 		{
 			@Override
 			public void deleteData(CapabilityItemVO data) throws
@@ -273,16 +329,6 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 				// TODO: Complete code for method updateData
 				throw new UnsupportedOperationException("Not supported yet.");
 			}
-		});
-		availableCapabilitiesViewController.initializeControlledViewBehavior();
-		getControlledView().getCapabilitiesLayout()
-				.addComponent(userCapabilitiesViewController.getControlledView());
-		getControlledView().getCapabilitiesLayout()
-				.addComponent(availableCapabilitiesViewController.getControlledView());
-		getControlledView().getCapabilitiesLayout()
-				.setExpandRatio(userCapabilitiesViewController.getControlledView(), 0.5f);
-		getControlledView().getCapabilitiesLayout()
-				.setExpandRatio(availableCapabilitiesViewController.getControlledView(), 0.5f);
-
+		};
 	}
 }

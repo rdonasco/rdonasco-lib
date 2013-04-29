@@ -21,6 +21,7 @@ import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ControlledView;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.vaadin.ui.DragAndDropWrapper;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
@@ -43,7 +44,6 @@ public class UserCapabilitiesView extends Panel implements ControlledView
 	{
 		return userCapabilitiesTable;
 	}
-
 
 	@Override
 	public void initWidget() throws WidgetInitalizeException

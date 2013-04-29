@@ -148,7 +148,6 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 		addComponent(buttonsLayout);
 		getForm().setReadOnly(true);
 		getForm().setWriteThrough(true);
-		changeModeToViewOnly();
 	}
 
 	private void configureUserDetailFields()
@@ -180,38 +179,6 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 			form = new ViewBoundForm(this);
 		}
 		return form;
-	}
-
-	@Override
-	public void setReadOnly(boolean readOnly)
-	{
-		super.setReadOnly(readOnly);
-		logonIdField.setReadOnly(readOnly);
-		passwordField.setReadOnly(readOnly);
-		retypedPasswordField.setReadOnly(readOnly);
-		getSaveButton().setReadOnly(readOnly);
-		getCancelButton().setReadOnly(readOnly);
-		getEditButton().setReadOnly(!readOnly);
-	}
-
-	public void changeModeToEdit()
-	{
-		setReadOnly(false);
-		getSaveButton().setVisible(true);
-		getCancelButton().setVisible(true);
-		getEditButton().setVisible(false);
-		passwordField.setVisible(true);
-		retypedPasswordField.setVisible(true);
-	}
-
-	public void changeModeToViewOnly()
-	{
-		setReadOnly(true);
-		getSaveButton().setVisible(false);
-		getCancelButton().setVisible(false);
-		getEditButton().setVisible(true);
-		passwordField.setVisible(false);
-		retypedPasswordField.setVisible(false);
 	}
 
 	public HorizontalLayout getCapabilitiesLayout()

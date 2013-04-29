@@ -23,17 +23,25 @@ import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.security.capability.utils.IconHelper;
+import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.user.views.UserCapabilitiesView;
 import com.vaadin.data.util.BeanItemContainer;
 import com.rdonasco.security.user.vo.UserCapabilityItemVO;
 import com.rdonasco.security.user.vo.UserCapabilityItemVOBuilder;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
 import com.rdonasco.security.vo.UserCapabilityVO;
+import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.event.DataBoundTransferable;
 import com.vaadin.event.MouseEvents;
+import com.vaadin.event.dd.DragAndDropEvent;
+import com.vaadin.event.dd.DropHandler;
+import com.vaadin.event.dd.acceptcriteria.AcceptAll;
+import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.ui.Embedded;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -56,6 +64,8 @@ public class UserCapabilitiesViewController implements
 	private ApplicationPopupProvider popupProvider;
 	private BeanItemContainer<UserCapabilityItemVO> userCapabilityItemContainer = new BeanItemContainer(UserCapabilityItemVO.class);
 	private BeanItem<UserSecurityProfileItemVO> currentProfile;
+	private DropHandler userCapabilitiesDropHandler;
+	private AcceptCriterion validDraggedObjectSource = AcceptAll.get();
 
 	@PostConstruct
 	@Override
@@ -110,6 +120,77 @@ public class UserCapabilitiesViewController implements
 		{
 			"", I18NResource.localize("Title")
 		});
+		userCapabilitiesDropHandler = new DropHandler()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void drop(DragAndDropEvent dropEvent)
+			{
+				final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
+				if (null != transferredData && transferredData.getItemId() instanceof CapabilityItemVO)
+				{
+					LOG.log(Level.FINE, "drop allowed at user capability panel");
+					final CapabilityItemVO droppedCapabilityItemVO = (CapabilityItemVO) transferredData.getItemId();
+					Embedded icon = IconHelper.createDeleteIcon(I18NResource.localize("Remove Capability"));
+					final UserCapabilityItemVO newUserCapabilityItem = new UserCapabilityItemVOBuilder()
+							.setIcon(icon)
+							.setUserCapabilityVO(new UserCapabilityVOBuilder()
+							.setCapability(droppedCapabilityItemVO.getCapabilityVO())
+							.setUserProfile(currentProfile.getBean().getUserSecurityProfileVO())
+							.createUserCapabilityVO())
+							.createUserCapabilityItemVO();
+					BeanItem<UserCapabilityItemVO> addedItem = userCapabilityItemContainer.addItem(newUserCapabilityItem);
+					LOG.log(Level.FINE, "addedItem = {0}", addedItem);
+//					icon.addListener(new MouseEvents.ClickListener()
+//					{
+//						private static final long serialVersionUID = 1L;
+//
+//						@Override
+//						public void click(MouseEvents.ClickEvent event)
+//						{
+//							if (!getControlledView().getEditorForm().isReadOnly() && !actionsContainer.removeItem(actionItemVO))
+//							{
+//								popupProvider.popUpError(I18NResource.localizeWithParameter("Unable to remove action _", actionItemVO));
+//
+//							}
+//						}
+//					});
+				}
+				else
+				{
+					LOG.log(Level.FINE, "invalid data dropped in user capability panel");
+				}
+			}
+
+			@Override
+			public AcceptCriterion getAcceptCriterion()
+			{
+				return AcceptAll.get();
+			}
+		};
+		getControlledView().getUserCapabilitiesTable().setDropHandler(userCapabilitiesDropHandler);
+	}
+
+	public void enableEditing()
+	{
+//		getControlledView().getUserCapabilitiesTable().setDropHandler(userCapabilitiesDropHandler);
+	}
+
+	public void disableEditing()
+	{
+//		getControlledView().getUserCapabilitiesTable().setDropHandler(null);
+	}
+
+	public AcceptCriterion getValidDraggedObjectSource()
+	{
+		return validDraggedObjectSource;
+	}
+
+	public void setValidDraggedObjectSource(
+			AcceptCriterion validDraggedObjectSource)
+	{
+		this.validDraggedObjectSource = validDraggedObjectSource;
 	}
 
 	private void populateItemContainer()
