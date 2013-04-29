@@ -14,14 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.rdonasco.security.user.views;
 
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ControlledView;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
-import com.vaadin.ui.DragAndDropWrapper;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
@@ -32,6 +30,7 @@ import com.vaadin.ui.VerticalLayout;
  */
 public class UserCapabilitiesView extends Panel implements ControlledView
 {
+
 	private static final long serialVersionUID = 1L;
 	private Table userCapabilitiesTable;
 
@@ -50,11 +49,13 @@ public class UserCapabilitiesView extends Panel implements ControlledView
 	{
 		setCaption(I18NResource.localize("User Capabilities"));
 		setStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
-		setHeight(100f, UNITS_PERCENTAGE);
 		getUserCapabilitiesTable().addStyleName(SecurityDefaultTheme.CSS_TABLE_SMALL_STRIPED);
 		getUserCapabilitiesTable().addStyleName(SecurityDefaultTheme.CSS_TABLE_BORDERLESS);
+
+		VerticalLayout layout = (VerticalLayout) getContent();
+		layout.setSpacing(true);
+		layout.addComponent(getUserCapabilitiesTable());
 		getUserCapabilitiesTable().setSizeFull();
-		addComponent(getUserCapabilitiesTable());
-		((VerticalLayout) getContent()).setExpandRatio(getUserCapabilitiesTable(), 1);
+		layout.setExpandRatio(getUserCapabilitiesTable(), 1);
 	}
 }

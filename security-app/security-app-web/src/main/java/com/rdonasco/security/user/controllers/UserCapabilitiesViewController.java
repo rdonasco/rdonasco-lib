@@ -56,6 +56,8 @@ public class UserCapabilitiesViewController implements
 
 	private static final Logger LOG = Logger.getLogger(UserCapabilitiesViewController.class.getName());
 	private static final long serialVersionUID = 1L;
+	private static final String CONSTANT_ICON = "icon";
+	private static final String COLUMN_CAPABILITY_TITLE = "capability.title";
 	@Inject
 	private UserCapabilitiesView userCapabilitiesView;
 	@Inject
@@ -66,6 +68,15 @@ public class UserCapabilitiesViewController implements
 	private BeanItem<UserSecurityProfileItemVO> currentProfile;
 	private DropHandler userCapabilitiesDropHandler;
 	private AcceptCriterion validDraggedObjectSource = AcceptAll.get();
+	private boolean editEnabled;
+	private final String[] editableColumns = new String[]
+	{
+		CONSTANT_ICON, COLUMN_CAPABILITY_TITLE
+	};
+	private final String[] readOnlyColumns = new String[]
+	{
+		COLUMN_CAPABILITY_TITLE
+	};
 
 	@PostConstruct
 	@Override
@@ -75,6 +86,7 @@ public class UserCapabilitiesViewController implements
 		{
 			userCapabilitiesView.initWidget();
 			configureUserCapabilitiesTable();
+			disableEditing();
 		}
 		catch (WidgetInitalizeException ex)
 		{
@@ -111,11 +123,8 @@ public class UserCapabilitiesViewController implements
 	private void configureUserCapabilitiesTable()
 	{
 		getControlledView().getUserCapabilitiesTable().setContainerDataSource(userCapabilityItemContainer);
-		userCapabilityItemContainer.addNestedContainerProperty("capability.title");
-		getControlledView().getUserCapabilitiesTable().setVisibleColumns(new String[]
-		{
-			"icon", "capability.title"
-		});
+		userCapabilityItemContainer.addNestedContainerProperty(COLUMN_CAPABILITY_TITLE);
+		getControlledView().getUserCapabilitiesTable().setVisibleColumns(editableColumns);
 		getControlledView().getUserCapabilitiesTable().setColumnHeaders(new String[]
 		{
 			"", I18NResource.localize("Title")
@@ -142,20 +151,22 @@ public class UserCapabilitiesViewController implements
 							.createUserCapabilityItemVO();
 					BeanItem<UserCapabilityItemVO> addedItem = userCapabilityItemContainer.addItem(newUserCapabilityItem);
 					LOG.log(Level.FINE, "addedItem = {0}", addedItem);
-//					icon.addListener(new MouseEvents.ClickListener()
-//					{
-//						private static final long serialVersionUID = 1L;
-//
-//						@Override
-//						public void click(MouseEvents.ClickEvent event)
-//						{
-//							if (!getControlledView().getEditorForm().isReadOnly() && !actionsContainer.removeItem(actionItemVO))
-//							{
-//								popupProvider.popUpError(I18NResource.localizeWithParameter("Unable to remove action _", actionItemVO));
-//
-//							}
-//						}
-//					});
+					icon.addListener(new MouseEvents.ClickListener()
+					{
+						private static final long serialVersionUID = 1L;
+
+						@Override
+						public void click(MouseEvents.ClickEvent event)
+						{
+							if (!getControlledView().isReadOnly() && !userCapabilityItemContainer.removeItem(newUserCapabilityItem))
+							{
+								popupProvider.popUpError(I18NResource
+										.localizeWithParameter("Unable to remove capability _",
+										newUserCapabilityItem.getCapability().getTitle()));
+
+							}
+						}
+					});
 				}
 				else
 				{
@@ -172,14 +183,25 @@ public class UserCapabilitiesViewController implements
 		getControlledView().getUserCapabilitiesTable().setDropHandler(userCapabilitiesDropHandler);
 	}
 
+	public boolean isEditEnabled()
+	{
+		return editEnabled;
+	}
+
 	public void enableEditing()
 	{
-//		getControlledView().getUserCapabilitiesTable().setDropHandler(userCapabilitiesDropHandler);
+		editEnabled = true;
+		getControlledView().getUserCapabilitiesTable().setVisibleColumns(editableColumns);
+		getControlledView().setReadOnly(false);
+		getControlledView().getUserCapabilitiesTable().setDropHandler(userCapabilitiesDropHandler);
 	}
 
 	public void disableEditing()
 	{
-//		getControlledView().getUserCapabilitiesTable().setDropHandler(null);
+		editEnabled = false;
+		getControlledView().getUserCapabilitiesTable().setVisibleColumns(readOnlyColumns);
+		getControlledView().setReadOnly(true);
+		getControlledView().getUserCapabilitiesTable().setDropHandler(null);
 	}
 
 	public AcceptCriterion getValidDraggedObjectSource()
@@ -196,6 +218,7 @@ public class UserCapabilitiesViewController implements
 	private void populateItemContainer()
 	{
 		userCapabilityItemContainer.removeAllItems();
+		getControlledView().getUserCapabilitiesTable().setSelectable(true);
 		for (UserCapabilityVO userCapability : currentProfile.getBean().getCapabilities())
 		{
 			Embedded icon = IconHelper.createDeleteIcon("Remove capability");
