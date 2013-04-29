@@ -118,7 +118,7 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 			catch (UnsupportedOperationException e)
 			{
 				LOG.log(Level.FINE, "creation of record not supported", e);
-				setReadOnlyBehavior();
+				disableEditing();
 			}
 		}
 		catch (WidgetInitalizeException ex)
@@ -261,7 +261,7 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 		getEditorViewPanel().getEditorTable().setContainerDataSource(dataContainer);
 		realVisibleColumns.add(TABLE_PROPERTY_ICON);
 		realVisibleColumns.addAll(Arrays.asList(getVisibleColumns()));
-		getEditorViewPanel().getEditorTable().setVisibleColumns(realVisibleColumns.toArray(new String[0]));
+		getEditorViewPanel().getEditorTable().setVisibleColumns(getEditableVisibleColumn());
 		List<String> realColumnHeaders = new ArrayList<String>();
 		realColumnHeaders.add(""); // empty header for the icon
 		realColumnHeaders.addAll(Arrays.asList(getColumnHeaders()));
@@ -460,7 +460,16 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 		return icon;
 	}
 
-	private void setReadOnlyBehavior()
+	public void enableEditing()
+	{
+		getControlledView().getAddItemButton().setReadOnly(false);
+		getControlledView().getAddItemButton().setVisible(true);
+		getEditorViewPanel().getEditorTable().removeListener(tableClickListener);
+		getEditorViewPanel().getEditorTable().addListener(tableClickListener);
+		getEditorViewPanel().getEditorTable().setVisibleColumns(getEditableVisibleColumn());
+	}
+
+	public void disableEditing()
 	{
 		getControlledView().getAddItemButton().setReadOnly(true);
 		getControlledView().getAddItemButton().setVisible(false);
@@ -480,5 +489,10 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 			}
 		}
 		return readOnlyColumns;
+	}
+
+	private String[] getEditableVisibleColumn()
+	{
+		return realVisibleColumns.toArray(new String[0]);
 	}
 }
