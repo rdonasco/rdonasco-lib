@@ -21,6 +21,7 @@ import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
+import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.datamanager.services.DataManager;
@@ -54,6 +55,8 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	private UserEditorView editorView;
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
+	@Inject
+	private ApplicationPopupProvider popupProvider;
 	private DataManagerContainer<UserSecurityProfileItemVO> userItemTableContainer;
 	@Inject
 	private UserCapabilitiesViewController userCapabilitiesViewController;
@@ -203,6 +206,8 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 					getControlledView().getForm().commit();
 					changeViewToViewMode();
 					userItemTableContainer.updateItem(getCurrentItem().getBean());
+					popupProvider.popUpInfo(I18NResource.localizeWithParameter("User _ saved", getCurrentItem().getBean().getLogonId()));
+
 				}
 				catch (Exception ex)
 				{
