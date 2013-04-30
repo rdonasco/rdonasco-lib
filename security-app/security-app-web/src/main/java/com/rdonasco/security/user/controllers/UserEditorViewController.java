@@ -207,6 +207,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 					changeViewToViewMode();
 					userItemTableContainer.updateItem(getCurrentItem().getBean());
 					popupProvider.popUpInfo(I18NResource.localizeWithParameter("User _ saved", getCurrentItem().getBean().getLogonId()));
+					clearPasswordFields();
 
 				}
 				catch (Exception ex)
@@ -214,6 +215,12 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 					exceptionPopupProvider.popUpErrorException(ex);
 				}
 
+			}
+
+			private void clearPasswordFields()
+			{
+				getCurrentItem().getBean().setPassword(null);
+				getCurrentItem().getBean().setRetypedPassword(null);
 			}
 		});
 
