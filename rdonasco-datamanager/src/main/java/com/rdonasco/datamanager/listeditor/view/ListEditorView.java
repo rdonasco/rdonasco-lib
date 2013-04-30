@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.rdonasco.datamanager.listeditor.view;
 
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
@@ -34,6 +33,7 @@ import com.vaadin.ui.VerticalLayout;
  */
 public class ListEditorView extends Panel implements ControlledView
 {
+
 	private static final long serialVersionUID = 1L;
 	private Table editorTable = new Table();
 	private Button addItemButton = new Button();
@@ -50,7 +50,10 @@ public class ListEditorView extends Panel implements ControlledView
 		editorTable.addStyleName(ListEditorTheme.CSS_TABLE_SMALL_STRIPED);
 		editorTable.addStyleName(ListEditorTheme.CSS_TABLE_BORDERLESS);
 		VerticalLayout layout = (VerticalLayout) getContent();
-		layout.addComponent(addItemButton);
+		if (!isReadOnly())
+		{
+			layout.addComponent(addItemButton);
+		}
 		layout.addComponent(editorTable);
 		editorTable.setSizeFull();
 		layout.setExpandRatio(editorTable, 1);
@@ -81,7 +84,6 @@ public class ListEditorView extends Panel implements ControlledView
 	{
 		this.attachStrategy = attachStrategy;
 	}
-
 
 	@Override
 	public void attach()

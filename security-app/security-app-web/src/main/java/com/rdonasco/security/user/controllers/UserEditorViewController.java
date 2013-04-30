@@ -33,9 +33,8 @@ import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.dd.acceptcriteria.SourceIs;
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.DragAndDropWrapper;
-import com.vaadin.ui.Table;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -236,6 +235,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		DataManagerContainer capabilityDataContainer = new DataManagerContainer(CapabilityItemVO.class);
 		availableCapabilitiesViewController.setDataContainer(capabilityDataContainer);
 		capabilityDataContainer.setDataManager(createAvailableCapabilitiesDataManager());
+		availableCapabilitiesViewController.getControlledView().setReadOnly(true);
 		availableCapabilitiesViewController.initializeControlledViewBehavior();
 
 		getControlledView().getCapabilitiesLayout()
@@ -246,6 +246,11 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 				.setExpandRatio(userCapabilitiesViewController.getControlledView(), 0.5f);
 		getControlledView().getCapabilitiesLayout()
 				.setExpandRatio(availableCapabilitiesViewController.getControlledView(), 0.5f);
+
+		// fix the size of the panels
+		float panelHeight = 300;
+		userCapabilitiesViewController.getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
+		availableCapabilitiesViewController.getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
 
 		// configure drag and drop of capabilities
 		userCapabilitiesViewController.setValidDraggedObjectSource(new SourceIs(availableCapabilitiesViewController.getControlledView().getEditorTable()));

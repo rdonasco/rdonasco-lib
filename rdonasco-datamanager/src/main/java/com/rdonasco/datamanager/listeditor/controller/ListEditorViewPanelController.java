@@ -87,8 +87,11 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 				if (event.isDoubleClick())
 				{
 					TextField textField = getFieldFromCache(event.getItemId(), event.getPropertyId());
-					textField.setReadOnly(false);
-					textField.focus();
+					if (null != textField)
+					{
+						textField.setReadOnly(false);
+						textField.focus();
+					}
 				}
 			}
 		};
@@ -318,9 +321,12 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 				return textField;
 			}
 		};
-		for (String propertyName : getVisibleColumns())
+		if (!getEditorViewPanel().isReadOnly())
 		{
-			getEditorViewPanel().getEditorTable().addGeneratedColumn(propertyName, columnGenerator);
+			for (String propertyName : getVisibleColumns())
+			{
+				getEditorViewPanel().getEditorTable().addGeneratedColumn(propertyName, columnGenerator);
+			}
 		}
 
 		getEditorViewPanel().getEditorTable().addListener(tableClickListener);
@@ -462,6 +468,7 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 
 	public void enableEditing()
 	{
+		getControlledView().setReadOnly(false);
 		getControlledView().getAddItemButton().setReadOnly(false);
 		getControlledView().getAddItemButton().setVisible(true);
 		getEditorViewPanel().getEditorTable().removeListener(tableClickListener);
@@ -471,6 +478,7 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 
 	public void disableEditing()
 	{
+		getControlledView().setReadOnly(true);
 		getControlledView().getAddItemButton().setReadOnly(true);
 		getControlledView().getAddItemButton().setVisible(false);
 		getEditorViewPanel().getEditorTable().removeListener(tableClickListener);
