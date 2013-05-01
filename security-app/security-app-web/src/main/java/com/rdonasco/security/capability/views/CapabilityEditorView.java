@@ -16,6 +16,7 @@ import com.vaadin.ui.Form;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
@@ -35,7 +36,7 @@ public class CapabilityEditorView extends VerticalLayout implements
 	private Button editButton = new Button();
 	private Button cancelButton = new Button();
 	private TextField titleField = new TextField(I18NResource.localize("Title"));
-	private TextField descriptionField = new TextField(I18NResource.localize("Description"));
+	private TextArea descriptionField = new TextArea(I18NResource.localize("Description"));
 	private ComboBox resourceField = new ComboBox(I18NResource.localize("Resource"));
 	private Table actionsTable = new Table();
 	private Form editorForm;
@@ -108,6 +109,7 @@ public class CapabilityEditorView extends VerticalLayout implements
 		capabilityDetailPanel.setStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
 		VerticalLayout fieldLayout = new VerticalLayout();
 		fieldLayout.addComponent(titleField);
+		descriptionField.setWidth(300f, UNITS_PIXELS);
 		fieldLayout.addComponent(descriptionField);
 		fieldLayout.addComponent(resourceField);
 		fieldLayout.setSpacing(true);
