@@ -33,6 +33,8 @@ import com.vaadin.data.Buffered;
 import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.event.ShortcutAction;
+import com.vaadin.event.ShortcutListener;
 import com.vaadin.event.dd.acceptcriteria.SourceIs;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Button;
@@ -50,21 +52,31 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 {
 
 	private static final Logger LOG = Logger.getLogger(UserEditorViewController.class.getName());
+
 	private static final long serialVersionUID = 1L;
+
 	@Inject
 	private UserEditorView editorView;
+
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
+
 	@Inject
 	private ApplicationPopupProvider popupProvider;
+
 	private DataManagerContainer<UserSecurityProfileItemVO> userItemTableContainer;
+
 	@Inject
 	private UserCapabilitiesViewController userCapabilitiesViewController;
+
 	@Inject
 	private AvailableCapabilitiesViewController availableCapabilitiesViewController;
+
 	private BeanItem<UserSecurityProfileItemVO> currentItem;
+
 	@Inject
 	private CapabilityDataManagerDecorator capabilityManager;
+
 	private Button.ClickListener cancelClickListener = new Button.ClickListener()
 	{
 		private static final long serialVersionUID = 1L;
@@ -200,31 +212,77 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 			public void buttonClick(Button.ClickEvent event)
 			{
 				LOG.log(Level.FINE, "saveButton clicked");
-				try
-				{
-					userCapabilitiesViewController.commit();
-					getControlledView().getForm().commit();
-					changeViewToViewMode();
-					userItemTableContainer.updateItem(getCurrentItem().getBean());
-					popupProvider.popUpInfo(I18NResource.localizeWithParameter("User _ saved", getCurrentItem().getBean().getLogonId()));
-					clearPasswordFields();
+				saveChanges();
 
-				}
-				catch (Exception ex)
-				{
-					exceptionPopupProvider.popUpErrorException(ex);
-				}
-
-			}
-
-			private void clearPasswordFields()
-			{
-				getCurrentItem().getBean().setPassword(null);
-				getCurrentItem().getBean().setRetypedPassword(null);
 			}
 		});
 
+		// configure shortcut listeners
+		int[] keyModifiers = new int[]
+		{
+			ShortcutAction.ModifierKey.CTRL
+		};
+		getControlledView().getEditButton().setDescription(I18NResource.localize("edit shortcut key"));
+		getControlledView().getEditButton().addShortcutListener(
+				new ShortcutListener(null,
+				ShortcutAction.KeyCode.E, keyModifiers)
+		{
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void handleAction(Object sender, Object target)
+			{
+				changeViewToEditMode();
+			}
+		});
+		getControlledView().getSaveButton().setDescription(I18NResource.localize("save shortcut key"));
+		getControlledView().getSaveButton().addShortcutListener(
+				new ShortcutListener(null,
+				ShortcutAction.KeyCode.S, keyModifiers)
+		{
+			private static final long serialVersionUID = 1L;
 
+			@Override
+			public void handleAction(Object sender, Object target)
+			{
+				saveChanges();
+			}
+		});
+		getControlledView().getCancelButton().setDescription(I18NResource.localize("cancel shortcut key"));
+		getControlledView().getCancelButton().addShortcutListener(
+				new ShortcutListener(null,
+				ShortcutAction.KeyCode.ESCAPE, null)
+		{
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void handleAction(Object sender, Object target)
+			{
+				discardChanges();
+			}
+		});
+	}
+
+	private void clearPasswordFields()
+	{
+		getCurrentItem().getBean().setPassword(null);
+		getCurrentItem().getBean().setRetypedPassword(null);
+	}
+
+	private void saveChanges()
+	{
+		try
+		{
+			userCapabilitiesViewController.commit();
+			getControlledView().getForm().commit();
+			changeViewToViewMode();
+			userItemTableContainer.updateItem(getCurrentItem().getBean());
+			popupProvider.popUpInfo(I18NResource.localizeWithParameter("User _ saved", getCurrentItem().getBean().getLogonId()));
+			clearPasswordFields();
+
+		}
+		catch (Exception ex)
+		{
+			exceptionPopupProvider.popUpErrorException(ex);
+		}
 	}
 
 	private void discardChanges() throws Buffered.SourceException
