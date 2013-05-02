@@ -16,6 +16,7 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.security.dao.RoleDAO;
 import com.rdonasco.security.dao.UserCapabilityDAO;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
@@ -57,6 +58,8 @@ public class SystemSecurityManagerImplTest
 	private static CapabilityManagerLocal capabilityManagerMock;
 	private static UserCapabilityDAO userCapabilityDAOMock;
 
+	private static RoleDAO roleDAO;
+
 	public SystemSecurityManagerImplTest()
 	{
 	}
@@ -69,6 +72,7 @@ public class SystemSecurityManagerImplTest
 		userSecurityProfileDAOMock = mock(UserSecurityProfileDAO.class);
 		capabilityManagerMock = mock(CapabilityManagerLocal.class);
 		userCapabilityDAOMock = mock(UserCapabilityDAO.class);
+		roleDAO = mock(RoleDAO.class);
 	}
 
 	@AfterClass
@@ -84,6 +88,7 @@ public class SystemSecurityManagerImplTest
 		reset(userSecurityProfileDAOMock);
 		reset(capabilityManagerMock);
 		reset(userCapabilityDAOMock);
+		reset(roleDAO);
 	}
 
 	@After
@@ -286,7 +291,7 @@ public class SystemSecurityManagerImplTest
 		instance.checkAccessRights(accessRights);
 	}
 
-	//@Test
+	@Test
 	public void testCreateNewSecurityProfile() throws Exception
 	{
 		System.out.println("createNewSecurityProfile");
