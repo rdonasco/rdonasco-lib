@@ -18,8 +18,6 @@ package com.rdonasco.security.model;
 
 import com.rdonasco.security.utils.SecurityConstants;
 import java.io.Serializable;
-import java.util.Collection;
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,22 +25,30 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.UniqueConstraint;
 
 /**
  *
  * @author Roy F. Donasco
  */
 @Entity
-@Table(name = "roles")
-public class Role implements Serializable
+@Table(name = "capability_action", catalog = "", schema = "",
+		uniqueConstraints =
+		@UniqueConstraint(
+		columnNames =
+{
+	"role_id", "capability_id"
+}, name = "unique_role_capabilty"))
+public class RoleCapability implements Serializable
 {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String GENERATOR_KEY = "ID_IDGEN";
+	private static final String GENERATOR_KEY = "ROLE_CAPABILITY_IDGEN";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = GENERATOR_KEY)
@@ -50,12 +56,13 @@ public class Role implements Serializable
 	@Column(name = "id", nullable = false)
 	private Long id;
 
-	@Basic(optional = false)
-	@Column(name = "name", nullable = false, length = 256, unique = true)
-	private String name;
+	@JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	private Role role;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "role", fetch = FetchType.EAGER)
-	private Collection<RoleCapability> capabilities;
+	@JoinColumn(name = "capability_id", referencedColumnName = "id", nullable = false)
+	@ManyToOne(cascade = CascadeType.REFRESH, optional = false, fetch = FetchType.EAGER)
+	private Capability capability;
 
 	public Long getId()
 	{
@@ -67,32 +74,32 @@ public class Role implements Serializable
 		this.id = id;
 	}
 
-	public String getName()
+	public Capability getCapability()
 	{
-		return name;
+		return capability;
 	}
 
-	public void setName(String name)
+	public void setCapability(Capability capability)
 	{
-		this.name = name;
+		this.capability = capability;
 	}
 
-	public Collection<RoleCapability> getCapabilities()
+	public Role getRole()
 	{
-		return capabilities;
+		return role;
 	}
 
-	public void setCapabilities(
-			Collection<RoleCapability> capabilities)
+	public void setRole(Role role)
 	{
-		this.capabilities = capabilities;
+		this.role = role;
 	}
 
 	@Override
 	public int hashCode()
 	{
-		int hash = 7;
-		hash = 37 * hash + (this.id != null ? this.id.hashCode() : 0);
+		int hash = 3;
+		hash = 31 * hash + (this.role != null ? this.role.hashCode() : 0);
+		hash = 31 * hash + (this.capability != null ? this.capability.hashCode() : 0);
 		return hash;
 	}
 
@@ -110,18 +117,16 @@ public class Role implements Serializable
 		}
 		else
 		{
-			final Role other = (Role) obj;
-			if (this.id != other.id && (this.id == null || !this.id.equals(other.id)))
+			final RoleCapability other = (RoleCapability) obj;
+			if (this.role != other.role && (this.role == null || !this.role.equals(other.role)))
+			{
+				isEqual = false;
+			}
+			else if (this.capability != other.capability && (this.capability == null || !this.capability.equals(other.capability)))
 			{
 				isEqual = false;
 			}
 		}
 		return isEqual;
-	}
-
-	@Override
-	public String toString()
-	{
-		return "UserRole{" + "id=" + id + ", name=" + name + '}';
 	}
 }
