@@ -32,8 +32,8 @@ import javax.persistence.TableGenerator;
  * @author Roy F. Donasco
  */
 @Entity
-@Table(name = "user_role")
-public class UserRole implements Serializable
+@Table(name = "roles")
+public class Role implements Serializable
 {
 
 	private static final long serialVersionUID = 1L;
@@ -92,7 +92,7 @@ public class UserRole implements Serializable
 		}
 		else
 		{
-			final UserRole other = (UserRole) obj;
+			final Role other = (Role) obj;
 			if (this.id != other.id && (this.id == null || !this.id.equals(other.id)))
 			{
 				isEqual = false;

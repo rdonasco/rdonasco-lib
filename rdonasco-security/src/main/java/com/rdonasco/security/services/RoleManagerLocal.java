@@ -1,6 +1,6 @@
 /*
  * Copyright 2013 Roy F. Donasco.
- * File Created on: 27-Jan-2013
+ * File Created on: 02-May-2013
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rdonasco.security.dao;
+package com.rdonasco.security.services;
 
-import com.rdonasco.common.dao.DataAccess;
-import com.rdonasco.security.model.UserRole;
+import com.rdonasco.datamanager.services.DataManager;
+import com.rdonasco.security.vo.RoleVO;
+import javax.ejb.Local;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public interface UserRoleDAO extends DataAccess<UserRole>
+@Local
+public interface RoleManagerLocal extends DataManager<RoleVO>
 {
-	
 }

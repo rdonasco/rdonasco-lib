@@ -16,11 +16,11 @@
  */
 package com.rdonasco.security.services;
 
-import com.rdonasco.security.dao.UserRoleDAO;
-import com.rdonasco.security.model.UserRole;
+import com.rdonasco.security.dao.RoleDAO;
+import com.rdonasco.security.model.Role;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
-import com.rdonasco.security.vo.UserRoleVO;
-import com.rdonasco.security.vo.UserRoleVOBuilder;
+import com.rdonasco.security.vo.RoleVO;
+import com.rdonasco.security.vo.RoleVOBuilder;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,16 +43,16 @@ public class UserRoleManagerLocalTest
 	private static final Logger LOG = Logger.getLogger(UserRoleManagerLocalTest.class.getName());
 
 	@EJB
-	private UserRoleManagerLocal userRoleManager;
+	private RoleManagerLocal userRoleManager;
 
 	@Deployment
 	public static JavaArchive createTestArchive()
 	{
 		JavaArchive archive = ArchiveCreator.createCommonArchive();
-		archive.addPackage(UserRoleDAO.class.getPackage())
-				.addPackage(UserRole.class.getPackage())
-				.addPackage(UserRoleManagerLocal.class.getPackage())
-				.addPackage(UserRoleVO.class.getPackage())
+		archive.addPackage(RoleDAO.class.getPackage())
+				.addPackage(Role.class.getPackage())
+				.addPackage(RoleManagerLocal.class.getPackage())
+				.addPackage(RoleVO.class.getPackage())
 				.addClass(SecurityEntityValueObjectConverter.class);
 
 		return archive;
@@ -62,12 +62,12 @@ public class UserRoleManagerLocalTest
 	public void testDeleteUserRole() throws Exception
 	{
 		LOG.log(Level.INFO, "deleteUserRole");
-		UserRoleVO userRole = new UserRoleVOBuilder()
+		RoleVO userRole = new RoleVOBuilder()
 				.setName("data to delete")
 				.createUserRoleVO();
 		userRole = userRoleManager.saveData(userRole);
 		userRoleManager.deleteData(userRole);
-		UserRoleVO savedRole = userRoleManager.loadData(userRole);
+		RoleVO savedRole = userRoleManager.loadData(userRole);
 		assertNull(savedRole);
 	}
 
@@ -75,7 +75,7 @@ public class UserRoleManagerLocalTest
 	public void testCreateUserRole() throws Exception
 	{
 		LOG.log(Level.INFO, "createUserRole");
-		UserRoleVO userRole = new UserRoleVOBuilder()
+		RoleVO userRole = new RoleVOBuilder()
 				.setName("new role")
 				.createUserRoleVO();
 		userRoleManager.saveData(userRole);
@@ -86,14 +86,14 @@ public class UserRoleManagerLocalTest
 	public void testUpdateUserRole() throws Exception
 	{
 		LOG.log(Level.INFO, "updateUserRole");
-		UserRoleVO userRole = new UserRoleVOBuilder()
+		RoleVO userRole = new RoleVOBuilder()
 				.setName("data to delete")
 				.createUserRoleVO();
 		userRole = userRoleManager.saveData(userRole);
 		String newName = userRole.getName() + "-modified";
 		userRole.setName(newName);
 		userRoleManager.updateData(userRole);
-		UserRoleVO updatedUserRole = userRoleManager.loadData(userRole);
+		RoleVO updatedUserRole = userRoleManager.loadData(userRole);
 		assertEquals("data not equal", userRole, updatedUserRole);
 		assertEquals("mismatch on name", newName, updatedUserRole.getName());
 	}
@@ -102,11 +102,11 @@ public class UserRoleManagerLocalTest
 	public void testRetrieveAll() throws Exception
 	{
 		LOG.log(Level.INFO, "retrieveAll");
-		UserRoleVO userRole = new UserRoleVOBuilder()
+		RoleVO userRole = new RoleVOBuilder()
 				.setName("data to retrieve")
 				.createUserRoleVO();
 		userRole = userRoleManager.saveData(userRole);
-		List<UserRoleVO> roles = userRoleManager.retrieveAllData();
+		List<RoleVO> roles = userRoleManager.retrieveAllData();
 		assertTrue("failed to find user role", roles.contains(userRole));
 
 	}

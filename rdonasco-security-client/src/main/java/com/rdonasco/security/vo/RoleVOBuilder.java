@@ -15,17 +15,34 @@
  * limitations under the License.
  */
 
-package com.rdonasco.security.dao;
+package com.rdonasco.security.vo;
 
-import com.rdonasco.security.model.UserRole;
 
-public class UserRoleDAOJpaImpl extends AbstractSecurityDAO<UserRole> implements
-		UserRoleDAO
+public class RoleVOBuilder 
 {
+	private Long id;
 
-	@Override
-	public Class<UserRole> getDataClass()
+	private String name;
+
+	public RoleVOBuilder()
 	{
-		return UserRole.class;
 	}
+
+	public RoleVOBuilder setId(Long id)
+	{
+		this.id = id;
+		return this;
+	}
+
+	public RoleVOBuilder setName(String name)
+	{
+		this.name = name;
+		return this;
+	}
+
+	public RoleVO createUserRoleVO()
+	{
+		return new RoleVO(id, name);
+	}
+
 }

@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rdonasco.security.services;
 
-import com.rdonasco.datamanager.services.DataManager;
-import com.rdonasco.security.vo.UserRoleVO;
-import javax.ejb.Local;
+package com.rdonasco.security.dao;
 
-/**
- *
- * @author Roy F. Donasco
- */
-@Local
-public interface UserRoleManagerLocal extends DataManager<UserRoleVO>
+import com.rdonasco.security.model.Role;
+
+public class RoleDAOJpaImpl extends AbstractSecurityDAO<Role> implements
+		RoleDAO
 {
+
+	@Override
+	public Class<Role> getDataClass()
+	{
+		return Role.class;
+	}
 }

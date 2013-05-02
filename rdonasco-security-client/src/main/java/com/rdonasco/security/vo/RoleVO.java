@@ -22,7 +22,7 @@ import java.io.Serializable;
  *
  * @author Roy F. Donasco
  */
-public class UserRoleVO implements Serializable
+public class RoleVO implements Serializable
 {
 
 	private static final long serialVersionUID = 1L;
@@ -31,7 +31,7 @@ public class UserRoleVO implements Serializable
 
 	private String name;
 
-	UserRoleVO(Long id, String name)
+	RoleVO(Long id, String name)
 	{
 		this.id = id;
 		this.name = name;
@@ -79,7 +79,7 @@ public class UserRoleVO implements Serializable
 		}
 		else
 		{
-			final UserRoleVO other = (UserRoleVO) obj;
+			final RoleVO other = (RoleVO) obj;
 
 			if (this.id != other.id && (this.id == null || !this.id.equals(other.id)))
 			{

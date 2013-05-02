@@ -17,10 +17,10 @@
 package com.rdonasco.security.services;
 
 import com.rdonasco.common.exceptions.DataAccessException;
-import com.rdonasco.security.dao.UserRoleDAO;
-import com.rdonasco.security.model.UserRole;
+import com.rdonasco.security.dao.RoleDAO;
+import com.rdonasco.security.model.Role;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
-import com.rdonasco.security.vo.UserRoleVO;
+import com.rdonasco.security.vo.RoleVO;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -30,19 +30,19 @@ import javax.inject.Inject;
  * @author Roy F. Donasco
  */
 @Stateless
-public class UserRoleManager implements UserRoleManagerLocal
+public class RoleManager implements RoleManagerLocal
 {
 
 	@Inject
-	private UserRoleDAO userRoleDAO;
+	private RoleDAO userRoleDAO;
 
-	public void setUserRoleVODAO(UserRoleDAO userRoleDAO)
+	public void setUserRoleVODAO(RoleDAO userRoleDAO)
 	{
 		this.userRoleDAO = userRoleDAO;
 	}
 
 	@Override
-	public void deleteData(UserRoleVO data) throws DataAccessException
+	public void deleteData(RoleVO data) throws DataAccessException
 	{
 		try
 		{
@@ -56,15 +56,15 @@ public class UserRoleManager implements UserRoleManagerLocal
 	}
 
 	@Override
-	public UserRoleVO loadData(UserRoleVO data) throws DataAccessException
+	public RoleVO loadData(RoleVO data) throws DataAccessException
 	{
-		UserRoleVO loadedUserRoleVO = null;
+		RoleVO loadedUserRoleVO = null;
 		try
 		{
-			UserRole foundData = userRoleDAO.findData(data.getId());
+			Role foundData = userRoleDAO.findData(data.getId());
 			if (null != foundData)
 			{
-				loadedUserRoleVO = SecurityEntityValueObjectConverter.toUserRoleVO(foundData);
+				loadedUserRoleVO = SecurityEntityValueObjectConverter.toRoleVO(foundData);
 			}		
 		}
 		catch (Exception e)
@@ -75,12 +75,12 @@ public class UserRoleManager implements UserRoleManagerLocal
 	}
 
 	@Override
-	public List<UserRoleVO> retrieveAllData() throws DataAccessException
+	public List<RoleVO> retrieveAllData() throws DataAccessException
 	{
-		List<UserRoleVO> userRoles = null;
+		List<RoleVO> userRoles = null;
 		try
 		{
-			userRoles = SecurityEntityValueObjectConverter.toUserRoleVOList(userRoleDAO.findAllData());
+			userRoles = SecurityEntityValueObjectConverter.toRoleVOList(userRoleDAO.findAllData());
 		}
 		catch (Exception e)
 		{
@@ -90,11 +90,11 @@ public class UserRoleManager implements UserRoleManagerLocal
 	}
 
 	@Override
-	public UserRoleVO saveData(UserRoleVO userRoleVO) throws DataAccessException
+	public RoleVO saveData(RoleVO userRoleVO) throws DataAccessException
 	{
 		try
 		{
-			final UserRole userRole = SecurityEntityValueObjectConverter.toUserRole(userRoleVO);			
+			final Role userRole = SecurityEntityValueObjectConverter.toRole(userRoleVO);			
 			userRoleDAO.create(userRole);
 			userRoleVO.setId(userRole.getId());
 		}
@@ -106,11 +106,11 @@ public class UserRoleManager implements UserRoleManagerLocal
 	}
 
 	@Override
-	public void updateData(UserRoleVO data) throws DataAccessException
+	public void updateData(RoleVO data) throws DataAccessException
 	{
 		try
 		{
-			userRoleDAO.update(SecurityEntityValueObjectConverter.toUserRole(data));
+			userRoleDAO.update(SecurityEntityValueObjectConverter.toRole(data));
 		}
 		catch (Exception e)
 		{

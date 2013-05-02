@@ -1,6 +1,6 @@
 /*
  * Copyright 2013 Roy F. Donasco.
- * File Created on: 02-May-2013
+ * File Created on: 27-Jan-2013
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,35 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.rdonasco.security.dao;
 
-package com.rdonasco.security.vo;
+import com.rdonasco.common.dao.DataAccess;
+import com.rdonasco.security.model.Role;
 
-
-public class UserRoleVOBuilder 
+/**
+ *
+ * @author Roy F. Donasco
+ */
+public interface RoleDAO extends DataAccess<Role>
 {
-	private Long id;
-
-	private String name;
-
-	public UserRoleVOBuilder()
-	{
-	}
-
-	public UserRoleVOBuilder setId(Long id)
-	{
-		this.id = id;
-		return this;
-	}
-
-	public UserRoleVOBuilder setName(String name)
-	{
-		this.name = name;
-		return this;
-	}
-
-	public UserRoleVO createUserRoleVO()
-	{
-		return new UserRoleVO(id, name);
-	}
-
+	
 }

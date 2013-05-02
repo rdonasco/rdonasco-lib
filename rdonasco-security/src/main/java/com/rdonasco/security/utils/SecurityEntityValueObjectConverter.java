@@ -9,7 +9,7 @@ import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.CapabilityAction;
 import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.model.UserCapability;
-import com.rdonasco.security.model.UserRole;
+import com.rdonasco.security.model.Role;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityActionVO;
@@ -20,8 +20,8 @@ import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
 import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserCapabilityVOBuilder;
-import com.rdonasco.security.vo.UserRoleVO;
-import com.rdonasco.security.vo.UserRoleVOBuilder;
+import com.rdonasco.security.vo.RoleVO;
+import com.rdonasco.security.vo.RoleVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import java.lang.reflect.InvocationTargetException;
@@ -303,31 +303,31 @@ public class SecurityEntityValueObjectConverter
 		return convertedList;
 	}
 
-	public static UserRoleVO toUserRoleVO(UserRole userRole)
+	public static RoleVO toRoleVO(Role userRole)
 	{
-		UserRoleVO userRoleVO = new UserRoleVOBuilder()
+		RoleVO userRoleVO = new RoleVOBuilder()
 				.setId(userRole.getId())
 				.setName(userRole.getName())
 				.createUserRoleVO();
 		return userRoleVO;
 	}
 
-	public static List<UserRoleVO> toUserRoleVOList(
-			List<UserRole> userRoles)
+	public static List<RoleVO> toRoleVOList(
+			List<Role> userRoles)
 	{
-		List<UserRoleVO> userRoleVOs = new ArrayList<UserRoleVO>(userRoles.size());
-		for (UserRole userRole : userRoles)
+		List<RoleVO> userRoleVOs = new ArrayList<RoleVO>(userRoles.size());
+		for (Role userRole : userRoles)
 		{
-			userRoleVOs.add(toUserRoleVO(userRole));
+			userRoleVOs.add(toRoleVO(userRole));
 		}
 
 		return userRoleVOs;
 	}
 
-	public static UserRole toUserRole(UserRoleVO userRoleVO) throws
+	public static Role toRole(RoleVO userRoleVO) throws
 			IllegalAccessException, InvocationTargetException
 	{
-		UserRole userRole = new UserRole();
+		Role userRole = new Role();
 		BeanUtils.copyProperties(userRole, userRoleVO);
 		return userRole;
 	}
