@@ -9,6 +9,7 @@ import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.CapabilityAction;
 import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.model.UserCapability;
+import com.rdonasco.security.model.UserRole;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityActionVO;
@@ -19,11 +20,14 @@ import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
 import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserCapabilityVOBuilder;
+import com.rdonasco.security.vo.UserRoleVO;
+import com.rdonasco.security.vo.UserRoleVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.BeanUtilsBean2;
 
@@ -297,5 +301,34 @@ public class SecurityEntityValueObjectConverter
 			convertedList.add(toUserProfileVO(profile));
 		}
 		return convertedList;
+	}
+
+	public static UserRoleVO toUserRoleVO(UserRole userRole)
+	{
+		UserRoleVO userRoleVO = new UserRoleVOBuilder()
+				.setId(userRole.getId())
+				.setName(userRole.getName())
+				.createUserRoleVO();
+		return userRoleVO;
+	}
+
+	public static List<UserRoleVO> toUserRoleVOList(
+			List<UserRole> userRoles)
+	{
+		List<UserRoleVO> userRoleVOs = new ArrayList<UserRoleVO>(userRoles.size());
+		for (UserRole userRole : userRoles)
+		{
+			userRoleVOs.add(toUserRoleVO(userRole));
+		}
+
+		return userRoleVOs;
+	}
+
+	public static UserRole toUserRole(UserRoleVO userRoleVO) throws
+			IllegalAccessException, InvocationTargetException
+	{
+		UserRole userRole = new UserRole();
+		BeanUtils.copyProperties(userRole, userRoleVO);
+		return userRole;
 	}
 }
