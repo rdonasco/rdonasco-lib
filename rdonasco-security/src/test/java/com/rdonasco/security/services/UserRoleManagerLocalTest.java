@@ -18,7 +18,9 @@ package com.rdonasco.security.services;
 
 import com.rdonasco.security.dao.RoleDAO;
 import com.rdonasco.security.model.Role;
+import com.rdonasco.security.utils.CapabilityTestUtility;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
+import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.RoleVO;
 import com.rdonasco.security.vo.RoleVOBuilder;
 import java.util.List;
@@ -44,6 +46,11 @@ public class UserRoleManagerLocalTest
 
 	@EJB
 	private RoleManagerLocal userRoleManager;
+
+	@EJB
+	private CapabilityManagerRemote capabilityManager;
+
+	private CapabilityTestUtility testUtility = new CapabilityTestUtility(capabilityManager);
 
 	@Deployment
 	public static JavaArchive createTestArchive()
@@ -108,6 +115,14 @@ public class UserRoleManagerLocalTest
 		userRole = userRoleManager.saveData(userRole);
 		List<RoleVO> roles = userRoleManager.retrieveAllData();
 		assertTrue("failed to find user role", roles.contains(userRole));
+
+	}
+
+	@Test
+	public void testAddCapability() throws Exception
+	{
+		LOG.log(Level.INFO, "addCapability");
+		CapabilityVO capability = testUtility.createTestDataCapabilityWithActionAndResourceName("edit", "user");
 
 	}
 }
