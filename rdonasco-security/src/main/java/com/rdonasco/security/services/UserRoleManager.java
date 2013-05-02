@@ -61,7 +61,11 @@ public class UserRoleManager implements UserRoleManagerLocal
 		UserRoleVO loadedUserRoleVO = null;
 		try
 		{
-			loadedUserRoleVO = SecurityEntityValueObjectConverter.toUserRoleVO(userRoleDAO.findData(data.getId()));
+			UserRole foundData = userRoleDAO.findData(data.getId());
+			if (null != foundData)
+			{
+				loadedUserRoleVO = SecurityEntityValueObjectConverter.toUserRoleVO(foundData);
+			}		
 		}
 		catch (Exception e)
 		{

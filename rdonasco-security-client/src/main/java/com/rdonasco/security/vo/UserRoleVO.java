@@ -88,4 +88,10 @@ public class UserRoleVO implements Serializable
 		}
 		return isEqual;
 	}
+
+	@Override
+	public String toString()
+	{
+		return "UserRoleVO{" + "id=" + id + ", name=" + name + '}';
+	}
 }
