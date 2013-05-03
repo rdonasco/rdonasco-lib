@@ -42,7 +42,7 @@ public class Role implements Serializable
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String GENERATOR_KEY = "ID_IDGEN";
+	private static final String GENERATOR_KEY = "ROLE_ID_IDGEN";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = GENERATOR_KEY)

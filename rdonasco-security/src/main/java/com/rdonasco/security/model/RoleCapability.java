@@ -36,7 +36,7 @@ import javax.persistence.UniqueConstraint;
  * @author Roy F. Donasco
  */
 @Entity
-@Table(name = "capability_action", catalog = "", schema = "",
+@Table(name = "role_capability", catalog = "", schema = "",
 		uniqueConstraints =
 		@UniqueConstraint(
 		columnNames =

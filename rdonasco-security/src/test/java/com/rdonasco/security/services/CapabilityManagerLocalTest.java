@@ -14,6 +14,8 @@ import com.rdonasco.security.vo.ResourceVO;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -22,6 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import test.util.ArchiveCreator;
 import static org.junit.Assert.*;
+import org.junit.Before;
 
 /**
  * Unit test for simple App.
@@ -29,11 +32,18 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 public class CapabilityManagerLocalTest
 {
+	private static final Logger LOG = Logger.getLogger(CapabilityManagerLocalTest.class.getName());
 
 	@EJB
 	private CapabilityManagerRemote capabilityManager;
 
-	private CapabilityTestUtility testUtility = new CapabilityTestUtility(capabilityManager);
+	private CapabilityTestUtility testUtility;
+
+	@Before
+	public void setup()
+	{
+		testUtility = new CapabilityTestUtility(capabilityManager);
+	}
 
 	@Deployment
 	public static JavaArchive createTestArchive()
@@ -108,9 +118,17 @@ public class CapabilityManagerLocalTest
 	public void testRemoveResource() throws Exception
 	{
 		System.out.println("removeResource");
-		ResourceVO resourceToRemove = testUtility.createTestDataResourceNamed("resourceToRemove");
-		capabilityManager.removeResource(resourceToRemove);
-		capabilityManager.findResourceNamedAs(resourceToRemove.getName());
+		try
+		{
+			ResourceVO resourceToRemove = testUtility.createTestDataResourceNamed("resourceToRemove");
+			capabilityManager.removeResource(resourceToRemove);
+			capabilityManager.findResourceNamedAs(resourceToRemove.getName());
+		}
+		catch (Exception e)
+		{
+			LOG.log(Level.SEVERE, e.getMessage(), e);
+			throw e;
+		}
 	}
 
 	@Test
@@ -270,7 +288,5 @@ public class CapabilityManagerLocalTest
 		updatedCapability.findActionNamed("missingInAction");
 
 	}
-
 	//--- no more test beyond this point.
-	
 }
