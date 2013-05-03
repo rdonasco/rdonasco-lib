@@ -17,6 +17,10 @@ import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
+import com.rdonasco.security.vo.RoleCapabilityVO;
+import com.rdonasco.security.vo.RoleCapabilityVOBuilder;
+import com.rdonasco.security.vo.RoleVO;
+import com.rdonasco.security.vo.RoleVOBuilder;
 import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
@@ -48,7 +52,7 @@ public class SecurityEntityValueObjectDataUtility
 		}
 		return capabilityActions;
 	}
-	
+
 	public static List<CapabilityAction> createTestDataCapabilityActionsForWithActionName(
 			Capability capability, String actionName)
 	{
@@ -79,7 +83,8 @@ public class SecurityEntityValueObjectDataUtility
 		return actions;
 	}
 
-	public static CapabilityAction createTestDataCapabilityActionForWithActionName(String actionName,
+	public static CapabilityAction createTestDataCapabilityActionForWithActionName(
+			String actionName,
 			Capability capability)
 	{
 		Action action;
@@ -94,9 +99,10 @@ public class SecurityEntityValueObjectDataUtility
 		return capabilityAction;
 	}
 
-	static UserSecurityProfile createTestDataUserSecurityProfileWithCapability(String action,
+	static UserSecurityProfile createTestDataUserSecurityProfileWithCapability(
+			String action,
 			String resource)
-	{		
+	{
 		UserSecurityProfile userSecurityProfile = new UserSecurityProfile();
 		Capability capability = createTestDataCapabilityOnResourceAndAction(resource, action);
 		UserCapability userCapability = new UserCapability();
@@ -104,15 +110,16 @@ public class SecurityEntityValueObjectDataUtility
 		List<UserCapability> capabilities = new ArrayList<UserCapability>();
 		userCapability.setCapability(capability);
 		userCapability.setUserProfile(userSecurityProfile);
-		capabilities.add(userCapability);		
+		capabilities.add(userCapability);
 		userSecurityProfile.setCapabilities(capabilities);
 		userSecurityProfile.setRegistrationToken("token");
 		userSecurityProfile.setRegistrationTokenExpiration(new Date());
-		
+
 		return userSecurityProfile;
 	}
 
-	static UserCapability createTestDataUserCapabilityWithResourceAndAction(Resource resource,
+	static UserCapability createTestDataUserCapabilityWithResourceAndAction(
+			Resource resource,
 			Action action)
 	{
 
@@ -130,6 +137,41 @@ public class SecurityEntityValueObjectDataUtility
 		userCapability.setId(generateRandomID());
 		return userCapability;
 
+	}
+
+	static RoleVO createTestRoleVO(String roleName, String... capabilities)
+	{
+		RoleVOBuilder roleVoBuilder = new RoleVOBuilder()
+				.setId(generateRandomID())
+				.setName(roleName);
+		for (String capabilityName : capabilities)
+		{
+			roleVoBuilder.addCapability(createTestDataCapabilityVO());
+		}
+		return roleVoBuilder.createUserRoleVO();
+	}
+
+	private static CapabilityVO createTestCapabilityVOWithResourceActionAndTitle(
+			ResourceVO resourceVO, ActionVO actionVO,
+			final String capabilityTitle)
+	{
+		CapabilityVO capability = new CapabilityVOBuilder()
+				.setId(Long.MIN_VALUE)
+				.setResource(resourceVO)
+				.addAction(actionVO)
+				.setTitle(capabilityTitle)
+				.setDescription(capabilityTitle)
+				.createCapabilityVO();
+		return capability;
+	}
+
+	static RoleCapabilityVO createTestRoleCapabilityVO()
+	{
+		RoleCapabilityVOBuilder builder = new RoleCapabilityVOBuilder()
+				.setId(generateRandomID())
+				.setRoleVO(createTestRoleVO("Talent Manager"));
+
+		return builder.createRoleCapabilityVO();
 	}
 
 	public SecurityEntityValueObjectDataUtility()
@@ -170,18 +212,13 @@ public class SecurityEntityValueObjectDataUtility
 				.setName("resource")
 				.createResourceVO();
 		ActionVO actionVO = createTestDataActionVO();
-		CapabilityVO capability = new CapabilityVOBuilder()
-				.setId(Long.MIN_VALUE)
-				.setResource(resourceVO)
-				.addAction(actionVO)
-				.setTitle("testCapability")
-				.setDescription("testCapability")
-				.createCapabilityVO();
+		final String capabilityTitle = "testCapability";
+		CapabilityVO capability = createTestCapabilityVOWithResourceActionAndTitle(resourceVO, actionVO, capabilityTitle);
 		List<CapabilityActionVO> capabilityActions = createTestDataCapabilityActionVOsFor(capability);
 		capability.setActions(capabilityActions);
 		return capability;
 	}
-	
+
 //	public static Capability createTestDataCapabilityForResourceAndAction(String resourceName, String actionName)
 //	{
 //		Resource resource = createTestDataResource(resourceName);
@@ -199,7 +236,6 @@ public class SecurityEntityValueObjectDataUtility
 //		capability.getActions().add(capabilityAction);
 //		return capability;
 //	}
-
 	public static UserSecurityProfileVO createTestDataUserSecurityProfileVOwithUserCapability(
 			UserCapabilityVO userCapability)
 	{
@@ -227,7 +263,8 @@ public class SecurityEntityValueObjectDataUtility
 		return userSecurityProfileVO;
 	}
 
-	public static Capability createTestDataCapabilityOnResourceAndAction(String resourceName,
+	public static Capability createTestDataCapabilityOnResourceAndAction(
+			String resourceName,
 			String actionName)
 	{
 		Capability capability = new Capability();
@@ -259,7 +296,7 @@ public class SecurityEntityValueObjectDataUtility
 		action.setId(randomID);
 		return action;
 	}
-	
+
 	public static Action createTestDataActionWithName(String actionName)
 	{
 		Action action = createTestDataAction();
@@ -267,6 +304,7 @@ public class SecurityEntityValueObjectDataUtility
 		return action;
 	}
 	private static long MIN_SEED = 1;
+
 	private static long MAX_SEED = Long.MAX_VALUE;
 
 	public static long generateRandomID()

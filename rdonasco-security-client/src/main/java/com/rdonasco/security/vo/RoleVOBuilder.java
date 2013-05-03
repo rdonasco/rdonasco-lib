@@ -14,15 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.rdonasco.security.vo;
 
+import java.util.ArrayList;
+import java.util.List;
 
-public class RoleVOBuilder 
+public class RoleVOBuilder
 {
+
 	private Long id;
 
 	private String name;
+
+	private List<RoleCapabilityVO> roleCapabilities;
 
 	public RoleVOBuilder()
 	{
@@ -40,9 +44,48 @@ public class RoleVOBuilder
 		return this;
 	}
 
-	public RoleVO createUserRoleVO()
+	public RoleVOBuilder setRoleCapabilities(
+			List<RoleCapabilityVO> roleCapabilities)
 	{
-		return new RoleVO(id, name);
+		this.roleCapabilities = roleCapabilities;
+		return this;
 	}
 
+	public RoleVOBuilder addRoleCapability(RoleCapabilityVO roleCapability)
+	{
+		getRoleCapabilities().add(roleCapability);
+		return this;
+	}
+
+	public RoleVO createUserRoleVO()
+	{
+		RoleVO roleVO = new RoleVO(id, name, getRoleCapabilities());
+		for (RoleCapabilityVO roleCapability : getRoleCapabilities())
+		{
+			roleCapability.setRoleVO(roleVO);
+		}
+
+		return roleVO;
+	}
+
+	public List<RoleCapabilityVO> getRoleCapabilities()
+	{
+		if (null == roleCapabilities)
+		{
+			roleCapabilities = new ArrayList<RoleCapabilityVO>();
+		}
+		return roleCapabilities;
+	}
+
+	public RoleVOBuilder addCapability(CapabilityVO capabilityVO)
+	{
+		if (null != capabilityVO)
+		{
+			RoleCapabilityVO roleCapability = new RoleCapabilityVOBuilder()
+					.setCapabilityVO(capabilityVO)
+					.createRoleCapabilityVO();
+			getRoleCapabilities().add(roleCapability);
+		}
+		return this;
+	}
 }

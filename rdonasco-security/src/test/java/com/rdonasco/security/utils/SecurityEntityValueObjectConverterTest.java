@@ -8,6 +8,8 @@ import com.rdonasco.security.model.Action;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.CapabilityAction;
 import com.rdonasco.security.model.Resource;
+import com.rdonasco.security.model.Role;
+import com.rdonasco.security.model.RoleCapability;
 import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.ActionVO;
@@ -16,9 +18,13 @@ import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
+import com.rdonasco.security.vo.RoleCapabilityVO;
+import com.rdonasco.security.vo.RoleVO;
 import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -293,6 +299,45 @@ public class SecurityEntityValueObjectConverterTest
 		assertNotNull(result.getRegistrationTokenExpiration());
 		assertEquals(userSecurityProfile.getRegistrationToken(), result.getRegistrationToken());
 		assertEquals(userSecurityProfile.getRegistrationTokenExpiration(), result.getRegistrationTokenExpiration());
+	}
+
+	@Test
+	public void testToRole() throws Exception
+	{
+		System.out.println("toRole");
+		String[] capabilities =
+		{
+			"Manage User", "Manage User Capability"
+		};
+		RoleVO roleVO = SecurityEntityValueObjectDataUtility.createTestRoleVO("user manager", capabilities);
+		Role role = SecurityEntityValueObjectConverter.toRole(roleVO);
+		assertNotNull("converted to null", role);
+		assertEquals("id mismatch", roleVO.getId(), role.getId());
+		assertEquals("name mismatch", roleVO.getName(), role.getName());
+		assertNotNull("null capablities", role.getCapabilities());
+		assertEquals("capabilities.size mismatch", capabilities.length, role.getCapabilities().size());
+		Map<Long, RoleCapability> roleCapabilities = new HashMap<Long, RoleCapability>();
+		for (RoleCapability roleCapability : role.getCapabilities())
+		{
+			roleCapabilities.put(roleCapability.getId(), roleCapability);
+		}
+		for (RoleCapabilityVO roleCapabilityVO : roleVO.getRoleCapabilities())
+		{
+			assertNotNull("roleCapability not converted", roleCapabilities.get(roleCapabilityVO.getId()));
+		}
+	}
+
+	@Test
+	public void testToRoleCapability() throws Exception
+	{
+		System.out.println("toRoleCapability");
+		RoleCapabilityVO roleCapabilityVO = SecurityEntityValueObjectDataUtility
+				.createTestRoleCapabilityVO();
+		RoleCapability roleCapability = SecurityEntityValueObjectConverter.toRoleCapability(roleCapabilityVO);
+		assertNotNull("not Converted", roleCapability);
+		assertEquals("id mismatch", roleCapabilityVO.getId(), roleCapability.getId());
+		assertEquals("role.id mismatch", roleCapabilityVO.getRoleVO().getId(), roleCapability.getRole().getId());
+		assertEquals("capability.id mismatch", roleCapabilityVO.getCapabilityVO().getId(), roleCapability.getCapability().getId());
 	}
 
 }

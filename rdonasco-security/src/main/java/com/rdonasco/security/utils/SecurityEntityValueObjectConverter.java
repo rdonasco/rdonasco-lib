@@ -10,6 +10,7 @@ import com.rdonasco.security.model.CapabilityAction;
 import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.Role;
+import com.rdonasco.security.model.RoleCapability;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityActionVO;
@@ -18,6 +19,7 @@ import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
+import com.rdonasco.security.vo.RoleCapabilityVO;
 import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.RoleVO;
@@ -329,6 +331,22 @@ public class SecurityEntityValueObjectConverter
 	{
 		Role userRole = new Role();
 		BeanUtils.copyProperties(userRole, userRoleVO);
+		for (RoleCapabilityVO roleCapabilityVO : userRoleVO.getRoleCapabilities())
+		{
+			RoleCapability roleCapability = new RoleCapability();
+			Capability capability = toCapability(roleCapabilityVO.getCapabilityVO());
+			roleCapability.setCapability(capability);
+			roleCapability.setId(roleCapabilityVO.getId());
+			roleCapability.setRole(userRole);
+			userRole.getCapabilities().add(roleCapability);
+		}
 		return userRole;
+	}
+
+	static RoleCapability toRoleCapability(RoleCapabilityVO roleCapabilityVO)
+	{
+		// To change body of generated methods, choose Tools | Templates.
+		// TODO: Complete code for method toRoleCapability
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

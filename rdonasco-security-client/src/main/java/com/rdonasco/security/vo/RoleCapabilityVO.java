@@ -1,6 +1,6 @@
 /*
  * Copyright 2013 Roy F. Donasco.
- * File Created on: 02-May-2013
+ * File Created on: 03-May-2013
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,28 +17,27 @@
 package com.rdonasco.security.vo;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public class RoleVO implements Serializable
+public class RoleCapabilityVO implements Serializable
 {
 
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
 
-	private String name;
+	private RoleVO roleVO;
 
-	private List<RoleCapabilityVO> roleCapabilities;
+	private CapabilityVO capabilityVO;
 
-	RoleVO(Long id, String name, List<RoleCapabilityVO> roleCapabilities)
+	RoleCapabilityVO(Long id, RoleVO roleVO, CapabilityVO capabilityVO)
 	{
 		this.id = id;
-		this.name = name;
-		this.roleCapabilities = roleCapabilities;
+		this.roleVO = roleVO;
+		this.capabilityVO = capabilityVO;
 	}
 
 	public Long getId()
@@ -51,32 +50,32 @@ public class RoleVO implements Serializable
 		this.id = id;
 	}
 
-	public String getName()
+	public RoleVO getRoleVO()
 	{
-		return name;
+		return roleVO;
 	}
 
-	public void setName(String name)
+	public void setRoleVO(RoleVO roleVO)
 	{
-		this.name = name;
+		this.roleVO = roleVO;
 	}
 
-	public List<RoleCapabilityVO> getRoleCapabilities()
+	public CapabilityVO getCapabilityVO()
 	{
-		return roleCapabilities;
+		return capabilityVO;
 	}
 
-	public void setRoleCapabilities(
-			List<RoleCapabilityVO> roleCapabilities)
+	public void setCapabilityVO(CapabilityVO capabilityVO)
 	{
-		this.roleCapabilities = roleCapabilities;
+		this.capabilityVO = capabilityVO;
 	}
 
 	@Override
 	public int hashCode()
 	{
-		int hash = 3;
-		hash = 83 * hash + (this.id != null ? this.id.hashCode() : 0);
+		int hash = 7;
+		hash = 29 * hash + (this.roleVO != null ? this.roleVO.hashCode() : 0);
+		hash = 29 * hash + (this.capabilityVO != null ? this.capabilityVO.hashCode() : 0);
 		return hash;
 	}
 
@@ -94,19 +93,16 @@ public class RoleVO implements Serializable
 		}
 		else
 		{
-			final RoleVO other = (RoleVO) obj;
-
-			if (this.id != other.id && (this.id == null || !this.id.equals(other.id)))
+			final RoleCapabilityVO other = (RoleCapabilityVO) obj;
+			if (this.roleVO != other.roleVO && (this.roleVO == null || !this.roleVO.equals(other.roleVO)))
+			{
+				isEqual = false;
+			}
+			else if (this.capabilityVO != other.capabilityVO && (this.capabilityVO == null || !this.capabilityVO.equals(other.capabilityVO)))
 			{
 				isEqual = false;
 			}
 		}
 		return isEqual;
-	}
-
-	@Override
-	public String toString()
-	{
-		return "UserRoleVO{" + "id=" + id + ", name=" + name + '}';
 	}
 }
