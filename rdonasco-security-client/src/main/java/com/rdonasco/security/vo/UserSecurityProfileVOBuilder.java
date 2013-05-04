@@ -2,21 +2,28 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.rdonasco.security.vo;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
-
-public class UserSecurityProfileVOBuilder 
+public class UserSecurityProfileVOBuilder
 {
+
 	private Long id;
+
 	private String loginId;
+
 	private Collection<UserCapabilityVO> capabilities = new ArrayList<UserCapabilityVO>();
+
+	private Collection<UserRoleVO> roles;
+
 	private String password;
+
 	private Date expiryDate = new Date();
+
 	private String registrationToken;
 
 	public UserSecurityProfileVOBuilder()
@@ -34,7 +41,7 @@ public class UserSecurityProfileVOBuilder
 		this.loginId = loginId;
 		return this;
 	}
-	
+
 	public UserSecurityProfileVOBuilder setPassword(String password)
 	{
 		this.password = password;
@@ -54,13 +61,15 @@ public class UserSecurityProfileVOBuilder
 		return this;
 	}
 
-	public UserSecurityProfileVOBuilder setCapabilities(Collection<UserCapabilityVO> capabilities)
+	public UserSecurityProfileVOBuilder setCapabilities(
+			Collection<UserCapabilityVO> capabilities)
 	{
 		this.capabilities = capabilities;
 		return this;
 	}
-	
-	public UserSecurityProfileVOBuilder addCapability(UserCapabilityVO userCapabilityVO)
+
+	public UserSecurityProfileVOBuilder addCapability(
+			UserCapabilityVO userCapabilityVO)
 	{
 		this.capabilities.add(userCapabilityVO);
 		return this;
@@ -68,8 +77,13 @@ public class UserSecurityProfileVOBuilder
 
 	public UserSecurityProfileVO createUserSecurityProfileVO()
 	{
-		return new UserSecurityProfileVO(id, loginId, password, registrationToken, expiryDate, capabilities);
+		return new UserSecurityProfileVO(id, loginId, password, registrationToken, expiryDate, capabilities, roles);
 	}
 
-
+	public UserSecurityProfileVOBuilder setRoles(
+			List<UserRoleVO> roles)
+	{
+		this.roles = roles;
+		return this;
+	}
 }

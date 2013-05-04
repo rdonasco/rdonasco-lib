@@ -21,16 +21,19 @@ import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.common.utils.CollectionsUtility;
 import com.rdonasco.security.dao.UserCapabilityDAO;
+import com.rdonasco.security.dao.UserRoleDAO;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
 import com.rdonasco.security.model.Capability;
+import com.rdonasco.security.model.Role;
 import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.CapabilityVO;
+import com.rdonasco.security.vo.RoleVO;
 import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
@@ -60,6 +63,9 @@ public class UserSecurityProfileManager implements
 
 	@Inject
 	private UserCapabilityDAO userCapabilityDAO;
+
+	@Inject
+	private UserRoleDAO userRoleDAO;
 
 	@EJB
 	private CapabilityManagerLocal capabilityManager;
@@ -120,6 +126,27 @@ public class UserSecurityProfileManager implements
 		}
 		return capabilityVOList;
 	}
+
+	@Override
+	public List<RoleVO> retrieveRolesOfUser(
+			UserSecurityProfileVO userSecurityProfileVO) throws
+			DataAccessException
+	{
+		List<RoleVO> roleVOList = null;
+		try
+		{
+			UserSecurityProfile userProfile = SecurityEntityValueObjectConverter.toUserProfile(userSecurityProfileVO);
+			List<Role> roles = userRoleDAO.loadRolesOf(userProfile);
+			roleVOList = new ArrayList<RoleVO>();
+			roleVOList = SecurityEntityValueObjectConverter.toRoleVOList(roles);
+		}
+		catch (Exception e)
+		{
+			throw new DataAccessException(e);
+		}
+		return roleVOList;
+	}
+
 
 	@Override
 	public UserSecurityProfileVO findSecurityProfileWithLogonID(String logonId)

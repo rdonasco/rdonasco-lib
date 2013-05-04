@@ -11,6 +11,7 @@ import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.Role;
 import com.rdonasco.security.model.RoleCapability;
+import com.rdonasco.security.model.UserRole;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityActionVO;
@@ -25,6 +26,8 @@ import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.RoleVO;
 import com.rdonasco.security.vo.RoleVOBuilder;
+import com.rdonasco.security.vo.UserRoleVO;
+import com.rdonasco.security.vo.UserRoleVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import java.lang.reflect.InvocationTargetException;
@@ -93,6 +96,8 @@ public class SecurityEntityValueObjectConverter
 
 			userSecurityProfile.getCapabilities().add(userCapability);
 		}
+		List<UserRole> userRoles = toUserRoles(userSecurityProfile, userSecurityProfileVO.getRoles());
+		userSecurityProfile.setRoles(userRoles);
 		return userSecurityProfile;
 	}
 
@@ -274,14 +279,21 @@ public class SecurityEntityValueObjectConverter
 			userCapabilityVO = toUserCapabilityVO(userCapability);
 			userCapabilityVOList.add(userCapabilityVO);
 		}
+		List<UserRoleVO> userRoleVOList = new ArrayList<UserRoleVO>();
+
 		UserSecurityProfileVO userSecurityProfileVO = new UserSecurityProfileVOBuilder()
 				.setId(profileToConvert.getId())
 				.setLoginId(profileToConvert.getLogonId())
 				.setPassword(profileToConvert.getPassword())
 				.setCapabilities(userCapabilityVOList)
+				.setRoles(userRoleVOList)
 				.setRegistrationToken(profileToConvert.getRegistrationToken())
 				.setRegistrationTokenExpiry(profileToConvert.getRegistrationTokenExpiration())
 				.createUserSecurityProfileVO();
+		for (UserRole userRole : profileToConvert.getRoles())
+		{
+			userRoleVOList.add(toUserRoleVO(userSecurityProfileVO, userRole));
+		}
 		return userSecurityProfileVO;
 	}
 
@@ -416,5 +428,43 @@ public class SecurityEntityValueObjectConverter
 			roleCapability.setRole(role);
 		}
 		return roleCapability;
+	}
+
+	private static List<UserRole> toUserRoles(UserSecurityProfile profile,
+			Collection<UserRoleVO> roleVOList) throws IllegalAccessException,
+			InvocationTargetException
+	{
+		List<UserRole> userRoles = null;
+		if (roleVOList != null)
+		{
+			userRoles = new ArrayList<UserRole>(roleVOList.size());
+			UserRole userRole = null;
+			for (UserRoleVO userRoleVO : roleVOList)
+			{
+				userRole = new UserRole();
+				userRole.setId(userRoleVO.getId());
+				userRole.setRole(toRole(userRoleVO.getRole()));
+				userRole.setUserProfile(profile);
+				userRoles.add(userRole);
+			}
+		}
+		return userRoles;
+	}
+
+	private static UserRoleVO toUserRoleVO(UserSecurityProfileVO userProfile,
+			UserRole userRole) throws
+			IllegalAccessException, IllegalAccessException,
+			InvocationTargetException
+	{
+		UserRoleVO userRoleVO = null;
+		if (null != userRole)
+		{
+			userRoleVO = new UserRoleVOBuilder()
+					.setId(userRole.getId())
+					.setRole(toRoleVO(userRole.getRole()))
+					.setUserProfile(userProfile)
+					.createUserRoleVO();
+		}
+		return userRoleVO;
 	}
 }

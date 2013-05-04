@@ -36,14 +36,19 @@ public class UserSecurityProfileVO implements Serializable
 	private Date registrationTokenExpiration;
 	private Collection<UserCapabilityVO> capabilities;
 
+	private Collection<UserRoleVO> roles;
+
+
 	public UserSecurityProfileVO(Long id, String loginId, String password,
 			String token, Date expiryDate,
-			Collection<UserCapabilityVO> capabilities)
+			Collection<UserCapabilityVO> capabilities,
+			Collection<UserRoleVO> roles)
 	{
 		this.id = id;
 		this.logonId = loginId;
 		this.password = password;
 		this.capabilities = capabilities;
+		this.roles = roles;
 		this.registrationToken = token;
 		this.registrationTokenExpiration = expiryDate;
 		if(null != capabilities)
@@ -51,6 +56,13 @@ public class UserSecurityProfileVO implements Serializable
 			for(UserCapabilityVO userCapabilityVO : capabilities)
 			{
 				userCapabilityVO.setUserProfile(this);
+			}
+		}
+		if (null != roles)
+		{
+			for (UserRoleVO userRoleVO : roles)
+			{
+				userRoleVO.setUserProfile(this);
 			}
 		}
 	}
@@ -107,13 +119,30 @@ public class UserSecurityProfileVO implements Serializable
 
 	public Collection<UserCapabilityVO> getCapabilities()
 	{
+		ensureCapabilitiesAreInitialized();
 		return capabilities;
 	}
 
 	public void setCapabilities(Collection<UserCapabilityVO> capabilities)
 	{
 		this.capabilities = capabilities;
-	}	
+	}
+
+	public Collection<UserRoleVO> getRoles()
+	{
+		if (roles == null)
+		{
+			roles = new ArrayList<UserRoleVO>();
+		}
+		return roles;
+	}
+
+	public void setRoles(
+			Collection<UserRoleVO> roles)
+	{
+		this.roles = roles;
+	}
+
 
 	@Override
 	public int hashCode()
@@ -156,8 +185,9 @@ public class UserSecurityProfileVO implements Serializable
 	@Override
 	public String toString()
 	{
-		return "UserSecurityProfileVO{" + "id=" + id + ", loginId=" + logonId + ", capabilities=" + capabilities + '}';
+		return "UserSecurityProfileVO{" + "id=" + id + ", logonId=" + logonId + ", capabilities=" + capabilities + ", roles=" + roles + '}';
 	}
+
 
 	private void ensureCapabilitiesAreInitialized()
 	{
@@ -168,11 +198,16 @@ public class UserSecurityProfileVO implements Serializable
 	}
 	
 	public void addCapbility(UserCapabilityVO userCapabilityVO)
-	{
-		ensureCapabilitiesAreInitialized();
-		capabilities.add(userCapabilityVO);
+	{		
+		getCapabilities().add(userCapabilityVO);
 		userCapabilityVO.setUserProfile(this);
 	}
 
-
+	public void addRole(RoleVO role)
+	{
+		getRoles().add(new UserRoleVOBuilder()
+				.setRole(role)
+				.setUserProfile(this)
+				.createUserRoleVO());
+	}
 }

@@ -188,6 +188,6 @@ public class UserSecurityProfile implements Serializable
 	@Override
 	public String toString()
 	{
-		return "UserSecurityProfile{" + "id=" + id + ", logonId=" + logonId + '}';
+		return "UserSecurityProfile{" + "id=" + id + ", logonId=" + logonId + ", capabilities=" + capabilities + ", roles=" + roles + '}';
 	}
 }

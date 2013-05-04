@@ -16,6 +16,7 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.config.dao.ConfigElementDAO;
 import com.rdonasco.config.data.ConfigElement;
 import com.rdonasco.config.parsers.ValueParser;
@@ -23,13 +24,20 @@ import com.rdonasco.config.services.ConfigDataManagerLocal;
 import com.rdonasco.config.util.ConfigDataValueObjectConverter;
 import com.rdonasco.config.vo.ConfigAttributeVO;
 import com.rdonasco.security.dao.ActionDAO;
+import com.rdonasco.security.exceptions.CapabilityManagerException;
+import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.utils.ArchiveCreator;
 import com.rdonasco.security.utils.CapabilityTestUtility;
 import com.rdonasco.security.utils.RoleTestUtility;
+import com.rdonasco.security.utils.UserSecurityProfileTestUtility;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.RoleVO;
+import com.rdonasco.security.vo.UserRoleVO;
+import com.rdonasco.security.vo.UserSecurityProfileVO;
+import java.util.Collection;
+import java.util.List;
 import javax.ejb.EJB;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -40,6 +48,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -50,17 +59,22 @@ public class UserSecurityProfileManagerTest
 {
 
 	@EJB
-	private UserSecurityProfileManagerLocal userSecurityProfileManager;
-
-	@EJB
 	private CapabilityManagerLocal capabilityManager;
 
 	private CapabilityTestUtility capabilityTestUtility;
 
 	private RoleTestUtility roleTestUtility;
 
+	private UserSecurityProfileTestUtility userSecurityProfileTestUtility;
+
 	@EJB
 	private RoleManagerLocal userRoleManager;
+
+	@EJB
+	private SystemSecurityManagerLocal systemSecurityManager;
+
+	@EJB
+	private UserSecurityProfileManagerLocal userSecurityProfileManager;
 
 	public UserSecurityProfileManagerTest()
 	{
@@ -99,6 +113,7 @@ public class UserSecurityProfileManagerTest
 	{
 		capabilityTestUtility = new CapabilityTestUtility(capabilityManager);
 		roleTestUtility = new RoleTestUtility(userRoleManager);
+		userSecurityProfileTestUtility = new UserSecurityProfileTestUtility(capabilityManager, systemSecurityManager);
 	}
 
 	@After
@@ -113,15 +128,33 @@ public class UserSecurityProfileManagerTest
 	public void testRetrieveRolesOfUser() throws Exception
 	{
 		System.out.println("retrieveRolesOfUser");
-		// prepare the capabilities
-		CapabilityVO capability = capabilityTestUtility.createTestDataCapabilityWithActionAndResourceName("edit", "role");
+		UserSecurityProfileVO createdSecurityProfile = createUserProfileWithRoleCapabilityTo("edit", "role");
+		System.out.println("created " + createdSecurityProfile);
+		assertNotNull(createdSecurityProfile);
+		Collection<UserRoleVO> associatedRoles = createdSecurityProfile.getRoles();
+		assertNotNull(associatedRoles);
+		assertEquals("roles not associated", 1, associatedRoles.size());
+		List<RoleVO> roles = userSecurityProfileManager.retrieveRolesOfUser(createdSecurityProfile);
+		assertNotNull(roles);
+		assertEquals("roles not associated", 1, roles.size());
 
+	}
+
+	// start of utilities here. 
+	private UserSecurityProfileVO createUserProfileWithRoleCapabilityTo(
+			final String action, final String resource) throws
+			CapabilityManagerException, DataAccessException,
+			SecurityManagerException
+	{
+		// prepare the capabilities
+		CapabilityVO capability = capabilityTestUtility.createTestDataCapabilityWithActionAndResourceName(action, resource);
 		// prepare the roles with capability
 		RoleVO role = roleTestUtility.createRoleNamedAndWithCapability("role editor", capability);
-
 		// create new user profile
-
-
+		UserSecurityProfileVO userSecurityProfile = userSecurityProfileTestUtility.createTestDataWithoutCapability();
 		// assign the roles to the profile
+		userSecurityProfile.addRole(role);
+		UserSecurityProfileVO createdProfile = userSecurityProfileManager.createNewUserSecurityProfile(userSecurityProfile);
+		return createdProfile;
 	}
 }
