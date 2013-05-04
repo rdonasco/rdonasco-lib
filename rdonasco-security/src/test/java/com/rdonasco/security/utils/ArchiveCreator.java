@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package test.util;
+package com.rdonasco.security.utils;
 
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.dao.BaseDAO;
 import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
@@ -38,6 +39,6 @@ public class ArchiveCreator
 				.addPackage(BaseDAO.class.getPackage())
 				.addPackage(DataAccessException.class.getPackage())
 				.addPackage(I18NResource.class.getPackage())
-				;
+				.addPackage(NotSecuredResourceException.class.getPackage());
 	}
 }

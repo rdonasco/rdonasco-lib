@@ -29,7 +29,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import test.util.ArchiveCreator;
+import com.rdonasco.security.utils.ArchiveCreator;
 import static org.junit.Assert.*;
 
 /**

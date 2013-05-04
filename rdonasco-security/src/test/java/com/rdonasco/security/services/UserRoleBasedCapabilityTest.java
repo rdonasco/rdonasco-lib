@@ -16,6 +16,8 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.security.dao.UserCapabilityDAO;
+import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -31,6 +33,9 @@ import static org.junit.Assert.*;
 public class UserRoleBasedCapabilityTest
 {
 	private static final Logger LOG = Logger.getLogger(UserRoleBasedCapabilityTest.class.getName());
+	private CapabilityManagerLocal capabilityManager;
+	private UserCapabilityDAO userCapabilityDAO;
+	private UserSecurityProfileDAO userSecurityProfileDAO;
 
 	public UserRoleBasedCapabilityTest()
 	{
@@ -59,6 +64,12 @@ public class UserRoleBasedCapabilityTest
 	@Test
 	public void testUserManagerRole() throws Exception
 	{
+		SystemSecurityManagerImpl systemSecurityManager = new SystemSecurityManagerImpl();
+		systemSecurityManager.setCapabilityManager(capabilityManager);
+		systemSecurityManager.setUserCapabilityDAO(userCapabilityDAO);
+		systemSecurityManager.setUserSecurityProfileDAO(userSecurityProfileDAO);
+
+
 		assertTrue(true);
 	}
 }

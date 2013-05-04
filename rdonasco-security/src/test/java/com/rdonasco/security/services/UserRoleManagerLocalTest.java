@@ -23,7 +23,6 @@ import com.rdonasco.security.utils.CapabilityTestUtility;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.RoleCapabilityVO;
-import com.rdonasco.security.vo.RoleCapabilityVOBuilder;
 import com.rdonasco.security.vo.RoleVO;
 import com.rdonasco.security.vo.RoleVOBuilder;
 import java.util.List;
@@ -37,7 +36,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import test.util.ArchiveCreator;
+import com.rdonasco.security.utils.ArchiveCreator;
 
 /**
  *
@@ -52,7 +51,7 @@ public class UserRoleManagerLocalTest
 	private RoleManagerLocal userRoleManager;
 
 	@EJB
-	private CapabilityManagerRemote capabilityManager;
+	private CapabilityManagerLocal capabilityManager;
 
 	private CapabilityTestUtility testUtility;
 
@@ -62,15 +61,18 @@ public class UserRoleManagerLocalTest
 		JavaArchive archive = ArchiveCreator.createCommonArchive();
 		archive.addPackage(RoleDAO.class.getPackage())
 				.addPackage(Role.class.getPackage())
-				.addPackage(RoleManagerLocal.class.getPackage())
 				.addPackage(RoleVO.class.getPackage())
+				.addClass(RoleManagerLocal.class)
+				.addClass(RoleManager.class)				
+				.addClass(CapabilityManagerRemote.class)
+				.addClass(CapabilityManagerImpl.class)
 				.addClass(SecurityEntityValueObjectConverter.class);
 
 		return archive;
 	}
 
 	@Before
-	public void setup()
+	public void setUp()
 	{
 		testUtility = new CapabilityTestUtility(capabilityManager);
 	}

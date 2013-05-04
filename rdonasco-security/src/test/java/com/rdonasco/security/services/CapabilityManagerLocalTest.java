@@ -22,7 +22,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import test.util.ArchiveCreator;
+import com.rdonasco.security.utils.ArchiveCreator;
 import static org.junit.Assert.*;
 import org.junit.Before;
 
@@ -35,12 +35,12 @@ public class CapabilityManagerLocalTest
 	private static final Logger LOG = Logger.getLogger(CapabilityManagerLocalTest.class.getName());
 
 	@EJB
-	private CapabilityManagerRemote capabilityManager;
+	private CapabilityManagerLocal capabilityManager;
 
 	private CapabilityTestUtility testUtility;
 
 	@Before
-	public void setup()
+	public void setUp()
 	{
 		testUtility = new CapabilityTestUtility(capabilityManager);
 	}
