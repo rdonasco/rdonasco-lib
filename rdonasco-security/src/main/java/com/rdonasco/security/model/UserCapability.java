@@ -41,7 +41,7 @@ import javax.persistence.UniqueConstraint;
 {
 	@UniqueConstraint(columnNames =
 	{
-		"id", "capability_id"
+		"user_profile_id", "capability_id"
 	}, name = "user_capability")
 })
 @NamedQueries(
