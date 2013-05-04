@@ -19,7 +19,6 @@ package com.rdonasco.security.services;
 import com.rdonasco.common.exceptions.CollectionMergeException;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.common.exceptions.DataAccessException;
-import com.rdonasco.common.exceptions.IllegalOrphanException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.common.utils.CollectionsUtility;
 import com.rdonasco.common.utils.CollectionsUtility.CollectionItemDeleteStrategy;
@@ -70,6 +69,15 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	private UserCapabilityDAO userCapabilityDAO;
 	@EJB
 	private CapabilityManagerLocal capabilityManager;
+
+	@EJB
+	private UserSecurityProfileManagerLocal userSecurityProfileManager;
+
+	public void setUserSecurityProfileManager(
+			UserSecurityProfileManagerLocal userSecurityProfileManager)
+	{
+		this.userSecurityProfileManager = userSecurityProfileManager;
+	}
 
 	public void setUserCapabilityDAO(UserCapabilityDAO userCapabilityDAO)
 	{
@@ -172,18 +180,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			UserSecurityProfileVO userSecurityProfile)
 			throws SecurityManagerException
 	{
-		UserSecurityProfileVO createdProfile = null;
-		try
-		{
-			UserSecurityProfile profileToCreate = SecurityEntityValueObjectConverter.toUserProfile(userSecurityProfile);
-			userSecurityProfileDAO.create(profileToCreate);
-			createdProfile = SecurityEntityValueObjectConverter.toUserProfileVO(profileToCreate);
-		}
-		catch (Exception e)
-		{
-			throw new SecurityManagerException(e);
-		}
-		return createdProfile;
+		return userSecurityProfileManager.createNewUserSecurityProfile(userSecurityProfile);
 	}
 
 	@Override

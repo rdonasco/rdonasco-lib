@@ -58,6 +58,8 @@ public class SystemSecurityManagerImplTest
 	private static CapabilityManagerLocal capabilityManagerMock;
 	private static UserCapabilityDAO userCapabilityDAOMock;
 
+	private static UserSecurityProfileManager userSecurityProfileManager;
+
 	private static RoleDAO roleDAO;
 
 	public SystemSecurityManagerImplTest()
@@ -311,10 +313,13 @@ public class SystemSecurityManagerImplTest
 
 	private SystemSecurityManagerImpl prepareSecurityManagerInstanceToTest()
 	{
+		userSecurityProfileManager = new UserSecurityProfileManager();
+		userSecurityProfileManager.setUserSecurityProfileDAO(userSecurityProfileDAOMock);
 		SystemSecurityManagerImpl systemSecurityManager = new SystemSecurityManagerImpl();
 		systemSecurityManager.setCapabilityManager(capabilityManagerMock);
 		systemSecurityManager.setUserSecurityProfileDAO(userSecurityProfileDAOMock);
 		systemSecurityManager.setUserCapabilityDAO(userCapabilityDAOMock);
+		systemSecurityManager.setUserSecurityProfileManager(userSecurityProfileManager);
 		return systemSecurityManager;
 	}
 }

@@ -35,6 +35,11 @@ public class UserSecurityProfileManager implements
 	@Inject
 	private UserSecurityProfileDAO userSecurityProfileDAO;
 
+	public void setUserSecurityProfileDAO(
+			UserSecurityProfileDAO userSecurityProfileDAO)
+	{
+		this.userSecurityProfileDAO = userSecurityProfileDAO;
+	}
 
 	@Override
 	public UserSecurityProfileVO createNewUserSecurityProfile(
