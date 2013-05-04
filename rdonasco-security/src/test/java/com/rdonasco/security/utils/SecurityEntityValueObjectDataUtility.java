@@ -8,6 +8,8 @@ import com.rdonasco.security.model.Action;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.CapabilityAction;
 import com.rdonasco.security.model.Resource;
+import com.rdonasco.security.model.Role;
+import com.rdonasco.security.model.RoleCapability;
 import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.ActionVO;
@@ -169,9 +171,28 @@ public class SecurityEntityValueObjectDataUtility
 	{
 		RoleCapabilityVOBuilder builder = new RoleCapabilityVOBuilder()
 				.setId(generateRandomID())
+				.setCapabilityVO(createTestDataCapabilityVO())
 				.setRoleVO(createTestRoleVO("Talent Manager"));
 
 		return builder.createRoleCapabilityVO();
+	}
+
+	static Role createTestDataRole()
+	{
+		Role role = new Role();
+		role.setId(generateRandomID());
+		createTestDataRoleCapabilityForRole(role);
+		return role;
+	}
+
+	static RoleCapability createTestDataRoleCapabilityForRole(Role role)
+	{
+		RoleCapability roleCapability = new RoleCapability();
+		roleCapability.setId(generateRandomID());
+		roleCapability.setCapability(createTestDataCapabilityOnResourceAndAction("employee", "edit"));
+		roleCapability.setRole(role);
+		role.getCapabilities().add(roleCapability);
+		return roleCapability;
 	}
 
 	public SecurityEntityValueObjectDataUtility()
@@ -181,7 +202,6 @@ public class SecurityEntityValueObjectDataUtility
 	public static UserCapabilityVO createTestDataUserCapabilityVO(
 			CapabilityVO capability)
 	{
-		CapabilityVO capabilityVO = createTestDataCapabilityVO();
 		UserCapabilityVO userCapability = new UserCapabilityVOBuilder()
 				.setCapability(capability)
 				.setId(generateRandomID())

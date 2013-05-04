@@ -340,4 +340,37 @@ public class SecurityEntityValueObjectConverterTest
 		assertEquals("capability.id mismatch", roleCapabilityVO.getCapabilityVO().getId(), roleCapability.getCapability().getId());
 	}
 
+	@Test
+	public void testToRoleVO() throws Exception
+	{
+		System.out.println("toRoleVO");
+		Role role = SecurityEntityValueObjectDataUtility.createTestDataRole();
+		RoleVO roleVO = SecurityEntityValueObjectConverter.toRoleVO(role);
+		assertEquals("id mismatch", role.getId(), roleVO.getId());
+		assertEquals("name did not match", roleVO.getName(), role.getName());
+		assertNotNull("capabilities not converted", roleVO.getRoleCapabilities());
+		assertEquals("capabilities size did not match", role.getCapabilities().size(), roleVO.getRoleCapabilities().size());
+		Map<Long, RoleCapabilityVO> roleCapabilities = new HashMap<Long, RoleCapabilityVO>();
+		for (RoleCapabilityVO roleCapabilityVO : roleVO.getRoleCapabilities())
+		{
+			roleCapabilities.put(roleCapabilityVO.getId(), roleCapabilityVO);
+		}
+		for (RoleCapability roleCapability : role.getCapabilities())
+		{
+			assertNotNull("roleCapability not converted", roleCapabilities.get(roleCapability.getId()));
+			assertNotNull("role not copied", roleCapability.getRole());
+			assertEquals("role id mismatch", role.getId(), roleCapability.getRole().getId());
+		}
+	}
+
+	@Test
+	public void testToRoleCapabilityVO() throws Exception
+	{
+		System.out.println("toRoleCapabilityVO");
+		RoleCapability roleCapability = SecurityEntityValueObjectDataUtility.createTestDataRoleCapabilityForRole(SecurityEntityValueObjectDataUtility.createTestDataRole());
+		RoleCapabilityVO roleCapabilityVO = SecurityEntityValueObjectConverter.toRoleCapabilityVO(roleCapability);
+		assertEquals("id mismatch", roleCapability.getId(), roleCapabilityVO.getId());
+		assertEquals("role id mismatch", roleCapability.getRole().getId(), roleCapabilityVO.getRoleVO().getId());
+
+	}
 }

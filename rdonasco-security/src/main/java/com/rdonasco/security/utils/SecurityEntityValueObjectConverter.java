@@ -20,6 +20,7 @@ import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
 import com.rdonasco.security.vo.RoleCapabilityVO;
+import com.rdonasco.security.vo.RoleCapabilityVOBuilder;
 import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.RoleVO;
@@ -28,6 +29,7 @@ import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.BeanUtilsBean;
@@ -295,27 +297,36 @@ public class SecurityEntityValueObjectConverter
 	}
 
 	public static List<UserSecurityProfileVO> toUserProfileVOList(
-			List<UserSecurityProfile> allProfiles) throws IllegalAccessException, InvocationTargetException
+			List<UserSecurityProfile> allProfiles) throws IllegalAccessException,
+			InvocationTargetException
 	{
 		List<UserSecurityProfileVO> convertedList = new ArrayList<UserSecurityProfileVO>(allProfiles.size());
-		for(UserSecurityProfile profile : allProfiles)
+		for (UserSecurityProfile profile : allProfiles)
 		{
 			convertedList.add(toUserProfileVO(profile));
 		}
 		return convertedList;
 	}
 
-	public static RoleVO toRoleVO(Role userRole)
+	public static RoleVO toRoleVO(Role userRole) throws IllegalAccessException,
+			InvocationTargetException
 	{
-		RoleVO userRoleVO = new RoleVOBuilder()
-				.setId(userRole.getId())
-				.setName(userRole.getName())
-				.createUserRoleVO();
+		RoleVO userRoleVO = null;
+		if (null != userRole)
+		{
+
+			userRoleVO = new RoleVOBuilder()
+					.setId(userRole.getId())
+					.setName(userRole.getName())
+					.setRoleCapabilities(toRoleCapabilityVOList(userRole.getCapabilities()))
+					.createUserRoleVO();
+		}
 		return userRoleVO;
 	}
 
 	public static List<RoleVO> toRoleVOList(
-			List<Role> userRoles)
+			List<Role> userRoles) throws IllegalAccessException,
+			InvocationTargetException
 	{
 		List<RoleVO> userRoleVOs = new ArrayList<RoleVO>(userRoles.size());
 		for (Role userRole : userRoles)
@@ -326,27 +337,84 @@ public class SecurityEntityValueObjectConverter
 		return userRoleVOs;
 	}
 
+	public static RoleCapabilityVO toRoleCapabilityVO(
+			RoleCapability roleCapability) throws IllegalAccessException,
+			InvocationTargetException
+	{
+		RoleCapabilityVO roleCapabilityVO = null;
+		if (null != roleCapability)
+		{
+			RoleVO roleVO = null;
+			if (roleCapability.getRole() != null)
+			{
+				roleVO = new RoleVOBuilder()
+						.setId(roleCapability.getRole().getId())
+						.setName(roleCapability.getRole().getName())
+						.createUserRoleVO();
+			}
+			roleCapabilityVO = new RoleCapabilityVOBuilder()
+					.setCapabilityVO(toCapabilityVO(roleCapability.getCapability()))
+					.setId(roleCapability.getId())
+					.setRoleVO(roleVO)
+					.createRoleCapabilityVO();
+		}
+		return roleCapabilityVO;
+	}
+
+	public static List<RoleCapabilityVO> toRoleCapabilityVOList(
+			Collection<RoleCapability> capabilities) throws
+			IllegalAccessException, InvocationTargetException
+	{
+		List<RoleCapabilityVO> roleCapabilities = null;
+		if (null != capabilities)
+		{
+			roleCapabilities = new ArrayList<RoleCapabilityVO>(capabilities.size());
+			for (RoleCapability roleCapability : capabilities)
+			{
+				roleCapabilities.add(toRoleCapabilityVO(roleCapability));
+			}
+		}
+		return roleCapabilities;
+	}
+
 	public static Role toRole(RoleVO userRoleVO) throws
 			IllegalAccessException, InvocationTargetException
 	{
-		Role userRole = new Role();
-		BeanUtils.copyProperties(userRole, userRoleVO);
-		for (RoleCapabilityVO roleCapabilityVO : userRoleVO.getRoleCapabilities())
+		Role userRole = null;
+		if (null != userRoleVO)
 		{
-			RoleCapability roleCapability = new RoleCapability();
-			Capability capability = toCapability(roleCapabilityVO.getCapabilityVO());
-			roleCapability.setCapability(capability);
-			roleCapability.setId(roleCapabilityVO.getId());
-			roleCapability.setRole(userRole);
-			userRole.getCapabilities().add(roleCapability);
+			userRole = new Role();
+			BeanUtils.copyProperties(userRole, userRoleVO);
+			for (RoleCapabilityVO roleCapabilityVO : userRoleVO.getRoleCapabilities())
+			{
+				RoleCapability roleCapability = new RoleCapability();
+				Capability capability = toCapability(roleCapabilityVO.getCapabilityVO());
+				roleCapability.setCapability(capability);
+				roleCapability.setId(roleCapabilityVO.getId());
+				roleCapability.setRole(userRole);
+				userRole.getCapabilities().add(roleCapability);
+			}
 		}
 		return userRole;
 	}
 
-	static RoleCapability toRoleCapability(RoleCapabilityVO roleCapabilityVO)
+	public static RoleCapability toRoleCapability(
+			RoleCapabilityVO roleCapabilityVO) throws IllegalAccessException,
+			InvocationTargetException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method toRoleCapability
-		throw new UnsupportedOperationException("Not supported yet.");
+		RoleCapability roleCapability = null;
+		if (null != roleCapabilityVO)
+		{
+			roleCapability = new RoleCapability();
+			roleCapability.setId(roleCapabilityVO.getId());
+			if (roleCapabilityVO.getCapabilityVO() != null)
+			{
+				roleCapability.setCapability(toCapability(roleCapabilityVO.getCapabilityVO()));
+			}
+			Role role = new Role();
+			BeanUtils.copyProperties(role, roleCapabilityVO.getRoleVO());
+			roleCapability.setRole(role);
+		}
+		return roleCapability;
 	}
 }
