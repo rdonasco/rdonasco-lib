@@ -53,9 +53,13 @@ public class SystemSecurityManagerImplTest
 	private static final Logger LOG = Logger.getLogger(SystemSecurityManagerImplTest.class.getName());
 
 	private static UserSecurityProfileVO userSecurityProfileVOMock;
+
 	private static UserSecurityProfile userSecurityProfileMock;
+
 	private static UserSecurityProfileDAO userSecurityProfileDAOMock;
+
 	private static CapabilityManagerLocal capabilityManagerMock;
+
 	private static UserCapabilityDAO userCapabilityDAOMock;
 
 	private static UserSecurityProfileManager userSecurityProfileManager;
