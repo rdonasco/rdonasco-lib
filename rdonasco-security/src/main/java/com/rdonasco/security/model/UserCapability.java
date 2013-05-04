@@ -107,23 +107,32 @@ public class UserCapability implements Serializable
 	@Override
 	public int hashCode()
 	{
-		int hash = 0;
-		hash += (id != null ? id.hashCode() : 0);
+		int hash = 3;
+		hash = 79 * hash + (this.userProfile != null ? this.userProfile.hashCode() : 0);
+		hash = 79 * hash + (this.capability != null ? this.capability.hashCode() : 0);
 		return hash;
 	}
 
 	@Override
-	public boolean equals(Object object)
+	public boolean equals(Object obj)
 	{
 		boolean isEqual = true;
-		if (!(object instanceof UserCapability))
+		if (obj == null)
+		{
+			isEqual = false;
+		}
+		else if (getClass() != obj.getClass())
 		{
 			isEqual = false;
 		}
 		else
 		{
-			UserCapability other = (UserCapability) object;
-			if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
+			final UserCapability other = (UserCapability) obj;
+			if (this.userProfile != other.userProfile && (this.userProfile == null || !this.userProfile.equals(other.userProfile)))
+			{
+				isEqual = false;
+			}
+			else if (this.capability != other.capability && (this.capability == null || !this.capability.equals(other.capability)))
 			{
 				isEqual = false;
 			}
@@ -134,6 +143,6 @@ public class UserCapability implements Serializable
 	@Override
 	public String toString()
 	{
-		return "com.rdonasco.security.model.SecuredUser[ id=" + id + " ]";
+		return "UserCapability{" + "id=" + id + ", userProfile=" + userProfile + ", capability=" + capability + '}';
 	}
 }
