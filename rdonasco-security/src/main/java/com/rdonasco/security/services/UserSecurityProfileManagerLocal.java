@@ -55,4 +55,7 @@ public interface UserSecurityProfileManagerLocal
 	void removeUserSecurityProfile(
 			UserSecurityProfileVO securityProfileToRemove) throws
 			SecurityManagerException;
+
+	void updateUserSecurityProfile(UserSecurityProfileVO userSecurityProfile)
+			throws SecurityManagerException;
 }

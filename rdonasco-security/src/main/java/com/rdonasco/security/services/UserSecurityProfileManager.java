@@ -16,14 +16,17 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.common.exceptions.CollectionMergeException;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
+import com.rdonasco.common.utils.CollectionsUtility;
 import com.rdonasco.security.dao.UserCapabilityDAO;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
 import com.rdonasco.security.model.Capability;
+import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.vo.AccessRightsVO;
@@ -221,6 +224,62 @@ public class UserSecurityProfileManager implements
 		catch (Exception e)
 		{
 			throw new SecurityManagerException(e);
+		}
+	}
+
+	@Override
+	public void updateUserSecurityProfile(
+			UserSecurityProfileVO userSecurityProfile) throws
+			SecurityManagerException
+	{
+		try
+		{
+			UserSecurityProfile profileUpdateDetails = SecurityEntityValueObjectConverter.toUserProfile(userSecurityProfile);
+			UserSecurityProfile profileToUpdate = userSecurityProfileDAO.findData(profileUpdateDetails.getId());
+			profileToUpdate.setLogonId(profileUpdateDetails.getLogonId());
+			profileToUpdate.setRegistrationToken(profileUpdateDetails.getRegistrationToken());
+			profileToUpdate.setRegistrationTokenExpiration(profileUpdateDetails.getRegistrationTokenExpiration());
+			if (profileUpdateDetails.getPassword() != null && !profileUpdateDetails.getPassword().isEmpty())
+			{
+
+				profileToUpdate.setPassword(profileUpdateDetails.getPassword());
+			}
+
+			profileToUpdate.setCapabilities(CollectionsUtility.updateCollection(
+					profileUpdateDetails.getCapabilities(),
+					profileToUpdate.getCapabilities(),
+					new CollectionsUtility.CollectionItemDeleteStrategy<UserCapability>()
+			{
+				@Override
+				public void delete(UserCapability itemToDelete) throws
+						CollectionMergeException
+				{
+					try
+					{
+						userCapabilityDAO.delete(itemToDelete.getId());
+					}
+					catch (Exception e)
+					{
+						throw new CollectionMergeException(e);
+					}
+				}
+			}, new CollectionsUtility.CollectionItemUpdateStrategy<UserCapability>()
+			{
+				@Override
+				public void update(UserCapability itemToUpdate,
+						UserCapability itemToCopy) throws
+						CollectionMergeException
+				{
+					itemToUpdate.setCapability(itemToCopy.getCapability());
+					itemToUpdate.setUserProfile(itemToCopy.getUserProfile());
+				}
+			}));
+
+			userSecurityProfileDAO.update(profileToUpdate);
+		}
+		catch (Exception ex)
+		{
+			throw new SecurityManagerException(ex);
 		}
 	}
 }
