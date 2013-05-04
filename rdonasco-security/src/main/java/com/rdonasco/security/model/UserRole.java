@@ -44,12 +44,21 @@ import javax.persistence.UniqueConstraint;
 		"user_profile_id", "role_id"
 	}, name = "unique_user_role")
 })
+@NamedQueries(
+{
+	@NamedQuery(name = UserRole.NAMED_QUERY_FIND_ROLE_BY_USER,
+			query = "SELECT urole from UserRole urole where urole.userProfile = :user")
+})
 public class UserRole implements Serializable
 {
 
 	private static final long serialVersionUID = 1L;
 
 	private static final String GENERATOR_KEY = "USER_ROLE_IDGEN";
+
+	public static final String NAMED_QUERY_FIND_ROLE_BY_USER = "findRoleByUser";
+
+	public static final String QUERY_PARAM_USER = "user";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = GENERATOR_KEY)
