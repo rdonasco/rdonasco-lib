@@ -188,6 +188,6 @@ public class UserSecurityProfile implements Serializable
 	@Override
 	public String toString()
 	{
-		return "com.rdonasco.security.model.SecuredUser[ id=" + id + " ]";
+		return "UserSecurityProfile{" + "id=" + id + ", logonId=" + logonId + '}';
 	}
 }
