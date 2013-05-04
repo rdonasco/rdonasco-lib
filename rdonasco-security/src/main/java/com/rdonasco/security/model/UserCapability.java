@@ -41,28 +41,35 @@ import javax.persistence.UniqueConstraint;
 {
 	@UniqueConstraint(columnNames =
 	{
-		"id","capability_id"
+		"id", "capability_id"
 	}, name = "user_capability")
 })
 @NamedQueries(
-{
+		{
 	@NamedQuery(name = UserCapability.NAMED_QUERY_FIND_CAPABILITY_BY_USER,
 			query = "SELECT uc from UserCapability uc where uc.userProfile = :user")
 })
 public class UserCapability implements Serializable
 {
+
 	private static final long serialVersionUID = 1L;
+
 	private static final String GENERATOR_KEY = "USER_CAPABILITY_IDGEN";
+
 	public static final String NAMED_QUERY_FIND_CAPABILITY_BY_USER = "UserCapability.findCapabilityByUser";
+
 	public static final String QUERY_PARAM_USER = "user";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = GENERATOR_KEY)
 	@TableGenerator(name = GENERATOR_KEY, table = SecurityConstants.TABLE_SEQUENCE)
 	@Column(name = "id", nullable = false)
 	private Long id;
+
 	@JoinColumn(name = "user_profile_id", referencedColumnName = "id", nullable = true)
 	@ManyToOne(optional = true, fetch = FetchType.EAGER)
 	private UserSecurityProfile userProfile;
+
 	@JoinColumn(name = "capability_id", referencedColumnName = "id", nullable = true)
 	@ManyToOne(optional = true, fetch = FetchType.EAGER)
 	private Capability capability;
@@ -108,17 +115,20 @@ public class UserCapability implements Serializable
 	@Override
 	public boolean equals(Object object)
 	{
-		// TODO: Warning - this method won't work in the case the id fields are not set
+		boolean isEqual = true;
 		if (!(object instanceof UserCapability))
 		{
-			return false;
+			isEqual = false;
 		}
-		UserCapability other = (UserCapability) object;
-		if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
+		else
 		{
-			return false;
+			UserCapability other = (UserCapability) object;
+			if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
+			{
+				isEqual = false;
+			}
 		}
-		return true;
+		return isEqual;
 	}
 
 	@Override
