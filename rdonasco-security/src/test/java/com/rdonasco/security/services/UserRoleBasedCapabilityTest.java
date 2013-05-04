@@ -16,8 +16,11 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.security.dao.RoleDAO;
 import com.rdonasco.security.dao.UserCapabilityDAO;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
+import com.rdonasco.security.model.UserSecurityProfile;
+import com.rdonasco.security.vo.UserSecurityProfileVO;
 import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -25,6 +28,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 /**
  *
@@ -32,10 +36,22 @@ import static org.junit.Assert.*;
  */
 public class UserRoleBasedCapabilityTest
 {
+
 	private static final Logger LOG = Logger.getLogger(UserRoleBasedCapabilityTest.class.getName());
-	private CapabilityManagerLocal capabilityManager;
-	private UserCapabilityDAO userCapabilityDAO;
-	private UserSecurityProfileDAO userSecurityProfileDAO;
+
+	private static UserSecurityProfileVO userSecurityProfileVOMock;
+
+	private static UserSecurityProfile userSecurityProfileMock;
+
+	private static UserSecurityProfileDAO userSecurityProfileDAOMock;
+
+	private static CapabilityManagerLocal capabilityManagerMock;
+
+	private static UserCapabilityDAO userCapabilityDAOMock;
+
+	private static UserSecurityProfileManager userSecurityProfileManager;
+
+	private static RoleDAO roleDAO;
 
 	public UserRoleBasedCapabilityTest()
 	{
@@ -54,6 +70,12 @@ public class UserRoleBasedCapabilityTest
 	@Before
 	public void setUp()
 	{
+		userSecurityProfileVOMock = mock(UserSecurityProfileVO.class);
+		userSecurityProfileMock = mock(UserSecurityProfile.class);
+		userSecurityProfileDAOMock = mock(UserSecurityProfileDAO.class);
+		capabilityManagerMock = mock(CapabilityManagerLocal.class);
+		userCapabilityDAOMock = mock(UserCapabilityDAO.class);
+		roleDAO = mock(RoleDAO.class);
 	}
 
 	@After
@@ -64,9 +86,18 @@ public class UserRoleBasedCapabilityTest
 	@Test
 	public void testUserManagerRole() throws Exception
 	{
-		SystemSecurityManagerImpl systemSecurityManager = new SystemSecurityManagerImpl();
-		systemSecurityManager.setCapabilityManager(capabilityManager);
-
+		SystemSecurityManagerImpl instance = prepareSecurityManagerInstanceToTest();
 		assertTrue(true);
 	}
+
+	private SystemSecurityManagerImpl prepareSecurityManagerInstanceToTest()
+	{
+		userSecurityProfileManager = new UserSecurityProfileManager();
+		userSecurityProfileManager.setUserSecurityProfileDAO(userSecurityProfileDAOMock);
+		userSecurityProfileManager.setUserCapabilityDAO(userCapabilityDAOMock);
+		SystemSecurityManagerImpl systemSecurityManager = new SystemSecurityManagerImpl();
+		systemSecurityManager.setCapabilityManager(capabilityManagerMock);
+		systemSecurityManager.setUserSecurityProfileManager(userSecurityProfileManager);
+		return systemSecurityManager;
+	}	
 }
