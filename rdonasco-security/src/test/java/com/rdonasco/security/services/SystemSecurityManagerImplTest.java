@@ -310,8 +310,6 @@ public class SystemSecurityManagerImplTest
 		userSecurityProfileManager.setUserCapabilityDAO(userCapabilityDAOMock);
 		SystemSecurityManagerImpl systemSecurityManager = new SystemSecurityManagerImpl();
 		systemSecurityManager.setCapabilityManager(capabilityManagerMock);
-		systemSecurityManager.setUserSecurityProfileDAO(userSecurityProfileDAOMock);
-		systemSecurityManager.setUserCapabilityDAO(userCapabilityDAOMock);
 		systemSecurityManager.setUserSecurityProfileManager(userSecurityProfileManager);
 		return systemSecurityManager;
 	}

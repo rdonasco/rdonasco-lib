@@ -16,36 +16,22 @@
  */
 package com.rdonasco.security.services;
 
-import com.rdonasco.common.exceptions.CollectionMergeException;
-import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
-import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
-import com.rdonasco.common.utils.CollectionsUtility;
-import com.rdonasco.common.utils.CollectionsUtility.CollectionItemDeleteStrategy;
 import com.rdonasco.security.dao.UserCapabilityDAO;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
-import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
-import com.rdonasco.security.model.Capability;
-import com.rdonasco.security.model.UserCapability;
-import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
 import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
-import com.rdonasco.security.vo.UserCapabilityVO;
-import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -63,10 +49,6 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 {
 
 	private static final Logger LOG = Logger.getLogger(SystemSecurityManagerImpl.class.getName());
-	@Inject
-	private UserSecurityProfileDAO userSecurityProfileDAO;
-	@Inject
-	private UserCapabilityDAO userCapabilityDAO;
 	@EJB
 	private CapabilityManagerLocal capabilityManager;
 
@@ -77,17 +59,6 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			UserSecurityProfileManagerLocal userSecurityProfileManager)
 	{
 		this.userSecurityProfileManager = userSecurityProfileManager;
-	}
-
-	public void setUserCapabilityDAO(UserCapabilityDAO userCapabilityDAO)
-	{
-		this.userCapabilityDAO = userCapabilityDAO;
-	}
-
-	public void setUserSecurityProfileDAO(
-			UserSecurityProfileDAO userSecurityProfileDAO)
-	{
-		this.userSecurityProfileDAO = userSecurityProfileDAO;
 	}
 
 	public void setCapabilityManager(CapabilityManagerLocal capabilityManager)

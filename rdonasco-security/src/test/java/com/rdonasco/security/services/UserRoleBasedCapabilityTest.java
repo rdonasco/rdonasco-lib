@@ -66,9 +66,6 @@ public class UserRoleBasedCapabilityTest
 	{
 		SystemSecurityManagerImpl systemSecurityManager = new SystemSecurityManagerImpl();
 		systemSecurityManager.setCapabilityManager(capabilityManager);
-		systemSecurityManager.setUserCapabilityDAO(userCapabilityDAO);
-		systemSecurityManager.setUserSecurityProfileDAO(userSecurityProfileDAO);
-
 
 		assertTrue(true);
 	}
