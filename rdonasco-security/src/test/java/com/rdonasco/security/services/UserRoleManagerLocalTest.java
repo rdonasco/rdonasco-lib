@@ -37,6 +37,8 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import com.rdonasco.security.utils.ArchiveCreator;
+import com.rdonasco.security.utils.RoleTestUtility;
+import com.rdonasco.security.utils.UserSecurityProfileTestUtility;
 
 /**
  *
@@ -45,6 +47,7 @@ import com.rdonasco.security.utils.ArchiveCreator;
 @RunWith(Arquillian.class)
 public class UserRoleManagerLocalTest
 {
+
 	private static final Logger LOG = Logger.getLogger(UserRoleManagerLocalTest.class.getName());
 
 	@EJB
@@ -55,6 +58,8 @@ public class UserRoleManagerLocalTest
 
 	private CapabilityTestUtility testUtility;
 
+	private RoleTestUtility roleTestUtility;
+
 	@Deployment
 	public static JavaArchive createTestArchive()
 	{
@@ -63,7 +68,7 @@ public class UserRoleManagerLocalTest
 				.addPackage(Role.class.getPackage())
 				.addPackage(RoleVO.class.getPackage())
 				.addClass(RoleManagerLocal.class)
-				.addClass(RoleManager.class)				
+				.addClass(RoleManager.class)
 				.addClass(CapabilityManagerRemote.class)
 				.addClass(CapabilityManagerImpl.class)
 				.addClass(SecurityEntityValueObjectConverter.class);
@@ -75,6 +80,7 @@ public class UserRoleManagerLocalTest
 	public void setUp()
 	{
 		testUtility = new CapabilityTestUtility(capabilityManager);
+		roleTestUtility = new RoleTestUtility(userRoleManager);
 	}
 
 	@Test
@@ -94,7 +100,7 @@ public class UserRoleManagerLocalTest
 	public void testCreateUserRole() throws Exception
 	{
 		LOG.log(Level.INFO, "createUserRole");
-		RoleVO userRole = createRoleWithNoCapability("new role");
+		RoleVO userRole = roleTestUtility.createRoleWithNoCapability("new role");
 		assertNotNull(userRole.getId());
 	}
 
@@ -102,7 +108,7 @@ public class UserRoleManagerLocalTest
 	public void testUpdateUserRole() throws Exception
 	{
 		LOG.log(Level.INFO, "updateUserRole");
-		RoleVO userRole = createRoleWithNoCapability("user manager");
+		RoleVO userRole = roleTestUtility.createRoleWithNoCapability("user manager");
 		String newName = userRole.getName() + "-modified";
 		userRole.setName(newName);
 		userRoleManager.updateData(userRole);
@@ -115,7 +121,7 @@ public class UserRoleManagerLocalTest
 	public void testRetrieveAll() throws Exception
 	{
 		LOG.log(Level.INFO, "retrieveAll");
-		RoleVO userRole = createRoleWithNoCapability("data to retrieve");
+		RoleVO userRole = roleTestUtility.createRoleWithNoCapability("data to retrieve");
 		List<RoleVO> roles = userRoleManager.retrieveAllData();
 		assertTrue("failed to find user role", roles.contains(userRole));
 
@@ -126,7 +132,7 @@ public class UserRoleManagerLocalTest
 	{
 		LOG.log(Level.INFO, "addRoleWithCapability");
 		CapabilityVO capability = testUtility.createTestDataCapabilityWithActionAndResourceName("edit", "user");
-		RoleVO savedrole = createRoleNamedAndWithCapability("sexy role", capability);
+		RoleVO savedrole = roleTestUtility.createRoleNamedAndWithCapability("sexy role", capability);
 		RoleVO newRole = userRoleManager.loadData(savedrole);
 		assertNotNull("role not saved", newRole);
 		assertNotNull("role did not have an id", newRole.getId());
@@ -136,22 +142,5 @@ public class UserRoleManagerLocalTest
 		{
 			assertNotNull("null roleCapability.id", roleCapability.getId());
 		}
-	}
-
-	private RoleVO createRoleNamedAndWithCapability(String roleName,
-			CapabilityVO capabilityVO) throws DataAccessException
-	{
-		RoleVO userRole = new RoleVOBuilder()
-				.setName(roleName)
-				.addCapability(capabilityVO)
-				.createUserRoleVO();
-		userRole = userRoleManager.saveData(userRole);
-		return userRole;
-	}
-
-	private RoleVO createRoleWithNoCapability(String roleName) throws
-			DataAccessException
-	{
-		return createRoleNamedAndWithCapability(roleName, null);
 	}
 }
