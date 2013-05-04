@@ -8,6 +8,7 @@ import com.rdonasco.config.util.ConfigDataValueObjectConverter;
 import com.rdonasco.config.vo.ConfigAttributeVO;
 import com.rdonasco.security.dao.ActionDAO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
+import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility;
@@ -30,7 +31,11 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import com.rdonasco.security.utils.ArchiveCreator;
+import com.rdonasco.security.utils.CapabilityTestUtility;
+import com.rdonasco.security.utils.RoleTestUtility;
+import com.rdonasco.security.utils.UserSecurityProfileTestUtility;
 import static org.junit.Assert.*;
+import org.junit.Before;
 
 /**
  * Unit test for simple App.
@@ -45,6 +50,8 @@ public class SystemSecurityManagerLocalTest
 	private CapabilityManagerLocal capabilityManager;
 	@EJB
 	private SystemSecurityInitializerLocal systemSecurityInitializerLocal;
+
+	private UserSecurityProfileTestUtility userSecurityProfileTestUtility;
 
 	@Deployment
 	public static JavaArchive createTestArchive()
@@ -64,13 +71,18 @@ public class SystemSecurityManagerLocalTest
 		return archive;
 	}
 
+	@Before
+	public void setUp()
+	{
+		userSecurityProfileTestUtility = new UserSecurityProfileTestUtility(capabilityManager, systemSecurityManager);
+	}
+
 	@Test
 	public void testCreateSecurityProfileWithoutCapability() throws Exception
 	{
 		System.out.println("createSecurityProfileWithoutCapability");
-		UserSecurityProfileVO userProfile = createTestDataWithoutCapability();
 
-		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userProfile);
+		UserSecurityProfileVO createdUser = createNewUserSecurityProfile();
 		assertNotNull(createdUser);
 
 	}
@@ -79,9 +91,8 @@ public class SystemSecurityManagerLocalTest
 	public void testCreateSecurityProfileWithCapability() throws Exception
 	{
 		System.out.println("createSecurityProfileWithCapability");
-		UserSecurityProfileVO userProfile = createTestDataUserProfileWithCapability();
 
-		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userProfile);
+		UserSecurityProfileVO createdUser = createNewUserSecurityProfileWithCapability();
 
 		assertNotNull("user not created", createdUser);
 		assertNotNull("id is null", createdUser.getId());
@@ -98,8 +109,7 @@ public class SystemSecurityManagerLocalTest
 	public void testAddCapability() throws Exception
 	{
 		System.out.println("addCapability");
-		UserSecurityProfileVO userProfile = createTestDataUserProfileWithCapability();
-		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userProfile);
+		UserSecurityProfileVO createdUser = createNewUserSecurityProfileWithCapability();
 		CapabilityVO additionalCapability = createTestDataCapabilityWithActionAndResourceName("fire", "employee");
 		systemSecurityManager.addCapabilityForUser(createdUser, additionalCapability);
 		String actionName = null;
@@ -119,8 +129,7 @@ public class SystemSecurityManagerLocalTest
 	public void testCheckAccessRights() throws Exception
 	{
 		System.out.println("CheckAccessRights");
-		UserSecurityProfileVO userProfile = createTestDataUserProfileWithCapability();
-		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userProfile);
+		UserSecurityProfileVO createdUser = createNewUserSecurityProfileWithCapability();
 		CapabilityVO additionalCapability = createTestDataCapabilityWithActionAndResourceName("fire", "employee");
 		systemSecurityManager.addCapabilityForUser(createdUser, additionalCapability);
 		String actionName = "doit";
@@ -144,8 +153,7 @@ public class SystemSecurityManagerLocalTest
 			throws Exception
 	{
 		System.out.println("CheckAccessRightsOnNonRestrictedResourceToCreateDefaultCapability");
-		UserSecurityProfileVO userProfile = createTestDataUserProfileWithCapability();
-		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userProfile);
+		UserSecurityProfileVO createdUser = createNewUserSecurityProfileWithCapability();
 		String actionName = "do";
 		String resourceName = "her";
 		String capabilityTitle = "do her";
@@ -167,8 +175,7 @@ public class SystemSecurityManagerLocalTest
 			throws Exception
 	{
 		System.out.println("CheckAccessRightsOnNonRestrictedResourceToCreateDefaultCapabilityWithoutDuplication");
-		UserSecurityProfileVO userProfile = createTestDataUserProfileWithCapability();
-		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userProfile);
+		UserSecurityProfileVO createdUser = createNewUserSecurityProfileWithCapability();
 		String actionName = "enter";
 		String resourceName = "the dragon";
 		String capabilityTitle = String.format("%1s %2s", actionName, resourceName);
@@ -191,8 +198,7 @@ public class SystemSecurityManagerLocalTest
 	public void testRemoveSecurityProfile() throws Exception
 	{
 		System.out.println("removeSecurityProfile");
-		UserSecurityProfileVO userSecurityProfileVO = createTestDataUserProfileWithCapability();
-		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userSecurityProfileVO);
+		UserSecurityProfileVO createdUser = createNewUserSecurityProfileWithCapability();
 		systemSecurityManager.removeSecurityProfile(createdUser);
 		try
 		{
@@ -210,8 +216,7 @@ public class SystemSecurityManagerLocalTest
 	{
 		System.out.println("createDefaultCapability");
 		systemSecurityInitializerLocal.initializeDefaultSystemAccessCapabilities();
-		UserSecurityProfileVO userSecurityProfileVO = createTestDataUserProfileWithCapability();
-		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userSecurityProfileVO);
+		UserSecurityProfileVO createdUser = createNewUserSecurityProfileWithCapability();
 		systemSecurityManager.setupDefaultCapabilitiesForUser(createdUser);
 		AccessRightsVO accessRights = new AccessRightsVOBuilder()
 				.setActionAsString("logon")
@@ -284,5 +289,21 @@ public class SystemSecurityManagerLocalTest
 				.setPassword("rdonasco")
 				.createUserSecurityProfileVO();
 		return userProfile;
+	}
+
+	private UserSecurityProfileVO createNewUserSecurityProfile() throws
+			SecurityManagerException
+	{
+		UserSecurityProfileVO userProfile = createTestDataWithoutCapability();
+		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userProfile);
+		return createdUser;
+	}
+
+	private UserSecurityProfileVO createNewUserSecurityProfileWithCapability()
+			throws SecurityManagerException, CapabilityManagerException
+	{
+		UserSecurityProfileVO userProfile = createTestDataUserProfileWithCapability();
+		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userProfile);
+		return createdUser;
 	}
 }
