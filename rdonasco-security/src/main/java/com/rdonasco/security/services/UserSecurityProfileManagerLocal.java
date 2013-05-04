@@ -16,8 +16,12 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
+import com.rdonasco.security.vo.AccessRightsVO;
+import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -30,5 +34,25 @@ public interface UserSecurityProfileManagerLocal
 
 	UserSecurityProfileVO createNewUserSecurityProfile(
 			final UserSecurityProfileVO userSecurityProfile) throws
+			SecurityManagerException;
+
+	List<CapabilityVO> retrieveCapabilitiesOfUser(
+			AccessRightsVO accessRights) throws DataAccessException;
+
+	UserSecurityProfileVO findSecurityProfileWithLogonID(String logonId)
+			throws SecurityManagerException;
+
+	List<UserSecurityProfileVO> findAllProfiles() throws
+			SecurityManagerException;
+
+	void setupDefaultCapabilitiesForUser(
+			UserSecurityProfileVO userSecurityProfile) throws
+			SecurityManagerException;
+
+	void addCapabilityForUser(UserSecurityProfileVO userSecurityProfileVO,
+			CapabilityVO capability) throws SecurityManagerException;
+
+	void removeUserSecurityProfile(
+			UserSecurityProfileVO securityProfileToRemove) throws
 			SecurityManagerException;
 }

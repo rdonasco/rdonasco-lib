@@ -104,7 +104,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		}
 		try
 		{
-			List<CapabilityVO> capabilities = retrieveCapabilitiesOfUser(requestedAccessRight);
+			List<CapabilityVO> capabilities = userSecurityProfileManager.retrieveCapabilitiesOfUser(requestedAccessRight);
 			Set<AccessRightsVO> accessRightsSet = new HashSet<AccessRightsVO>();
 			boolean capabilitiesNotFound = (capabilities == null || capabilities.isEmpty());
 			capabilityManager.findOrAddActionNamedAs(requestedAccessRight.getAction().getName());
@@ -146,33 +146,6 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			LOG.log(Level.FINE, e.getMessage(), e);
 			throw new SecurityAuthorizationException(e);
 		}
-	}
-
-	private List<CapabilityVO> retrieveCapabilitiesOfUser(
-			AccessRightsVO accessRights)
-			throws DataAccessException
-	{
-		List<CapabilityVO> capabilityVOList = null;
-		try
-		{
-
-			UserSecurityProfile userProfile = SecurityEntityValueObjectConverter.toUserProfile(accessRights.getUserProfile());
-			List<Capability> capabilities = userCapabilityDAO
-					.loadCapabilitiesOf(userProfile);
-			capabilityVOList = new ArrayList<CapabilityVO>(capabilities.size());
-			CapabilityVO capabilityVO = null;
-			for (Capability capability : capabilities)
-			{
-				capabilityVO = SecurityEntityValueObjectConverter.toCapabilityVO(capability);
-				capabilityVOList.add(capabilityVO);
-			}
-
-		}
-		catch (Exception ex)
-		{
-			throw new DataAccessException(ex);
-		}
-		return capabilityVOList;
 	}
 
 	@Override
@@ -243,24 +216,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	public UserSecurityProfileVO findSecurityProfileWithLogonID(String logonId)
 			throws SecurityManagerException
 	{
-		UserSecurityProfileVO foundSecurityProfileVO = null;
-		try
-		{
-			Map<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put(UserSecurityProfile.QUERY_PARAM_LOGON_ID, logonId);
-			UserSecurityProfile userSecurityProfile = userSecurityProfileDAO.findUniqueDataUsingNamedQuery(UserSecurityProfile.NAMED_QUERY_FIND_SECURITY_PROFILE_BY_LOGON_ID, parameters);
-			foundSecurityProfileVO = SecurityEntityValueObjectConverter.toUserProfileVO(userSecurityProfile);
-		}
-		catch (NonExistentEntityException e)
-		{
-			throw new SecurityProfileNotFoundException(e);
-		}
-		catch (Exception e)
-		{
-			throw new SecurityManagerException(e);
-		}
-
-		return foundSecurityProfileVO;
+		return userSecurityProfileManager.findSecurityProfileWithLogonID(logonId);
 	}
 
 	@Override
@@ -268,15 +224,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			UserSecurityProfileVO securityProfileToRemove) throws
 			SecurityManagerException
 	{
-		try
-		{
-			this.userSecurityProfileDAO.delete(securityProfileToRemove.getId());
-			LOG.log(Level.INFO, "Security profile {0} removed", securityProfileToRemove.toString());
-		}
-		catch (Exception e)
-		{
-			throw new SecurityManagerException(e);
-		}
+		userSecurityProfileManager.removeUserSecurityProfile(securityProfileToRemove);
 	}
 
 	@Override
@@ -304,20 +252,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	public void addCapabilityForUser(UserSecurityProfileVO userSecurityProfileVO,
 			CapabilityVO capability) throws SecurityManagerException
 	{
-		try
-		{
-			UserCapabilityVO userCapabilityVO = new UserCapabilityVOBuilder()
-					.setCapability(capability)
-					.setUserProfile(userSecurityProfileVO)
-					.createUserCapabilityVO();
-			userSecurityProfileVO.addCapbility(userCapabilityVO);
-			UserSecurityProfile userSecurityProfile = SecurityEntityValueObjectConverter.toUserProfile(userSecurityProfileVO);
-			userSecurityProfileDAO.update(userSecurityProfile);
-		}
-		catch (Exception e)
-		{
-			throw new SecurityManagerException(e);
-		}
+		userSecurityProfileManager.addCapabilityForUser(userSecurityProfileVO, capability);
 	}
 
 	@Override
@@ -325,28 +260,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			UserSecurityProfileVO userSecurityProfile) throws
 			SecurityManagerException
 	{
-		for (String[] capabilityArray : SystemSecurityInitializerLocal.DEFAULT_CAPABILITY_ELEMENTS)
-		{
-			try
-			{
-				CapabilityVO capability = capabilityManager.findCapabilityWithTitle(
-						capabilityArray[SystemSecurityInitializerLocal.ELEMENT_CAPABILITY_TITLE]);
-				addCapabilityForUser(userSecurityProfile, capability);
-
-			}
-			catch (CapabilityManagerException ex)
-			{
-				LOG.log(Level.WARNING, ex.getMessage(), ex);
-			}
-			catch (NonExistentEntityException ex)
-			{
-				LOG.log(Level.WARNING, ex.getLocalizedMessage(), ex);
-			}
-			catch (Exception ex)
-			{
-				throw new SecurityManagerException(ex);
-			}
-		}
+		userSecurityProfileManager.setupDefaultCapabilitiesForUser(userSecurityProfile);
 	}
 
 	private void throwSecurityAuthorizationExceptionFor(
@@ -400,16 +314,6 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	public List<UserSecurityProfileVO> findAllProfiles() throws
 			SecurityManagerException
 	{
-		List<UserSecurityProfileVO> allProfileVOList;
-		try
-		{
-			List<UserSecurityProfile> allProfiles = userSecurityProfileDAO.findAllData();
-			allProfileVOList = SecurityEntityValueObjectConverter.toUserProfileVOList(allProfiles);
-		}
-		catch (Exception e)
-		{
-			throw new SecurityManagerException(e);
-		}
-		return allProfileVOList;
+		return userSecurityProfileManager.findAllProfiles();
 	}
 }

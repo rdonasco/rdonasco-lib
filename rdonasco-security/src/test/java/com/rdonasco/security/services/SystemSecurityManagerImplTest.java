@@ -303,18 +303,11 @@ public class SystemSecurityManagerImplTest
 		ssm.createNewSecurityProfile(userSecurityProfileVO);
 	}
 
-	private Action createTestDataForActionNamed(String name)
-	{
-		Action action = new Action();
-		action.setName(name);
-		action.setId(Long.MIN_VALUE);
-		return action;
-	}
-
 	private SystemSecurityManagerImpl prepareSecurityManagerInstanceToTest()
 	{
 		userSecurityProfileManager = new UserSecurityProfileManager();
 		userSecurityProfileManager.setUserSecurityProfileDAO(userSecurityProfileDAOMock);
+		userSecurityProfileManager.setUserCapabilityDAO(userCapabilityDAOMock);
 		SystemSecurityManagerImpl systemSecurityManager = new SystemSecurityManagerImpl();
 		systemSecurityManager.setCapabilityManager(capabilityManagerMock);
 		systemSecurityManager.setUserSecurityProfileDAO(userSecurityProfileDAOMock);

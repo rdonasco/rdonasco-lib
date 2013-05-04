@@ -16,11 +16,28 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.common.exceptions.NonExistentEntityException;
+import com.rdonasco.security.dao.UserCapabilityDAO;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
+import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
+import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
+import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
+import com.rdonasco.security.vo.AccessRightsVO;
+import com.rdonasco.security.vo.CapabilityVO;
+import com.rdonasco.security.vo.UserCapabilityVO;
+import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -32,8 +49,22 @@ import javax.inject.Inject;
 public class UserSecurityProfileManager implements
 		UserSecurityProfileManagerLocal
 {
+
+	private static final Logger LOG = Logger.getLogger(UserSecurityProfileManager.class.getName());
+
 	@Inject
 	private UserSecurityProfileDAO userSecurityProfileDAO;
+
+	@Inject
+	private UserCapabilityDAO userCapabilityDAO;
+
+	@EJB
+	private CapabilityManagerLocal capabilityManager;
+
+	public void setUserCapabilityDAO(UserCapabilityDAO userCapabilityDAO)
+	{
+		this.userCapabilityDAO = userCapabilityDAO;
+	}
 
 	public void setUserSecurityProfileDAO(
 			UserSecurityProfileDAO userSecurityProfileDAO)
@@ -59,7 +90,137 @@ public class UserSecurityProfileManager implements
 		}
 		return createdProfile;
 	}
-	// Add business logic below. (Right-click in editor and choose
-	// "Insert Code > Add Business Method")
 
+	@Override
+	public List<CapabilityVO> retrieveCapabilitiesOfUser(
+			AccessRightsVO accessRights) throws DataAccessException
+	{
+		List<CapabilityVO> capabilityVOList = null;
+		try
+		{
+
+			UserSecurityProfile userProfile = SecurityEntityValueObjectConverter.toUserProfile(accessRights.getUserProfile());
+			List<Capability> capabilities = userCapabilityDAO
+					.loadCapabilitiesOf(userProfile);
+			capabilityVOList = new ArrayList<CapabilityVO>(capabilities.size());
+			CapabilityVO capabilityVO;
+			for (Capability capability : capabilities)
+			{
+				capabilityVO = SecurityEntityValueObjectConverter.toCapabilityVO(capability);
+				capabilityVOList.add(capabilityVO);
+			}
+
+		}
+		catch (Exception ex)
+		{
+			throw new DataAccessException(ex);
+		}
+		return capabilityVOList;
+	}
+
+	@Override
+	public UserSecurityProfileVO findSecurityProfileWithLogonID(String logonId)
+			throws SecurityManagerException
+	{
+		UserSecurityProfileVO foundSecurityProfileVO = null;
+		try
+		{
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put(UserSecurityProfile.QUERY_PARAM_LOGON_ID, logonId);
+			UserSecurityProfile userSecurityProfile = userSecurityProfileDAO.findUniqueDataUsingNamedQuery(UserSecurityProfile.NAMED_QUERY_FIND_SECURITY_PROFILE_BY_LOGON_ID, parameters);
+			foundSecurityProfileVO = SecurityEntityValueObjectConverter.toUserProfileVO(userSecurityProfile);
+		}
+		catch (NonExistentEntityException e)
+		{
+			throw new SecurityProfileNotFoundException(e);
+		}
+		catch (Exception e)
+		{
+			throw new SecurityManagerException(e);
+		}
+
+		return foundSecurityProfileVO;
+	}
+
+	@Override
+	public List<UserSecurityProfileVO> findAllProfiles() throws
+			SecurityManagerException
+	{
+		List<UserSecurityProfileVO> allProfileVOList;
+		try
+		{
+			List<UserSecurityProfile> allProfiles = userSecurityProfileDAO.findAllData();
+			allProfileVOList = SecurityEntityValueObjectConverter.toUserProfileVOList(allProfiles);
+		}
+		catch (Exception e)
+		{
+			throw new SecurityManagerException(e);
+		}
+		return allProfileVOList;
+	}
+
+	@Override
+	public void addCapabilityForUser(UserSecurityProfileVO userSecurityProfileVO,
+			CapabilityVO capability) throws SecurityManagerException
+	{
+		try
+		{
+			UserCapabilityVO userCapabilityVO = new UserCapabilityVOBuilder()
+					.setCapability(capability)
+					.setUserProfile(userSecurityProfileVO)
+					.createUserCapabilityVO();
+			userSecurityProfileVO.addCapbility(userCapabilityVO);
+			UserSecurityProfile userSecurityProfile = SecurityEntityValueObjectConverter.toUserProfile(userSecurityProfileVO);
+			userSecurityProfileDAO.update(userSecurityProfile);
+		}
+		catch (Exception e)
+		{
+			throw new SecurityManagerException(e);
+		}
+	}
+
+	@Override
+	public void setupDefaultCapabilitiesForUser(
+			UserSecurityProfileVO userSecurityProfile) throws
+			SecurityManagerException
+	{
+		for (String[] capabilityArray : SystemSecurityInitializerLocal.DEFAULT_CAPABILITY_ELEMENTS)
+		{
+			try
+			{
+				CapabilityVO capability = capabilityManager.findCapabilityWithTitle(
+						capabilityArray[SystemSecurityInitializerLocal.ELEMENT_CAPABILITY_TITLE]);
+				addCapabilityForUser(userSecurityProfile, capability);
+
+			}
+			catch (CapabilityManagerException ex)
+			{
+				LOG.log(Level.WARNING, ex.getMessage(), ex);
+			}
+			catch (NonExistentEntityException ex)
+			{
+				LOG.log(Level.WARNING, ex.getLocalizedMessage(), ex);
+			}
+			catch (Exception ex)
+			{
+				throw new SecurityManagerException(ex);
+			}
+		}
+	}
+
+	@Override
+	public void removeUserSecurityProfile(
+			UserSecurityProfileVO securityProfileToRemove) throws
+			SecurityManagerException
+	{
+		try
+		{
+			this.userSecurityProfileDAO.delete(securityProfileToRemove.getId());
+			LOG.log(Level.INFO, "Security profile {0} removed", securityProfileToRemove.toString());
+		}
+		catch (Exception e)
+		{
+			throw new SecurityManagerException(e);
+		}
+	}
 }
