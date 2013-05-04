@@ -41,35 +41,51 @@ import javax.persistence.TemporalType;
  * @author Roy F. Donasco
  */
 @Entity
-@Table(name="user_security_profile",catalog="",schema="")
-@NamedQueries({@NamedQuery(name=UserSecurityProfile.NAMED_QUERY_FIND_SECURITY_PROFILE_BY_LOGON_ID,
-		query="SELECT u from UserSecurityProfile u where u.logonId = :logonId")})
+@Table(name = "user_security_profile", catalog = "", schema = "")
+@NamedQueries(
+		{
+	@NamedQuery(name = UserSecurityProfile.NAMED_QUERY_FIND_SECURITY_PROFILE_BY_LOGON_ID,
+			query = "SELECT u from UserSecurityProfile u where u.logonId = :logonId")
+})
 public class UserSecurityProfile implements Serializable
 {
+
 	private static final long serialVersionUID = 1L;
+
 	private static final String GENERATOR_KEY = "SECURITY_PROFILE_IDGEN";
+
 	public static final String NAMED_QUERY_FIND_SECURITY_PROFILE_BY_LOGON_ID = "UserSecurityProfile.findSecurityProfileByLogonId";
+
 	public static final String QUERY_PARAM_LOGON_ID = "logonId";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = GENERATOR_KEY)
 	@TableGenerator(name = GENERATOR_KEY, table = SecurityConstants.TABLE_SEQUENCE)
 	@Column(name = "id", nullable = false)
 	private Long id;
+
 	@Basic(optional = false)
 	@Column(name = "logon_id", nullable = false, length = 128, unique = true)
 	private String logonId;
+
 	@Basic(optional = false)
 	@Column(name = "password", nullable = false)
 	private String password;
+
 	@Basic(optional = true)
 	@Column(name = "registrationToken")
 	private String registrationToken;
+
 	@Basic(optional = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "tokenExpiration")
 	private Date registrationTokenExpiration;
+
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile", fetch = FetchType.EAGER)
 	private Collection<UserCapability> capabilities;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile", fetch = FetchType.EAGER)
+	private Collection<UserRole> roles;
 
 	public Long getId()
 	{
@@ -129,10 +145,20 @@ public class UserSecurityProfile implements Serializable
 	public void setCapabilities(Collection<UserCapability> capabilities)
 	{
 		this.capabilities = capabilities;
-		for(UserCapability capability : capabilities)
+		for (UserCapability capability : capabilities)
 		{
 			capability.setUserProfile(this);
 		}
+	}
+
+	public Collection<UserRole> getRoles()
+	{
+		return roles;
+	}
+
+	public void setRoles(Collection<UserRole> roles)
+	{
+		this.roles = roles;
 	}
 
 	@Override
