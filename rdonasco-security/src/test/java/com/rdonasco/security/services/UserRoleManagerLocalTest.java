@@ -16,7 +16,6 @@
  */
 package com.rdonasco.security.services;
 
-import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.security.dao.RoleDAO;
 import com.rdonasco.security.model.Role;
 import com.rdonasco.security.utils.CapabilityTestUtility;
@@ -38,7 +37,6 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import com.rdonasco.security.utils.ArchiveCreator;
 import com.rdonasco.security.utils.RoleTestUtility;
-import com.rdonasco.security.utils.UserSecurityProfileTestUtility;
 
 /**
  *
