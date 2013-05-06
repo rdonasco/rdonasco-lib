@@ -18,6 +18,7 @@ package com.rdonasco.security.model;
 
 import com.rdonasco.security.utils.SecurityConstants;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -139,6 +140,10 @@ public class UserSecurityProfile implements Serializable
 
 	public Collection<UserCapability> getCapabilities()
 	{
+		if (null == capabilities)
+		{
+			capabilities = new ArrayList<UserCapability>();
+		}
 		return capabilities;
 	}
 
@@ -153,6 +158,10 @@ public class UserSecurityProfile implements Serializable
 
 	public Collection<UserRole> getRoles()
 	{
+		if (null == roles)
+		{
+			roles = new ArrayList<UserRole>();
+		}
 		return roles;
 	}
 
