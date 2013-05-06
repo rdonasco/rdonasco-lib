@@ -40,6 +40,9 @@ public interface UserSecurityProfileManagerLocal
 	List<CapabilityVO> retrieveCapabilitiesOfUser(
 			AccessRightsVO accessRights) throws DataAccessException;
 
+	List<CapabilityVO> retrieveCapabilitiesOfUserBasedOnRoles(
+			AccessRightsVO accessRights) throws DataAccessException;
+
 	List<RoleVO> retrieveRolesOfUser(UserSecurityProfileVO userSecurityProfile)
 			throws DataAccessException;
 

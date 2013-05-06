@@ -128,6 +128,15 @@ public class UserSecurityProfileManager implements
 	}
 
 	@Override
+	public List<CapabilityVO> retrieveCapabilitiesOfUserBasedOnRoles(
+			AccessRightsVO accessRights) throws DataAccessException
+	{
+		// To change body of generated methods, choose Tools | Templates.
+		// TODO: Complete code for method retrieveCapabilitiesOfUserBasedOnRoles
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
 	public List<RoleVO> retrieveRolesOfUser(
 			UserSecurityProfileVO userSecurityProfileVO) throws
 			DataAccessException
