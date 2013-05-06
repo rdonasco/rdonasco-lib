@@ -85,6 +85,17 @@ public class UserRoleBasedCapabilityTest
 	{
 	}
 
+	private SystemSecurityManagerImpl prepareSecurityManagerInstanceToTest()
+	{
+		userSecurityProfileManager = new UserSecurityProfileManager();
+		userSecurityProfileManager.setUserSecurityProfileDAO(userSecurityProfileDAOMock);
+		userSecurityProfileManager.setUserCapabilityDAO(userCapabilityDAOMock);
+		SystemSecurityManagerImpl systemSecurityManager = new SystemSecurityManagerImpl();
+		systemSecurityManager.setCapabilityManager(capabilityManagerMock);
+		systemSecurityManager.setUserSecurityProfileManager(userSecurityProfileManager);
+		return systemSecurityManager;
+	}
+
 	@Test
 	public void testUserManagerRole() throws Exception
 	{
@@ -97,14 +108,4 @@ public class UserRoleBasedCapabilityTest
 		instance.checkAccessRights(accessRight);
 	}
 
-	private SystemSecurityManagerImpl prepareSecurityManagerInstanceToTest()
-	{
-		userSecurityProfileManager = new UserSecurityProfileManager();
-		userSecurityProfileManager.setUserSecurityProfileDAO(userSecurityProfileDAOMock);
-		userSecurityProfileManager.setUserCapabilityDAO(userCapabilityDAOMock);
-		SystemSecurityManagerImpl systemSecurityManager = new SystemSecurityManagerImpl();
-		systemSecurityManager.setCapabilityManager(capabilityManagerMock);
-		systemSecurityManager.setUserSecurityProfileManager(userSecurityProfileManager);
-		return systemSecurityManager;
-	}	
 }
