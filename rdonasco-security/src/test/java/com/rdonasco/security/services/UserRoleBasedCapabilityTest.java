@@ -20,6 +20,8 @@ import com.rdonasco.security.dao.RoleDAO;
 import com.rdonasco.security.dao.UserCapabilityDAO;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.model.UserSecurityProfile;
+import com.rdonasco.security.vo.AccessRightsVO;
+import com.rdonasco.security.vo.AccessRightsVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import java.util.logging.Logger;
 import org.junit.After;
@@ -87,7 +89,12 @@ public class UserRoleBasedCapabilityTest
 	public void testUserManagerRole() throws Exception
 	{
 		SystemSecurityManagerImpl instance = prepareSecurityManagerInstanceToTest();
-		assertTrue(true);
+		AccessRightsVO accessRight = new AccessRightsVOBuilder()
+				.setUserProfileVO(userSecurityProfileVOMock)
+				.setResourceAsString("employee")
+				.setActionAsString("edit")
+				.createAccessRightsVO();
+		instance.checkAccessRights(accessRight);
 	}
 
 	private SystemSecurityManagerImpl prepareSecurityManagerInstanceToTest()

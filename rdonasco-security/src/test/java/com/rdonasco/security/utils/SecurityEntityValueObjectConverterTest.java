@@ -39,6 +39,7 @@ import static org.junit.Assert.*;
  */
 public class SecurityEntityValueObjectConverterTest
 {
+	private static final String ID_MISMATCH = "id mismatch";
 
 	public SecurityEntityValueObjectConverterTest()
 	{
@@ -312,7 +313,7 @@ public class SecurityEntityValueObjectConverterTest
 		RoleVO roleVO = SecurityEntityValueObjectDataUtility.createTestRoleVO("user manager", capabilities);
 		Role role = SecurityEntityValueObjectConverter.toRole(roleVO);
 		assertNotNull("converted to null", role);
-		assertEquals("id mismatch", roleVO.getId(), role.getId());
+		assertEquals(ID_MISMATCH, roleVO.getId(), role.getId());
 		assertEquals("name mismatch", roleVO.getName(), role.getName());
 		assertNotNull("null capablities", role.getCapabilities());
 		assertEquals("capabilities.size mismatch", capabilities.length, role.getCapabilities().size());
@@ -335,7 +336,7 @@ public class SecurityEntityValueObjectConverterTest
 				.createTestRoleCapabilityVO();
 		RoleCapability roleCapability = SecurityEntityValueObjectConverter.toRoleCapability(roleCapabilityVO);
 		assertNotNull("not Converted", roleCapability);
-		assertEquals("id mismatch", roleCapabilityVO.getId(), roleCapability.getId());
+		assertEquals(ID_MISMATCH, roleCapabilityVO.getId(), roleCapability.getId());
 		assertEquals("role.id mismatch", roleCapabilityVO.getRoleVO().getId(), roleCapability.getRole().getId());
 		assertEquals("capability.id mismatch", roleCapabilityVO.getCapabilityVO().getId(), roleCapability.getCapability().getId());
 	}
@@ -346,7 +347,7 @@ public class SecurityEntityValueObjectConverterTest
 		System.out.println("toRoleVO");
 		Role role = SecurityEntityValueObjectDataUtility.createTestDataRole();
 		RoleVO roleVO = SecurityEntityValueObjectConverter.toRoleVO(role);
-		assertEquals("id mismatch", role.getId(), roleVO.getId());
+		assertEquals(ID_MISMATCH, role.getId(), roleVO.getId());
 		assertEquals("name did not match", roleVO.getName(), role.getName());
 		assertNotNull("capabilities not converted", roleVO.getRoleCapabilities());
 		assertEquals("capabilities size did not match", role.getCapabilities().size(), roleVO.getRoleCapabilities().size());
@@ -369,7 +370,7 @@ public class SecurityEntityValueObjectConverterTest
 		System.out.println("toRoleCapabilityVO");
 		RoleCapability roleCapability = SecurityEntityValueObjectDataUtility.createTestDataRoleCapabilityForRole(SecurityEntityValueObjectDataUtility.createTestDataRole());
 		RoleCapabilityVO roleCapabilityVO = SecurityEntityValueObjectConverter.toRoleCapabilityVO(roleCapability);
-		assertEquals("id mismatch", roleCapability.getId(), roleCapabilityVO.getId());
+		assertEquals(ID_MISMATCH, roleCapability.getId(), roleCapabilityVO.getId());
 		assertEquals("role id mismatch", roleCapability.getRole().getId(), roleCapabilityVO.getRoleVO().getId());
 
 	}
