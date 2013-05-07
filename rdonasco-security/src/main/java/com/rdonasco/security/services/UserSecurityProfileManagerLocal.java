@@ -65,4 +65,7 @@ public interface UserSecurityProfileManagerLocal
 
 	void updateUserSecurityProfile(UserSecurityProfileVO userSecurityProfile)
 			throws SecurityManagerException;
+
+	void removeAllAssignedUserCapability(CapabilityVO capability) throws
+			DataAccessException;
 }

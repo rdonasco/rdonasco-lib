@@ -34,6 +34,7 @@ import com.rdonasco.security.utils.UserSecurityProfileTestUtility;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.RoleVO;
+import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserRoleVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import java.util.Collection;
@@ -128,7 +129,7 @@ public class UserSecurityProfileManagerTest
 	public void testRetrieveRolesOfUser() throws Exception
 	{
 		System.out.println("retrieveRolesOfUser");
-		UserSecurityProfileVO createdSecurityProfile = createUserProfileWithRoleCapabilityTo("edit", "role");
+		UserSecurityProfileVO createdSecurityProfile = createUserProfileWithRoleCapabilityTo("edit", "role", "role editor");
 		System.out.println("created " + createdSecurityProfile);
 		assertNotNull(createdSecurityProfile);
 		Collection<UserRoleVO> associatedRoles = createdSecurityProfile.getRoles();
@@ -140,16 +141,32 @@ public class UserSecurityProfileManagerTest
 
 	}
 
+	@Test
+	public void testRemoveUserCapability() throws Exception
+	{
+		System.out.println("removeUserCapability");
+		UserSecurityProfileVO createdSecurityProfile = createUserProfileWithRoleCapabilityTo("remove", "capability", "capability editor");
+		assertNotNull(createdSecurityProfile);
+		UserCapabilityVO userCapabilityVO = createdSecurityProfile
+				.getCapabilities().iterator().next();
+		userSecurityProfileManager.removeAllAssignedUserCapability(userCapabilityVO.getCapability());
+		UserSecurityProfileVO foundSecurityProfile = userSecurityProfileManager.findSecurityProfileWithLogonID(createdSecurityProfile.getLogonId());
+		assertNotNull(foundSecurityProfile);
+		assertTrue(foundSecurityProfile.getCapabilities().size() <= 0);
+
+	}
+
 	// start of utilities here. 
 	private UserSecurityProfileVO createUserProfileWithRoleCapabilityTo(
-			final String action, final String resource) throws
+			final String action, final String resource, final String roleTitle)
+			throws
 			CapabilityManagerException, DataAccessException,
 			SecurityManagerException
 	{
 		// prepare the capabilities
 		CapabilityVO capability = capabilityTestUtility.createTestDataCapabilityWithActionAndResourceName(action, resource);
 		// prepare the roles with capability
-		RoleVO role = roleTestUtility.createRoleNamedAndWithCapability("role editor", capability);
+		RoleVO role = roleTestUtility.createRoleNamedAndWithCapability(roleTitle, capability);
 		// create new user profile
 		UserSecurityProfileVO userSecurityProfile = userSecurityProfileTestUtility.createTestDataWithoutCapability();
 		// assign the roles to the profile

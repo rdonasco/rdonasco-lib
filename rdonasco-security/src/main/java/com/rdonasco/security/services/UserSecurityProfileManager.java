@@ -318,4 +318,13 @@ public class UserSecurityProfileManager implements
 			throw new SecurityManagerException(ex);
 		}
 	}
+
+	@Override
+	public void removeAllAssignedUserCapability(CapabilityVO capability) throws
+			DataAccessException
+	{
+		// To change body of generated methods, choose Tools | Templates.
+		// TODO: Complete code for method removeAllAssignedUserCapability
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }
