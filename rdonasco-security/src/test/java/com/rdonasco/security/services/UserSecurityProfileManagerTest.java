@@ -146,15 +146,16 @@ public class UserSecurityProfileManagerTest
 	public void testRemoveUserCapability() throws Exception
 	{
 		System.out.println("removeUserCapability");
-		UserSecurityProfileVO createdSecurityProfile = createUserProfileWithRoleCapabilityTo("remove", "capability", "capability editor");
+		UserSecurityProfileVO createdSecurityProfile = userSecurityProfileTestUtility.createNewUserSecurityProfileWithCapability();
 		assertNotNull(createdSecurityProfile);
 		final Iterator<UserCapabilityVO> capabilityIterator = createdSecurityProfile
 				.getCapabilities().iterator();
-		UserCapabilityVO userCapabilityVO = null;
+		UserCapabilityVO userCapabilityVO;
 		if (capabilityIterator.hasNext())
 		{
 			userCapabilityVO = capabilityIterator.next();
-			userSecurityProfileManager.removeAllAssignedUserCapability(userCapabilityVO.getCapability());
+			int removedCount = userSecurityProfileManager.removeAllAssignedUserCapability(userCapabilityVO.getCapability());
+			assertTrue("removedCount is zero ", removedCount > 0);
 		}
 		UserSecurityProfileVO foundSecurityProfile = userSecurityProfileManager.findSecurityProfileWithLogonID(createdSecurityProfile.getLogonId());
 		assertNotNull(foundSecurityProfile);
