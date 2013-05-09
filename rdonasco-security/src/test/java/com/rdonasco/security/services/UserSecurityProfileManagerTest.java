@@ -38,6 +38,7 @@ import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserRoleVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import javax.ejb.EJB;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -147,9 +148,14 @@ public class UserSecurityProfileManagerTest
 		System.out.println("removeUserCapability");
 		UserSecurityProfileVO createdSecurityProfile = createUserProfileWithRoleCapabilityTo("remove", "capability", "capability editor");
 		assertNotNull(createdSecurityProfile);
-		UserCapabilityVO userCapabilityVO = createdSecurityProfile
-				.getCapabilities().iterator().next();
-		userSecurityProfileManager.removeAllAssignedUserCapability(userCapabilityVO.getCapability());
+		final Iterator<UserCapabilityVO> capabilityIterator = createdSecurityProfile
+				.getCapabilities().iterator();
+		UserCapabilityVO userCapabilityVO = null;
+		if (capabilityIterator.hasNext())
+		{
+			userCapabilityVO = capabilityIterator.next();
+			userSecurityProfileManager.removeAllAssignedUserCapability(userCapabilityVO.getCapability());
+		}
 		UserSecurityProfileVO foundSecurityProfile = userSecurityProfileManager.findSecurityProfileWithLogonID(createdSecurityProfile.getLogonId());
 		assertNotNull(foundSecurityProfile);
 		assertTrue(foundSecurityProfile.getCapabilities().size() <= 0);
