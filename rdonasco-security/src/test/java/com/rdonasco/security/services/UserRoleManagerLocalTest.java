@@ -69,6 +69,8 @@ public class UserRoleManagerLocalTest
 				.addClass(RoleManager.class)
 				.addClass(CapabilityManagerRemote.class)
 				.addClass(CapabilityManagerImpl.class)
+				.addClass(UserSecurityProfileManager.class)
+				.addClass(UserSecurityProfileManagerLocal.class)
 				.addClass(SecurityEntityValueObjectConverter.class);
 
 		return archive;

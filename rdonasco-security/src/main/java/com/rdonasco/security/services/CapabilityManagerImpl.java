@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -54,6 +55,9 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 	private ResourceDAO resourceDAO;
 	@Inject
 	private ActionDAO actionDAO;
+
+	@EJB
+	UserSecurityProfileManagerLocal userSecurityProfileManager;
 
 	public void setActionDAO(ActionDAO actionDAO)
 	{
@@ -493,6 +497,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 	{
 		try
 		{
+			userSecurityProfileManager.removeAllAssignedUserCapability(capabilityToRemove);
 			capabilityDAO.delete(capabilityToRemove.getId());
 		}
 		catch (Exception e)
