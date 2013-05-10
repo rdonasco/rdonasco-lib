@@ -56,4 +56,8 @@ public interface DataAccess<T>
 			Map<String, Object> parameters)
 			throws DataAccessException, NonExistentEntityException,
 			MultipleEntityFoundException;
+
+	int executeUpdateUsingNamedQuery(String namedQuery,
+			Map<String, Object> parameters)
+			throws DataAccessException;
 }

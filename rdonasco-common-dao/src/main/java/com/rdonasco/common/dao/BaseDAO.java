@@ -246,4 +246,13 @@ public abstract class BaseDAO<T> implements DataAccess<T>
 		}
 		return foundData;
 	}
+
+	@Override
+	public int executeUpdateUsingNamedQuery(String namedQuery,
+			Map<String, Object> parameters) throws DataAccessException
+	{
+		// To change body of generated methods, choose Tools | Templates.
+		// TODO: Complete code for method executeUpdateUsingNamedQuery
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }

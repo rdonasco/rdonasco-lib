@@ -323,6 +323,7 @@ public class UserSecurityProfileManager implements
 	public int removeAllAssignedUserCapability(CapabilityVO capability) throws
 			DataAccessException
 	{
+		//userSecurityProfileDAO.executeUpdateUsingNamedQuery()
 		return 0;
 	}
 }
