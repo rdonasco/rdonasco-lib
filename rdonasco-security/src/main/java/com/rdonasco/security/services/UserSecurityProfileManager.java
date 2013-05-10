@@ -167,6 +167,7 @@ public class UserSecurityProfileManager implements
 			Map<String, Object> parameters = new HashMap<String, Object>();
 			parameters.put(UserSecurityProfile.QUERY_PARAM_LOGON_ID, logonId);
 			UserSecurityProfile userSecurityProfile = userSecurityProfileDAO.findUniqueDataUsingNamedQuery(UserSecurityProfile.NAMED_QUERY_FIND_SECURITY_PROFILE_BY_LOGON_ID, parameters);
+			userSecurityProfile = userSecurityProfileDAO.findFreshData(userSecurityProfile.getId());
 			foundSecurityProfileVO = SecurityEntityValueObjectConverter.toUserProfileVO(userSecurityProfile);
 		}
 		catch (NonExistentEntityException e)
@@ -323,7 +324,8 @@ public class UserSecurityProfileManager implements
 	public int removeAllAssignedUserCapability(CapabilityVO capability) throws
 			DataAccessException
 	{
-		//userSecurityProfileDAO.executeUpdateUsingNamedQuery()
-		return 0;
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		parameters.put(UserCapability.QUERY_PARAM_CAPABILITY_ID, capability.getId());
+		return userSecurityProfileDAO.executeUpdateUsingNamedQuery(UserCapability.NAMED_QUERY_DELETE_CAPABILITY_WITH_ID, parameters);
 	}
 }

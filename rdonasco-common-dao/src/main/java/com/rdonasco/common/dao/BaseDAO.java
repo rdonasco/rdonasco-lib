@@ -198,14 +198,7 @@ public abstract class BaseDAO<T> implements DataAccess<T>
 		{
 			EntityManager em = getEntityManager();
 			TypedQuery<T> query = em.createNamedQuery(namedQuery, getDataClass());
-			if (parameters != null)
-			{
-				for (String paramName : parameters.keySet())
-				{
-					query.setParameter(paramName, parameters.get(paramName));
-				}
-			}
-
+			applyParameters(parameters, query);
 			dataList = query.getResultList();
 		}
 		catch (Exception e)
@@ -226,14 +219,7 @@ public abstract class BaseDAO<T> implements DataAccess<T>
 		{
 			EntityManager em = getEntityManager();
 			TypedQuery<T> query = em.createNamedQuery(namedQuery, getDataClass());
-			if (parameters != null)
-			{
-				for (String paramName : parameters.keySet())
-				{
-					query.setParameter(paramName, parameters.get(paramName));
-				}
-			}
-
+			applyParameters(parameters, query);
 			foundData = query.getSingleResult();
 		}
 		catch (NoResultException e)
@@ -251,8 +237,29 @@ public abstract class BaseDAO<T> implements DataAccess<T>
 	public int executeUpdateUsingNamedQuery(String namedQuery,
 			Map<String, Object> parameters) throws DataAccessException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method executeUpdateUsingNamedQuery
-		throw new UnsupportedOperationException("Not supported yet.");
+		int updatedRows = 0;
+		try
+		{
+			Query query = getEntityManager().createNamedQuery(namedQuery);
+			applyParameters(parameters, query);
+			updatedRows = query.executeUpdate();
+		}
+		catch (Exception e)
+		{
+			throw new DataAccessException(e);
+		}
+		return updatedRows;
+	}
+
+	private void applyParameters(
+			Map<String, Object> parameters, Query query)
+	{
+		if (null != parameters)
+		{
+			for (String paramName : parameters.keySet())
+			{
+				query.setParameter(paramName, parameters.get(paramName));
+			}
+		}
 	}
 }
