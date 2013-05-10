@@ -57,7 +57,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 	private ActionDAO actionDAO;
 
 	@EJB
-	UserSecurityProfileManagerLocal userSecurityProfileManager;
+	private UserSecurityProfileManagerLocal userSecurityProfileManager;
 
 	public void setActionDAO(ActionDAO actionDAO)
 	{
