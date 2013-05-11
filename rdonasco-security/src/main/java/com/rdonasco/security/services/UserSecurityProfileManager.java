@@ -33,14 +33,17 @@ import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.CapabilityVO;
+import com.rdonasco.security.vo.RoleCapabilityVO;
 import com.rdonasco.security.vo.RoleVO;
 import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -80,6 +83,17 @@ public class UserSecurityProfileManager implements
 	{
 		this.userSecurityProfileDAO = userSecurityProfileDAO;
 	}
+
+	public void setUserRoleDAO(UserRoleDAO userRoleDAO)
+	{
+		this.userRoleDAO = userRoleDAO;
+	}
+
+	public void setCapabilityManager(CapabilityManagerLocal capabilityManager)
+	{
+		this.capabilityManager = capabilityManager;
+	}
+
 
 	@Override
 	public UserSecurityProfileVO createNewUserSecurityProfile(
@@ -131,9 +145,18 @@ public class UserSecurityProfileManager implements
 	public List<CapabilityVO> retrieveCapabilitiesOfUserBasedOnRoles(
 			AccessRightsVO accessRights) throws DataAccessException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method retrieveCapabilitiesOfUserBasedOnRoles
-		throw new UnsupportedOperationException("Not supported yet.");
+		List<RoleVO> roles = retrieveRolesOfUser(accessRights.getUserProfile());
+		Set<CapabilityVO> uniqueCapabilities = new HashSet<CapabilityVO>();
+		List<CapabilityVO> capabilities = new ArrayList<CapabilityVO>();
+		for (RoleVO role : roles)
+		{
+			for (RoleCapabilityVO roleCapability : role.getRoleCapabilities())
+			{
+				uniqueCapabilities.add(roleCapability.getCapabilityVO());
+			}
+		}
+		capabilities.addAll(uniqueCapabilities);
+		return capabilities;
 	}
 
 	@Override

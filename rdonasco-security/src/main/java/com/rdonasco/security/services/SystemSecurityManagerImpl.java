@@ -76,8 +76,10 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		try
 		{
 			List<CapabilityVO> capabilities = userSecurityProfileManager.retrieveCapabilitiesOfUser(requestedAccessRight);
+			List<CapabilityVO> roleCapabilities = userSecurityProfileManager.retrieveCapabilitiesOfUserBasedOnRoles(requestedAccessRight);
+			capabilities.addAll(roleCapabilities);
 			Set<AccessRightsVO> accessRightsSet = new HashSet<AccessRightsVO>();
-			boolean capabilitiesNotFound = (capabilities == null || capabilities.isEmpty());
+			boolean capabilitiesNotFound = capabilities.isEmpty();
 			capabilityManager.findOrAddActionNamedAs(requestedAccessRight.getAction().getName());
 			ResourceVO securedResourceVO = ensureThatResourceExistsAndIsSecured(requestedAccessRight.getResource().getName());
 			if (capabilitiesNotFound)
