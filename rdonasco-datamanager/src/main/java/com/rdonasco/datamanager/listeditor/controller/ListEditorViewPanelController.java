@@ -331,7 +331,7 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 
 		getEditorViewPanel().getEditorTable().addListener(tableClickListener);
 		TableHelper.setupTable(getEditorViewPanel().getEditorTable());
-		getEditorViewPanel().getEditorTable().setDragMode(Table.TableDragMode.ROW);
+		allowDraggingSingleRow();
 	}
 
 	public abstract String[] getColumnHeaders();
@@ -502,5 +502,20 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 	private String[] getEditableVisibleColumn()
 	{
 		return realVisibleColumns.toArray(new String[0]);
+	}
+
+	public void allowDraggingSingleRow()
+	{
+		getEditorViewPanel().getEditorTable().setDragMode(Table.TableDragMode.ROW);
+	}
+
+	public void allowDraggingMultipleRows()
+	{
+		getEditorViewPanel().getEditorTable().setDragMode(Table.TableDragMode.MULTIROW);
+	}
+
+	public void donotAllowDraggingAnyRow()
+	{
+		getEditorViewPanel().getEditorTable().setDragMode(Table.TableDragMode.NONE);
 	}
 }
