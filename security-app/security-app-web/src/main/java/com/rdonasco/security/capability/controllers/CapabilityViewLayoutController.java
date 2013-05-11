@@ -196,7 +196,6 @@ public class CapabilityViewLayoutController implements
 		});
 
 		getActionEditorController().initializeControlledViewBehavior();
-		getActionEditorController().getControlledView().getEditorTable().setDragMode(Table.TableDragMode.ROW);
 	}
 
 	private void configureResourceEditor()
@@ -280,7 +279,6 @@ public class CapabilityViewLayoutController implements
 		});
 
 		getResourceEditorController().initializeControlledViewBehavior();
-		getResourceEditorController().getControlledView().getEditorTable().setDragMode(Table.TableDragMode.ROW);
 		capabilityEditorViewController.setResourceTableSource(getResourceEditorController().getControlledView().getEditorTable());
 
 	}
@@ -299,6 +297,7 @@ public class CapabilityViewLayoutController implements
 		if (null == actionEditorController)
 		{
 			actionEditorController = actionEditorControllerInstances.get();
+			actionEditorController.allowDraggingMultipleRows();
 		}
 		return actionEditorController;
 	}

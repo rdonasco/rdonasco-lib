@@ -37,6 +37,7 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.FieldEvents;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.MouseEvents;
+import com.vaadin.ui.AbstractSelect;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Embedded;
@@ -506,15 +507,20 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 	public void allowDraggingSingleRow()
 	{
 		getEditorViewPanel().getEditorTable().setDragMode(Table.TableDragMode.ROW);
+		getEditorViewPanel().getEditorTable().setSelectable(true);
+		getEditorViewPanel().getEditorTable().setMultiSelect(false);
 	}
 
 	public void allowDraggingMultipleRows()
 	{
 		getEditorViewPanel().getEditorTable().setDragMode(Table.TableDragMode.MULTIROW);
+		getEditorViewPanel().getEditorTable().setSelectable(true);
+		getEditorViewPanel().getEditorTable().setMultiSelect(true);
 	}
 
 	public void donotAllowDraggingAnyRow()
 	{
 		getEditorViewPanel().getEditorTable().setDragMode(Table.TableDragMode.NONE);
+		getEditorViewPanel().getEditorTable().setSelectable(false);
 	}
 }
