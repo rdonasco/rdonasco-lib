@@ -20,21 +20,24 @@ package com.rdonasco.security.role.views;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.view.ControlledView;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Panel;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public class RoleEditorView extends VerticalLayout implements ControlledView
+public class RoleEditorView extends Panel implements ControlledView
 {
 	private static final long serialVersionUID = 1L;
 
-	private Label dummyContent = new Label("role editor panel");
+	public RoleEditorView()
+	{
+
+	}
 
 	@Override
 	public void initWidget() throws WidgetInitalizeException
 	{
-		addComponent(dummyContent);
+		addComponent(new Label("dummy editor content"));
 	}
 }

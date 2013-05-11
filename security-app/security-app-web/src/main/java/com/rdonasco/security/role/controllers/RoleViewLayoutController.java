@@ -22,7 +22,6 @@ import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.security.common.views.TwoColumnFlexibleRightColumnViewLayout;
-import com.vaadin.ui.Label;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
