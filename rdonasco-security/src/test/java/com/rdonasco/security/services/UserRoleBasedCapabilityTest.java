@@ -29,7 +29,6 @@ import com.rdonasco.security.model.Role;
 import com.rdonasco.security.model.RoleCapability;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
-import com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
@@ -142,14 +141,6 @@ public class UserRoleBasedCapabilityTest
 		systemSecurityManager.setCapabilityManager(capabilityManagerMock);
 		systemSecurityManager.setUserSecurityProfileManager(userSecurityProfileManager);
 		return systemSecurityManager;
-	}
-
-	private List<Capability> getCapabilityOnAddingUser()
-	{
-		List<Capability> capabilities = new ArrayList<Capability>();
-		capabilities.add(SecurityEntityValueObjectDataUtility
-				.createTestDataCapabilityOnResourceAndAction("User", "Add"));
-		return capabilities;
 	}
 
 	private List<Capability> getEmptyUserCapabilities()
