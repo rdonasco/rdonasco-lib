@@ -331,7 +331,6 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 
 		getEditorViewPanel().getEditorTable().addListener(tableClickListener);
 		TableHelper.setupTable(getEditorViewPanel().getEditorTable());
-		allowDraggingSingleRow();
 	}
 
 	public abstract String[] getColumnHeaders();
