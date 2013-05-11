@@ -25,7 +25,9 @@ public class CapabilityListPanel extends Panel implements
 {
 
 	private static final long serialVersionUID = 1L;
+
 	private Table dataViewListTable;
+
 	private Button addCapabilityButton = new Button();
 
 	public CapabilityListPanel()
