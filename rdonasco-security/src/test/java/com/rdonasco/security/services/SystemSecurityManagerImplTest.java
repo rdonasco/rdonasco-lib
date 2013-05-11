@@ -18,6 +18,7 @@ package com.rdonasco.security.services;
 
 import com.rdonasco.security.dao.RoleDAO;
 import com.rdonasco.security.dao.UserCapabilityDAO;
+import com.rdonasco.security.dao.UserRoleDAO;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
@@ -50,6 +51,7 @@ import static org.mockito.Mockito.*;
  */
 public class SystemSecurityManagerImplTest
 {
+
 	private static final Logger LOG = Logger.getLogger(SystemSecurityManagerImplTest.class.getName());
 
 	private static UserSecurityProfileVO userSecurityProfileVOMock;
@@ -66,6 +68,8 @@ public class SystemSecurityManagerImplTest
 
 	private static RoleDAO roleDAO;
 
+	static private UserRoleDAO userRoleDAOMock;
+
 	public SystemSecurityManagerImplTest()
 	{
 	}
@@ -78,6 +82,7 @@ public class SystemSecurityManagerImplTest
 		userSecurityProfileDAOMock = mock(UserSecurityProfileDAO.class);
 		capabilityManagerMock = mock(CapabilityManagerLocal.class);
 		userCapabilityDAOMock = mock(UserCapabilityDAO.class);
+		userRoleDAOMock = mock(UserRoleDAO.class);
 		roleDAO = mock(RoleDAO.class);
 	}
 
@@ -182,7 +187,7 @@ public class SystemSecurityManagerImplTest
 			throw e;
 		}
 	}
-	
+
 	@Test(expected = SecurityAuthorizationException.class)
 	public void testRestrictedResource() throws Exception
 	{
@@ -198,29 +203,29 @@ public class SystemSecurityManagerImplTest
 				.createAccessRightsVO();
 		List<Capability> emptyCapability = new ArrayList<Capability>();
 		when(userCapabilityDAOMock.loadCapabilitiesOf(userSecurityProfileMock)).thenReturn(emptyCapability);
-		
+
 		ActionVO actionVOtoReturn = new ActionVO();
 		actionVOtoReturn.setId(Long.MIN_VALUE);
 		actionVOtoReturn.setName("Edit");
-		
+
 		ResourceVO resourceVOtoReturn = new ResourceVOBuilder()
 				.setId(Long.MIN_VALUE)
 				.setName("restrictedResource")
 				.createResourceVO();
-		
+
 		when(capabilityManagerMock.findOrAddActionNamedAs(accessRights.getAction().getName())).thenReturn(actionVOtoReturn);
-		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessRights.getResource().getName())).thenReturn(resourceVOtoReturn);				
+		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessRights.getResource().getName())).thenReturn(resourceVOtoReturn);
 		try
 		{
 			instance.checkAccessRights(accessRights);
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			LOG.info(e.getMessage());
 			throw e;
 		}
-		
-	}	
+
+	}
 
 	@Test
 	public void testNonRestrictedResource() throws Exception
@@ -242,11 +247,11 @@ public class SystemSecurityManagerImplTest
 		ActionVO actionVOtoReturn = new ActionVO();
 		actionVOtoReturn.setId(Long.MIN_VALUE);
 		actionVOtoReturn.setName("Edit");
-		
+
 		when(capabilityManagerMock.findOrAddActionNamedAs(accessRights.getAction().getName())).thenReturn(actionVOtoReturn);
-		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessRights.getResource().getName())).thenThrow(NotSecuredResourceException.class);				
+		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessRights.getResource().getName())).thenThrow(NotSecuredResourceException.class);
 		instance.checkAccessRights(accessRights);
-		
+
 	}
 
 	@Test
@@ -312,6 +317,7 @@ public class SystemSecurityManagerImplTest
 		userSecurityProfileManager = new UserSecurityProfileManager();
 		userSecurityProfileManager.setUserSecurityProfileDAO(userSecurityProfileDAOMock);
 		userSecurityProfileManager.setUserCapabilityDAO(userCapabilityDAOMock);
+		userSecurityProfileManager.setUserRoleDAO(userRoleDAOMock);
 		SystemSecurityManagerImpl systemSecurityManager = new SystemSecurityManagerImpl();
 		systemSecurityManager.setCapabilityManager(capabilityManagerMock);
 		systemSecurityManager.setUserSecurityProfileManager(userSecurityProfileManager);
