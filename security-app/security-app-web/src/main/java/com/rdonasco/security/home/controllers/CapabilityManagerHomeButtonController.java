@@ -31,8 +31,6 @@ public class CapabilityManagerHomeButtonController implements
 	private FeatureHomeButton featureButton;
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
-//	@Inject
-//	private ApplicationPopupProvider popupProvider;
 	@Inject
 	private Instance<HomeFrameViewController> homeFrameViewControllers;
 	@Inject
