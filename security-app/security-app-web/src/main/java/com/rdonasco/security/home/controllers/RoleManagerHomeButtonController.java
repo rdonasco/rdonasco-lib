@@ -10,10 +10,11 @@ import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.home.views.FeatureHomeButton;
+import com.rdonasco.security.role.controllers.RoleViewLayoutController;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Label;
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 /**
@@ -24,12 +25,33 @@ public class RoleManagerHomeButtonController implements
 		HomeViewButtonController
 {
 
+	private static final long serialVersionUID = 1L;
+
 	@Inject
 	private FeatureHomeButton featureButton;
+
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
+
 	@Inject
 	private ApplicationPopupProvider popupProvider;
+
+	@Inject
+	private Instance<HomeFrameViewController> homeFrameViewControllers;
+
+	@Inject
+	private Instance<RoleViewLayoutController> viewLayoutProvider;
+
+	private RoleViewLayoutController roleViewLayoutController;
+
+	public RoleViewLayoutController getRoleViewLayoutController()
+	{
+		if (roleViewLayoutController == null)
+		{
+			roleViewLayoutController = viewLayoutProvider.get();
+		}
+		return roleViewLayoutController;
+	}
 
 	@PostConstruct
 	@Override
@@ -40,10 +62,11 @@ public class RoleManagerHomeButtonController implements
 			doTheRefresh();
 			featureButton.addListener(new Button.ClickListener()
 			{
+				private static final long serialVersionUID = 1L;
 				@Override
 				public void buttonClick(Button.ClickEvent event)
 				{
-					popupProvider.popUpInfo("Role Manager Clicked");
+					homeFrameViewControllers.get().setWorkspaceContent(getRoleViewLayoutController().getControlledView());
 				}
 			});
 		}
