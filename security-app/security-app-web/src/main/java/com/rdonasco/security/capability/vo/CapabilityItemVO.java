@@ -26,7 +26,6 @@ public class CapabilityItemVO implements Serializable, ListEditorItem
 	private static final long serialVersionUID = 1L;
 	private CapabilityVO capabilityVO;
 	private Embedded icon;
-	private String captcha;
 
 	@Override
 	public Embedded getIcon()
@@ -169,13 +168,4 @@ public class CapabilityItemVO implements Serializable, ListEditorItem
 		return capabilityVO.toString();
 	}
 
-	public String getCaptcha()
-	{
-		return captcha;
-	}
-
-	public void setCaptcha(String captcha)
-	{
-		this.captcha = captcha;
-	}
 }
