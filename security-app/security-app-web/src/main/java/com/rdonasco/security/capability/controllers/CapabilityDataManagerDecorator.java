@@ -35,16 +35,6 @@ public class CapabilityDataManagerDecorator implements
 	private CapabilityManagerLocal capabilityManager;
 	private ClickListenerProvider clickListenerProvider;
 
-	public CapabilityManagerLocal getCapabilityManager()
-	{
-		return capabilityManager;
-	}
-
-	public void setCapabilityManager(CapabilityManagerLocal capabilityManager)
-	{
-		this.capabilityManager = capabilityManager;
-	}
-
 	@Override
 	public void deleteData(CapabilityItemVO data) throws DataAccessException
 	{

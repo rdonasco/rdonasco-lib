@@ -16,12 +16,34 @@
  */
 package com.rdonasco.security.role.controllers;
 
+import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
+import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
+import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
+import com.rdonasco.datamanager.controller.DataManagerContainer;
+import com.rdonasco.datamanager.utils.TableHelper;
+import com.rdonasco.security.common.builders.DeletePromptBuilder;
+import com.rdonasco.security.common.controllers.ClickListenerProvider;
+import com.rdonasco.security.i18n.MessageKeys;
+import com.rdonasco.security.role.utils.RoleConstants;
 import com.rdonasco.security.role.views.RoleListPanelView;
+import com.rdonasco.security.role.vo.RoleItemVO;
+import com.rdonasco.security.role.vo.RoleItemVOBuilder;
+import com.rdonasco.security.vo.RoleVO;
+import com.rdonasco.security.vo.RoleVOBuilder;
+import com.vaadin.data.util.BeanItem;
+import com.vaadin.event.MouseEvents;
+import com.vaadin.event.MouseEvents.ClickListener;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Table;
+import de.steinwedel.vaadin.MessageBox;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 /**
@@ -31,14 +53,26 @@ import javax.inject.Inject;
 public class RoleListPanelViewController implements
 		ViewController<RoleListPanelView>
 {
-
+	private static final Logger logger = Logger.getLogger(RoleListPanelViewController.class.getName());
 	private static final long serialVersionUID = 1L;
 
 	@Inject
+	private Instance<ApplicationExceptionPopupProvider> exceptionPopupProviderFactory;
+
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
 
 	@Inject
+	private Instance<ApplicationPopupProvider> popupProviderFactory;
+
+	private ApplicationPopupProvider popupProvider;
+
+	@Inject
 	private RoleListPanelView roleListPanelView;
+
+	@Inject
+	private RoleDataManagerDecorator roleDataManager;
+
+	private DataManagerContainer<RoleItemVO> roleItemTableContainer = new DataManagerContainer(RoleItemVO.class);
 
 	@PostConstruct
 	@Override
@@ -47,11 +81,70 @@ public class RoleListPanelViewController implements
 		try
 		{
 			roleListPanelView.initWidget();
+			final Table roleListTable = roleListPanelView.getRoleListTable();
+			TableHelper.setupTable(roleListTable);
+			roleItemTableContainer.setDataManager(roleDataManager);
+			setupDeleteClickListener();
+			roleListTable.setContainerDataSource(roleItemTableContainer);
+			roleListTable.setVisibleColumns(RoleConstants.TABLE_VISIBLE_COLUMNS);
+			roleListTable.setColumnHeaders(RoleConstants.TABLE_VISIBLE_HEADERS);
+			roleListPanelView.getAddRoleButton().addListener(new Button.ClickListener()
+			{
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void buttonClick(Button.ClickEvent event)
+				{
+					addNewRole();
+				}
+			});
+			roleItemTableContainer.refresh();
+
 		}
-		catch (WidgetInitalizeException ex)
+		catch (Exception ex)
 		{
-			exceptionPopupProvider.popUpDebugException(ex);
+			getExceptionPopupProvider().popUpDebugException(ex);
 		}
+	}
+
+	private void addNewRole()
+	{
+		RoleVO newRoleVO = new RoleVOBuilder()
+				.setName(MessageKeys.NEW_ROLE)
+				.createUserRoleVO();
+		try
+		{
+			RoleItemVO newRoleItemVO = new RoleItemVOBuilder()
+					.setRoleVO(newRoleVO)
+					.createRoleItemVO();
+
+			BeanItem<RoleItemVO> newItemAdded = roleItemTableContainer.addItem(newRoleItemVO);
+			roleListPanelView.getRoleListTable().setCurrentPageFirstItemId(newItemAdded.getBean());
+			roleListPanelView.getRoleListTable().select(newItemAdded.getBean());
+		}
+		catch (Exception e)
+		{
+			logger.log(Level.SEVERE, e.getMessage(), e);
+			getPopupProvider().popUpError(I18NResource.localizeWithParameter(MessageKeys.UNABLE_TO_ADD_NEW_ROLE, newRoleVO.getName()));
+		}
+	}
+
+	public ApplicationPopupProvider getPopupProvider()
+	{
+		if (null == popupProvider)
+		{
+			popupProvider = popupProviderFactory.get();
+		}
+		return popupProvider;
+	}
+
+	public ApplicationExceptionPopupProvider getExceptionPopupProvider()
+	{
+		if (null == exceptionPopupProvider)
+		{
+			exceptionPopupProvider = exceptionPopupProviderFactory.get();
+		}
+		return exceptionPopupProvider;
 	}
 
 	@Override
@@ -63,8 +156,58 @@ public class RoleListPanelViewController implements
 	@Override
 	public void refreshView() throws WidgetException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method refreshView
-		throw new UnsupportedOperationException("Not supported yet.");
+		try
+		{
+			roleItemTableContainer.refresh();
+		}
+		catch (DataAccessException ex)
+		{
+			getExceptionPopupProvider().popUpErrorException(ex);
+		}
+	}
+
+	private void setupDeleteClickListener()
+	{
+		roleDataManager.setClickListenerProvider(new ClickListenerProvider<RoleItemVO>()
+		{
+			@Override
+			public MouseEvents.ClickListener provideClickListenerFor(
+					final RoleItemVO data)
+			{
+				ClickListener clickListener = new MouseEvents.ClickListener()
+				{
+					private static final long serialVersionUID = 1L;
+
+					@Override
+					public void click(MouseEvents.ClickEvent event)
+					{
+						new DeletePromptBuilder()
+								.setParentWindow(getControlledView().getWindow())
+								.createDeletePrompt()
+								.show(new MessageBox.EventListener()
+						{
+							@Override
+							public void buttonClicked(
+									MessageBox.ButtonType buttonType)
+							{
+								if (MessageBox.ButtonType.YES.equals(buttonType))
+								{
+									try
+									{
+										roleItemTableContainer.removeItem(data);
+										getPopupProvider().popUpInfo(I18NResource.localize(MessageKeys.ROLE_DELETED));
+									}
+									catch (Exception e)
+									{
+										getExceptionPopupProvider().popUpErrorException(e);
+									}
+								}
+							}
+						});
+					}
+				};
+				return clickListener;
+			}
+		});
 	}
 }

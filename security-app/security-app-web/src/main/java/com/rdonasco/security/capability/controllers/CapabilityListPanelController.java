@@ -42,18 +42,27 @@ public class CapabilityListPanelController implements
 {
 
 	private static final long serialVersionUID = 1L;
+
 	protected static final long ADD_CAPABILITY_ID = -1L;
+
 	@Inject
 	private CapabilityListPanel capabilityListPanel;
+
 	@Inject
 	CapabilityDataManagerDecorator dataManager;
+
 	@Inject
 	private Instance<ApplicationExceptionPopupProvider> exceptionPopupProviderFactory;
+
+	private ApplicationExceptionPopupProvider exceptionPopupProvider;
+
 	@Inject
 	private Instance<ApplicationPopupProvider> popupProviderFactory;
-	private ApplicationExceptionPopupProvider exceptionPopupProvider;
+
 	private ApplicationPopupProvider popupProvider;
+
 	private DataManagerContainer<CapabilityItemVO> capabilityItemTableContainer = new DataManagerContainer(CapabilityItemVO.class);
+
 	private final Table capabilityListTable = new Table();
 
 	@PostConstruct

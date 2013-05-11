@@ -32,4 +32,10 @@ public interface MessageKeys
 	// user message keys
 	static final String USER_PROFILE_DELETED = "User profile deleted";
 	public static String UNABLE_TO_ADD_NEW_USER = "Unable to add new user";
+
+	// role message keys
+	public static final String ROLE_DELETED = "Role deleted";
+	public static final String NEW_ROLE = "New Role";
+
+	public static final String UNABLE_TO_ADD_NEW_ROLE = "Unable to add new role";
 }
