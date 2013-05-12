@@ -18,15 +18,13 @@ import com.rdonasco.datamanager.utils.TableHelper;
 import com.rdonasco.security.capability.views.CapabilityListPanel;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.capability.vo.CapabilityItemVOBuilder;
-import com.rdonasco.security.common.builders.DeletePromptBuilder;
+import com.rdonasco.security.common.controllers.DeleteClickListenerBuilder;
 import com.rdonasco.security.i18n.MessageKeys;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.event.MouseEvents;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Table;
-import de.steinwedel.vaadin.MessageBox;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Instance;
@@ -164,49 +162,25 @@ public class CapabilityListPanelController implements
 
 	private void setupDeleteClickListener()
 	{
-		dataManager.setClickListenerProvider(new ClickListenerProvider<CapabilityItemVO>()
+		ClickListenerProvider<CapabilityItemVO> deleteClickBuilder = new DeleteClickListenerBuilder<CapabilityItemVO>()
+				.setComponent(getControlledView())
+				.setDeleteListener(new DeleteClickListenerBuilder.DeleteListener<CapabilityItemVO>()
 		{
 			@Override
-			public MouseEvents.ClickListener provideClickListenerFor(
-					final CapabilityItemVO data)
+			public void delete(CapabilityItemVO itemToDelete)
 			{
-				MouseEvents.ClickListener clickListener = new MouseEvents.ClickListener()
+				try
 				{
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void click(MouseEvents.ClickEvent event)
-					{
-						new DeletePromptBuilder().setParentWindow(getControlledView().getWindow())
-								.createDeletePrompt()
-								.show(new MessageBox.EventListener()
-						{
-							private static final long serialVersionUID = 1L;
-
-							@Override
-							public void buttonClicked(
-									MessageBox.ButtonType buttonType)
-							{
-								if (MessageBox.ButtonType.YES.equals(buttonType))
-								{
-									try
-									{
-										capabilityItemTableContainer.removeItem(data);
-										getPopupProvider().popUpInfo(I18NResource.localize(MessageKeys.CAPABILITY_DELETED));
-									}
-									catch (Exception e)
-									{
-										getExceptionPopupProvider().popUpErrorException(e);
-									}
-
-								}
-							}
-						});
-					}
-				};
-				return clickListener;
-
+					capabilityItemTableContainer.removeItem(itemToDelete);
+					getPopupProvider().popUpInfo(I18NResource.localize(MessageKeys.CAPABILITY_DELETED));
+				}
+				catch (Exception e)
+				{
+					getExceptionPopupProvider().popUpErrorException(e);
+				}
 			}
-		});
+		})
+				.createClickListenerProvider();
+		dataManager.setClickListenerProvider(deleteClickBuilder);
 	}
 }

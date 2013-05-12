@@ -27,6 +27,7 @@ import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.datamanager.utils.TableHelper;
 import com.rdonasco.security.common.builders.DeletePromptBuilder;
 import com.rdonasco.security.common.controllers.ClickListenerProvider;
+import com.rdonasco.security.common.controllers.DeleteClickListenerBuilder;
 import com.rdonasco.security.i18n.MessageKeys;
 import com.rdonasco.security.role.utils.RoleConstants;
 import com.rdonasco.security.role.views.RoleListPanelView;
@@ -53,7 +54,9 @@ import javax.inject.Inject;
 public class RoleListPanelViewController implements
 		ViewController<RoleListPanelView>
 {
+
 	private static final Logger logger = Logger.getLogger(RoleListPanelViewController.class.getName());
+
 	private static final long serialVersionUID = 1L;
 
 	@Inject
@@ -168,46 +171,25 @@ public class RoleListPanelViewController implements
 
 	private void setupDeleteClickListener()
 	{
-		roleDataManager.setClickListenerProvider(new ClickListenerProvider<RoleItemVO>()
+		ClickListenerProvider<RoleItemVO> deleteClickBuilder = new DeleteClickListenerBuilder<RoleItemVO>()
+				.setComponent(getControlledView())
+				.setDeleteListener(new DeleteClickListenerBuilder.DeleteListener<RoleItemVO>()
 		{
 			@Override
-			public MouseEvents.ClickListener provideClickListenerFor(
-					final RoleItemVO data)
+			public void delete(RoleItemVO itemToDelete)
 			{
-				ClickListener clickListener = new MouseEvents.ClickListener()
+				try
 				{
-					private static final long serialVersionUID = 1L;
-
-					@Override
-					public void click(MouseEvents.ClickEvent event)
-					{
-						new DeletePromptBuilder()
-								.setParentWindow(getControlledView().getWindow())
-								.createDeletePrompt()
-								.show(new MessageBox.EventListener()
-						{
-							@Override
-							public void buttonClicked(
-									MessageBox.ButtonType buttonType)
-							{
-								if (MessageBox.ButtonType.YES.equals(buttonType))
-								{
-									try
-									{
-										roleItemTableContainer.removeItem(data);
-										getPopupProvider().popUpInfo(I18NResource.localize(MessageKeys.ROLE_DELETED));
-									}
-									catch (Exception e)
-									{
-										getExceptionPopupProvider().popUpErrorException(e);
-									}
-								}
-							}
-						});
-					}
-				};
-				return clickListener;
+					roleItemTableContainer.removeItem(itemToDelete);
+					getPopupProvider().popUpInfo(I18NResource.localize(MessageKeys.ROLE_DELETED));
+				}
+				catch (Exception e)
+				{
+					getExceptionPopupProvider().popUpErrorException(e);
+				}
 			}
-		});
+		})
+		.createClickListenerProvider();
+		roleDataManager.setClickListenerProvider(deleteClickBuilder);
 	}
 }

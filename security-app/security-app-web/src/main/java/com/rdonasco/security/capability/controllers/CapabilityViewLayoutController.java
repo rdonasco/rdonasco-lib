@@ -288,6 +288,7 @@ public class CapabilityViewLayoutController implements
 		if (null == resourceEditorController)
 		{
 			resourceEditorController = listEditorViewControllerInstances.get();
+			resourceEditorController.allowDraggingSingleRow();
 		}
 		return resourceEditorController;
 	}
