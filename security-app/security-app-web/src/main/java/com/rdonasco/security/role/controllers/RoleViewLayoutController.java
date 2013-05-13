@@ -17,14 +17,20 @@
 
 package com.rdonasco.security.role.controllers;
 
+import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
-import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.datamanager.controller.DataManagerContainer;
+import com.rdonasco.datamanager.services.DataManager;
 import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewController;
+import com.rdonasco.security.capability.controllers.CapabilityDataManagerDecorator;
+import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.common.views.ThreeColumnFlexibleCenterViewLayout;
-import com.vaadin.ui.Panel;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -36,6 +42,7 @@ public class RoleViewLayoutController implements
 		ViewController<ThreeColumnFlexibleCenterViewLayout>
 {
 	private static final long serialVersionUID = 1L;
+	private static final Logger LOG = Logger.getLogger(RoleViewLayoutController.class.getName());
 
 	@Inject
 	private ThreeColumnFlexibleCenterViewLayout roleViewLayout;
@@ -52,6 +59,10 @@ public class RoleViewLayoutController implements
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
 
+	@Inject
+	private CapabilityDataManagerDecorator capabilityManager;
+
+
 	@PostConstruct
 	@Override
 	public void initializeControlledViewBehavior()
@@ -59,11 +70,10 @@ public class RoleViewLayoutController implements
 		try
 		{
 			roleViewLayout.initWidget();
+			configureAvailableCapabilitiesViewController();
 			roleViewLayout.setLeftPanelContent(roleListPanelViewController.getControlledView());
 			roleViewLayout.setCenterPanelContent(roleEditorViewController.getControlledView());
-			final Panel dummyPanel = new Panel("dummy right panel");
-			dummyPanel.setStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
-			roleViewLayout.addRightPanelContent(dummyPanel);
+			roleViewLayout.addRightPanelContent(availableCapabilitiesViewController.getControlledView());
 		}
 		catch (WidgetInitalizeException ex)
 		{
@@ -83,5 +93,59 @@ public class RoleViewLayoutController implements
 		// To change body of generated methods, choose Tools | Templates.
 		// TODO: Complete code for method refreshView
 		throw new UnsupportedOperationException("Not supported yet.");
+	}
+	private DataManager<CapabilityItemVO> createAvailableCapabilitiesDataManager()
+	{
+		return new DataManager<CapabilityItemVO>()
+		{
+			@Override
+			public void deleteData(CapabilityItemVO data) throws
+					DataAccessException
+			{
+				LOG.log(Level.FINE, "deleteData not supported");
+			}
+
+			@Override
+			public CapabilityItemVO loadData(CapabilityItemVO data) throws
+					DataAccessException
+			{
+				// To change body of generated methods, choose Tools | Templates.
+				// TODO: Complete code for method loadData
+				throw new UnsupportedOperationException("Not supported yet.");
+			}
+
+			@Override
+			public List<CapabilityItemVO> retrieveAllData() throws
+					DataAccessException
+			{
+				return capabilityManager.retrieveAllData();
+			}
+
+			@Override
+			public CapabilityItemVO saveData(CapabilityItemVO data) throws
+					DataAccessException
+			{
+				// To change body of generated methods, choose Tools | Templates.
+				// TODO: Complete code for method saveData
+				throw new UnsupportedOperationException("Not supported yet.");
+			}
+
+			@Override
+			public void updateData(CapabilityItemVO data) throws
+					DataAccessException
+			{
+				// To change body of generated methods, choose Tools | Templates.
+				// TODO: Complete code for method updateData
+				throw new UnsupportedOperationException("Not supported yet.");
+			}
+		};
+	}
+	private void configureAvailableCapabilitiesViewController()
+	{
+		DataManagerContainer capabilityDataContainer = new DataManagerContainer(CapabilityItemVO.class);
+		availableCapabilitiesViewController.setDataContainer(capabilityDataContainer);
+		capabilityDataContainer.setDataManager(createAvailableCapabilitiesDataManager());
+		availableCapabilitiesViewController.getControlledView().setReadOnly(true);
+		availableCapabilitiesViewController.initializeControlledViewBehavior();
 	}
 }
