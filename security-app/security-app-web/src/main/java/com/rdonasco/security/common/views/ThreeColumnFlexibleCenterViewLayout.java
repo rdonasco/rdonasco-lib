@@ -39,7 +39,7 @@ public class ThreeColumnFlexibleCenterViewLayout extends HorizontalLayout implem
 		leftPanel.addStyleName(SecurityDefaultTheme.CSS_LEFT_PANEL);
 
 		centerPanel.setSizeFull();
-		centerPanel.setMargin(false, false, true, false);
+		centerPanel.setMargin(true);
 		centerPanel.addStyleName(SecurityDefaultTheme.CSS_CENTER_PANEL);
 
 		rightPanel.setWidth(250, UNITS_PIXELS);
