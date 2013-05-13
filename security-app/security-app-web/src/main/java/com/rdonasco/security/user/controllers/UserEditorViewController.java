@@ -336,6 +336,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		getControlledView().getSaveButton().setReadOnly(readOnly);
 		getControlledView().getCancelButton().setReadOnly(readOnly);
 		getControlledView().getEditButton().setReadOnly(!readOnly);
+		availableCapabilitiesViewController.donotAllowDraggingAnyRow();
 	}
 
 	public void changeViewToEditMode()
@@ -347,6 +348,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		getControlledView().getPasswordField().setVisible(true);
 		getControlledView().getRetypedPasswordField().setVisible(true);
 		userCapabilitiesViewController.enableEditing();
+		availableCapabilitiesViewController.allowDraggingMultipleRows();
 	}
 
 	public void changeViewToViewMode()
