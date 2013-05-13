@@ -26,6 +26,7 @@ import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.datamanager.services.DataManager;
+import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewControllerBuilder;
 import com.rdonasco.security.capability.controllers.CapabilityDataManagerDecorator;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.user.views.UserEditorView;
@@ -71,7 +72,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	private UserCapabilitiesViewController userCapabilitiesViewController;
 
 	@Inject
-	private AvailableCapabilitiesViewController availableCapabilitiesViewController;
+	private AvailableCapabilitiesViewControllerBuilder availableCapabilitiesViewControllerBuilder;
 
 	private BeanItem<UserSecurityProfileItemVO> currentItem;
 
@@ -303,28 +304,23 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	{
 		getControlledView().getCapabilitiesLayout().setSpacing(true);
 		getControlledView().getCapabilitiesLayout().setMargin(true, true, true, true);
-		DataManagerContainer capabilityDataContainer = new DataManagerContainer(CapabilityItemVO.class);
-		availableCapabilitiesViewController.setDataContainer(capabilityDataContainer);
-		capabilityDataContainer.setDataManager(createAvailableCapabilitiesDataManager());
-		availableCapabilitiesViewController.getControlledView().setReadOnly(true);
-		availableCapabilitiesViewController.initializeControlledViewBehavior();
 
 		getControlledView().getCapabilitiesLayout()
 				.addComponent(userCapabilitiesViewController.getControlledView());
 		getControlledView().getCapabilitiesLayout()
-				.addComponent(availableCapabilitiesViewController.getControlledView());
+				.addComponent(getAvailableCapabilitiesViewController().getControlledView());
 		getControlledView().getCapabilitiesLayout()
 				.setExpandRatio(userCapabilitiesViewController.getControlledView(), 0.5f);
 		getControlledView().getCapabilitiesLayout()
-				.setExpandRatio(availableCapabilitiesViewController.getControlledView(), 0.5f);
+				.setExpandRatio(getAvailableCapabilitiesViewController().getControlledView(), 0.5f);
 
 		// fix the size of the panels
 		float panelHeight = 300;
 		userCapabilitiesViewController.getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
-		availableCapabilitiesViewController.getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
+		getAvailableCapabilitiesViewController().getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
 
 		// configure drag and drop of capabilities
-		userCapabilitiesViewController.setValidDraggedObjectSource(new SourceIs(availableCapabilitiesViewController.getControlledView().getEditorTable()));
+		userCapabilitiesViewController.setValidDraggedObjectSource(new SourceIs(getAvailableCapabilitiesViewController().getControlledView().getEditorTable()));
 
 	}
 
@@ -337,7 +333,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		getControlledView().getSaveButton().setReadOnly(readOnly);
 		getControlledView().getCancelButton().setReadOnly(readOnly);
 		getControlledView().getEditButton().setReadOnly(!readOnly);
-		availableCapabilitiesViewController.donotAllowDraggingAnyRow();
+		getAvailableCapabilitiesViewController().donotAllowDraggingAnyRow();
 	}
 
 	public void changeViewToEditMode()
@@ -349,7 +345,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		getControlledView().getPasswordField().setVisible(true);
 		getControlledView().getRetypedPasswordField().setVisible(true);
 		userCapabilitiesViewController.enableEditing();
-		availableCapabilitiesViewController.allowDraggingMultipleRows();
+		getAvailableCapabilitiesViewController().allowDraggingMultipleRows();
 	}
 
 	public void changeViewToViewMode()
@@ -363,50 +359,8 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		userCapabilitiesViewController.disableEditing();
 	}
 
-	private DataManager<CapabilityItemVO> createAvailableCapabilitiesDataManager()
+	protected AvailableCapabilitiesViewController getAvailableCapabilitiesViewController()
 	{
-		return new DataManager<CapabilityItemVO>()
-		{
-			@Override
-			public void deleteData(CapabilityItemVO data) throws
-					DataAccessException
-			{
-				LOG.log(Level.FINE, "deleteData not supported");
-			}
-
-			@Override
-			public CapabilityItemVO loadData(CapabilityItemVO data) throws
-					DataAccessException
-			{
-				// To change body of generated methods, choose Tools | Templates.
-				// TODO: Complete code for method loadData
-				throw new UnsupportedOperationException("Not supported yet.");
-			}
-
-			@Override
-			public List<CapabilityItemVO> retrieveAllData() throws
-					DataAccessException
-			{
-				return capabilityManager.retrieveAllData();
-			}
-
-			@Override
-			public CapabilityItemVO saveData(CapabilityItemVO data) throws
-					DataAccessException
-			{
-				// To change body of generated methods, choose Tools | Templates.
-				// TODO: Complete code for method saveData
-				throw new UnsupportedOperationException("Not supported yet.");
-			}
-
-			@Override
-			public void updateData(CapabilityItemVO data) throws
-					DataAccessException
-			{
-				// To change body of generated methods, choose Tools | Templates.
-				// TODO: Complete code for method updateData
-				throw new UnsupportedOperationException("Not supported yet.");
-			}
-		};
+		return availableCapabilitiesViewControllerBuilder.build();
 	}
 }

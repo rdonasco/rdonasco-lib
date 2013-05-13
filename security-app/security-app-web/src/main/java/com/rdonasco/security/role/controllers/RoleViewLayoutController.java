@@ -25,6 +25,7 @@ import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.datamanager.services.DataManager;
 import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewController;
+import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewControllerBuilder;
 import com.rdonasco.security.capability.controllers.CapabilityDataManagerDecorator;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.common.views.ThreeColumnFlexibleCenterViewLayout;
@@ -54,13 +55,16 @@ public class RoleViewLayoutController implements
 	private RoleListPanelViewController roleListPanelViewController;
 
 	@Inject
-	private AvailableCapabilitiesViewController availableCapabilitiesViewController;
+	private AvailableCapabilitiesViewControllerBuilder availableCapabilitiesViewControllerBuilder;
 
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
 
-	@Inject
-	private CapabilityDataManagerDecorator capabilityManager;
+
+	public AvailableCapabilitiesViewController getAvailableCapabilitiesViewController()
+	{
+		return availableCapabilitiesViewControllerBuilder.build();
+	}
 
 
 	@PostConstruct
@@ -70,10 +74,9 @@ public class RoleViewLayoutController implements
 		try
 		{
 			roleViewLayout.initWidget();
-			configureAvailableCapabilitiesViewController();
 			roleViewLayout.setLeftPanelContent(roleListPanelViewController.getControlledView());
 			roleViewLayout.setCenterPanelContent(roleEditorViewController.getControlledView());
-			roleViewLayout.addRightPanelContent(availableCapabilitiesViewController.getControlledView());
+			roleViewLayout.addRightPanelContent(getAvailableCapabilitiesViewController().getControlledView());
 		}
 		catch (WidgetInitalizeException ex)
 		{
@@ -93,59 +96,5 @@ public class RoleViewLayoutController implements
 		// To change body of generated methods, choose Tools | Templates.
 		// TODO: Complete code for method refreshView
 		throw new UnsupportedOperationException("Not supported yet.");
-	}
-	private DataManager<CapabilityItemVO> createAvailableCapabilitiesDataManager()
-	{
-		return new DataManager<CapabilityItemVO>()
-		{
-			@Override
-			public void deleteData(CapabilityItemVO data) throws
-					DataAccessException
-			{
-				LOG.log(Level.FINE, "deleteData not supported");
-			}
-
-			@Override
-			public CapabilityItemVO loadData(CapabilityItemVO data) throws
-					DataAccessException
-			{
-				// To change body of generated methods, choose Tools | Templates.
-				// TODO: Complete code for method loadData
-				throw new UnsupportedOperationException("Not supported yet.");
-			}
-
-			@Override
-			public List<CapabilityItemVO> retrieveAllData() throws
-					DataAccessException
-			{
-				return capabilityManager.retrieveAllData();
-			}
-
-			@Override
-			public CapabilityItemVO saveData(CapabilityItemVO data) throws
-					DataAccessException
-			{
-				// To change body of generated methods, choose Tools | Templates.
-				// TODO: Complete code for method saveData
-				throw new UnsupportedOperationException("Not supported yet.");
-			}
-
-			@Override
-			public void updateData(CapabilityItemVO data) throws
-					DataAccessException
-			{
-				// To change body of generated methods, choose Tools | Templates.
-				// TODO: Complete code for method updateData
-				throw new UnsupportedOperationException("Not supported yet.");
-			}
-		};
-	}
-	private void configureAvailableCapabilitiesViewController()
-	{
-		DataManagerContainer capabilityDataContainer = new DataManagerContainer(CapabilityItemVO.class);
-		availableCapabilitiesViewController.setDataContainer(capabilityDataContainer);
-		capabilityDataContainer.setDataManager(createAvailableCapabilitiesDataManager());
-		availableCapabilitiesViewController.getControlledView().setReadOnly(true);
-		availableCapabilitiesViewController.initializeControlledViewBehavior();
 	}
 }
