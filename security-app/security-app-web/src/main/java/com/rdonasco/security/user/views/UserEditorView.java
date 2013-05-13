@@ -34,7 +34,6 @@ import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.TabSheet.Tab;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import java.util.logging.Logger;
 import org.vaadin.addon.formbinder.ViewBoundForm;
 
 /**
