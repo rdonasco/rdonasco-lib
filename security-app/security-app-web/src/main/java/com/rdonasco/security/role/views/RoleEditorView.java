@@ -18,18 +18,23 @@
 package com.rdonasco.security.role.views;
 
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
+import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ControlledView;
-import com.vaadin.ui.Label;
+import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.VerticalLayout;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public class RoleEditorView extends Panel implements ControlledView
+public class RoleEditorView extends VerticalLayout implements ControlledView
 {
 	private static final long serialVersionUID = 1L;
 
+	private Panel roleDetailPanel = new Panel();
+
+	private Panel roleCapabilitiesPanel = new Panel();
 	public RoleEditorView()
 	{
 
@@ -38,6 +43,13 @@ public class RoleEditorView extends Panel implements ControlledView
 	@Override
 	public void initWidget() throws WidgetInitalizeException
 	{
-		addComponent(new Label("dummy editor content"));
+		roleDetailPanel.setCaption(I18NResource.localize("Role Editor"));
+		roleDetailPanel.setStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
+		roleCapabilitiesPanel.setCaption(I18NResource.localize("Capabilities of this role"));
+		roleCapabilitiesPanel.setStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
+		setSpacing(true);
+
+		addComponent(roleDetailPanel);
+		addComponent(roleCapabilitiesPanel);
 	}
 }

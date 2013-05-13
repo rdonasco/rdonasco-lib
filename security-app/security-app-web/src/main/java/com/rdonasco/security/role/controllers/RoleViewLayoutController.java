@@ -21,7 +21,9 @@ import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
-import com.rdonasco.security.common.views.TwoColumnFlexibleRightColumnViewLayout;
+import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.security.common.views.ThreeColumnFlexibleCenterViewLayout;
+import com.vaadin.ui.Panel;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -30,12 +32,12 @@ import javax.inject.Inject;
  * @author Roy F. Donasco
  */
 public class RoleViewLayoutController implements
-		ViewController<TwoColumnFlexibleRightColumnViewLayout>
+		ViewController<ThreeColumnFlexibleCenterViewLayout>
 {
 	private static final long serialVersionUID = 1L;
 
 	@Inject
-	private TwoColumnFlexibleRightColumnViewLayout roleViewLayout;
+	private ThreeColumnFlexibleCenterViewLayout roleViewLayout;
 
 	@Inject
 	private RoleEditorViewController roleEditorViewController;
@@ -55,6 +57,9 @@ public class RoleViewLayoutController implements
 			roleViewLayout.initWidget();
 			roleViewLayout.setLeftPanelContent(roleListPanelViewController.getControlledView());
 			roleViewLayout.setCenterPanelContent(roleEditorViewController.getControlledView());
+			final Panel dummyPanel = new Panel("dummy right panel");
+			dummyPanel.setStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
+			roleViewLayout.addRightPanelContent(dummyPanel);
 		}
 		catch (WidgetInitalizeException ex)
 		{
@@ -63,7 +68,7 @@ public class RoleViewLayoutController implements
 	}
 
 	@Override
-	public TwoColumnFlexibleRightColumnViewLayout getControlledView()
+	public ThreeColumnFlexibleCenterViewLayout getControlledView()
 	{
 		return roleViewLayout;
 	}
