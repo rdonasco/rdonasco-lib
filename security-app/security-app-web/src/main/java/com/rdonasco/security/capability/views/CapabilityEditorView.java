@@ -64,7 +64,6 @@ public class CapabilityEditorView extends VerticalLayout implements
 		setExpandRatio(capabilityActionsPanel, 1);
 
 		addStyleName(SecurityDefaultTheme.CSS_CAPABILITY_EDITOR);
-		setMargin(true);
 		setSpacing(true);
 	}
 
