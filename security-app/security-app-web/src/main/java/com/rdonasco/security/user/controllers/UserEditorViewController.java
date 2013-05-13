@@ -16,6 +16,7 @@
  */
 package com.rdonasco.security.user.controllers;
 
+import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewController;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;

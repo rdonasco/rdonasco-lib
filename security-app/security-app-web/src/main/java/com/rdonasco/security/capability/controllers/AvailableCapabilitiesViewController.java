@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.rdonasco.security.user.controllers;
+package com.rdonasco.security.capability.controllers;
 
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.datamanager.listeditor.controller.ListEditorViewPanelController;

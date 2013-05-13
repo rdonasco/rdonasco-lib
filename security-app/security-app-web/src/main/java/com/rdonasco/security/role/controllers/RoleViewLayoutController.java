@@ -22,6 +22,7 @@ import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewController;
 import com.rdonasco.security.common.views.ThreeColumnFlexibleCenterViewLayout;
 import com.vaadin.ui.Panel;
 import javax.annotation.PostConstruct;
@@ -44,6 +45,9 @@ public class RoleViewLayoutController implements
 
 	@Inject
 	private RoleListPanelViewController roleListPanelViewController;
+
+	@Inject
+	private AvailableCapabilitiesViewController availableCapabilitiesViewController;
 
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
