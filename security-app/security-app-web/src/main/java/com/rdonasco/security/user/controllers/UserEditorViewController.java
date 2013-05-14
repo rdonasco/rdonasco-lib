@@ -17,7 +17,6 @@
 package com.rdonasco.security.user.controllers;
 
 import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewController;
-import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
@@ -25,10 +24,8 @@ import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
-import com.rdonasco.datamanager.services.DataManager;
 import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewControllerBuilder;
 import com.rdonasco.security.capability.controllers.CapabilityDataManagerDecorator;
-import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.user.views.UserEditorView;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
 import com.vaadin.data.Buffered;
@@ -40,7 +37,6 @@ import com.vaadin.event.ShortcutListener;
 import com.vaadin.event.dd.acceptcriteria.SourceIs;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Button;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
