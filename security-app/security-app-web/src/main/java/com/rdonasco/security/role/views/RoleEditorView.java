@@ -22,11 +22,13 @@ import com.rdonasco.common.vaadin.view.ControlledView;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Form;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import org.vaadin.addon.formbinder.ViewBoundForm;
 
 /**
  *
@@ -53,6 +55,17 @@ public class RoleEditorView extends VerticalLayout implements ControlledView
 
 	private Table roleCapabilitiesTable = new Table();
 
+	private Form form;
+
+	public Form getForm()
+	{
+		if (form == null)
+		{
+			form = new ViewBoundForm(this);
+		}
+		return form;
+	}
+
 	public RoleEditorView()
 	{
 	}
@@ -69,6 +82,7 @@ public class RoleEditorView extends VerticalLayout implements ControlledView
 		configureRoleFields();
 		configureRoleCapabilityFields();
 		configureEditorButtons();
+		configureInitialState();
 
 		addComponent(roleDetailPanel);
 		addComponent(roleCapabilitiesPanel);
@@ -114,5 +128,26 @@ public class RoleEditorView extends VerticalLayout implements ControlledView
 		buttonLayout.setSpacing(true);
 	}
 
+	public Button getSaveButton()
+	{
+		return saveButton;
+	}
 
+	public Button getEditButton()
+	{
+		return editButton;
+	}
+
+	public Button getCancelButton()
+	{
+		return cancelButton;
+	}
+
+	private void configureInitialState()
+	{
+		getEditButton().setVisible(false);
+		getCancelButton().setVisible(false);
+		getSaveButton().setVisible(false);
+		nameField.setReadOnly(true);
+	}
 }

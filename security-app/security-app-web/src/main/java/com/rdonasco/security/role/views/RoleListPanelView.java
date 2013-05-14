@@ -19,6 +19,7 @@ package com.rdonasco.security.role.views;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ControlledView;
+import com.rdonasco.datamanager.listeditor.controller.ListEditorAttachStrategy;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import static com.vaadin.terminal.Sizeable.UNITS_PERCENTAGE;
 import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
@@ -35,7 +36,7 @@ import com.vaadin.ui.VerticalLayout;
 public class RoleListPanelView extends Panel implements
 		ControlledView
 {
-
+	private ListEditorAttachStrategy attachStrategy;
 	private static final long serialVersionUID = 1L;
 
 	private Table roleListTable;
@@ -78,5 +79,20 @@ public class RoleListPanelView extends Panel implements
 		content.setExpandRatio(getRoleListTable(), 1);
 		content.setSpacing(true);
 
+	}
+
+	public void setAttachStrategy(ListEditorAttachStrategy attachStrategy)
+	{
+		this.attachStrategy = attachStrategy;
+	}
+
+	@Override
+	public void attach()
+	{
+		super.attach();
+		if (attachStrategy != null)
+		{
+			attachStrategy.attached(this);
+		}
 	}
 }

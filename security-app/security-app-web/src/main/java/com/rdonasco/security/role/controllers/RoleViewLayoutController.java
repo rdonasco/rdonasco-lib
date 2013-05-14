@@ -14,23 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.rdonasco.security.role.controllers;
 
-import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
-import com.rdonasco.datamanager.controller.DataManagerContainer;
-import com.rdonasco.datamanager.services.DataManager;
 import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewController;
 import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewControllerBuilder;
-import com.rdonasco.security.capability.controllers.CapabilityDataManagerDecorator;
-import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.common.views.ThreeColumnFlexibleCenterViewLayout;
-import java.util.List;
-import java.util.logging.Level;
+import com.rdonasco.security.role.vo.RoleItemVO;
+import com.vaadin.data.Property;
+import com.vaadin.data.util.BeanItem;
+import com.vaadin.ui.Table;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -42,7 +38,9 @@ import javax.inject.Inject;
 public class RoleViewLayoutController implements
 		ViewController<ThreeColumnFlexibleCenterViewLayout>
 {
+
 	private static final long serialVersionUID = 1L;
+
 	private static final Logger LOG = Logger.getLogger(RoleViewLayoutController.class.getName());
 
 	@Inject
@@ -60,12 +58,10 @@ public class RoleViewLayoutController implements
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
 
-
 	public AvailableCapabilitiesViewController getAvailableCapabilitiesViewController()
 	{
 		return availableCapabilitiesViewControllerBuilder.build();
 	}
-
 
 	@PostConstruct
 	@Override
@@ -75,7 +71,20 @@ public class RoleViewLayoutController implements
 		{
 			roleViewLayout.initWidget();
 			roleViewLayout.setLeftPanelContent(roleListPanelViewController.getControlledView());
-			roleViewLayout.setCenterPanelContent(roleEditorViewController.getControlledView());
+			roleViewLayout.setCenterPanelContent(roleEditorViewController.getControlledView().getForm());
+			roleListPanelViewController.getControlledView().getRoleListTable()
+					.addListener(new Property.ValueChangeListener()
+			{
+				private static final long serialVersionUID = 1L;
+				@Override
+				public void valueChange(Property.ValueChangeEvent event)
+				{
+					Table tableSource = roleListPanelViewController.getControlledView().getRoleListTable();
+					BeanItem<RoleItemVO> beamItem = (BeanItem) tableSource.getItem(tableSource.getValue());
+					roleEditorViewController.setItemDataSource(beamItem);
+				}
+			});
+			roleEditorViewController.setRoleItemTableContainer(roleListPanelViewController.getRoleItemTableContainer());
 			roleViewLayout.addRightPanelContent(getAvailableCapabilitiesViewController().getControlledView());
 		}
 		catch (WidgetInitalizeException ex)

@@ -18,14 +18,13 @@ package com.rdonasco.security.role.controllers;
 
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.WidgetException;
-import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
+import com.rdonasco.datamanager.listeditor.controller.ListEditorAttachStrategy;
 import com.rdonasco.datamanager.utils.TableHelper;
-import com.rdonasco.security.common.builders.DeletePromptBuilder;
 import com.rdonasco.security.common.controllers.ClickListenerProvider;
 import com.rdonasco.security.common.controllers.DeleteClickListenerBuilder;
 import com.rdonasco.security.i18n.MessageKeys;
@@ -36,11 +35,9 @@ import com.rdonasco.security.role.vo.RoleItemVOBuilder;
 import com.rdonasco.security.vo.RoleVO;
 import com.rdonasco.security.vo.RoleVOBuilder;
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.event.MouseEvents;
-import com.vaadin.event.MouseEvents.ClickListener;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
-import de.steinwedel.vaadin.MessageBox;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -101,13 +98,27 @@ public class RoleListPanelViewController implements
 					addNewRole();
 				}
 			});
-			roleItemTableContainer.refresh();
+			roleListPanelView.setAttachStrategy(new ListEditorAttachStrategy()
+			{
+				@Override
+				public void attached(Component component)
+				{
+					refreshList();
+					selectTheFirstRecord();
+				}
+			});
+
 
 		}
 		catch (Exception ex)
 		{
 			getExceptionPopupProvider().popUpDebugException(ex);
 		}
+	}
+
+	public DataManagerContainer<RoleItemVO> getRoleItemTableContainer()
+	{
+		return roleItemTableContainer;
 	}
 
 	private void addNewRole()
@@ -189,7 +200,28 @@ public class RoleListPanelViewController implements
 				}
 			}
 		})
-		.createClickListenerProvider();
+				.createClickListenerProvider();
 		roleDataManager.setClickListenerProvider(deleteClickBuilder);
+	}
+
+	private void refreshList()
+	{
+		try
+		{
+			refreshView();
+		}
+		catch (WidgetException ex)
+		{
+			exceptionPopupProvider.popUpErrorException(ex);
+		}
+	}
+
+	private void selectTheFirstRecord()
+	{
+		final Object firstItemId = getControlledView().getRoleListTable().firstItemId();
+		if (null != firstItemId)
+		{
+			getControlledView().getRoleListTable().select(firstItemId);
+		}
 	}
 }
