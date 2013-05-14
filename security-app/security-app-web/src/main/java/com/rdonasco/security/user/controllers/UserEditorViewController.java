@@ -25,7 +25,6 @@ import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewControllerBuilder;
-import com.rdonasco.security.capability.controllers.CapabilityDataManagerDecorator;
 import com.rdonasco.security.user.views.UserEditorView;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
 import com.vaadin.data.Buffered;
@@ -71,9 +70,6 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	private AvailableCapabilitiesViewControllerBuilder availableCapabilitiesViewControllerBuilder;
 
 	private BeanItem<UserSecurityProfileItemVO> currentItem;
-
-	@Inject
-	private CapabilityDataManagerDecorator capabilityManager;
 
 	private Button.ClickListener cancelClickListener = new Button.ClickListener()
 	{
