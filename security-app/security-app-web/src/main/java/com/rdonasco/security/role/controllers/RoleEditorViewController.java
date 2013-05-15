@@ -24,10 +24,13 @@ import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.security.role.views.RoleEditorView;
+import com.rdonasco.security.role.vo.RoleCapabilityItemVO;
 import com.rdonasco.security.role.vo.RoleItemVO;
 import com.vaadin.data.Buffered;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Table;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -56,6 +59,8 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 	private BeanItem<RoleItemVO> currentItem;
 
 	private DataManagerContainer<RoleItemVO> roleItemTableContainer;
+
+	private BeanItemContainer<RoleCapabilityItemVO> roleCapabilitiesContainer = new BeanItemContainer<RoleCapabilityItemVO>(RoleCapabilityItemVO.class);
 
 	private Button.ClickListener cancelClickListener = new Button.ClickListener()
 	{
@@ -92,6 +97,28 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 		}
 	};
 
+	private static final String CAPABILITY_TITLE = "capability.title";
+
+	private static final String[] EDITABLE_COLUMNS = new String[]
+	{
+		"icon", CAPABILITY_TITLE
+	};
+
+	private static final String[] NON_EDITABLE_COLUMNS = new String[]
+	{
+		CAPABILITY_TITLE
+	};
+
+	private final String[] EDITABLE_HEADERS = new String[]
+	{
+		"", I18NResource.localize("Title")
+	};
+
+	private final String[] NON_EDITABLE_HEADERS = new String[]
+	{
+		I18NResource.localize("Title")
+	};
+
 	@PostConstruct
 	@Override
 	public void initializeControlledViewBehavior()
@@ -99,6 +126,7 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 		try
 		{
 			roleEditorView.initWidget();
+			configureRoleCapabilityTable();
 			configureButtonListenters();
 		}
 		catch (WidgetInitalizeException ex)
@@ -112,7 +140,6 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 	{
 		this.roleItemTableContainer = roleItemTableContainer;
 	}
-
 
 	private void saveChanges()
 	{
@@ -179,6 +206,9 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 		getControlledView().getSaveButton().setVisible(false);
 		getControlledView().getCancelButton().setVisible(false);
 		getControlledView().getEditButton().setVisible(true);
+		getControlledView().getRoleCapabilitiesTable().setVisibleColumns(NON_EDITABLE_COLUMNS);
+		getControlledView().getRoleCapabilitiesTable().setColumnHeaders(NON_EDITABLE_HEADERS);
+
 	}
 
 	private void changeViewToEditMode()
@@ -187,6 +217,8 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 		getControlledView().getSaveButton().setVisible(true);
 		getControlledView().getCancelButton().setVisible(true);
 		getControlledView().getEditButton().setVisible(false);
+		getControlledView().getRoleCapabilitiesTable().setVisibleColumns(EDITABLE_COLUMNS);
+		getControlledView().getRoleCapabilitiesTable().setColumnHeaders(EDITABLE_HEADERS);
 	}
 
 	private void configureButtonListenters()
@@ -194,5 +226,16 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 		getControlledView().getEditButton().addListener(editClickListener);
 		getControlledView().getCancelButton().addListener(cancelClickListener);
 		getControlledView().getSaveButton().addListener(saveClickListener);
+	}
+
+	private void configureRoleCapabilityTable()
+	{
+		Table roleCapabilitiesTable = getControlledView().getRoleCapabilitiesTable();
+		roleCapabilitiesTable.setSelectable(true);
+		roleCapabilitiesTable.setContainerDataSource(roleCapabilitiesContainer);
+		roleCapabilitiesContainer.addNestedContainerProperty(CAPABILITY_TITLE);
+		roleCapabilitiesTable.setVisibleColumns(EDITABLE_COLUMNS);
+		roleCapabilitiesTable.setColumnHeaders(EDITABLE_HEADERS);
+		// TODO: activate drop handler
 	}
 }

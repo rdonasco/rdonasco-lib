@@ -62,6 +62,7 @@ public class RoleEditorView extends VerticalLayout implements ControlledView
 		if (form == null)
 		{
 			form = new ViewBoundForm(this);
+			form.setWriteThrough(false);
 		}
 		return form;
 	}
