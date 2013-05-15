@@ -226,7 +226,6 @@ public class UserCapabilitiesViewController implements
 					.setIcon(icon)
 					.setUserCapabilityVO(userCapability)
 					.createUserCapabilityItemVO();
-			userCapabilityItemVO.getCapability().getTitle();
 			userCapabilityItemContainer.addItem(userCapabilityItemVO);
 			icon.addListener(new MouseEvents.ClickListener()
 			{
