@@ -16,10 +16,15 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.common.exceptions.CollectionMergeException;
 import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.common.utils.CollectionsUtility;
+import com.rdonasco.security.dao.RoleCapabilityDAO;
 import com.rdonasco.security.dao.RoleDAO;
 import com.rdonasco.security.model.Role;
+import com.rdonasco.security.model.RoleCapability;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
+import com.rdonasco.security.vo.RoleCapabilityVO;
 import com.rdonasco.security.vo.RoleVO;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -34,11 +39,14 @@ public class RoleManager implements RoleManagerLocal
 {
 
 	@Inject
-	private RoleDAO userRoleDAO;
+	private RoleDAO roleDao;
 
-	public void setUserRoleVODAO(RoleDAO userRoleDAO)
+	@Inject
+	private RoleCapabilityDAO roleCapabilityDAO;
+
+	public void setRoleDAO(RoleDAO userRoleDAO)
 	{
-		this.userRoleDAO = userRoleDAO;
+		this.roleDao = userRoleDAO;
 	}
 
 	@Override
@@ -46,7 +54,7 @@ public class RoleManager implements RoleManagerLocal
 	{
 		try
 		{
-			userRoleDAO.delete(data.getId());
+			roleDao.delete(data.getId());
 		}
 		catch (Exception ex)
 		{
@@ -61,7 +69,7 @@ public class RoleManager implements RoleManagerLocal
 		RoleVO loadedUserRoleVO = null;
 		try
 		{
-			Role foundData = userRoleDAO.findData(data.getId());
+			Role foundData = roleDao.findData(data.getId());
 			if (null != foundData)
 			{
 				loadedUserRoleVO = SecurityEntityValueObjectConverter.toRoleVO(foundData);
@@ -80,7 +88,7 @@ public class RoleManager implements RoleManagerLocal
 		List<RoleVO> userRoles = null;
 		try
 		{
-			userRoles = SecurityEntityValueObjectConverter.toRoleVOList(userRoleDAO.findAllData());
+			userRoles = SecurityEntityValueObjectConverter.toRoleVOList(roleDao.findAllData());
 		}
 		catch (Exception e)
 		{
@@ -95,7 +103,7 @@ public class RoleManager implements RoleManagerLocal
 		try
 		{
 			final Role userRole = SecurityEntityValueObjectConverter.toRole(userRoleVO);			
-			userRoleDAO.create(userRole);
+			roleDao.create(userRole);
 			userRoleVO.setId(userRole.getId());
 		}
 		catch (Exception e)
@@ -110,11 +118,52 @@ public class RoleManager implements RoleManagerLocal
 	{
 		try
 		{
-			userRoleDAO.update(SecurityEntityValueObjectConverter.toRole(data));
+			ensureThatCapabilitiesAreAssignedToThisRole(data);
+			Role updatedRoleDetails = SecurityEntityValueObjectConverter.toRole(data);
+			Role roleToUpdate = roleDao.findData(updatedRoleDetails.getId());
+			roleToUpdate.setName(updatedRoleDetails.getName());
+			roleToUpdate.setCapabilities(CollectionsUtility.updateCollection(
+					updatedRoleDetails.getCapabilities(),
+					roleToUpdate.getCapabilities(),
+					new CollectionsUtility.CollectionItemDeleteStrategy<RoleCapability>()
+			{
+				@Override
+				public void delete(RoleCapability itemToDelete) throws
+						CollectionMergeException
+				{
+					try
+					{
+						roleCapabilityDAO.delete(itemToDelete.getId());
+					}
+					catch (Exception e)
+					{
+						throw new CollectionMergeException(e);
+					}
+				}
+			}, new CollectionsUtility.CollectionItemUpdateStrategy<RoleCapability>()
+			{
+				@Override
+				public void update(RoleCapability itemToUpdate,
+						RoleCapability itemToCopy) throws
+						CollectionMergeException
+				{
+					itemToUpdate.setCapability(itemToCopy.getCapability());
+					itemToUpdate.setRole(itemToCopy.getRole());
+				}
+			}));
+			roleDao.update(roleToUpdate);
 		}
 		catch (Exception e)
 		{
 			throw new DataAccessException(e);
+		}
+	}
+
+	private void ensureThatCapabilitiesAreAssignedToThisRole(RoleVO roleVO)
+	{
+		for (RoleCapabilityVO roleCapabilityVO : roleVO.getRoleCapabilities())
+		{
+			roleCapabilityVO.setRoleVO(roleVO);
 		}
 	}
 }
