@@ -126,8 +126,11 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 		Tab capabilitiesTab = otherDetailTab.addTab(capabilitiesLayout, I18NResource.localize("Capabilities"), new ThemeResource(SecurityDefaultTheme.ICON_16x16_CAPABILITIES));
 		capabilitiesTab.getComponent().setSizeFull();
 
-		otherDetailTab.addTab(rolesLayout, I18NResource.localize("Roles"), new ThemeResource(SecurityDefaultTheme.ICON_16x16_ROLES));
-		otherDetailTab.addTab(groupsLayout, I18NResource.localize("Groups"), new ThemeResource(SecurityDefaultTheme.ICON_16x16_GROUPS));
+		Tab rolesTab = otherDetailTab.addTab(rolesLayout, I18NResource.localize("Roles"), new ThemeResource(SecurityDefaultTheme.ICON_16x16_ROLES));
+		rolesTab.getComponent().setSizeFull();
+
+		Tab groupsTab = otherDetailTab.addTab(groupsLayout, I18NResource.localize("Groups"), new ThemeResource(SecurityDefaultTheme.ICON_16x16_GROUPS));
+		groupsTab.getComponent().setSizeFull();
 
 		editButton.setCaption(I18NResource.localize("Edit"));
 		editButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_EDIT));
@@ -183,6 +186,11 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 	public HorizontalLayout getCapabilitiesLayout()
 	{
 		return capabilitiesLayout;
+	}
+
+	public HorizontalLayout getRolesLayout()
+	{
+		return rolesLayout;
 	}
 
 	public void hideButtons()
