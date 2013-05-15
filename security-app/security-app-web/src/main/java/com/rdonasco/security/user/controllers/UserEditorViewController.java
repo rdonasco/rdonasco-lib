@@ -25,6 +25,8 @@ import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewControllerBuilder;
+import com.rdonasco.security.role.controllers.AvailableRolesViewController;
+import com.rdonasco.security.role.controllers.AvailableRolesViewControllerBuilder;
 import com.rdonasco.security.user.views.UserEditorView;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
 import com.vaadin.data.Buffered;
@@ -71,6 +73,9 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 
 	@Inject
 	private AvailableCapabilitiesViewControllerBuilder availableCapabilitiesViewControllerBuilder;
+
+	@Inject
+	private AvailableRolesViewControllerBuilder availableRolesViewControllerBuilder;
 
 	private BeanItem<UserSecurityProfileItemVO> currentItem;
 
@@ -329,14 +334,18 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		getControlledView().getRolesLayout().setMargin(true, true, true, true);
 		getControlledView().getRolesLayout()
 				.addComponent(userRolesViewController.getControlledView());
-		// TODO: Add available roles panel
+		getControlledView().getRolesLayout()
+				.addComponent(getAvailableRolesViewController().getControlledView());
 		getControlledView().getRolesLayout()
 				.setExpandRatio(userRolesViewController.getControlledView(), 0.5f);
-		// TODO: setup expand ratio of available roles
+		getControlledView().getRolesLayout()
+				.setExpandRatio(getAvailableRolesViewController().getControlledView(), 0.5f);
 		// fix the size of the panels
 		float panelHeight = 300;
 		userRolesViewController.getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
-		// TODO: Configure drag and drop of roles		
+		getAvailableRolesViewController().getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
+		// Configure drag and drop of roles
+		userRolesViewController.setValidDraggedObjectSource(new SourceIs(getAvailableRolesViewController().getControlledView().getEditorTable()));
 
 	}
 
@@ -350,6 +359,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		getControlledView().getCancelButton().setReadOnly(readOnly);
 		getControlledView().getEditButton().setReadOnly(!readOnly);
 		getAvailableCapabilitiesViewController().donotAllowDraggingAnyRow();
+		getAvailableRolesViewController().donotAllowDraggingAnyRow();
 	}
 
 	public void changeViewToEditMode()
@@ -361,7 +371,9 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		getControlledView().getPasswordField().setVisible(true);
 		getControlledView().getRetypedPasswordField().setVisible(true);
 		userCapabilitiesViewController.enableEditing();
+		userRolesViewController.enableEditing();
 		getAvailableCapabilitiesViewController().allowDraggingMultipleRows();
+		getAvailableRolesViewController().allowDraggingMultipleRows();
 	}
 
 	public void changeViewToViewMode()
@@ -373,10 +385,16 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		getControlledView().getPasswordField().setVisible(false);
 		getControlledView().getRetypedPasswordField().setVisible(false);
 		userCapabilitiesViewController.disableEditing();
+		userRolesViewController.disableEditing();
 	}
 
 	protected AvailableCapabilitiesViewController getAvailableCapabilitiesViewController()
 	{
 		return availableCapabilitiesViewControllerBuilder.build();
+	}
+
+	protected AvailableRolesViewController getAvailableRolesViewController()
+	{
+		return availableRolesViewControllerBuilder.build();
 	}
 }

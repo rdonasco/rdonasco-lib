@@ -23,15 +23,12 @@ import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.security.capability.utils.IconHelper;
-import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.role.vo.RoleItemVO;
 import com.rdonasco.security.user.views.UserRolesView;
 import com.vaadin.data.util.BeanItemContainer;
-import com.rdonasco.security.user.vo.UserCapabilityItemVO;
 import com.rdonasco.security.user.vo.UserRoleItemVO;
 import com.rdonasco.security.user.vo.UserRoleItemVOBuilder;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
-import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserRoleVO;
 import com.rdonasco.security.vo.UserRoleVOBuilder;
 import com.vaadin.data.util.BeanItem;
@@ -140,7 +137,7 @@ public class UserRolesViewController implements
 			public void drop(DragAndDropEvent dropEvent)
 			{
 				final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
-				if (null != transferredData && transferredData.getItemId() instanceof CapabilityItemVO)
+				if (null != transferredData && transferredData.getItemId() instanceof RoleItemVO)
 				{
 					LOG.log(Level.FINE, "drop allowed at user capability panel");
 					final RoleItemVO droppedCapabilityItemVO = (RoleItemVO) transferredData.getItemId();

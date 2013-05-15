@@ -29,6 +29,7 @@ import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.Role;
 import com.rdonasco.security.model.UserCapability;
+import com.rdonasco.security.model.UserRole;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.vo.AccessRightsVO;
@@ -305,35 +306,8 @@ public class UserSecurityProfileManager implements
 				profileToUpdate.setPassword(profileUpdateDetails.getPassword());
 			}
 
-			profileToUpdate.setCapabilities(CollectionsUtility.updateCollection(
-					profileUpdateDetails.getCapabilities(),
-					profileToUpdate.getCapabilities(),
-					new CollectionsUtility.CollectionItemDeleteStrategy<UserCapability>()
-			{
-				@Override
-				public void delete(UserCapability itemToDelete) throws
-						CollectionMergeException
-				{
-					try
-					{
-						userCapabilityDAO.delete(itemToDelete.getId());
-					}
-					catch (Exception e)
-					{
-						throw new CollectionMergeException(e);
-					}
-				}
-			}, new CollectionsUtility.CollectionItemUpdateStrategy<UserCapability>()
-			{
-				@Override
-				public void update(UserCapability itemToUpdate,
-						UserCapability itemToCopy) throws
-						CollectionMergeException
-				{
-					itemToUpdate.setCapability(itemToCopy.getCapability());
-					itemToUpdate.setUserProfile(itemToCopy.getUserProfile());
-				}
-			}));
+			mergeCapabilities(profileToUpdate, profileUpdateDetails);
+			mergeRoles(profileToUpdate, profileUpdateDetails);
 
 			userSecurityProfileDAO.update(profileToUpdate);
 		}
@@ -350,5 +324,75 @@ public class UserSecurityProfileManager implements
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put(UserCapability.QUERY_PARAM_CAPABILITY_ID, capability.getId());
 		return userSecurityProfileDAO.executeUpdateUsingNamedQuery(UserCapability.NAMED_QUERY_DELETE_CAPABILITY_WITH_ID, parameters);
+	}
+
+	private void mergeCapabilities(UserSecurityProfile profileToUpdate,
+			UserSecurityProfile profileUpdateDetails) throws
+			CollectionMergeException
+	{
+		profileToUpdate.setCapabilities(CollectionsUtility.updateCollection(
+				profileUpdateDetails.getCapabilities(),
+				profileToUpdate.getCapabilities(),
+				new CollectionsUtility.CollectionItemDeleteStrategy<UserCapability>()
+		{
+			@Override
+			public void delete(UserCapability itemToDelete) throws
+					CollectionMergeException
+			{
+				try
+				{
+					userCapabilityDAO.delete(itemToDelete.getId());
+				}
+				catch (Exception e)
+				{
+					throw new CollectionMergeException(e);
+				}
+			}
+		}, new CollectionsUtility.CollectionItemUpdateStrategy<UserCapability>()
+		{
+			@Override
+			public void update(UserCapability itemToUpdate,
+					UserCapability itemToCopy) throws
+					CollectionMergeException
+			{
+				itemToUpdate.setCapability(itemToCopy.getCapability());
+				itemToUpdate.setUserProfile(itemToCopy.getUserProfile());
+			}
+		}));
+	}
+
+	private void mergeRoles(UserSecurityProfile profileToUpdate,
+			UserSecurityProfile profileUpdateDetails) throws
+			CollectionMergeException
+	{
+		profileToUpdate.setRoles(CollectionsUtility.updateCollection(
+				profileUpdateDetails.getRoles(),
+				profileToUpdate.getRoles(),
+				new CollectionsUtility.CollectionItemDeleteStrategy<UserRole>()
+		{
+			@Override
+			public void delete(UserRole itemToDelete) throws
+					CollectionMergeException
+			{
+				try
+				{
+					userRoleDAO.delete(itemToDelete.getId());
+				}
+				catch (Exception e)
+				{
+					throw new CollectionMergeException(e);
+				}
+			}
+		}, new CollectionsUtility.CollectionItemUpdateStrategy<UserRole>()
+		{
+			@Override
+			public void update(UserRole itemToUpdate,
+					UserRole itemToCopy) throws
+					CollectionMergeException
+			{
+				itemToUpdate.setRole(itemToCopy.getRole());
+				itemToUpdate.setUserProfile(itemToCopy.getUserProfile());
+			}
+		}));
 	}
 }
