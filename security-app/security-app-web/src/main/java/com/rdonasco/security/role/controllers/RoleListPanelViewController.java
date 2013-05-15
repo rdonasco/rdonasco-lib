@@ -191,7 +191,13 @@ public class RoleListPanelViewController implements
 			{
 				try
 				{
+					RoleItemVO nextItem = roleItemTableContainer.nextItemId(itemToDelete);
 					roleItemTableContainer.removeItem(itemToDelete);
+					if (nextItem != null)
+					{
+						getControlledView().getRoleListTable().select(nextItem);
+					}
+
 					getPopupProvider().popUpInfo(I18NResource.localize(MessageKeys.ROLE_DELETED));
 				}
 				catch (Exception e)
