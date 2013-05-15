@@ -67,6 +67,9 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	private UserCapabilitiesViewController userCapabilitiesViewController;
 
 	@Inject
+	private UserRolesViewController userRolesViewController;
+
+	@Inject
 	private AvailableCapabilitiesViewControllerBuilder availableCapabilitiesViewControllerBuilder;
 
 	private BeanItem<UserSecurityProfileItemVO> currentItem;
@@ -99,6 +102,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 			configureButtonListeners();
 			configureFieldValidators();
 			configureCapabilitiesTab();
+			configureRolesTab();
 			changeViewToViewMode();
 
 		}
@@ -117,6 +121,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	{
 		this.currentItem = currentItem;
 		userCapabilitiesViewController.setCurrentProfile(getCurrentItem());
+		userRolesViewController.setCurrentProfile(getCurrentItem());
 		changeViewToViewMode();
 	}
 
@@ -266,6 +271,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		try
 		{
 			userCapabilitiesViewController.commit();
+			userRolesViewController.commit();
 			getControlledView().getForm().commit();
 			changeViewToViewMode();
 			userItemTableContainer.updateItem(getCurrentItem().getBean());
@@ -283,6 +289,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	{
 		getControlledView().getForm().discard();
 		userCapabilitiesViewController.discardChanges();
+		userRolesViewController.discardChanges();
 		setCurrentItem(currentItem);
 		changeViewToViewMode();
 	}
@@ -313,6 +320,23 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 
 		// configure drag and drop of capabilities
 		userCapabilitiesViewController.setValidDraggedObjectSource(new SourceIs(getAvailableCapabilitiesViewController().getControlledView().getEditorTable()));
+
+	}
+
+	private void configureRolesTab()
+	{
+		getControlledView().getRolesLayout().setSpacing(true);
+		getControlledView().getRolesLayout().setMargin(true, true, true, true);
+		getControlledView().getRolesLayout()
+				.addComponent(userRolesViewController.getControlledView());
+		// TODO: Add available roles panel
+		getControlledView().getRolesLayout()
+				.setExpandRatio(userRolesViewController.getControlledView(), 0.5f);
+		// TODO: setup expand ratio of available roles
+		// fix the size of the panels
+		float panelHeight = 300;
+		userRolesViewController.getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
+		// TODO: Configure drag and drop of roles		
 
 	}
 
