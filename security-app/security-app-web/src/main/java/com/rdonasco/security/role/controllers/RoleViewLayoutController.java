@@ -27,7 +27,6 @@ import com.rdonasco.security.role.vo.RoleItemVO;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Table;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -40,8 +39,6 @@ public class RoleViewLayoutController implements
 {
 
 	private static final long serialVersionUID = 1L;
-
-	private static final Logger LOG = Logger.getLogger(RoleViewLayoutController.class.getName());
 
 	@Inject
 	private ThreeColumnFlexibleCenterViewLayout roleViewLayout;
