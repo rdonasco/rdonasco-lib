@@ -18,13 +18,22 @@
 package com.rdonasco.security.role.vo;
 
 import com.rdonasco.security.vo.RoleCapabilityVO;
+import com.vaadin.ui.Embedded;
 
 public class RoleCapabilityItemVOBuilder 
 {
 	private RoleCapabilityVO roleCapabilityVO;
 
+	private Embedded icon;
+
 	public RoleCapabilityItemVOBuilder()
 	{
+	}
+
+	public RoleCapabilityItemVOBuilder setIcon(Embedded icon)
+	{
+		this.icon = icon;
+		return this;
 	}
 
 	public RoleCapabilityItemVOBuilder setRoleCapabilityVO(
@@ -36,7 +45,7 @@ public class RoleCapabilityItemVOBuilder
 
 	public RoleCapabilityItemVO createRoleCapabilityItemVO()
 	{
-		return new RoleCapabilityItemVO(roleCapabilityVO);
+		return new RoleCapabilityItemVO(icon, roleCapabilityVO);
 	}
 
 }

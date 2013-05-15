@@ -83,6 +83,7 @@ public class RoleViewLayoutController implements
 			});
 			roleEditorViewController.setRoleItemTableContainer(roleListPanelViewController.getRoleItemTableContainer());
 			roleViewLayout.addRightPanelContent(getAvailableCapabilitiesViewController().getControlledView());
+			getAvailableCapabilitiesViewController().allowDraggingMultipleRows();
 		}
 		catch (WidgetInitalizeException ex)
 		{

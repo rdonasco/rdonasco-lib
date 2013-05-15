@@ -36,8 +36,9 @@ public class RoleCapabilityItemVO implements Serializable, ListEditorItem
 
 	private RoleCapabilityVO roleCapabilityVO;
 
-	RoleCapabilityItemVO(RoleCapabilityVO roleCapabilityVO)
+	RoleCapabilityItemVO(Embedded icon, RoleCapabilityVO roleCapabilityVO)
 	{
+		this.icon = icon;
 		this.roleCapabilityVO = roleCapabilityVO;
 	}
 
@@ -56,6 +57,11 @@ public class RoleCapabilityItemVO implements Serializable, ListEditorItem
 	public Long getId()
 	{
 		return roleCapabilityVO.getId();
+	}
+
+	public RoleCapabilityVO getRoleCapabilityVO()
+	{
+		return roleCapabilityVO;
 	}
 
 	public void setId(Long id)
