@@ -117,7 +117,7 @@ public class SecurityGroupDataManagerLocalTest
 		SecurityGroupVO updatedGroupVO = securityGroupDataManager.loadData(groupVO);
 		assertNotNull(updatedGroupVO);
 		assertNotNull("null roles", updatedGroupVO.getGroupRoleVOs());
-		assertTrue("empty roles", updatedGroupVO.getGroupRoleVOs().isEmpty());
+		assertFalse("empty roles", updatedGroupVO.getGroupRoleVOs().isEmpty());
 		assertTrue("role not found in group", updatedGroupVO.getGroupRoleVOs().contains(groupRole));
 
 	}

@@ -16,9 +16,13 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.common.exceptions.CollectionMergeException;
 import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.common.utils.CollectionsUtility;
 import com.rdonasco.security.dao.SecurityGroupDAO;
+import com.rdonasco.security.dao.SecurityGroupRoleDAO;
 import com.rdonasco.security.model.SecurityGroup;
+import com.rdonasco.security.model.SecurityGroupRole;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.vo.SecurityGroupVO;
 import java.util.List;
@@ -36,10 +40,20 @@ public class SecurityGroupDataManager implements SecurityGroupDataManagerLocal
 	@Inject
 	private SecurityGroupDAO securityGroupDAO;
 
+	@Inject
+	private SecurityGroupRoleDAO securityGroupRoleDAO;
+
 	public void setSecurityGroupDAO(SecurityGroupDAO securityGroupDAO)
 	{
 		this.securityGroupDAO = securityGroupDAO;
 	}
+
+	public void setSecurityGroupRoleDAO(
+			SecurityGroupRoleDAO securityGroupRoleDAO)
+	{
+		this.securityGroupRoleDAO = securityGroupRoleDAO;
+	}
+
 
 	@Override
 	public void deleteData(SecurityGroupVO data) throws DataAccessException
@@ -61,11 +75,11 @@ public class SecurityGroupDataManager implements SecurityGroupDataManagerLocal
 		SecurityGroupVO securityGroupVO = null;
 		try
 		{
-		SecurityGroup loadedData = securityGroupDAO.findData(data.getId());
-		if (null == loadedData)
-		{
-			throw new DataAccessException("Record not found");
-		}
+			SecurityGroup loadedData = securityGroupDAO.findData(data.getId());
+			if (null == loadedData)
+			{
+				throw new DataAccessException("Record not found");
+			}
 			securityGroupVO = SecurityEntityValueObjectConverter.toSecurityGroupVO(loadedData);
 		}
 		catch (Exception e)
@@ -82,7 +96,7 @@ public class SecurityGroupDataManager implements SecurityGroupDataManagerLocal
 		List<SecurityGroupVO> allGroupVO;
 		try
 		{
-		List<SecurityGroup> allGroup = securityGroupDAO.findAllData();
+			List<SecurityGroup> allGroup = securityGroupDAO.findAllData();
 			allGroupVO = SecurityEntityValueObjectConverter.toSecurityGroupVOList(allGroup);
 		}
 		catch (Exception e)
@@ -116,8 +130,40 @@ public class SecurityGroupDataManager implements SecurityGroupDataManagerLocal
 	{
 		try
 		{
-			SecurityGroup securityGroup = SecurityEntityValueObjectConverter.toSecurityGroup(dataToUpdate);
-			securityGroupDAO.update(securityGroup);
+			SecurityGroup securityGroupWithUpdatedDetails = SecurityEntityValueObjectConverter.toSecurityGroup(dataToUpdate);
+			SecurityGroup securityGroupToUpdate = securityGroupDAO.findData(securityGroupWithUpdatedDetails.getId());
+			securityGroupToUpdate.setName(securityGroupWithUpdatedDetails.getName());
+			securityGroupToUpdate.setGroupRoles(CollectionsUtility.updateCollection(
+					securityGroupWithUpdatedDetails.getGroupRoles(),
+					securityGroupToUpdate.getGroupRoles(), new CollectionsUtility.CollectionItemDeleteStrategy<SecurityGroupRole>()
+			{
+				@Override
+				public void delete(SecurityGroupRole itemToDelete) throws
+						CollectionMergeException
+				{
+					try
+					{
+						securityGroupRoleDAO.delete(itemToDelete.getId());
+					}
+					catch (Exception e)
+					{
+						throw new CollectionMergeException(e);
+					}
+
+				}
+			}, new CollectionsUtility.CollectionItemUpdateStrategy<SecurityGroupRole>()
+			{
+				@Override
+				public void update(SecurityGroupRole itemToUpdate,
+						SecurityGroupRole itemToCopy) throws
+						CollectionMergeException
+				{
+					itemToUpdate.setRole(itemToCopy.getRole());
+					itemToUpdate.setSecurityGroup(itemToCopy.getSecurityGroup());
+				}
+			}));
+
+			securityGroupDAO.update(securityGroupToUpdate);
 		}
 		catch (Exception ex)
 		{
