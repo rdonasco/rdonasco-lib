@@ -16,7 +16,6 @@
  */
 package com.rdonasco.security.utils;
 
-import javax.crypto.SecretKeyFactory;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -30,6 +29,7 @@ import static org.junit.Assert.*;
  */
 public class EncryptionUtilTest
 {
+	private static final String PASSWORD_TO_ENCRYPT = "password to encrypt";
 	
 	public EncryptionUtilTest()
 	{
@@ -63,7 +63,7 @@ public class EncryptionUtilTest
 	{
 		System.out.println("encryptWithPassword");
 		String stringToEncrypt = "cool password of you know who";
-		String password = "password to encrypt";
+		String password = PASSWORD_TO_ENCRYPT;
 		String result = EncryptionUtil.encryptWithPassword(stringToEncrypt, password);
 		System.out.println("result = " + result);
 		assertNotSame(stringToEncrypt, result);
@@ -73,8 +73,8 @@ public class EncryptionUtilTest
 	public void testEncryptSameStringAsPassword() throws Exception
 	{
 		System.out.println("EncryptSameStringAsPassword");
-		String stringToEncrypt = "password to encrypt";
-		String password = "password to encrypt";
+		String stringToEncrypt = PASSWORD_TO_ENCRYPT;
+		String password = PASSWORD_TO_ENCRYPT;
 		String result = EncryptionUtil.encryptWithPassword(stringToEncrypt, password);
 		System.out.println("result = " + result);
 		assertNotSame(stringToEncrypt, result);
@@ -88,7 +88,7 @@ public class EncryptionUtilTest
 	{
 		System.out.println("decryptWithPassword");
 		String encryptedString = "CcodRLCmRG904cla/U374NYVvCk75Z1UI+kpD8H5fVk=";
-		String password = "password to encrypt";
+		String password = PASSWORD_TO_ENCRYPT;
 		String expResult = "cool password of you know who";
 		String result = EncryptionUtil.decryptWithPassword(encryptedString, password);
 		System.out.println("result = " + result);
