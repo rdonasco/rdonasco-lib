@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -41,6 +43,7 @@ import org.apache.commons.codec.binary.Base64;
  */
 public class EncryptionUtil
 {
+	private static final Logger LOG = Logger.getLogger(EncryptionUtil.class.getName());
 
 	/**
 	 * Creates a new instance of EncryptionUtil
@@ -142,7 +145,7 @@ public class EncryptionUtil
 				}
 				catch (IOException ex)
 				{
-					ex.printStackTrace();
+					LOG.log(Level.SEVERE, ex.getMessage(), ex);
 				}
 			}
 			if (null != fos)
@@ -153,7 +156,7 @@ public class EncryptionUtil
 				}
 				catch (IOException ex)
 				{
-					ex.printStackTrace();
+					LOG.log(Level.SEVERE, ex.getMessage(), ex);
 				}
 			}
 		}
