@@ -58,12 +58,21 @@ public class SecurityGroupDataManager implements SecurityGroupDataManagerLocal
 	public SecurityGroupVO loadData(SecurityGroupVO data) throws
 			DataAccessException
 	{
+		SecurityGroupVO securityGroupVO = null;
+		try
+		{
 		SecurityGroup loadedData = securityGroupDAO.findData(data.getId());
 		if (null == loadedData)
 		{
 			throw new DataAccessException("Record not found");
 		}
-		SecurityGroupVO securityGroupVO = SecurityEntityValueObjectConverter.toSecurityGroupVO(loadedData);
+			securityGroupVO = SecurityEntityValueObjectConverter.toSecurityGroupVO(loadedData);
+		}
+		catch (Exception e)
+		{
+			throw new DataAccessException(e);
+		}
+
 		return securityGroupVO;
 	}
 
@@ -71,8 +80,15 @@ public class SecurityGroupDataManager implements SecurityGroupDataManagerLocal
 	public List<SecurityGroupVO> retrieveAllData() throws DataAccessException
 	{
 		List<SecurityGroupVO> allGroupVO;
+		try
+		{
 		List<SecurityGroup> allGroup = securityGroupDAO.findAllData();
-		allGroupVO = SecurityEntityValueObjectConverter.toSecurityGroupVOList(allGroup);
+			allGroupVO = SecurityEntityValueObjectConverter.toSecurityGroupVOList(allGroup);
+		}
+		catch (Exception e)
+		{
+			throw new DataAccessException(e);
+		}
 		return allGroupVO;
 	}
 

@@ -18,8 +18,6 @@ package com.rdonasco.security.model;
 
 import com.rdonasco.security.utils.SecurityConstants;
 import java.io.Serializable;
-import java.util.Collection;
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,22 +25,29 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.UniqueConstraint;
 
 /**
  *
  * @author Roy F. Donasco
  */
 @Entity
-@Table(name = "security_group")
-public class SecurityGroup implements Serializable
+@Table(name = "security_group_role", uniqueConstraints =
+		@UniqueConstraint(columnNames =
+{
+	"security_group_id",
+	"role_id"
+}, name = "unique_security_role"))
+public class SecurityGroupRole implements Serializable
 {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String GENERATOR_KEY = "GROUP_IDGEN";
+	private static final String GENERATOR_KEY = "ACTION_IDGEN";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = GENERATOR_KEY)
@@ -50,12 +55,13 @@ public class SecurityGroup implements Serializable
 	@Column(name = "id", nullable = false)
 	private Long id;
 
-	@Basic(optional = false)
-	@Column(name = "name", nullable = false, length = 256, unique = true)
-	private String name;
+	@JoinColumn(name = "security_group_id", referencedColumnName = "id", nullable = false)
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	private SecurityGroup securityGroup;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "securityGroup", fetch = FetchType.LAZY)
-	private Collection<SecurityGroupRole> groupRoles;
+	@JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
+	@ManyToOne(cascade = CascadeType.REFRESH, optional = false, fetch = FetchType.EAGER)
+	private Role role;
 
 	public Long getId()
 	{
@@ -67,32 +73,33 @@ public class SecurityGroup implements Serializable
 		this.id = id;
 	}
 
-	public String getName()
+	public SecurityGroup getSecurityGroup()
 	{
-		return name;
+		return securityGroup;
 	}
 
-	public void setName(String name)
+	public void setSecurityGroup(
+			SecurityGroup securityGroup)
 	{
-		this.name = name;
+		this.securityGroup = securityGroup;
 	}
 
-	public Collection<SecurityGroupRole> getGroupRoles()
+	public Role getRole()
 	{
-		return groupRoles;
+		return role;
 	}
 
-	public void setGroupRoles(
-			Collection<SecurityGroupRole> groupRoles)
+	public void setRole(Role role)
 	{
-		this.groupRoles = groupRoles;
+		this.role = role;
 	}
 
 	@Override
 	public int hashCode()
 	{
 		int hash = 5;
-		hash = 79 * hash + (this.id != null ? this.id.hashCode() : 0);
+		hash = 53 * hash + (this.securityGroup != null ? this.securityGroup.hashCode() : 0);
+		hash = 53 * hash + (this.role != null ? this.role.hashCode() : 0);
 		return hash;
 	}
 
@@ -110,18 +117,16 @@ public class SecurityGroup implements Serializable
 		}
 		else
 		{
-			final SecurityGroup other = (SecurityGroup) obj;
-			if (this.id != other.id && (this.id == null || !this.id.equals(other.id)))
+			final SecurityGroupRole other = (SecurityGroupRole) obj;
+			if (this.securityGroup != other.securityGroup && (this.securityGroup == null || !this.securityGroup.equals(other.securityGroup)))
+			{
+				isEqual = false;
+			}
+			else if (this.role != other.role && (this.role == null || !this.role.equals(other.role)))
 			{
 				isEqual = false;
 			}
 		}
 		return isEqual;
-	}
-
-	@Override
-	public String toString()
-	{
-		return "UserGroup{" + "id=" + id + ", name=" + name + '}';
 	}
 }

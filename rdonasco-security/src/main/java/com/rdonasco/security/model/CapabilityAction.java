@@ -37,8 +37,8 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(name = "capability_action", catalog = "", schema = "",
-uniqueConstraints =
-@UniqueConstraint(
+		uniqueConstraints =
+		@UniqueConstraint(
 		columnNames =
 {
 	"capability_id", "action_id"
@@ -47,21 +47,26 @@ public class CapabilityAction implements Serializable
 {
 
 	public static final String NAMED_QUERY_FIND_ACTION_BY_NAME = "findActionByName";
+
 	public static final String QUERY_PARAM_ACTION = "action";
+
 	private static final long serialVersionUID = 1L;
+
 	private static final String GENERATOR_KEY = "ACTION_IDGEN";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = GENERATOR_KEY)
 	@TableGenerator(name = GENERATOR_KEY, table = SecurityConstants.TABLE_SEQUENCE)
 	@Column(name = "id", nullable = false)
 	private Long id;
+
 	@JoinColumn(name = "capability_id", referencedColumnName = "id", nullable = false)
 	@ManyToOne(optional = false, fetch = FetchType.EAGER)
 	private Capability capability;
-	@JoinColumn(name = "action_id", referencedColumnName = "id", nullable = false)
-	@ManyToOne(cascade= CascadeType.REFRESH ,optional = false, fetch= FetchType.EAGER)
-	private Action action;
 
+	@JoinColumn(name = "action_id", referencedColumnName = "id", nullable = false)
+	@ManyToOne(cascade = CascadeType.REFRESH, optional = false, fetch = FetchType.EAGER)
+	private Action action;
 
 	public Long getId()
 	{
@@ -93,31 +98,6 @@ public class CapabilityAction implements Serializable
 		this.action = action;
 	}
 
-
-
-//	@Override
-//	public int hashCode()
-//	{
-//		int hash = 0;
-//		hash += (id != null ? id.hashCode() : 0);
-//		return hash;
-//	}
-//
-//	@Override
-//	public boolean equals(Object object)
-//	{
-//		boolean isEqual = true;
-//		if (isEqual && !(object instanceof CapabilityAction))
-//		{
-//			isEqual = false;
-//		}
-//		CapabilityAction other = (CapabilityAction) object;
-//		if (isEqual && ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))))
-//		{
-//			isEqual = false;
-//		}
-//		return isEqual;
-//	}
 	@Override
 	public int hashCode()
 	{
@@ -130,24 +110,28 @@ public class CapabilityAction implements Serializable
 	@Override
 	public boolean equals(Object obj)
 	{
+		boolean isEqual = true;
 		if (obj == null)
 		{
-			return false;
+			isEqual = false;
 		}
-		if (getClass() != obj.getClass())
+		else if (getClass() != obj.getClass())
 		{
-			return false;
+			isEqual = false;
 		}
-		final CapabilityAction other = (CapabilityAction) obj;
-		if (this.capability != other.capability && (this.capability == null || !this.capability.equals(other.capability)))
+		else
 		{
-			return false;
+			final CapabilityAction other = (CapabilityAction) obj;
+			if (this.capability != other.capability && (this.capability == null || !this.capability.equals(other.capability)))
+			{
+				isEqual = false;
+			}
+			else if (this.action != other.action && (this.action == null || !this.action.equals(other.action)))
+			{
+				isEqual = false;
+			}
 		}
-		if (this.action != other.action && (this.action == null || !this.action.equals(other.action)))
-		{
-			return false;
-		}
-		return true;
+		return isEqual;
 	}
 
 	@Override

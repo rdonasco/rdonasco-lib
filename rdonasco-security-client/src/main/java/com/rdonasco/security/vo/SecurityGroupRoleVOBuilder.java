@@ -14,45 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.rdonasco.security.vo;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class SecurityGroupVOBuilder 
+public class SecurityGroupRoleVOBuilder
 {
+
+	private SecurityGroupVO securityGroup;
+
+	private RoleVO role;
+
 	private Long id;
 
-	private String name;
-
-	private List<SecurityGroupRoleVO> securityGroupRoleVOs = new ArrayList<SecurityGroupRoleVO>();
-
-	public SecurityGroupVOBuilder()
+	public SecurityGroupRoleVOBuilder()
 	{
 	}
 
-	public SecurityGroupVOBuilder setId(Long id)
+	public SecurityGroupRoleVOBuilder setId(Long id)
 	{
 		this.id = id;
 		return this;
 	}
 
-	public SecurityGroupVOBuilder setName(String name)
+	public SecurityGroupRoleVOBuilder setSecurityGroup(
+			SecurityGroupVO securityGroup)
 	{
-		this.name = name;
+		this.securityGroup = securityGroup;
 		return this;
 	}
 
-	public SecurityGroupVOBuilder setSecurityGroupRoles(
-			List<SecurityGroupRoleVO> securityGroupRoleVOs)
+	public SecurityGroupRoleVOBuilder setRole(RoleVO role)
 	{
-		this.securityGroupRoleVOs = securityGroupRoleVOs;
+		this.role = role;
 		return this;
 	}
 
-	public SecurityGroupVO createSecurityGroupVO()
+	public SecurityGroupRoleVO createSecurityGroupRoleVO()
 	{
-		return new SecurityGroupVO(id, name, securityGroupRoleVOs);
+		return new SecurityGroupRoleVO(id, securityGroup, role);
 	}
 }

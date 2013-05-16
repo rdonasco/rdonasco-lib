@@ -17,32 +17,27 @@
 package com.rdonasco.security.vo;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public class SecurityGroupVO implements Serializable
+public class SecurityGroupRoleVO implements Serializable
 {
 
 	private static final long serialVersionUID = 1L;
 
+	private SecurityGroupVO securityGroup;
+
+	private RoleVO role;
+
 	private Long id;
 
-	private String name;
-
-	private List<SecurityGroupRoleVO> roles;
-
-	SecurityGroupVO(Long id, String name, List<SecurityGroupRoleVO> roles)
+	SecurityGroupRoleVO(Long id, SecurityGroupVO securityGroup, RoleVO role)
 	{
 		this.id = id;
-		this.name = name;
-		this.roles = roles;
-		for (SecurityGroupRoleVO securityGroupRoleVO : this.roles)
-		{
-			securityGroupRoleVO.setSecurityGroup(this);
-		}
+		this.securityGroup = securityGroup;
+		this.role = role;
 	}
 
 	public Long getId()
@@ -50,37 +45,32 @@ public class SecurityGroupVO implements Serializable
 		return id;
 	}
 
-	public void setId(Long id)
+	public String getRoleName()
 	{
-		this.id = id;
+		return role.getName();
 	}
 
-	public String getName()
+	public RoleVO getRoleVO()
 	{
-		return name;
+		return role;
 	}
 
-	public void setName(String name)
+	void setSecurityGroup(SecurityGroupVO parentSecurityGroup)
 	{
-		this.name = name;
+		securityGroup = parentSecurityGroup;
 	}
 
-	public List<SecurityGroupRoleVO> getGroupRoleVOs()
+	public SecurityGroupVO getSecurityGroup()
 	{
-		return roles;
-	}
-
-	public void setGroupRoleVOs(
-			List<SecurityGroupRoleVO> roles)
-	{
-		this.roles = roles;
+		return securityGroup;
 	}
 
 	@Override
 	public int hashCode()
 	{
 		int hash = 7;
-		hash = 29 * hash + (this.id != null ? this.id.hashCode() : 0);
+		hash = 97 * hash + (this.securityGroup != null ? this.securityGroup.hashCode() : 0);
+		hash = 97 * hash + (this.role != null ? this.role.hashCode() : 0);
 		return hash;
 	}
 
@@ -98,8 +88,12 @@ public class SecurityGroupVO implements Serializable
 		}
 		else
 		{
-			final SecurityGroupVO other = (SecurityGroupVO) obj;
-			if (this.id != other.id && (this.id == null || !this.id.equals(other.id)))
+			final SecurityGroupRoleVO other = (SecurityGroupRoleVO) obj;
+			if (this.securityGroup != other.securityGroup && (this.securityGroup == null || !this.securityGroup.equals(other.securityGroup)))
+			{
+				isEqual = false;
+			}
+			else if (this.role != other.role && (this.role == null || !this.role.equals(other.role)))
 			{
 				isEqual = false;
 			}
@@ -110,6 +104,7 @@ public class SecurityGroupVO implements Serializable
 	@Override
 	public String toString()
 	{
-		return "SecurityGroupVO{" + "id=" + id + ", name=" + name + '}';
+		return "SecurityGroupRoleVO{" + getRoleName() + '}';
 	}
+
 }

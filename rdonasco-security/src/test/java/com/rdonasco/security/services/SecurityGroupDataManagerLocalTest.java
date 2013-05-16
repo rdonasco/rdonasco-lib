@@ -19,8 +19,14 @@ package com.rdonasco.security.services;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.security.dao.SecurityGroupDAO;
 import com.rdonasco.security.model.SecurityGroup;
+import com.rdonasco.security.model.SecurityGroupRole;
 import com.rdonasco.security.utils.ArchiveCreator;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
+import com.rdonasco.security.vo.RoleCapabilityVOBuilder;
+import com.rdonasco.security.vo.RoleVO;
+import com.rdonasco.security.vo.RoleVOBuilder;
+import com.rdonasco.security.vo.SecurityGroupRoleVO;
+import com.rdonasco.security.vo.SecurityGroupRoleVOBuilder;
 import com.rdonasco.security.vo.SecurityGroupVO;
 import com.rdonasco.security.vo.SecurityGroupVOBuilder;
 import java.util.List;
@@ -46,6 +52,9 @@ public class SecurityGroupDataManagerLocalTest
 
 	@EJB
 	private SecurityGroupDataManagerLocal securityGroupDataManager;
+
+	@EJB
+	private RoleManagerLocal roleManager;
 
 	public SecurityGroupDataManagerLocalTest()
 	{
@@ -88,13 +97,29 @@ public class SecurityGroupDataManagerLocalTest
 	public void testCreateGroup() throws Exception
 	{
 		System.out.println("createGroup");
-
-		SecurityGroupVO securityGroup = new SecurityGroupVOBuilder()
-				.setName("new group")
-				.createSecurityGroupVO();
-		SecurityGroupVO savedData = securityGroupDataManager.saveData(securityGroup);
+		SecurityGroupVO savedData = createGroupNamed("new group");
 		assertNotNull("data not saved", savedData);
 		assertNotNull("id not assigned", savedData.getId());
+	}
+
+	@Test
+	public void testCreateGroupWithRoles() throws Exception
+	{
+		System.out.println("createGroupWithRoles");
+		SecurityGroupVO groupVO = createGroupNamed("User Group Managers");
+		RoleVO role = createRoleNamed("UserGroup Manager");
+		SecurityGroupRoleVO groupRole = new SecurityGroupRoleVOBuilder()
+				.setRole(role)
+				.setSecurityGroup(groupVO)
+				.createSecurityGroupRoleVO();
+		groupVO.getGroupRoleVOs().add(groupRole);
+		securityGroupDataManager.updateData(groupVO);
+		SecurityGroupVO updatedGroupVO = securityGroupDataManager.loadData(groupVO);
+		assertNotNull(updatedGroupVO);
+		assertNotNull("null roles", updatedGroupVO.getGroupRoleVOs());
+		assertTrue("empty roles", updatedGroupVO.getGroupRoleVOs().isEmpty());
+		assertTrue("role not found in group", updatedGroupVO.getGroupRoleVOs().contains(groupRole));
+
 	}
 
 	@Test
@@ -136,5 +161,24 @@ public class SecurityGroupDataManagerLocalTest
 		assertTrue("empty group list", allData.size() > 0);
 		assertTrue("data is missing from the list", allData.contains(savedData));
 		
+	}
+
+	private SecurityGroupVO createGroupNamed(final String groupName) throws
+			DataAccessException
+	{
+		SecurityGroupVO securityGroup = new SecurityGroupVOBuilder()
+				.setName(groupName)
+				.createSecurityGroupVO();
+		SecurityGroupVO savedData = securityGroupDataManager.saveData(securityGroup);
+		return savedData;
+	}
+
+	private RoleVO createRoleNamed(final String roleName) throws
+			DataAccessException
+	{
+		RoleVO roleToUse = new RoleVOBuilder()
+				.setName(roleName)
+				.createUserRoleVO();
+		return roleManager.saveData(roleToUse);
 	}
 }

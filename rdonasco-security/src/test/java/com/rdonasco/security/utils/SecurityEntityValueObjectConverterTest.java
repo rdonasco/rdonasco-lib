@@ -10,6 +10,8 @@ import com.rdonasco.security.model.CapabilityAction;
 import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.model.Role;
 import com.rdonasco.security.model.RoleCapability;
+import com.rdonasco.security.model.SecurityGroup;
+import com.rdonasco.security.model.SecurityGroupRole;
 import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.ActionVO;
@@ -20,9 +22,15 @@ import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
 import com.rdonasco.security.vo.RoleCapabilityVO;
 import com.rdonasco.security.vo.RoleVO;
+import com.rdonasco.security.vo.SecurityGroupRoleVO;
+import com.rdonasco.security.vo.SecurityGroupRoleVOBuilder;
+import com.rdonasco.security.vo.SecurityGroupVO;
+import com.rdonasco.security.vo.SecurityGroupVOBuilder;
 import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -39,6 +47,7 @@ import static org.junit.Assert.*;
  */
 public class SecurityEntityValueObjectConverterTest
 {
+
 	private static final String ID_MISMATCH = "id mismatch";
 
 	public SecurityEntityValueObjectConverterTest()
@@ -102,15 +111,15 @@ public class SecurityEntityValueObjectConverterTest
 		assertEquals("user capabilities did not match", userProfileVO.getCapabilities().size(), resultingUserSecurityProfile.getCapabilities().size());
 		UserCapability resultUserCapability = resultingUserSecurityProfile.getCapabilities().iterator().next();
 		assertEquals("userCapability.id did not match", userCapability.getId(), resultUserCapability.getId());
-		assertEquals("userCapability.userProfile.id did not match", userCapability.getUserProfile().getId(),resultUserCapability.getUserProfile().getId());
-		assertEquals("userCapability.userProfile.LoginId did not match", userCapability.getUserProfile().getLogonId(),resultUserCapability.getUserProfile().getLogonId());
+		assertEquals("userCapability.userProfile.id did not match", userCapability.getUserProfile().getId(), resultUserCapability.getUserProfile().getId());
+		assertEquals("userCapability.userProfile.LoginId did not match", userCapability.getUserProfile().getLogonId(), resultUserCapability.getUserProfile().getLogonId());
 		assertEquals("capability.id did not match", capability.getId(), resultUserCapability.getCapability().getId());
 		assertEquals("capability.title did not match", capability.getTitle(), resultUserCapability.getCapability().getTitle());
 		assertEquals("capability.description did not match", capability.getDescription(), resultUserCapability.getCapability().getDescription());
 		assertEquals("capability.actions.size did not match", capability.getActions().size(), resultUserCapability.getCapability().getActions().size());
 		assertEquals("capability.resource.id did not match", capability.getResource().getId(), resultUserCapability.getCapability().getResource().getId());
 		assertEquals("capability.resource.name did not match", capability.getResource().getName(), resultUserCapability.getCapability().getResource().getName());
-		
+
 	}
 
 	/**
@@ -123,22 +132,21 @@ public class SecurityEntityValueObjectConverterTest
 		System.out.println("toCapabilityVO");
 		int size = 3;
 		Capability testCapability = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataCapabilityOnResourceAndAction("User", "Add");
-		List<CapabilityAction> actions = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataCapabilityActionsForWithSize(testCapability,size);
+		List<CapabilityAction> actions = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataCapabilityActionsForWithSize(testCapability, size);
 		testCapability.setActions(actions);
 		CapabilityVO expResult = new CapabilityVOBuilder()
 				.setId(testCapability.getId())
 				.setTitle(testCapability.getTitle())
 				.setDescription(testCapability.getDescription())
-				.createCapabilityVO();		
+				.createCapabilityVO();
 		CapabilityVO result = SecurityEntityValueObjectConverter.toCapabilityVO(testCapability);
-		assertEquals("id did not match",expResult.getId(), result.getId());
-		assertEquals("actions.size did not match",size, result.getActions().size());
-		assertEquals("description did not match",expResult.getDescription(), result.getDescription());
-		assertEquals("title did not match",expResult.getTitle(), result.getTitle());	
-		assertNotNull("resource not set",result.getResource());
+		assertEquals("id did not match", expResult.getId(), result.getId());
+		assertEquals("actions.size did not match", size, result.getActions().size());
+		assertEquals("description did not match", expResult.getDescription(), result.getDescription());
+		assertEquals("title did not match", expResult.getTitle(), result.getTitle());
+		assertNotNull("resource not set", result.getResource());
 	}
-	
-	
+
 	@Test
 	public void testToCapability() throws Exception
 	{
@@ -148,14 +156,14 @@ public class SecurityEntityValueObjectConverterTest
 		Capability expResult = new Capability();
 		expResult.setId(testCapabilityVO.getId());
 		expResult.setTitle(testCapabilityVO.getTitle());
-		expResult.setDescription(testCapabilityVO.getDescription());	
+		expResult.setDescription(testCapabilityVO.getDescription());
 		Capability result = SecurityEntityValueObjectConverter.toCapability(testCapabilityVO);
-		assertEquals("id did not match",expResult.getId(), result.getId());
-		assertEquals("actions.size did not match",1, result.getActions().size());
-		assertEquals("description did not match",expResult.getDescription(), result.getDescription());
-		assertEquals("title did not match",expResult.getTitle(), result.getTitle());	
-		assertNotNull("resource not set",result.getResource());	
-		for(CapabilityAction action : result.getActions())
+		assertEquals("id did not match", expResult.getId(), result.getId());
+		assertEquals("actions.size did not match", 1, result.getActions().size());
+		assertEquals("description did not match", expResult.getDescription(), result.getDescription());
+		assertEquals("title did not match", expResult.getTitle(), result.getTitle());
+		assertNotNull("resource not set", result.getResource());
+		for (CapabilityAction action : result.getActions())
 		{
 			assertNotNull(action.getId());
 		}
@@ -173,11 +181,11 @@ public class SecurityEntityValueObjectConverterTest
 		expResult.setId(resourceVO.getId());
 		expResult.setName(resourceVO.getName());
 		Resource result = SecurityEntityValueObjectConverter.toResource(resourceVO);
-		assertEquals("result.id did not match",expResult.getId(), result.getId());
-		assertEquals("result.name did not match",expResult.getName(), result.getName());
+		assertEquals("result.id did not match", expResult.getId(), result.getId());
+		assertEquals("result.name did not match", expResult.getName(), result.getName());
 
 	}
-	
+
 	@Test
 	public void testToResourceVO() throws Exception
 	{
@@ -188,10 +196,10 @@ public class SecurityEntityValueObjectConverterTest
 				.setName(resource.getName())
 				.createResourceVO();
 		ResourceVO result = SecurityEntityValueObjectConverter.toResourceVO(resource);
-		assertEquals("result.id did not match",expResult.getId(), result.getId());
-		assertEquals("result.name did not match",expResult.getName(), result.getName());
+		assertEquals("result.id did not match", expResult.getId(), result.getId());
+		assertEquals("result.name did not match", expResult.getName(), result.getName());
 	}
-	
+
 	@Test
 	public void testToAction() throws Exception
 	{
@@ -201,11 +209,11 @@ public class SecurityEntityValueObjectConverterTest
 		expResult.setId(actionVO.getId());
 		expResult.setName(actionVO.getName());
 		Action result = SecurityEntityValueObjectConverter.toAction(actionVO);
-		assertEquals("result.id did not match",expResult.getId(), result.getId());
-		assertEquals("result.name did not match",expResult.getName(), result.getName());
-		
+		assertEquals("result.id did not match", expResult.getId(), result.getId());
+		assertEquals("result.name did not match", expResult.getName(), result.getName());
+
 	}
-	
+
 	@Test
 	public void testToActionVO() throws Exception
 	{
@@ -214,11 +222,11 @@ public class SecurityEntityValueObjectConverterTest
 		ActionVO expResult = new ActionVO();
 		expResult.setId(action.getId());
 		expResult.setName(action.getName());
-		ActionVO result = SecurityEntityValueObjectConverter.toActionVO(action);	
-		assertEquals("result.id did not match",expResult.getId(), result.getId());
-		assertEquals("result.name did not match",expResult.getName(), result.getName());
+		ActionVO result = SecurityEntityValueObjectConverter.toActionVO(action);
+		assertEquals("result.id did not match", expResult.getId(), result.getId());
+		assertEquals("result.name did not match", expResult.getName(), result.getName());
 	}
-	
+
 	@Test
 	public void testToUserCapability() throws Exception
 	{
@@ -229,70 +237,69 @@ public class SecurityEntityValueObjectConverterTest
 		expResult.setId(userCapabilityVO.getId());
 		expResult.setCapability(SecurityEntityValueObjectConverter.toCapability(capabilityVO));
 		UserCapability result = SecurityEntityValueObjectConverter.toUserCapability(userCapabilityVO);
-		assertEquals(expResult.getId(),result.getId());
-		assertEquals(expResult.getCapability(),result.getCapability());
+		assertEquals(expResult.getId(), result.getId());
+		assertEquals(expResult.getCapability(), result.getCapability());
 	}
-	
+
 	@Test
 	public void testToCapabilityActionVO() throws Exception
 	{
 		System.out.println("toCapabilityActionVO");
 
 		Capability capability = SecurityEntityValueObjectDataUtility.createTestDataCapabilityOnResourceAndAction("cab", "edit");
-		
-		for(CapabilityAction capabilityAction : capability.getActions())
+
+		for (CapabilityAction capabilityAction : capability.getActions())
 		{
 			CapabilityActionVO capabilityActionVO = SecurityEntityValueObjectConverter.toCapabilityActionVO(capabilityAction);
-			assertEquals(capabilityAction.getId(),capabilityActionVO.getId());
-			assertEquals(capabilityAction.getAction().getId(),capabilityActionVO.getActionVO().getId());
-			assertEquals(capabilityAction.getCapability().getId(),capabilityActionVO.getCapabilityVO().getId());
+			assertEquals(capabilityAction.getId(), capabilityActionVO.getId());
+			assertEquals(capabilityAction.getAction().getId(), capabilityActionVO.getActionVO().getId());
+			assertEquals(capabilityAction.getCapability().getId(), capabilityActionVO.getCapabilityVO().getId());
 		}
 
 	}
-	
+
 	@Test
 	public void testToCapabilityAction() throws Exception
 	{
 		System.out.println("toCapabilityAction");
 		CapabilityVO capabilityVO = SecurityEntityValueObjectDataUtility.createTestDataCapabilityVO();
-		for(CapabilityActionVO capabilityActionVO : capabilityVO.getActions())
+		for (CapabilityActionVO capabilityActionVO : capabilityVO.getActions())
 		{
 			CapabilityAction capabilityAction = SecurityEntityValueObjectConverter.toCapabilityAction(capabilityActionVO);
-			assertNotNull("action is null",capabilityAction.getAction());
-			assertEquals(capabilityActionVO.getActionVO().getId(),capabilityAction.getAction().getId());
+			assertNotNull("action is null", capabilityAction.getAction());
+			assertEquals(capabilityActionVO.getActionVO().getId(), capabilityAction.getAction().getId());
 
 		}
-		
+
 	}
-	
+
 	@Test
 	public void testToUserCapabilityVO() throws Exception
 	{
 		System.out.println("toUserCapabilityVO");
 		Action action = SecurityEntityValueObjectDataUtility.createTestDataAction();
-		Resource resource = SecurityEntityValueObjectDataUtility.createTestDataResource();		
-		UserCapability userCapability = SecurityEntityValueObjectDataUtility.createTestDataUserCapabilityWithResourceAndAction(resource,action);
+		Resource resource = SecurityEntityValueObjectDataUtility.createTestDataResource();
+		UserCapability userCapability = SecurityEntityValueObjectDataUtility.createTestDataUserCapabilityWithResourceAndAction(resource, action);
 		UserCapabilityVO userCapabilityVO = SecurityEntityValueObjectConverter.toUserCapabilityVO(userCapability);
 		assertNotNull(userCapabilityVO);
-		assertEquals(userCapability.getId(),userCapabilityVO.getId());
+		assertEquals(userCapability.getId(), userCapabilityVO.getId());
 		assertNotNull(userCapabilityVO.getCapability());
-		assertEquals(userCapability.getCapability().getId(),userCapabilityVO.getCapability().getId());
-		if(userCapability.getUserProfile() != null)
+		assertEquals(userCapability.getCapability().getId(), userCapabilityVO.getCapability().getId());
+		if (userCapability.getUserProfile() != null)
 		{
 			assertNotNull(userCapabilityVO.getUserProfile());
-			assertEquals(userCapability.getUserProfile().getId(),userCapabilityVO.getUserProfile().getId());
+			assertEquals(userCapability.getUserProfile().getId(), userCapabilityVO.getUserProfile().getId());
 		}
-		
-		
-		
+
+
+
 	}
-	
+
 	@Test
 	public void testToUserProfileVO() throws Exception
 	{
-		System.out.println("toUserProfileVO");		
-		UserSecurityProfile userSecurityProfile 
-				= SecurityEntityValueObjectDataUtility.createTestDataUserSecurityProfileWithCapability("edit","User");
+		System.out.println("toUserProfileVO");
+		UserSecurityProfile userSecurityProfile = SecurityEntityValueObjectDataUtility.createTestDataUserSecurityProfileWithCapability("edit", "User");
 		UserSecurityProfileVO result = SecurityEntityValueObjectConverter.toUserProfileVO(userSecurityProfile);
 		assertNotNull(result);
 		assertEquals(userSecurityProfile.getId(), result.getId());
@@ -372,6 +379,71 @@ public class SecurityEntityValueObjectConverterTest
 		RoleCapabilityVO roleCapabilityVO = SecurityEntityValueObjectConverter.toRoleCapabilityVO(roleCapability);
 		assertEquals(ID_MISMATCH, roleCapability.getId(), roleCapabilityVO.getId());
 		assertEquals("role id mismatch", roleCapability.getRole().getId(), roleCapabilityVO.getRoleVO().getId());
+
+	}
+
+	@Test
+	public void testToSecurityGroup() throws Exception
+	{
+		System.out.println("toSecurityGroup");
+		List<SecurityGroupRoleVO> securityGroupRoles = new ArrayList<SecurityGroupRoleVO>();
+		SecurityGroupVO securityGroupVO = new SecurityGroupVOBuilder()
+				.setId(Long.MIN_VALUE)
+				.setName("testGroup")
+				.setSecurityGroupRoles(securityGroupRoles)
+				.createSecurityGroupVO();
+		SecurityGroupRoleVO securityGroupRoleVO = new SecurityGroupRoleVOBuilder()
+				.setRole(SecurityEntityValueObjectDataUtility.createTestRoleVO("user manager", "manage users"))
+				.setSecurityGroup(securityGroupVO)
+				.createSecurityGroupRoleVO();
+		securityGroupRoles.add(securityGroupRoleVO);
+		SecurityGroup securityGroup = SecurityEntityValueObjectConverter.toSecurityGroup(securityGroupVO);
+		assertNotNull(securityGroup);
+		assertEquals("id mismatch", securityGroupVO.getId(), securityGroup.getId());
+		assertEquals("name mismatch", securityGroupVO.getName(), securityGroup.getName());
+		assertNotNull("null group roles", securityGroup.getGroupRoles());
+		assertTrue(securityGroup.getGroupRoles().size() > 0);
+		for (SecurityGroupRole role : securityGroup.getGroupRoles())
+		{
+			assertEquals("parent group mismatch", securityGroupVO.getId(), role.getSecurityGroup().getId());
+		}
+	}
+
+	@Test
+	public void testToSecurityGroupVO() throws Exception
+	{
+		System.out.println("toSecurityGroupVO");
+		List<SecurityGroupRole> securityGroupRoles = new ArrayList<SecurityGroupRole>();
+		SecurityGroup securityGroup = new SecurityGroup();
+		securityGroup.setId(Long.MIN_VALUE);
+		securityGroup.setName("testGroup");
+		securityGroup.setGroupRoles(securityGroupRoles);
+		SecurityGroupRole securityGroupRole = new SecurityGroupRole();
+		securityGroupRole.setId(Long.MIN_VALUE);
+		securityGroupRole.setRole(SecurityEntityValueObjectDataUtility.createTestDataRole());
+		securityGroupRole.setSecurityGroup(securityGroup);
+		securityGroupRoles.add(securityGroupRole);
+		SecurityGroupVO securityGroupVO = SecurityEntityValueObjectConverter.toSecurityGroupVO(securityGroup);
+		SecurityGroupRoleVO expectedRole = new SecurityGroupRoleVOBuilder()
+				.setId(securityGroupRole.getId())
+				.setRole(SecurityEntityValueObjectConverter.toRoleVO(securityGroupRole.getRole()))
+				.createSecurityGroupRoleVO();
+		assertNotNull("null conversion", securityGroupVO);
+		assertEquals("id mismatch", securityGroup.getId(), securityGroupVO.getId());
+		assertEquals("name mismatch", securityGroup.getName(), securityGroupVO.getName());
+		assertNotNull("empty roles", securityGroupVO.getGroupRoleVOs());
+		Iterator<SecurityGroupRoleVO> iterator = securityGroupVO.getGroupRoleVOs().iterator();
+		if (iterator.hasNext())
+		{
+			SecurityGroupRoleVO role = iterator.next();
+			assertEquals("role id mismatch", expectedRole.getId(), role.getId());
+			assertEquals("role name mismatch", expectedRole.getRoleVO().getName(), role.getRoleVO().getName());
+			assertEquals("role parent group id mismatch", securityGroup.getId(), role.getSecurityGroup().getId());
+		}
+		else
+		{
+			fail("role not included");
+		}
 
 	}
 }

@@ -12,6 +12,7 @@ import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.Role;
 import com.rdonasco.security.model.RoleCapability;
 import com.rdonasco.security.model.SecurityGroup;
+import com.rdonasco.security.model.SecurityGroupRole;
 import com.rdonasco.security.model.UserRole;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.ActionVO;
@@ -27,6 +28,8 @@ import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.RoleVO;
 import com.rdonasco.security.vo.RoleVOBuilder;
+import com.rdonasco.security.vo.SecurityGroupRoleVO;
+import com.rdonasco.security.vo.SecurityGroupRoleVOBuilder;
 import com.rdonasco.security.vo.SecurityGroupVO;
 import com.rdonasco.security.vo.SecurityGroupVOBuilder;
 import com.rdonasco.security.vo.UserRoleVO;
@@ -472,24 +475,30 @@ public class SecurityEntityValueObjectConverter
 	}
 
 	public static SecurityGroupVO toSecurityGroupVO(SecurityGroup securityGroup)
+			throws IllegalAccessException, InvocationTargetException
 	{
+		List<SecurityGroupRoleVO> securityGroupRoleVOs = toSecurityGroupRoleVOs(securityGroup.getGroupRoles());
 		SecurityGroupVO securityGroupVO = new SecurityGroupVOBuilder()
 				.setId(securityGroup.getId())
 				.setName(securityGroup.getName())
+				.setSecurityGroupRoles(securityGroupRoleVOs)
 				.createSecurityGroupVO();
 		return securityGroupVO;
 	}
 
 	public static SecurityGroup toSecurityGroup(SecurityGroupVO securityGroupVO)
+			throws IllegalAccessException, InvocationTargetException
 	{
 		SecurityGroup securityGroup = new SecurityGroup();
 		securityGroup.setId(securityGroupVO.getId());
 		securityGroup.setName(securityGroupVO.getName());
+		securityGroup.setGroupRoles(toSecurityGroupRoles(securityGroup, securityGroupVO.getGroupRoleVOs()));
 		return securityGroup;
 	}
 
 	public static List<SecurityGroupVO> toSecurityGroupVOList(
-			List<SecurityGroup> securityGroupList)
+			List<SecurityGroup> securityGroupList) throws IllegalAccessException,
+			InvocationTargetException
 	{
 		List<SecurityGroupVO> securityGroupVOList = new ArrayList<SecurityGroupVO>(securityGroupList.size());
 		for (SecurityGroup securityGroup : securityGroupList)
@@ -497,5 +506,55 @@ public class SecurityEntityValueObjectConverter
 			securityGroupVOList.add(toSecurityGroupVO(securityGroup));
 		}
 		return securityGroupVOList;
+	}
+
+	private static Collection<SecurityGroupRole> toSecurityGroupRoles(
+			SecurityGroup parentGroup,
+			List<SecurityGroupRoleVO> roles) throws IllegalAccessException,
+			InvocationTargetException
+	{
+		List<SecurityGroupRole> securityGroupRoles = new ArrayList<SecurityGroupRole>(roles.size());
+		for (SecurityGroupRoleVO securityGroupRoleVO : roles)
+		{
+			SecurityGroupRole securityGroupRole = toSecurityGroupRole(securityGroupRoleVO);
+			securityGroupRole.setSecurityGroup(parentGroup);
+			securityGroupRoles.add(securityGroupRole);
+		}
+		return securityGroupRoles;
+	}
+	
+	private static SecurityGroupRole toSecurityGroupRole(
+			SecurityGroupRoleVO securityGroupRoleVO) throws
+			IllegalAccessException, InvocationTargetException
+	{
+		SecurityGroupRole securityGroupRole = new SecurityGroupRole();
+		securityGroupRole.setId(securityGroupRoleVO.getId());
+		securityGroupRole.setRole(toRole(securityGroupRoleVO.getRoleVO()));
+		
+		return securityGroupRole;
+	}
+
+	private static List<SecurityGroupRoleVO> toSecurityGroupRoleVOs(
+			Collection<SecurityGroupRole> groupRoles) throws
+			IllegalAccessException, InvocationTargetException
+	{
+		List<SecurityGroupRoleVO> securityGroupRoleVOs = new ArrayList<SecurityGroupRoleVO>(groupRoles.size());
+		for (SecurityGroupRole securityGroupRole : groupRoles)
+		{
+			securityGroupRoleVOs.add(toSecurityGroupRoleVO(securityGroupRole));
+		}
+
+		return securityGroupRoleVOs;
+	}
+
+	private static SecurityGroupRoleVO toSecurityGroupRoleVO(
+			SecurityGroupRole securityGroupRole) throws IllegalAccessException,
+			InvocationTargetException
+	{
+		SecurityGroupRoleVO securityGroupRoleVO = new SecurityGroupRoleVOBuilder()
+				.setId(securityGroupRole.getId())
+				.setRole(toRoleVO(securityGroupRole.getRole()))
+				.createSecurityGroupRoleVO();
+		return securityGroupRoleVO;
 	}
 }

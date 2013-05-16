@@ -148,7 +148,7 @@ public class SecurityEntityValueObjectDataUtility
 				.setName(roleName);
 		for (String capabilityName : capabilities)
 		{
-			roleVoBuilder.addCapability(createTestDataCapabilityVO());
+			roleVoBuilder.addCapability(createTestDataCapabilityVO(capabilityName));
 		}
 		return roleVoBuilder.createUserRoleVO();
 	}
@@ -227,12 +227,17 @@ public class SecurityEntityValueObjectDataUtility
 
 	public static CapabilityVO createTestDataCapabilityVO()
 	{
+		return createTestDataCapabilityVO("testCapability");
+	}
+
+	public static CapabilityVO createTestDataCapabilityVO(
+			final String capabilityTitle)
+	{
 		ResourceVO resourceVO = new ResourceVOBuilder()
 				.setId(Long.MIN_VALUE)
 				.setName("resource")
 				.createResourceVO();
-		ActionVO actionVO = createTestDataActionVO();
-		final String capabilityTitle = "testCapability";
+		ActionVO actionVO = createTestDataActionVO();		
 		CapabilityVO capability = createTestCapabilityVOWithResourceActionAndTitle(resourceVO, actionVO, capabilityTitle);
 		List<CapabilityActionVO> capabilityActions = createTestDataCapabilityActionVOsFor(capability);
 		capability.setActions(capabilityActions);
