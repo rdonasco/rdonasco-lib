@@ -18,6 +18,7 @@ package com.rdonasco.common.exceptions;
 
 public class NonExistentEntityException extends Exception
 {
+	private static final long serialVersionUID = 1L;
 
     private Object entity;
 
