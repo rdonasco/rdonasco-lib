@@ -11,6 +11,7 @@ import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.Role;
 import com.rdonasco.security.model.RoleCapability;
+import com.rdonasco.security.model.SecurityGroup;
 import com.rdonasco.security.model.UserRole;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.ActionVO;
@@ -26,6 +27,8 @@ import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.RoleVO;
 import com.rdonasco.security.vo.RoleVOBuilder;
+import com.rdonasco.security.vo.SecurityGroupVO;
+import com.rdonasco.security.vo.SecurityGroupVOBuilder;
 import com.rdonasco.security.vo.UserRoleVO;
 import com.rdonasco.security.vo.UserRoleVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
@@ -466,5 +469,33 @@ public class SecurityEntityValueObjectConverter
 					.createUserRoleVO();
 		}
 		return userRoleVO;
+	}
+
+	public static SecurityGroupVO toSecurityGroupVO(SecurityGroup securityGroup)
+	{
+		SecurityGroupVO securityGroupVO = new SecurityGroupVOBuilder()
+				.setId(securityGroup.getId())
+				.setName(securityGroup.getName())
+				.createSecurityGroupVO();
+		return securityGroupVO;
+	}
+
+	public static SecurityGroup toSecurityGroup(SecurityGroupVO securityGroupVO)
+	{
+		SecurityGroup securityGroup = new SecurityGroup();
+		securityGroup.setId(securityGroupVO.getId());
+		securityGroup.setName(securityGroupVO.getName());
+		return securityGroup;
+	}
+
+	public static List<SecurityGroupVO> toSecurityGroupVOList(
+			List<SecurityGroup> securityGroupList)
+	{
+		List<SecurityGroupVO> securityGroupVOList = new ArrayList<SecurityGroupVO>(securityGroupList.size());
+		for (SecurityGroup securityGroup : securityGroupList)
+		{
+			securityGroupVOList.add(toSecurityGroupVO(securityGroup));
+		}
+		return securityGroupVOList;
 	}
 }
