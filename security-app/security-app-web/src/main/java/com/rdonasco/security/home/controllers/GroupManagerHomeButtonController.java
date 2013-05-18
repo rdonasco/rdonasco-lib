@@ -1,18 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.rdonasco.security.home.controllers;
 
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
-import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.security.group.controllers.GroupViewLayoutController;
 import com.rdonasco.security.home.views.FeatureHomeButton;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 /**
@@ -22,13 +19,30 @@ import javax.inject.Inject;
 public class GroupManagerHomeButtonController implements
 		HomeViewButtonController
 {
+	private static final long serialVersionUID = 1L;
 
 	@Inject
 	private FeatureHomeButton featureButton;
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
+
 	@Inject
-	private ApplicationPopupProvider popupProvider;
+	private Instance<HomeFrameViewController> homeFrameViewControllers;
+
+	@Inject
+	private Instance<GroupViewLayoutController> viewLayoutProvider;
+
+	private GroupViewLayoutController groupViewLayoutController;
+
+	public GroupViewLayoutController getGroupViewLayoutController()
+	{
+		if (null == groupViewLayoutController)
+		{
+			groupViewLayoutController = viewLayoutProvider.get();
+		}
+		return groupViewLayoutController;
+	}
+
 
 	@PostConstruct
 	@Override
@@ -42,7 +56,7 @@ public class GroupManagerHomeButtonController implements
 				@Override
 				public void buttonClick(Button.ClickEvent event)
 				{
-					popupProvider.popUpInfo("Group Manager Clicked");
+					homeFrameViewControllers.get().setWorkspaceContent(getGroupViewLayoutController().getControlledView());
 				}
 			});
 		}

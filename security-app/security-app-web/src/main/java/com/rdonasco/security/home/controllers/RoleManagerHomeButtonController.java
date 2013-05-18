@@ -1,13 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.rdonasco.security.home.controllers;
 
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
-import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.home.views.FeatureHomeButton;
 import com.rdonasco.security.role.controllers.RoleViewLayoutController;
@@ -32,9 +27,6 @@ public class RoleManagerHomeButtonController implements
 
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
-
-	@Inject
-	private ApplicationPopupProvider popupProvider;
 
 	@Inject
 	private Instance<HomeFrameViewController> homeFrameViewControllers;

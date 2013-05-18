@@ -36,6 +36,10 @@ public interface MessageKeys
 	// role message keys
 	public static final String ROLE_DELETED = "Role deleted";
 	public static final String NEW_ROLE = "New Role";
-
 	public static final String UNABLE_TO_ADD_NEW_ROLE = "Unable to add new role";
+
+	// group message keys
+	public static final String GROUP_DELETED = "Group Deleted";
+	public static final String NEW_GROUP = "New Group";
+	public static final String UNABLE_TO_ADD_NEW_GROUP = "Unable to add new group";
 }
