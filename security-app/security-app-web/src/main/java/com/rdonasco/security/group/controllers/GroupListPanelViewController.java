@@ -32,7 +32,6 @@ import com.rdonasco.security.group.views.GroupListPanelView;
 import com.rdonasco.security.group.vo.GroupItemVO;
 import com.rdonasco.security.group.vo.GroupItemVOBuilder;
 import com.rdonasco.security.i18n.MessageKeys;
-import com.rdonasco.security.role.vo.RoleItemVO;
 import com.rdonasco.security.vo.SecurityGroupVO;
 import com.rdonasco.security.vo.SecurityGroupVOBuilder;
 import com.vaadin.data.util.BeanItem;
@@ -96,6 +95,15 @@ public class GroupListPanelViewController implements
 				public void buttonClick(Button.ClickEvent event)
 				{
 					addNewGroup();
+				}
+			});
+			groupListPanelView.getRefreshButton().addListener(new Button.ClickListener()
+			{
+				@Override
+				public void buttonClick(Button.ClickEvent event)
+				{
+					LOG.log(Level.FINE, "refresh button clicked");
+					refreshList();
 				}
 			});
 			groupListPanelView.setAttachStrategy(new ListEditorAttachStrategy()

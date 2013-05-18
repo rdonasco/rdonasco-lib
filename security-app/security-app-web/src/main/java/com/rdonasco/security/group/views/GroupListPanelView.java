@@ -21,8 +21,10 @@ import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.ControlledView;
 import com.rdonasco.datamanager.listeditor.controller.ListEditorAttachStrategy;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import static com.vaadin.terminal.Sizeable.UNITS_PERCENTAGE;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
@@ -42,6 +44,8 @@ public class GroupListPanelView extends Panel implements ControlledView
 
 	private Button addGroupButton;
 
+	private Button refreshButton = new Button();
+
 	public GroupListPanelView()
 	{
 		groupListTable = new Table();
@@ -51,6 +55,9 @@ public class GroupListPanelView extends Panel implements ControlledView
 		addGroupButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_ADD));
 		addGroupButton.setWidth(100, UNITS_PERCENTAGE);
 		addGroupButton.addStyleName(SecurityDefaultTheme.CSS_SMALL);
+		refreshButton.setCaption("Refresh");
+		refreshButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_REFRESH));
+		refreshButton.addStyleName(SecurityDefaultTheme.CSS_SMALL);
 	}
 
 	public Table getGroupListTable()
@@ -61,6 +68,11 @@ public class GroupListPanelView extends Panel implements ControlledView
 	public Button getAddGroupButton()
 	{
 		return addGroupButton;
+	}
+
+	public Button getRefreshButton()
+	{
+		return refreshButton;
 	}
 
 	public void setAttachStrategy(ListEditorAttachStrategy attachStrategy)
@@ -78,7 +90,14 @@ public class GroupListPanelView extends Panel implements ControlledView
 		content.setHeight(600, UNITS_PIXELS);
 		content.removeAllComponents();
 		getGroupListTable().setSizeFull();
-		content.addComponent(addGroupButton);
+		HorizontalLayout buttonLayout = new HorizontalLayout();
+		buttonLayout.setSpacing(true);
+		buttonLayout.setWidth(100F, UNITS_PERCENTAGE);
+		buttonLayout.addComponent(getAddGroupButton());
+		buttonLayout.addComponent(getRefreshButton());
+		buttonLayout.setExpandRatio(getAddGroupButton(), 1);
+		content.addComponent(buttonLayout);
+
 		content.addComponent(getGroupListTable());
 		content.setExpandRatio(getGroupListTable(), 1);
 		content.setSpacing(true);
