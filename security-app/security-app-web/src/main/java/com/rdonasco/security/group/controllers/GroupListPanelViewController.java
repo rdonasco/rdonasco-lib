@@ -124,7 +124,7 @@ public class GroupListPanelViewController implements
 		}
 	}
 
-	public DataManagerContainer<GroupItemVO> getRoleItemTableContainer()
+	public DataManagerContainer<GroupItemVO> getGroupItemTableContainer()
 	{
 		return groupItemDataContainer;
 	}

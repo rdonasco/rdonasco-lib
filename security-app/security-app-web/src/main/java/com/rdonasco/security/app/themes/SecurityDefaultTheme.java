@@ -24,6 +24,7 @@ public final class SecurityDefaultTheme
 	public static final String CSS_DATA_TABLE = "capabilityTable";
 	public static final String CSS_CAPABILITY_EDITOR = "capabilityEditor";
 	public static final String CSS_ROLE_EDITOR = "roleEditor";
+	public static final String CSS_GROUP_EDITOR = "groupEditor";
 	public static final String CSS_PANEL_BUBBLE = "bubble";
 	public static final String CSS_PANEL_BORDERLESS_BUBBLE = "borderless bubble";
 	public static final String CSS_TABLE_SMALL_STRIPED = "small striped";

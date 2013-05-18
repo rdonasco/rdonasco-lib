@@ -19,10 +19,13 @@ package com.rdonasco.security.group.controllers;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
-import com.rdonasco.datamanager.listeditor.view.ListEditorView;
 import com.rdonasco.security.common.views.ThreeColumnFlexibleCenterViewLayout;
+import com.rdonasco.security.group.vo.GroupItemVO;
 import com.rdonasco.security.role.controllers.AvailableRolesViewController;
 import com.rdonasco.security.role.controllers.AvailableRolesViewControllerBuilder;
+import com.vaadin.data.Property;
+import com.vaadin.data.util.BeanItem;
+import com.vaadin.ui.Table;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -43,6 +46,9 @@ public class GroupViewLayoutController implements
 	private GroupListPanelViewController groupListPanelViewController;
 
 	@Inject
+	private GroupEditorViewController groupEditorViewController;
+
+	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
 
 	@Inject
@@ -56,9 +62,24 @@ public class GroupViewLayoutController implements
 		{
 			groupViewLayout.initWidget();
 			groupViewLayout.setLeftPanelContent(groupListPanelViewController.getControlledView());
+			groupViewLayout.setCenterPanelContent(groupEditorViewController.getControlledView().getForm());
+			groupListPanelViewController.getControlledView().getGroupListTable()
+					.addListener(new Property.ValueChangeListener()
+			{
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void valueChange(Property.ValueChangeEvent event)
+				{
+					Table tableSource = groupListPanelViewController.getControlledView().getGroupListTable();
+					BeanItem<GroupItemVO> beanItem = (BeanItem) tableSource.getItem(tableSource.getValue());
+					groupEditorViewController.setItemDataSource(beanItem);
+				}
+			});
+			groupEditorViewController.setGroupItemTableContainer(groupListPanelViewController.getGroupItemTableContainer());
 			final AvailableRolesViewController availableRolesViewController = availableRolesViewControllerBuilder.build();
 			groupViewLayout.addRightPanelContent(availableRolesViewController.getControlledView());
-			availableRolesViewController.allowDraggingMultipleRows();;
+			availableRolesViewController.allowDraggingMultipleRows();
 
 		}
 		catch (Exception e)
