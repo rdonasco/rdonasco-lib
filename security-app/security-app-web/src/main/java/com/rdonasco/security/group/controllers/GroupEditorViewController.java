@@ -24,13 +24,33 @@ import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
+import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.security.capability.utils.IconHelper;
+import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.group.views.GroupEditorView;
 import com.rdonasco.security.group.vo.GroupItemVO;
+import com.rdonasco.security.group.vo.GroupRoleItemVO;
+import com.rdonasco.security.group.vo.GroupRoleItemVOBuilder;
+import com.rdonasco.security.role.vo.RoleItemVO;
+import com.rdonasco.security.vo.RoleVO;
+import com.rdonasco.security.vo.SecurityGroupRoleVO;
+import com.rdonasco.security.vo.SecurityGroupRoleVOBuilder;
 import com.vaadin.data.Buffered;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.event.DataBoundTransferable;
+import com.vaadin.event.MouseEvents;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
+import com.vaadin.event.dd.DragAndDropEvent;
+import com.vaadin.event.dd.DropHandler;
+import com.vaadin.event.dd.acceptcriteria.AcceptAll;
+import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Embedded;
+import com.vaadin.ui.Table;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -61,10 +81,9 @@ public class GroupEditorViewController implements
 
 	private DataManagerContainer<GroupItemVO> groupItemTableDataManagerContainer;
 
-//	private BeanItemContainer<RoleCapabilityItemVO> roleCapabilitiesContainer = new BeanItemContainer<RoleCapabilityItemVO>(RoleCapabilityItemVO.class);
+	private BeanItemContainer<GroupRoleItemVO> groupRolesContainer = new BeanItemContainer<GroupRoleItemVO>(GroupRoleItemVO.class);
 
-//	private DropHandler roleCapabilitiesDropHandler;
-
+	private DropHandler groupRolesDropHandler;
 	private Button.ClickListener cancelClickListener = new Button.ClickListener()
 	{
 		private static final long serialVersionUID = 1L;
@@ -135,47 +154,47 @@ public class GroupEditorViewController implements
 		}
 	};
 
-//	private static final String CAPABILITY_TITLE = "capability.title";
+	private static final String ROLE_NAME = "roleName";
 
-//	private static final String[] EDITABLE_COLUMNS = new String[]
-//	{
-//		"icon", CAPABILITY_TITLE
-//	};
+	private static final String[] EDITABLE_COLUMNS = new String[]
+	{
+		"icon", ROLE_NAME
+	};
 
-//	private static final String[] NON_EDITABLE_COLUMNS = new String[]
-//	{
-//		CAPABILITY_TITLE
-//	};
+	private static final String[] NON_EDITABLE_COLUMNS = new String[]
+	{
+		ROLE_NAME
+	};
 
-//	private final String[] EDITABLE_HEADERS = new String[]
-//	{
-//		"", I18NResource.localize("Title")
-//	};
-//
-//	private final String[] NON_EDITABLE_HEADERS = new String[]
-//	{
-//		I18NResource.localize("Title")
-//	};
-//
-//	private Table.CellStyleGenerator CELL_STYLE_GENERATOR = new Table.CellStyleGenerator()
-//	{
-//		private static final long serialVersionUID = 1L;
-//
-//		@Override
-//		public String getStyle(Object itemId, Object propertyId)
-//		{
-//			String style;
-//			if ("icon".equals(propertyId))
-//			{
-//				style = SecurityDefaultTheme.CSS_ICON_IN_A_CELL;
-//			}
-//			else
-//			{
-//				style = SecurityDefaultTheme.CSS_FULL_WIDTH;
-//			}
-//			return style;
-//		}
-//	};
+	private final String[] EDITABLE_HEADERS = new String[]
+	{
+		"", I18NResource.localize("Name")
+	};
+
+	private final String[] NON_EDITABLE_HEADERS = new String[]
+	{
+		I18NResource.localize("Name")
+	};
+
+	private Table.CellStyleGenerator CELL_STYLE_GENERATOR = new Table.CellStyleGenerator()
+	{
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public String getStyle(Object itemId, Object propertyId)
+		{
+			String style;
+			if ("icon".equals(propertyId))
+			{
+				style = SecurityDefaultTheme.CSS_ICON_IN_A_CELL;
+			}
+			else
+			{
+				style = SecurityDefaultTheme.CSS_FULL_WIDTH;
+			}
+			return style;
+		}
+	};
 
 	@PostConstruct
 	@Override
@@ -184,7 +203,7 @@ public class GroupEditorViewController implements
 		try
 		{
 			groupEditorView.initWidget();
-//			configureRoleCapabilityTable();
+			configureRoleCapabilityTable();
 			configureButtonListenters();
 		}
 		catch (WidgetInitalizeException ex)
@@ -203,19 +222,19 @@ public class GroupEditorViewController implements
 	{
 		try
 		{
-//			getControlledView().getRoleCapabilitiesTable().commit();
+			getControlledView().getGroupRolesTable().commit();
 			getControlledView().getForm().commit();
-			LOG.log(Level.FINE, "roleItemTableContainer == null : {0}", groupItemTableDataManagerContainer == null);
+			LOG.log(Level.FINE, "groupRolesContainer == null : {0}", groupItemTableDataManagerContainer == null);
 			LOG.log(Level.FINE, "currentItem == null : {0}", currentItem == null);
-//			Collection<RoleCapabilityVO> editedRoleCapabilities = new ArrayList<RoleCapabilityVO>();
-//			for (RoleCapabilityItemVO roleCapability : roleCapabilitiesContainer.getItemIds())
-//			{
-//				editedRoleCapabilities.add(roleCapability.getRoleCapabilityVO());
-//			}
+			Collection<SecurityGroupRoleVO> editedRoleCapabilities = new ArrayList<SecurityGroupRoleVO>();
+			for (GroupRoleItemVO roleCapability : groupRolesContainer.getItemIds())
+			{
+				editedRoleCapabilities.add(roleCapability.getSecurityGroupRoleVO());
+			}
 			BeanItem<GroupItemVO> roleBean = getCurrentItem();
-//			roleBean.getItemProperty("roleCapabilities").setValue(editedRoleCapabilities);
+			roleBean.getItemProperty("groupRoles").setValue(editedRoleCapabilities);
 			groupItemTableDataManagerContainer.updateItem(roleBean.getBean());
-			popupProvider.popUpInfo(I18NResource.localizeWithParameter("Role _ saved", getCurrentItem().getBean().getName()));
+			popupProvider.popUpInfo(I18NResource.localizeWithParameter("Group _ saved", getCurrentItem().getBean().getName()));
 			changeViewToViewMode();
 		}
 		catch (Exception ex)
@@ -227,7 +246,7 @@ public class GroupEditorViewController implements
 	private void discardChanges() throws Buffered.SourceException
 	{
 		getControlledView().getForm().discard();
-//		getControlledView().getRoleCapabilitiesTable().discard();
+		getControlledView().getGroupRolesTable().discard();
 		setCurrentItem(currentItem);
 		changeViewToViewMode();
 	}
@@ -241,13 +260,12 @@ public class GroupEditorViewController implements
 			BeanItem<GroupItemVO> currentItem)
 	{
 		this.currentItem = currentItem;
-//		roleCapabilitiesContainer.removeAllItems();
-//		getControlledView().getRoleCapabilitiesTable().setSelectable(true);
-//		for (RoleCapabilityVO roleCapability : currentItem.getBean().getRoleCapabilities())
-//		{
-//			roleCapabilitiesContainer.addItem(createRoleCapabilityItemVO(
-//					roleCapability.getCapabilityVO()));
-//		}
+		groupRolesContainer.removeAllItems();
+		getControlledView().getGroupRolesTable().setSelectable(true);
+		for (SecurityGroupRoleVO groupRoleVO : currentItem.getBean().getGroupRoles())
+		{
+			groupRolesContainer.addItem(createGroupRoleItemVO(groupRoleVO.getRoleVO()));
+		}
 		changeViewToViewMode();
 	}
 
@@ -276,10 +294,10 @@ public class GroupEditorViewController implements
 		getControlledView().getSaveButton().setVisible(false);
 		getControlledView().getCancelButton().setVisible(false);
 		getControlledView().getEditButton().setVisible(true);
-//		getControlledView().getRoleCapabilitiesTable().setVisibleColumns(NON_EDITABLE_COLUMNS);
-//		getControlledView().getRoleCapabilitiesTable().setColumnHeaders(NON_EDITABLE_HEADERS);
-//		getControlledView().getRoleCapabilitiesTable().setCellStyleGenerator(CELL_STYLE_GENERATOR);
-//		getControlledView().getRoleCapabilitiesTable().setDropHandler(null);
+		getControlledView().getGroupRolesTable().setVisibleColumns(NON_EDITABLE_COLUMNS);
+		getControlledView().getGroupRolesTable().setColumnHeaders(NON_EDITABLE_HEADERS);
+		getControlledView().getGroupRolesTable().setCellStyleGenerator(CELL_STYLE_GENERATOR);
+		getControlledView().getGroupRolesTable().setDropHandler(null);
 
 	}
 
@@ -289,10 +307,10 @@ public class GroupEditorViewController implements
 		getControlledView().getSaveButton().setVisible(true);
 		getControlledView().getCancelButton().setVisible(true);
 		getControlledView().getEditButton().setVisible(false);
-//		getControlledView().getRoleCapabilitiesTable().setVisibleColumns(EDITABLE_COLUMNS);
-//		getControlledView().getRoleCapabilitiesTable().setColumnHeaders(EDITABLE_HEADERS);
-//		getControlledView().getRoleCapabilitiesTable().setCellStyleGenerator(CELL_STYLE_GENERATOR);
-//		getControlledView().getRoleCapabilitiesTable().setDropHandler(roleCapabilitiesDropHandler);
+		getControlledView().getGroupRolesTable().setVisibleColumns(EDITABLE_COLUMNS);
+		getControlledView().getGroupRolesTable().setColumnHeaders(EDITABLE_HEADERS);
+		getControlledView().getGroupRolesTable().setCellStyleGenerator(CELL_STYLE_GENERATOR);
+		getControlledView().getGroupRolesTable().setDropHandler(groupRolesDropHandler);
 	}
 
 	private void configureButtonListenters()
@@ -308,75 +326,74 @@ public class GroupEditorViewController implements
 		getControlledView().getCancelButton().setDescription("Cancel (Esc)");
 	}
 
-//	private void configureRoleCapabilityTable()
-//	{
-//		Table roleCapabilitiesTable = getControlledView().getRoleCapabilitiesTable();
-//		roleCapabilitiesTable.setSelectable(true);
-//		roleCapabilitiesTable.setContainerDataSource(roleCapabilitiesContainer);
-//		roleCapabilitiesContainer.addNestedContainerProperty(CAPABILITY_TITLE);
-//		roleCapabilitiesTable.setVisibleColumns(EDITABLE_COLUMNS);
-//		roleCapabilitiesTable.setColumnHeaders(EDITABLE_HEADERS);
-//		roleCapabilitiesTable.setCellStyleGenerator(CELL_STYLE_GENERATOR);
-//		roleCapabilitiesDropHandler = new DropHandler()
-//		{
-//			private static final long serialVersionUID = 1L;
-//
-//			@Override
-//			public void drop(DragAndDropEvent dropEvent)
-//			{
-//				final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
-//				if (null != transferredData && transferredData.getItemId() instanceof CapabilityItemVO)
-//				{
-//					LOG.log(Level.FINE, "drop allowed at role capability panel");
-//					final CapabilityItemVO droppedCapabilityItemVO = (CapabilityItemVO) transferredData.getItemId();
-//
-//					final RoleCapabilityItemVO newRoleCapability = createRoleCapabilityItemVO(droppedCapabilityItemVO.getCapabilityVO());
-//					BeanItem<RoleCapabilityItemVO> addedItem = roleCapabilitiesContainer.addItem(newRoleCapability);
-//					LOG.log(Level.FINE, "addedItem = {0}", addedItem);
-//
-//				}
-//				else
-//				{
-//					LOG.log(Level.FINE, "invalid data dropped in role capability panel");
-//				}
-//			}
-//
-//			@Override
-//			public AcceptCriterion getAcceptCriterion()
-//			{
-//				return AcceptAll.get();
-//			}
-//		};
-//		getControlledView().getRoleCapabilitiesTable().setDropHandler(roleCapabilitiesDropHandler);
-//	}
+	private void configureRoleCapabilityTable()
+	{
+		Table roleCapabilitiesTable = getControlledView().getGroupRolesTable();
+		roleCapabilitiesTable.setSelectable(true);
+		roleCapabilitiesTable.setContainerDataSource(groupRolesContainer);
+		roleCapabilitiesTable.setVisibleColumns(EDITABLE_COLUMNS);
+		roleCapabilitiesTable.setColumnHeaders(EDITABLE_HEADERS);
+		roleCapabilitiesTable.setCellStyleGenerator(CELL_STYLE_GENERATOR);
+		groupRolesDropHandler = new DropHandler()
+		{
+			private static final long serialVersionUID = 1L;
 
-//	private RoleCapabilityItemVO createRoleCapabilityItemVO(
-//			final CapabilityVO capabilityVO)
-//	{
-//		Embedded icon = IconHelper.createDeleteIcon("Remove Capability");
-//		final RoleCapabilityItemVO newRoleCapability = new RoleCapabilityItemVOBuilder()
-//				.setIcon(icon)
-//				.setRoleCapabilityVO(new RoleCapabilityVOBuilder()
-//				.setCapabilityVO(capabilityVO)
-//				.setRoleVO(getCurrentItem().getBean().getRoleVO())
-//				.createRoleCapabilityVO())
-//				.createRoleCapabilityItemVO();
-//		icon.addListener(new MouseEvents.ClickListener()
-//		{
-//			private static final long serialVersionUID = 1L;
-//
-//			@Override
-//			public void click(MouseEvents.ClickEvent event)
-//			{
-//				if (!getControlledView().isReadOnly() && !roleCapabilitiesContainer.removeItem(newRoleCapability))
-//				{
-//					popupProvider.popUpError(I18NResource
-//							.localizeWithParameter("Unable to remove capability _",
-//							newRoleCapability.getCapability().getTitle()));
-//
-//				}
-//			}
-//		});
-//		return newRoleCapability;
-//	}
+			@Override
+			public void drop(DragAndDropEvent dropEvent)
+			{
+				final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
+				if (null != transferredData && transferredData.getItemId() instanceof RoleItemVO)
+				{
+					LOG.log(Level.FINE, "drop allowed at group role panel");
+					final RoleItemVO roleItemVO = (RoleItemVO) transferredData.getItemId();
+
+					final GroupRoleItemVO newGroupRoleItemVO = createGroupRoleItemVO(roleItemVO.getRoleVO());
+					BeanItem<GroupRoleItemVO> addedItem = groupRolesContainer.addItem(newGroupRoleItemVO);
+					LOG.log(Level.FINE, "addedItem = {0}", addedItem);
+
+				}
+				else
+				{
+					LOG.log(Level.FINE, "invalid data dropped in group role panel");
+				}
+			}
+
+			@Override
+			public AcceptCriterion getAcceptCriterion()
+			{
+				return AcceptAll.get();
+			}
+		};
+		getControlledView().getGroupRolesTable().setDropHandler(groupRolesDropHandler);
+	}
+
+	private GroupRoleItemVO createGroupRoleItemVO(
+			RoleVO roleVO)
+	{
+		Embedded icon = IconHelper.createDeleteIcon("Remove Role");
+		final GroupRoleItemVO groupRoleItemVO = new GroupRoleItemVOBuilder()
+				.setIcon(icon)
+				.setSecurityGroupRoleVO(new SecurityGroupRoleVOBuilder()
+				.setRole(roleVO)
+				.setSecurityGroup(getCurrentItem().getBean().getSecurityGroupVO())
+				.createSecurityGroupRoleVO())
+				.createGroupRoleItemVO();
+		icon.addListener(new MouseEvents.ClickListener()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void click(MouseEvents.ClickEvent event)
+			{
+				if (!getControlledView().isReadOnly() && !groupRolesContainer.removeItem(groupRoleItemVO))
+				{
+					popupProvider.popUpError(I18NResource
+							.localizeWithParameter("Unable to remove role _",
+							groupRoleItemVO.getSecurityGroupRoleVO().getRoleVO().getName()));
+
+				}
+			}
+		});
+		return groupRoleItemVO;
+	}
 }
