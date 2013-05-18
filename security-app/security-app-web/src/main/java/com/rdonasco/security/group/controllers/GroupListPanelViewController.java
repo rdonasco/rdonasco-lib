@@ -67,7 +67,6 @@ public class GroupListPanelViewController implements
 	@Inject
 	private GroupListPanelView groupListPanelView;
 
-	// TODO: Use GroupDataManagerDecorator
 	@Inject
 	private GroupDataManagerDecorator dataManager;
 
