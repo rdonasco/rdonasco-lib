@@ -74,6 +74,9 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	private UserRolesViewController userRolesViewController;
 
 	@Inject
+	private UserGroupsViewController userGroupsViewController;
+
+	@Inject
 	private AvailableCapabilitiesViewControllerBuilder availableCapabilitiesViewControllerBuilder;
 
 	@Inject
@@ -112,6 +115,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 			configureButtonListeners();
 			configureFieldValidators();
 			configureCapabilitiesTab();
+			configureGroupsTab();
 			configureRolesTab();
 			changeViewToViewMode();
 
@@ -358,21 +362,20 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	{
 		getControlledView().getGroupsLayout().setSpacing(true);
 		getControlledView().getGroupsLayout().setMargin(true, true, true, true);
-		// TODO: change it to userGroupsViewController
 		getControlledView().getGroupsLayout()
-				.addComponent(userRolesViewController.getControlledView());
+				.addComponent(userGroupsViewController.getControlledView());
 		getControlledView().getGroupsLayout()
-				.addComponent(getAvailableRolesViewController().getControlledView());
+				.addComponent(getAvailableGroupsViewController().getControlledView());
 		getControlledView().getGroupsLayout()
-				.setExpandRatio(userRolesViewController.getControlledView(), 0.5f);
+				.setExpandRatio(userGroupsViewController.getControlledView(), 0.5f);
 		getControlledView().getGroupsLayout()
-				.setExpandRatio(getAvailableRolesViewController().getControlledView(), 0.5f);
+				.setExpandRatio(getAvailableGroupsViewController().getControlledView(), 0.5f);
 		// fix the size of the panels
 		float panelHeight = 300;
-		userRolesViewController.getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
-		getAvailableRolesViewController().getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
+		userGroupsViewController.getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
+		getAvailableGroupsViewController().getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
 		// Configure drag and drop of roles
-		userRolesViewController.setValidDraggedObjectSource(new SourceIs(getAvailableRolesViewController().getControlledView().getEditorTable()));
+		userGroupsViewController.setValidDraggedObjectSource(new SourceIs(getAvailableGroupsViewController().getControlledView().getEditorTable()));
 
 	}
 
@@ -387,6 +390,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		getControlledView().getEditButton().setReadOnly(!readOnly);
 		getAvailableCapabilitiesViewController().donotAllowDraggingAnyRow();
 		getAvailableRolesViewController().donotAllowDraggingAnyRow();
+		getAvailableGroupsViewController().donotAllowDraggingAnyRow();
 	}
 
 	public void changeViewToEditMode()
@@ -399,8 +403,10 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		getControlledView().getRetypedPasswordField().setVisible(true);
 		userCapabilitiesViewController.enableEditing();
 		userRolesViewController.enableEditing();
+		userGroupsViewController.enableEditing();
 		getAvailableCapabilitiesViewController().allowDraggingMultipleRows();
 		getAvailableRolesViewController().allowDraggingMultipleRows();
+		getAvailableGroupsViewController().allowDraggingMultipleRows();
 	}
 
 	public void changeViewToViewMode()
@@ -413,6 +419,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		getControlledView().getRetypedPasswordField().setVisible(false);
 		userCapabilitiesViewController.disableEditing();
 		userRolesViewController.disableEditing();
+		userGroupsViewController.disableEditing();
 	}
 
 	protected AvailableCapabilitiesViewController getAvailableCapabilitiesViewController()
