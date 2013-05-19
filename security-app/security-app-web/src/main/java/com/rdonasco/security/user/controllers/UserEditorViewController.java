@@ -25,6 +25,8 @@ import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewControllerBuilder;
+import com.rdonasco.security.group.controllers.AvailableGroupsViewController;
+import com.rdonasco.security.group.controllers.AvailableGroupsViewControllerBuilder;
 import com.rdonasco.security.role.controllers.AvailableRolesViewController;
 import com.rdonasco.security.role.controllers.AvailableRolesViewControllerBuilder;
 import com.rdonasco.security.user.views.UserEditorView;
@@ -73,6 +75,9 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 
 	@Inject
 	private AvailableCapabilitiesViewControllerBuilder availableCapabilitiesViewControllerBuilder;
+
+	@Inject
+	private AvailableGroupsViewControllerBuilder availableGroupsViewControllerBuilder;
 
 	@Inject
 	private AvailableRolesViewControllerBuilder availableRolesViewControllerBuilder;
@@ -349,6 +354,28 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 
 	}
 
+	private void configureGroupsTab()
+	{
+		getControlledView().getGroupsLayout().setSpacing(true);
+		getControlledView().getGroupsLayout().setMargin(true, true, true, true);
+		// TODO: change it to userGroupsViewController
+		getControlledView().getGroupsLayout()
+				.addComponent(userRolesViewController.getControlledView());
+		getControlledView().getGroupsLayout()
+				.addComponent(getAvailableRolesViewController().getControlledView());
+		getControlledView().getGroupsLayout()
+				.setExpandRatio(userRolesViewController.getControlledView(), 0.5f);
+		getControlledView().getGroupsLayout()
+				.setExpandRatio(getAvailableRolesViewController().getControlledView(), 0.5f);
+		// fix the size of the panels
+		float panelHeight = 300;
+		userRolesViewController.getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
+		getAvailableRolesViewController().getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
+		// Configure drag and drop of roles
+		userRolesViewController.setValidDraggedObjectSource(new SourceIs(getAvailableRolesViewController().getControlledView().getEditorTable()));
+
+	}
+
 	private void setViewToReadOnly(boolean readOnly)
 	{
 		getControlledView().setReadOnly(readOnly);
@@ -396,5 +423,10 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	protected AvailableRolesViewController getAvailableRolesViewController()
 	{
 		return availableRolesViewControllerBuilder.build();
+	}
+
+	protected AvailableGroupsViewController getAvailableGroupsViewController()
+	{
+		return availableGroupsViewControllerBuilder.build();
 	}
 }

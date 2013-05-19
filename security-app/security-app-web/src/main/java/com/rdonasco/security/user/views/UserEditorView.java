@@ -193,6 +193,11 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 		return rolesLayout;
 	}
 
+	public HorizontalLayout getGroupsLayout()
+	{
+		return groupsLayout;
+	}
+
 	public void hideButtons()
 	{
 		ButtonUtil.hideButtons(getSaveButton(), getEditButton(), getCancelButton());

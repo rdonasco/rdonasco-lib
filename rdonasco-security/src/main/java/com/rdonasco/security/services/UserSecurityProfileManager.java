@@ -21,6 +21,7 @@ import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.common.utils.CollectionsUtility;
 import com.rdonasco.security.dao.UserCapabilityDAO;
+import com.rdonasco.security.dao.UserGroupDAO;
 import com.rdonasco.security.dao.UserRoleDAO;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
@@ -29,6 +30,7 @@ import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.Role;
 import com.rdonasco.security.model.UserCapability;
+import com.rdonasco.security.model.UserGroup;
 import com.rdonasco.security.model.UserRole;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
@@ -71,6 +73,9 @@ public class UserSecurityProfileManager implements
 	@Inject
 	private UserRoleDAO userRoleDAO;
 
+	@Inject
+	private UserGroupDAO userGroupDAO;
+
 	@EJB
 	private CapabilityManagerLocal capabilityManager;
 
@@ -90,11 +95,15 @@ public class UserSecurityProfileManager implements
 		this.userRoleDAO = userRoleDAO;
 	}
 
+	public void setUserGroupDAO(UserGroupDAO userGroupDAO)
+	{
+		this.userGroupDAO = userGroupDAO;
+	}
+
 	public void setCapabilityManager(CapabilityManagerLocal capabilityManager)
 	{
 		this.capabilityManager = capabilityManager;
 	}
-
 
 	@Override
 	public UserSecurityProfileVO createNewUserSecurityProfile(
@@ -179,7 +188,6 @@ public class UserSecurityProfileManager implements
 		}
 		return roleVOList;
 	}
-
 
 	@Override
 	public UserSecurityProfileVO findSecurityProfileWithLogonID(String logonId)
@@ -308,6 +316,7 @@ public class UserSecurityProfileManager implements
 
 			mergeCapabilities(profileToUpdate, profileUpdateDetails);
 			mergeRoles(profileToUpdate, profileUpdateDetails);
+			mergeGroups(profileToUpdate, profileUpdateDetails);
 
 			userSecurityProfileDAO.update(profileToUpdate);
 		}
@@ -391,6 +400,41 @@ public class UserSecurityProfileManager implements
 					CollectionMergeException
 			{
 				itemToUpdate.setRole(itemToCopy.getRole());
+				itemToUpdate.setUserProfile(itemToCopy.getUserProfile());
+			}
+		}));
+	}
+
+	private void mergeGroups(UserSecurityProfile profileToUpdate,
+			UserSecurityProfile profileUpdateDetails) throws
+			CollectionMergeException
+	{
+		profileToUpdate.setGroups(CollectionsUtility.updateCollection(
+				profileUpdateDetails.getGroups(),
+				profileToUpdate.getGroups(),
+				new CollectionsUtility.CollectionItemDeleteStrategy<UserGroup>()
+		{
+			@Override
+			public void delete(UserGroup itemToDelete) throws
+					CollectionMergeException
+			{
+				try
+				{
+					userRoleDAO.delete(itemToDelete.getId());
+				}
+				catch (Exception e)
+				{
+					throw new CollectionMergeException(e);
+				}
+			}
+		}, new CollectionsUtility.CollectionItemUpdateStrategy<UserGroup>()
+		{
+			@Override
+			public void update(UserGroup itemToUpdate,
+					UserGroup itemToCopy) throws
+					CollectionMergeException
+			{
+				itemToUpdate.setGroup(itemToCopy.getGroup());
 				itemToUpdate.setUserProfile(itemToCopy.getUserProfile());
 			}
 		}));

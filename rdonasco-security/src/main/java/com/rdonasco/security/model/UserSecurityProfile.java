@@ -88,6 +88,9 @@ public class UserSecurityProfile implements Serializable
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile", fetch = FetchType.EAGER)
 	private Collection<UserRole> roles;
 
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile", fetch = FetchType.EAGER)
+	private Collection<UserGroup> groups;
+
 	public Long getId()
 	{
 		return id;
@@ -168,6 +171,21 @@ public class UserSecurityProfile implements Serializable
 	public void setRoles(Collection<UserRole> roles)
 	{
 		this.roles = roles;
+	}
+
+	public Collection<UserGroup> getGroups()
+	{
+		if (null == groups)
+		{
+			groups = new ArrayList<UserGroup>();
+		}
+		return groups;
+	}
+
+	public void setGroups(
+			Collection<UserGroup> groups)
+	{
+		this.groups = groups;
 	}
 
 	@Override
