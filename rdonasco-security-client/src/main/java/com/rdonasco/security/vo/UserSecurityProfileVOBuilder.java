@@ -20,6 +20,8 @@ public class UserSecurityProfileVOBuilder
 
 	private Collection<UserRoleVO> roles;
 
+	private Collection<UserGroupVO> groups;
+
 	private String password;
 
 	private Date expiryDate = new Date();
@@ -77,13 +79,19 @@ public class UserSecurityProfileVOBuilder
 
 	public UserSecurityProfileVO createUserSecurityProfileVO()
 	{
-		return new UserSecurityProfileVO(id, loginId, password, registrationToken, expiryDate, capabilities, roles);
+		return new UserSecurityProfileVO(id, loginId, password, registrationToken, expiryDate, capabilities, roles, groups);
 	}
 
 	public UserSecurityProfileVOBuilder setRoles(
 			List<UserRoleVO> roles)
 	{
 		this.roles = roles;
+		return this;
+	}
+
+	public UserSecurityProfileVOBuilder setGroups(Collection<UserGroupVO> groups)
+	{
+		this.groups = groups;
 		return this;
 	}
 }

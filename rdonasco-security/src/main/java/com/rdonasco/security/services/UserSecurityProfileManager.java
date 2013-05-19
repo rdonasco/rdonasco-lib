@@ -29,6 +29,7 @@ import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.Role;
+import com.rdonasco.security.model.SecurityGroup;
 import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.UserGroup;
 import com.rdonasco.security.model.UserRole;
@@ -38,6 +39,7 @@ import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.RoleCapabilityVO;
 import com.rdonasco.security.vo.RoleVO;
+import com.rdonasco.security.vo.SecurityGroupVO;
 import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
@@ -187,6 +189,26 @@ public class UserSecurityProfileManager implements
 			throw new DataAccessException(e);
 		}
 		return roleVOList;
+	}
+
+	@Override
+	public List<SecurityGroupVO> retrieveGroupsOfUser(
+			UserSecurityProfileVO userSecurityProfileVO) throws
+			DataAccessException
+	{
+		List<SecurityGroupVO> groupVOList = null;
+		try
+		{
+			UserSecurityProfile userProfile = SecurityEntityValueObjectConverter.toUserProfile(userSecurityProfileVO);
+			List<SecurityGroup> groupsOfUser = userGroupDAO.loadGroupsOf(userProfile);
+			groupVOList = SecurityEntityValueObjectConverter.toSecurityGroupVOList(groupsOfUser);
+
+		}
+		catch (Exception e)
+		{
+			throw new DataAccessException(e);
+		}
+		return groupVOList;
 	}
 
 	@Override
@@ -420,7 +442,7 @@ public class UserSecurityProfileManager implements
 			{
 				try
 				{
-					userRoleDAO.delete(itemToDelete.getId());
+					userGroupDAO.delete(itemToDelete.getId());
 				}
 				catch (Exception e)
 				{

@@ -29,14 +29,18 @@ import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.utils.ArchiveCreator;
 import com.rdonasco.security.utils.CapabilityTestUtility;
+import com.rdonasco.security.utils.GroupTestUtility;
 import com.rdonasco.security.utils.RoleTestUtility;
 import com.rdonasco.security.utils.UserSecurityProfileTestUtility;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.RoleVO;
+import com.rdonasco.security.vo.SecurityGroupVO;
 import com.rdonasco.security.vo.UserCapabilityVO;
+import com.rdonasco.security.vo.UserGroupVO;
 import com.rdonasco.security.vo.UserRoleVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -67,7 +71,12 @@ public class UserSecurityProfileManagerTest
 
 	private RoleTestUtility roleTestUtility;
 
+	private GroupTestUtility groupTestUtility;
+
 	private UserSecurityProfileTestUtility userSecurityProfileTestUtility;
+
+	@EJB
+	private SecurityGroupDataManagerLocal securityGroupDataManager;
 
 	@EJB
 	private RoleManagerLocal userRoleManager;
@@ -115,6 +124,7 @@ public class UserSecurityProfileManagerTest
 	{
 		capabilityTestUtility = new CapabilityTestUtility(capabilityManager);
 		roleTestUtility = new RoleTestUtility(userRoleManager);
+		groupTestUtility = new GroupTestUtility(securityGroupDataManager);
 		userSecurityProfileTestUtility = new UserSecurityProfileTestUtility(capabilityManager, systemSecurityManager);
 	}
 
@@ -140,6 +150,51 @@ public class UserSecurityProfileManagerTest
 		assertNotNull(roles);
 		assertEquals("roles not associated", 1, roles.size());
 
+	}
+
+	@Test
+	public void testRetrieveGroupsOfUser() throws Exception
+	{
+		System.out.println("retrieveGroupsOfUser");
+		UserSecurityProfileVO createdSecurityProfile = createUserProfileAssignedToGroups("Administrators", "Facilitators");
+		assertNotNull(createdSecurityProfile);
+		Collection<UserGroupVO> userGroups = createdSecurityProfile.getGroups();
+		assertNotNull(userGroups);
+		assertEquals("group not associated", 2, userGroups.size());
+		List<SecurityGroupVO> groups = userSecurityProfileManager.retrieveGroupsOfUser(createdSecurityProfile);
+		assertEquals("groups.size is wrong", 2, groups.size());
+	}
+
+	@Test
+	public void testUpdateGroupsOfUser() throws Exception
+	{
+		System.out.println("updateGroupsOfUser");
+		UserSecurityProfileVO createdSecurityProfile = createUserProfileAssignedToGroups("Some Administrators", "Some Facilitators");
+		UserSecurityProfileVO userSecurityProfileVO = userSecurityProfileManager.findSecurityProfileWithLogonID(createdSecurityProfile.getLogonId());
+		assertNotNull("user for update not created", userSecurityProfileVO);
+		List<UserGroupVO> groupsToUpdate = new ArrayList<UserGroupVO>(userSecurityProfileVO.getGroups());
+		Iterator<UserGroupVO> iterator = groupsToUpdate.iterator();
+		if (iterator.hasNext())
+		{
+			iterator.next();
+			iterator.remove();
+		}
+		userSecurityProfileVO.setGroups(groupsToUpdate);
+		createUserGroupsNamed(userSecurityProfileVO, "Idols");
+		userSecurityProfileManager.updateUserSecurityProfile(userSecurityProfileVO);
+		UserSecurityProfileVO updatedUserSecurityProfileVO = userSecurityProfileManager.findSecurityProfileWithLogonID(userSecurityProfileVO.getLogonId());
+		assertNotNull("updated data not found", updatedUserSecurityProfileVO);
+		assertEquals("wrong group size", 2, updatedUserSecurityProfileVO.getGroups().size());
+		boolean foundIt = false;
+		for (UserGroupVO userGroup : updatedUserSecurityProfileVO.getGroups())
+		{
+			if (userGroup.getGroup().getName().equals("Idols"))
+			{
+				foundIt = true;
+				break;
+			}
+		}
+		assertTrue("added group not found", foundIt);
 	}
 
 	@Test
@@ -180,5 +235,25 @@ public class UserSecurityProfileManagerTest
 		userSecurityProfile.addRole(role);
 		UserSecurityProfileVO createdProfile = userSecurityProfileManager.createNewUserSecurityProfile(userSecurityProfile);
 		return createdProfile;
+	}
+
+	private UserSecurityProfileVO createUserProfileAssignedToGroups(
+			String... groups) throws DataAccessException,
+			SecurityManagerException
+	{
+		UserSecurityProfileVO userSecurityProfile = userSecurityProfileTestUtility.createTestDataWithoutCapability();
+		createUserGroupsNamed(userSecurityProfile, groups);
+		return userSecurityProfileManager.createNewUserSecurityProfile(userSecurityProfile);
+	}
+
+	private void createUserGroupsNamed(UserSecurityProfileVO userSecurityProfile,
+			String... groups) throws
+			DataAccessException
+	{
+		for (String group : groups)
+		{
+			SecurityGroupVO securityGroupVO = groupTestUtility.createSecurityGroupNamed(group);
+			userSecurityProfile.addGroup(securityGroupVO);
+		}
 	}
 }

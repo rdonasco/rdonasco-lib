@@ -21,6 +21,7 @@ import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.RoleVO;
+import com.rdonasco.security.vo.SecurityGroupVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import java.util.List;
 import javax.ejb.Local;
@@ -45,6 +46,10 @@ public interface UserSecurityProfileManagerLocal
 
 	List<RoleVO> retrieveRolesOfUser(UserSecurityProfileVO userSecurityProfile)
 			throws DataAccessException;
+
+	public List<SecurityGroupVO> retrieveGroupsOfUser(
+			UserSecurityProfileVO userSecurityProfileVO) throws
+			DataAccessException;
 
 	UserSecurityProfileVO findSecurityProfileWithLogonID(String logonId)
 			throws SecurityManagerException;

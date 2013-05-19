@@ -37,32 +37,42 @@ public class UserSecurityProfileVO implements Serializable
 	private Collection<UserCapabilityVO> capabilities;
 
 	private Collection<UserRoleVO> roles;
+	private Collection<UserGroupVO> groups;
 
-
-	public UserSecurityProfileVO(Long id, String loginId, String password,
+	UserSecurityProfileVO(Long id, String loginId, String password,
 			String token, Date expiryDate,
 			Collection<UserCapabilityVO> capabilities,
-			Collection<UserRoleVO> roles)
+			Collection<UserRoleVO> roles,
+			Collection<UserGroupVO> groups)
 	{
 		this.id = id;
 		this.logonId = loginId;
 		this.password = password;
 		this.capabilities = capabilities;
 		this.roles = roles;
+		this.groups = groups;
 		this.registrationToken = token;
 		this.registrationTokenExpiration = expiryDate;
+		final UserSecurityProfileVO userSecurityProfileVO = this;
 		if(null != capabilities)
 		{
 			for(UserCapabilityVO userCapabilityVO : capabilities)
 			{
-				userCapabilityVO.setUserProfile(this);
+				userCapabilityVO.setUserProfile(userSecurityProfileVO);
 			}
 		}
 		if (null != roles)
 		{
 			for (UserRoleVO userRoleVO : roles)
 			{
-				userRoleVO.setUserProfile(this);
+				userRoleVO.setUserProfile(userSecurityProfileVO);
+			}
+		}
+		if (null != groups)
+		{
+			for (UserGroupVO userGroupVO : groups)
+			{
+				userGroupVO.setUserProfile(userSecurityProfileVO);
 			}
 		}
 	}
@@ -209,5 +219,28 @@ public class UserSecurityProfileVO implements Serializable
 				.setRole(role)
 				.setUserProfile(this)
 				.createUserRoleVO());
+	}
+
+	public void setGroups(
+			Collection<UserGroupVO> groups)
+	{
+		this.groups = groups;
+	}
+
+	public Collection<UserGroupVO> getGroups()
+	{
+		if (null == groups)
+		{
+			groups = new ArrayList<UserGroupVO>();
+		}
+		return groups;
+	}
+
+	public void addGroup(SecurityGroupVO securityGroupVO)
+	{
+		getGroups().add(new UserGroupVOBuilder()
+				.setGroup(securityGroupVO)
+				.setUserProfile(this)
+				.createUserGroupVO());
 	}
 }
