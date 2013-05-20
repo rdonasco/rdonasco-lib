@@ -20,6 +20,7 @@ import com.rdonasco.security.capability.vo.ActionItemVO;
 import com.rdonasco.security.capability.vo.ActionItemVOBuilder;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.capability.vo.ResourceItemVO;
+import com.rdonasco.security.common.views.ListItemIconCellStyleGenerator;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.ResourceVO;
@@ -283,25 +284,7 @@ public class CapabilityEditorViewController implements
 		{
 			"", I18NResource.localize("Name")
 		});
-		actionTable.setCellStyleGenerator(new Table.CellStyleGenerator()
-		{
-			private static final long serialVersionUID = 1L;
-
-			@Override
-			public String getStyle(Object itemId, Object propertyId)
-			{
-				String style = null;
-				if ("icon".equals(propertyId))
-				{
-					style = SecurityDefaultTheme.CSS_ICON_IN_A_CELL;
-				}
-				else if ("name".equals(propertyId))
-				{
-					style = SecurityDefaultTheme.CSS_FULL_WIDTH;
-				}
-				return style;
-			}
-		});
+		actionTable.setCellStyleGenerator(new ListItemIconCellStyleGenerator());
 	}
 
 	private void configureForm() throws Buffered.SourceException,

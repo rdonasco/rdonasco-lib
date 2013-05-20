@@ -23,14 +23,16 @@ import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.security.capability.utils.IconHelper;
+import com.rdonasco.security.common.views.ListItemIconCellStyleGenerator;
+import com.rdonasco.security.group.vo.GroupItemVO;
 import com.rdonasco.security.role.vo.RoleItemVO;
 import com.rdonasco.security.user.views.UserGroupsView;
 import com.vaadin.data.util.BeanItemContainer;
-import com.rdonasco.security.user.vo.UserRoleItemVO;
-import com.rdonasco.security.user.vo.UserRoleItemVOBuilder;
+import com.rdonasco.security.user.vo.UserGroupItemVO;
+import com.rdonasco.security.user.vo.UserGroupItemVOBuilder;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
-import com.rdonasco.security.vo.UserRoleVO;
-import com.rdonasco.security.vo.UserRoleVOBuilder;
+import com.rdonasco.security.vo.UserGroupVO;
+import com.rdonasco.security.vo.UserGroupVOBuilder;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.DataBoundTransferable;
 import com.vaadin.event.MouseEvents;
@@ -57,25 +59,25 @@ public class UserGroupsViewController implements
 	private static final Logger LOG = Logger.getLogger(UserGroupsViewController.class.getName());
 	private static final long serialVersionUID = 1L;
 	private static final String CONSTANT_ICON = "icon";
-	private static final String COLUMN_ROLE_NAME = "role.name";
+	private static final String COLUMN_GROUP_NAME = "group.name";
 	@Inject
 	private UserGroupsView userGroupsView;
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
 	@Inject
 	private ApplicationPopupProvider popupProvider;
-	private BeanItemContainer<UserRoleItemVO> userRoleItemContainer = new BeanItemContainer(UserRoleItemVO.class);
+	private BeanItemContainer<UserGroupItemVO> userGroupItemContainer = new BeanItemContainer(UserGroupItemVO.class);
 	private BeanItem<UserSecurityProfileItemVO> currentProfile;
 	private DropHandler userGroupsDropHandler;
 	private AcceptCriterion validDraggedObjectSource = AcceptAll.get();
 	private boolean editEnabled;
 	private final String[] editableColumns = new String[]
 	{
-		CONSTANT_ICON, COLUMN_ROLE_NAME
+		CONSTANT_ICON, COLUMN_GROUP_NAME
 	};
 	private final String[] readOnlyColumns = new String[]
 	{
-		COLUMN_ROLE_NAME
+		COLUMN_GROUP_NAME
 	};
 
 	@PostConstruct
@@ -122,13 +124,14 @@ public class UserGroupsViewController implements
 
 	private void configureUserGroupsTable()
 	{
-		getControlledView().getUserGroupsTable().setContainerDataSource(userRoleItemContainer);
-		userRoleItemContainer.addNestedContainerProperty(COLUMN_ROLE_NAME);
+		getControlledView().getUserGroupsTable().setContainerDataSource(userGroupItemContainer);
+		userGroupItemContainer.addNestedContainerProperty(COLUMN_GROUP_NAME);
 		getControlledView().getUserGroupsTable().setVisibleColumns(editableColumns);
 		getControlledView().getUserGroupsTable().setColumnHeaders(new String[]
 		{
 			"", I18NResource.localize("Name")
 		});
+		getControlledView().getUserGroupsTable().setCellStyleGenerator(new ListItemIconCellStyleGenerator());
 		userGroupsDropHandler = new DropHandler()
 		{
 			private static final long serialVersionUID = 1L;
@@ -137,19 +140,19 @@ public class UserGroupsViewController implements
 			public void drop(DragAndDropEvent dropEvent)
 			{
 				final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
-				if (null != transferredData && transferredData.getItemId() instanceof RoleItemVO)
+				if (null != transferredData && transferredData.getItemId() instanceof GroupItemVO)
 				{
-					LOG.log(Level.FINE, "drop allowed at user capability panel");
-					final RoleItemVO droppedCapabilityItemVO = (RoleItemVO) transferredData.getItemId();
-					Embedded icon = IconHelper.createDeleteIcon(I18NResource.localize("Remove Capability"));
-					final UserRoleItemVO newUserRoleItemVO = new UserRoleItemVOBuilder()
+					LOG.log(Level.FINE, "drop allowed at user group panel");
+					final GroupItemVO droppedCapabilityItemVO = (GroupItemVO) transferredData.getItemId();
+					Embedded icon = IconHelper.createDeleteIcon(I18NResource.localize("Remove Group"));
+					final UserGroupItemVO newUserGroupItemVO = new UserGroupItemVOBuilder()
 							.setIcon(icon)
-							.setUserRoleVO(new UserRoleVOBuilder()
-							.setRole(droppedCapabilityItemVO.getRoleVO())
+							.setUserGroupVO(new UserGroupVOBuilder()
+							.setGroup(droppedCapabilityItemVO.getSecurityGroupVO())
 							.setUserProfile(currentProfile.getBean().getUserSecurityProfileVO())
-							.createUserRoleVO())
-							.createUserRoleItemVO();
-					BeanItem<UserRoleItemVO> addedItem = userRoleItemContainer.addItem(newUserRoleItemVO);
+							.createUserGroupVO())
+							.createUserGroupItemVO();
+					BeanItem<UserGroupItemVO> addedItem = userGroupItemContainer.addItem(newUserGroupItemVO);
 					LOG.log(Level.FINE, "addedItem = {0}", addedItem);
 					icon.addListener(new MouseEvents.ClickListener()
 					{
@@ -158,11 +161,11 @@ public class UserGroupsViewController implements
 						@Override
 						public void click(MouseEvents.ClickEvent event)
 						{
-							if (!getControlledView().isReadOnly() && !userRoleItemContainer.removeItem(newUserRoleItemVO))
+							if (!getControlledView().isReadOnly() && !userGroupItemContainer.removeItem(newUserGroupItemVO))
 							{
 								popupProvider.popUpError(I18NResource
-										.localizeWithParameter("Unable to remove role _",
-										newUserRoleItemVO.getRole().getName()));
+										.localizeWithParameter("Unable to remove group _",
+										newUserGroupItemVO.getGroup().getName()));
 
 							}
 						}
@@ -170,7 +173,7 @@ public class UserGroupsViewController implements
 				}
 				else
 				{
-					LOG.log(Level.FINE, "invalid data dropped in user role panel");
+					LOG.log(Level.FINE, "invalid data dropped in user group panel");
 				}
 			}
 
@@ -217,31 +220,31 @@ public class UserGroupsViewController implements
 
 	private void populateItemContainer()
 	{
-		userRoleItemContainer.removeAllItems();
+		userGroupItemContainer.removeAllItems();
 		getControlledView().getUserGroupsTable().setSelectable(true);
-//		for (UserRoleVO userRole : currentProfile.getBean().getGroups())
-//		{
-//			Embedded icon = IconHelper.createDeleteIcon("Remove role");
-//			final UserRoleItemVO userRoleItemVO = new UserRoleItemVOBuilder()
-//					.setIcon(icon)
-//					.setUserRoleVO(userRole)
-//					.createUserRoleItemVO();
-//			userRoleItemContainer.addItem(userRoleItemVO);
-//			icon.addListener(new MouseEvents.ClickListener()
-//			{
-//				private static final long serialVersionUID = 1L;
-//
-//				@Override
-//				public void click(MouseEvents.ClickEvent event)
-//				{
-//					if (!getControlledView().isReadOnly() && !userRoleItemContainer.removeItem(userRoleItemVO))
-//					{
-//						popupProvider.popUpError(I18NResource.localizeWithParameter("Unable to remove role _", userRoleItemVO));
-//
-//					}
-//				}
-//			});
-//		}
+		for (UserGroupVO userGroup : currentProfile.getBean().getGroups())
+		{
+			Embedded icon = IconHelper.createDeleteIcon("Remove group");
+			final UserGroupItemVO userRoleItemVO = new UserGroupItemVOBuilder()
+					.setIcon(icon)
+					.setUserGroupVO(userGroup)
+					.createUserGroupItemVO();
+			userGroupItemContainer.addItem(userRoleItemVO);
+			icon.addListener(new MouseEvents.ClickListener()
+			{
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void click(MouseEvents.ClickEvent event)
+				{
+					if (!getControlledView().isReadOnly() && !userGroupItemContainer.removeItem(userRoleItemVO))
+					{
+						popupProvider.popUpError(I18NResource.localizeWithParameter("Unable to remove group _", userRoleItemVO));
+
+					}
+				}
+			});
+		}
 	}
 
 	void discardChanges()
@@ -251,11 +254,11 @@ public class UserGroupsViewController implements
 
 	public void commit()
 	{
-		List<UserRoleVO> editedCapabilities = new ArrayList<UserRoleVO>();
-		for (UserRoleItemVO roleItem : userRoleItemContainer.getItemIds())
+		List<UserGroupVO> editedCapabilities = new ArrayList<UserGroupVO>();
+		for (UserGroupItemVO roleItem : userGroupItemContainer.getItemIds())
 		{
-			editedCapabilities.add(roleItem.getUserRoleVO());
+			editedCapabilities.add(roleItem.getUserGroupVO());
 		}
-		currentProfile.getItemProperty("roles").setValue(editedCapabilities);
+		currentProfile.getItemProperty("groups").setValue(editedCapabilities);
 	}
 }

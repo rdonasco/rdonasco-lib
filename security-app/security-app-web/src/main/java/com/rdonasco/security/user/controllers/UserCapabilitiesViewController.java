@@ -24,6 +24,7 @@ import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.security.capability.utils.IconHelper;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
+import com.rdonasco.security.common.views.ListItemIconCellStyleGenerator;
 import com.rdonasco.security.user.views.UserCapabilitiesView;
 import com.vaadin.data.util.BeanItemContainer;
 import com.rdonasco.security.user.vo.UserCapabilityItemVO;
@@ -124,6 +125,7 @@ public class UserCapabilitiesViewController implements
 	{
 		getControlledView().getUserCapabilitiesTable().setContainerDataSource(userCapabilityItemContainer);
 		userCapabilityItemContainer.addNestedContainerProperty(COLUMN_CAPABILITY_TITLE);
+		getControlledView().getUserCapabilitiesTable().setCellStyleGenerator(new ListItemIconCellStyleGenerator());
 		getControlledView().getUserCapabilitiesTable().setVisibleColumns(editableColumns);
 		getControlledView().getUserCapabilitiesTable().setColumnHeaders(new String[]
 		{

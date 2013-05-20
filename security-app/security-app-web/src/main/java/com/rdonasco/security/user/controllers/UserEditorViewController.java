@@ -136,6 +136,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		this.currentItem = currentItem;
 		userCapabilitiesViewController.setCurrentProfile(getCurrentItem());
 		userRolesViewController.setCurrentProfile(getCurrentItem());
+		userGroupsViewController.setCurrentProfile(currentItem);
 		changeViewToViewMode();
 	}
 
@@ -286,6 +287,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		{
 			userCapabilitiesViewController.commit();
 			userRolesViewController.commit();
+			userGroupsViewController.commit();
 			getControlledView().getForm().commit();
 			changeViewToViewMode();
 			userItemTableContainer.updateItem(getCurrentItem().getBean());
@@ -304,6 +306,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		getControlledView().getForm().discard();
 		userCapabilitiesViewController.discardChanges();
 		userRolesViewController.discardChanges();
+		userGroupsViewController.discardChanges();
 		setCurrentItem(currentItem);
 		changeViewToViewMode();
 	}

@@ -27,6 +27,7 @@ import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.capability.utils.IconHelper;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
+import com.rdonasco.security.common.views.ListItemIconCellStyleGenerator;
 import com.rdonasco.security.group.views.GroupEditorView;
 import com.rdonasco.security.group.vo.GroupItemVO;
 import com.rdonasco.security.group.vo.GroupRoleItemVO;
@@ -84,6 +85,7 @@ public class GroupEditorViewController implements
 	private BeanItemContainer<GroupRoleItemVO> groupRolesContainer = new BeanItemContainer<GroupRoleItemVO>(GroupRoleItemVO.class);
 
 	private DropHandler groupRolesDropHandler;
+
 	private Button.ClickListener cancelClickListener = new Button.ClickListener()
 	{
 		private static final long serialVersionUID = 1L;
@@ -176,25 +178,7 @@ public class GroupEditorViewController implements
 		I18NResource.localize("Name")
 	};
 
-	private Table.CellStyleGenerator CELL_STYLE_GENERATOR = new Table.CellStyleGenerator()
-	{
-		private static final long serialVersionUID = 1L;
-
-		@Override
-		public String getStyle(Object itemId, Object propertyId)
-		{
-			String style;
-			if ("icon".equals(propertyId))
-			{
-				style = SecurityDefaultTheme.CSS_ICON_IN_A_CELL;
-			}
-			else
-			{
-				style = SecurityDefaultTheme.CSS_FULL_WIDTH;
-			}
-			return style;
-		}
-	};
+	private Table.CellStyleGenerator CELL_STYLE_GENERATOR = new ListItemIconCellStyleGenerator();
 
 	@PostConstruct
 	@Override
@@ -294,9 +278,9 @@ public class GroupEditorViewController implements
 		getControlledView().getSaveButton().setVisible(false);
 		getControlledView().getCancelButton().setVisible(false);
 		getControlledView().getEditButton().setVisible(true);
+		getControlledView().getGroupRolesTable().setCellStyleGenerator(CELL_STYLE_GENERATOR);
 		getControlledView().getGroupRolesTable().setVisibleColumns(NON_EDITABLE_COLUMNS);
 		getControlledView().getGroupRolesTable().setColumnHeaders(NON_EDITABLE_HEADERS);
-		getControlledView().getGroupRolesTable().setCellStyleGenerator(CELL_STYLE_GENERATOR);
 		getControlledView().getGroupRolesTable().setDropHandler(null);
 
 	}
@@ -307,9 +291,9 @@ public class GroupEditorViewController implements
 		getControlledView().getSaveButton().setVisible(true);
 		getControlledView().getCancelButton().setVisible(true);
 		getControlledView().getEditButton().setVisible(false);
+		getControlledView().getGroupRolesTable().setCellStyleGenerator(CELL_STYLE_GENERATOR);
 		getControlledView().getGroupRolesTable().setVisibleColumns(EDITABLE_COLUMNS);
 		getControlledView().getGroupRolesTable().setColumnHeaders(EDITABLE_HEADERS);
-		getControlledView().getGroupRolesTable().setCellStyleGenerator(CELL_STYLE_GENERATOR);
 		getControlledView().getGroupRolesTable().setDropHandler(groupRolesDropHandler);
 	}
 

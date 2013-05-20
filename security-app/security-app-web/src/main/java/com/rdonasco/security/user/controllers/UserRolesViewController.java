@@ -23,6 +23,7 @@ import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.security.capability.utils.IconHelper;
+import com.rdonasco.security.common.views.ListItemIconCellStyleGenerator;
 import com.rdonasco.security.role.vo.RoleItemVO;
 import com.rdonasco.security.user.views.UserRolesView;
 import com.vaadin.data.util.BeanItemContainer;
@@ -129,6 +130,7 @@ public class UserRolesViewController implements
 		{
 			"", I18NResource.localize("Name")
 		});
+		getControlledView().getUserRolesTable().setCellStyleGenerator(new ListItemIconCellStyleGenerator());
 		userRolesDropHandler = new DropHandler()
 		{
 			private static final long serialVersionUID = 1L;

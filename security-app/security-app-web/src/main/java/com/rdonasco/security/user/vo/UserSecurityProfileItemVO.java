@@ -19,6 +19,7 @@ package com.rdonasco.security.user.vo;
 
 import com.rdonasco.datamanager.listeditor.view.ListEditorItem;
 import com.rdonasco.security.vo.UserCapabilityVO;
+import com.rdonasco.security.vo.UserGroupVO;
 import com.rdonasco.security.vo.UserRoleVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.vaadin.ui.Embedded;
@@ -124,6 +125,16 @@ public class UserSecurityProfileItemVO implements ListEditorItem, Serializable
 		userSecurityProfileVO.setRoles(roles);
 	}
 
+	public void setGroups(
+			Collection<UserGroupVO> groups)
+	{
+		userSecurityProfileVO.setGroups(groups);
+	}
+
+	public Collection<UserGroupVO> getGroups()
+	{
+		return userSecurityProfileVO.getGroups();
+	}
 
 	public boolean isTokenExpired()
 	{
