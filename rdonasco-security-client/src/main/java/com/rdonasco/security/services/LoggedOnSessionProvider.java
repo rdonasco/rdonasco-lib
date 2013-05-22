@@ -24,4 +24,6 @@ public interface LoggedOnSessionProvider
 {
 
 	LoggedOnSession getLoggedOnSession();
+
+	void setLoggedOnSession(LoggedOnSession loggedOnSession);
 }
