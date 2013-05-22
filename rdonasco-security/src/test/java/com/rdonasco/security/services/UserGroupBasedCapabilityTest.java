@@ -1,6 +1,6 @@
 /*
  * Copyright 2013 Roy F. Donasco.
- * File Created on: 02-May-2013
+ * File Created on: 21-May-2013
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,14 @@ import com.rdonasco.security.dao.UserCapabilityDAO;
 import com.rdonasco.security.dao.UserGroupDAO;
 import com.rdonasco.security.dao.UserRoleDAO;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
-import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.CapabilityAction;
 import com.rdonasco.security.model.Resource;
 import com.rdonasco.security.model.Role;
 import com.rdonasco.security.model.RoleCapability;
+import com.rdonasco.security.model.SecurityGroup;
+import com.rdonasco.security.model.SecurityGroupRole;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.vo.AccessRightsVO;
@@ -45,16 +46,22 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public class UserRoleBasedCapabilityTest
+public class UserGroupBasedCapabilityTest
 {
 
-	private static final Logger LOG = Logger.getLogger(UserRoleBasedCapabilityTest.class.getName());
+	private static final Logger LOG = Logger.getLogger(UserGroupBasedCapabilityTest.class.getName());
 
 	private static UserSecurityProfileVO userSecurityProfileVOMock;
 
@@ -80,7 +87,9 @@ public class UserRoleBasedCapabilityTest
 
 	private static Resource resource;
 
-	public UserRoleBasedCapabilityTest()
+	private static long ID_SEED = 1L;
+
+	public UserGroupBasedCapabilityTest()
 	{
 	}
 
@@ -97,6 +106,7 @@ public class UserRoleBasedCapabilityTest
 			userRoleDAOmock = mock(UserRoleDAO.class);
 			roleDAOmock = mock(RoleDAO.class);
 			userGroupDAOMock = mock(UserGroupDAO.class);
+
 			resourceVO = new ResourceVOBuilder()
 					.setId(Long.MIN_VALUE)
 					.setName(resourceName)
@@ -108,7 +118,6 @@ public class UserRoleBasedCapabilityTest
 		{
 			LOG.log(Level.SEVERE, ex.getMessage(), ex);
 		}
-
 	}
 
 	@AfterClass
@@ -126,6 +135,7 @@ public class UserRoleBasedCapabilityTest
 		reset(userCapabilityDAOMock);
 		reset(userRoleDAOmock);
 		reset(roleDAOmock);
+		reset(userGroupDAOMock);
 		when(userSecurityProfileVOMock.getLogonId()).thenReturn("dummyUser");
 	}
 
@@ -134,6 +144,63 @@ public class UserRoleBasedCapabilityTest
 	{
 	}
 
+	private long getNextID()
+	{
+		return ID_SEED++;
+	}
+
+	private List<Role> getUserRolesThatCanDoThisToAUser(
+			final String... actionNames)
+	{
+		List<Role> roles = new ArrayList<Role>();
+		long id = 1;
+		for (String actionName : actionNames)
+		{
+			Role role = new Role();
+			Capability capability = new Capability();
+			capability.setId(getNextID());
+			Action action = new Action();
+			action.setId(getNextID());
+			action.setName(actionName);
+			CapabilityAction capabilityAction = new CapabilityAction();
+			capabilityAction.setId(getNextID());
+			capabilityAction.setAction(action);
+			capabilityAction.setCapability(capability);
+			List<CapabilityAction> capabilityActionList = new ArrayList<CapabilityAction>();
+			capabilityActionList.add(capabilityAction);
+			capability.setResource(resource);
+			capability.setActions(capabilityActionList);
+			RoleCapability roleCapability = new RoleCapability();
+			roleCapability.setCapability(capability);
+			roleCapability.setId(getNextID());
+			roleCapability.setRole(role);
+			List<RoleCapability> roleCapabilities = new ArrayList<RoleCapability>();
+			roleCapabilities.add(roleCapability);
+			role.setId(getNextID());
+			role.setCapabilities(roleCapabilities);
+			roles.add(role);
+		}
+		return roles;
+	}
+
+	private List<SecurityGroup> getUserGroupsThatCanDoThisToAUser(
+			String... actions)
+	{
+		List<SecurityGroup> securityGroups = new ArrayList<SecurityGroup>();
+		SecurityGroup group = new SecurityGroup();
+		group.setId(getNextID());
+		List<Role> roles = getUserRolesThatCanDoThisToAUser(actions);
+		for (Role role : roles)
+		{
+			SecurityGroupRole securityGroupRole = new SecurityGroupRole();
+			securityGroupRole.setId(getNextID());
+			securityGroupRole.setRole(role);
+			securityGroupRole.setSecurityGroup(group);
+			group.getGroupRoles().add(securityGroupRole);			
+		}
+		securityGroups.add(group);
+		return securityGroups;
+	}
 	private SystemSecurityManagerImpl prepareSecurityManagerInstanceToTest()
 	{
 		userSecurityProfileManager = new UserSecurityProfileManager();
@@ -152,44 +219,20 @@ public class UserRoleBasedCapabilityTest
 		return new ArrayList<Capability>();
 	}
 
-	private List<Role> getUserRolesThatCanDoThisToAUser(final String actionName)
+	private List<Role> getEmptyUserRoles()
 	{
-		List<Role> roles = new ArrayList<Role>();
-		Role role = new Role();
-		Capability capability = new Capability();
-		Action action = new Action();
-		action.setId(Long.MIN_VALUE);
-		action.setName(actionName);
-		CapabilityAction capabilityAction = new CapabilityAction();
-		capabilityAction.setAction(action);
-		capabilityAction.setCapability(capability);
-		List<CapabilityAction> capabilityActionList = new ArrayList<CapabilityAction>();
-		capabilityActionList.add(capabilityAction);
-		capability.setResource(resource);
-		capability.setActions(capabilityActionList);
-		RoleCapability roleCapability = new RoleCapability();
-		roleCapability.setCapability(capability);
-		roleCapability.setId(Long.MIN_VALUE);
-		roleCapability.setRole(role);
-		List<RoleCapability> roleCapabilities = new ArrayList<RoleCapability>();
-		roleCapabilities.add(roleCapability);
-		role.setId(Long.MIN_VALUE);
-		role.setCapabilities(roleCapabilities);
-		roles.add(role);
-		return roles;
+		return new ArrayList<Role>();
 	}
 
 	@Test
-	public void testWithRoleThatCanAddUser() throws Exception
+	public void testGroupWithCapabilityToAddUser() throws Exception
 	{
-		System.out.println("withRoleThatCanAddUser");
+		System.out.println("groupWithCapabilityToAddUser");
 		SystemSecurityManagerImpl instance = prepareSecurityManagerInstanceToTest();
 		final String addAction = "Add";
 		AccessRightsVO accessRights = new AccessRightsVOBuilder()
 				.setActionAsString(addAction)
-				.setActionID(Long.MIN_VALUE)
 				.setResourceAsString(resourceName)
-				.setResourceID(Long.MIN_VALUE)
 				.setUserProfileVO(userSecurityProfileVOMock)
 				.createAccessRightsVO();
 
@@ -198,31 +241,8 @@ public class UserRoleBasedCapabilityTest
 		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
 		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getEmptyUserCapabilities());
 		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessRights.getResource().getName())).thenReturn(resourceVO);
-		when(userRoleDAOmock.loadRolesOf(any(UserSecurityProfile.class))).thenReturn(getUserRolesThatCanDoThisToAUser(addAction));
-		instance.checkAccessRights(accessRights);
-		verify(userRoleDAOmock, times(1)).loadRolesOf(any(UserSecurityProfile.class));
-	}
-
-	@Test(expected = SecurityAuthorizationException.class)
-	public void testWithRoleThatCanNotAddUser() throws Exception
-	{
-		System.out.println("withRoleThatCannotAddUser");
-		SystemSecurityManagerImpl instance = prepareSecurityManagerInstanceToTest();
-		final String addAction = "Add";
-		AccessRightsVO accessRights = new AccessRightsVOBuilder()
-				.setActionAsString(addAction)
-				.setActionID(Long.MIN_VALUE)
-				.setResourceAsString(resourceName)
-				.setResourceID(Long.MIN_VALUE)
-				.setUserProfileVO(userSecurityProfileVOMock)
-				.createAccessRightsVO();
-
-		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
-		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
-		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
-		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getEmptyUserCapabilities());
-		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessRights.getResource().getName())).thenReturn(resourceVO);
-		when(userRoleDAOmock.loadRolesOf(any(UserSecurityProfile.class))).thenReturn(getUserRolesThatCanDoThisToAUser("Edit"));
+		when(userRoleDAOmock.loadRolesOf(any(UserSecurityProfile.class))).thenReturn(getEmptyUserRoles());
+		when(userGroupDAOMock.loadGroupsOf(any(UserSecurityProfile.class))).thenReturn(getUserGroupsThatCanDoThisToAUser("add", "edit", "delete"));
 		instance.checkAccessRights(accessRights);
 		verify(userRoleDAOmock, times(1)).loadRolesOf(any(UserSecurityProfile.class));
 	}

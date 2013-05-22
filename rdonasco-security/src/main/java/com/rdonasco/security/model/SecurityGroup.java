@@ -18,6 +18,7 @@ package com.rdonasco.security.model;
 
 import com.rdonasco.security.utils.SecurityConstants;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -79,6 +80,10 @@ public class SecurityGroup implements Serializable
 
 	public Collection<SecurityGroupRole> getGroupRoles()
 	{
+		if (null == groupRoles)
+		{
+			groupRoles = new ArrayList<SecurityGroupRole>();
+		}
 		return groupRoles;
 	}
 

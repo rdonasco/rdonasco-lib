@@ -26,31 +26,46 @@ public class AccessRightsVO implements Serializable
 {
 
 	private static final long serialVersionUID = 1L;
+
 	private ResourceVO resource;
+
 	private UserSecurityProfileVO userProfile;
+
 	private ActionVO action;
+
+	private String resourceName;
+
+	private String actionName;
 
 	AccessRightsVO(ResourceVO resource,
 			UserSecurityProfileVO userProfile, ActionVO action)
 	{
-		this.resource = resource;
-		this.userProfile = userProfile;
-		this.action = action;
+		setResource(resource);
+		setUserProfile(userProfile);
+		setAction(action);
 	}
 
-	void setResource(ResourceVO resource)
+	private void setResource(ResourceVO resource)
 	{
 		this.resource = resource;
+		if (null != resource && resource.getName() != null)
+		{
+			resourceName = resource.getName();
+		}
 	}
 
-	void setUserProfile(UserSecurityProfileVO userProfile)
+	private void setUserProfile(UserSecurityProfileVO userProfile)
 	{
 		this.userProfile = userProfile;
 	}
 
-	void setAction(ActionVO action)
+	private void setAction(ActionVO action)
 	{
 		this.action = action;
+		if (null != action && action.getName() != null)
+		{
+			actionName = action.getName().toLowerCase();
+		}
 	}
 
 	public ResourceVO getResource()
@@ -77,12 +92,12 @@ public class AccessRightsVO implements Serializable
 	public int hashCode()
 	{
 		int hash = 3;
-		hash = 89 * hash + (this.resource != null && this.resource.getName() != null ? this.resource.getName().hashCode() : 0);
+		hash = 89 * hash + (getResourceName() != null ? getResourceName().hashCode() : 0);
 		hash = 89 * hash + (this.userProfile != null ? this.userProfile.hashCode() : 0);
-		hash = 89 * hash + (this.action != null && this.action.getName() != null ? this.action.getName().hashCode() : 0);
+		hash = 89 * hash + (getActionName() != null ? getActionName().hashCode() : 0);
 		return hash;
 	}
-	
+
 	public Long getId()
 	{
 		return new Long(hashCode());
@@ -91,30 +106,43 @@ public class AccessRightsVO implements Serializable
 	@Override
 	public boolean equals(Object obj)
 	{
+		boolean isEqual;
 		if (obj == null)
 		{
-			return false;
+			isEqual = false;
 		}
-		if (getClass() != obj.getClass())
+		else if (getClass() != obj.getClass())
 		{
-			return false;
+			isEqual = false;
 		}
-		final AccessRightsVO other = (AccessRightsVO) obj;
-		if(this.getId() == null)
+		else
 		{
-			return false;			
+			final AccessRightsVO other = (AccessRightsVO) obj;
+			if (this.getId() == null)
+			{
+				isEqual = false;
+			}
+			else
+			{
+				isEqual = this.getId().equals(other.getId());
+			}
 		}
-		else if(other == null)
-		{
-			return false;
-		}
-		return this.getId().equals(other.getId());
+		return isEqual;
 	}
 
 	@Override
 	public String toString()
 	{
-		return "AccessRightsVO{" + "resource=" + resource.getName() + ", userProfile=" + userProfile.getId() + ", action=" + action.getName() + '}';
+		return "AccessRightsVO{" + "resource=" + getResourceName() + ", userProfile=" + userProfile.getId() + ", action=" + getActionName() + '}';
 	}
-	
+
+	private String getResourceName()
+	{
+		return resourceName;
+	}
+
+	private String getActionName()
+	{
+		return actionName;
+	}
 }

@@ -29,7 +29,9 @@ import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.Role;
+import com.rdonasco.security.model.RoleCapability;
 import com.rdonasco.security.model.SecurityGroup;
+import com.rdonasco.security.model.SecurityGroupRole;
 import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.UserGroup;
 import com.rdonasco.security.model.UserRole;
@@ -43,7 +45,9 @@ import com.rdonasco.security.vo.SecurityGroupVO;
 import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -157,18 +161,31 @@ public class UserSecurityProfileManager implements
 	public List<CapabilityVO> retrieveCapabilitiesOfUserBasedOnRoles(
 			AccessRightsVO accessRights) throws DataAccessException
 	{
-		List<RoleVO> roles = retrieveRolesOfUser(accessRights.getUserProfile());
-		Set<CapabilityVO> uniqueCapabilities = new HashSet<CapabilityVO>();
-		List<CapabilityVO> capabilities = new ArrayList<CapabilityVO>();
-		for (RoleVO role : roles)
+		return extractCapabilitiesFromRoles(retrieveRolesOfUser(accessRights.getUserProfile()));
+	}
+
+	@Override
+	public List<CapabilityVO> retrieveCapabilitiesOfUserBasedOnGroups(
+			AccessRightsVO accessRights) throws DataAccessException
+	{
+		List<CapabilityVO> capabilityVOs = new ArrayList<CapabilityVO>();
+		try
 		{
-			for (RoleCapabilityVO roleCapability : role.getRoleCapabilities())
+			Set<CapabilityVO> capabilityVOset = new HashSet<CapabilityVO>();
+			List<SecurityGroup> groups = userGroupDAO.loadGroupsOf(
+					SecurityEntityValueObjectConverter.toUserProfile(accessRights.getUserProfile()));
+			for (SecurityGroup group : groups)
 			{
-				uniqueCapabilities.add(roleCapability.getCapabilityVO());
+				capabilityVOset.addAll(extractCapabilityVOsFromSecurityGroup(group));
 			}
+			capabilityVOs.addAll(capabilityVOset);
 		}
-		capabilities.addAll(uniqueCapabilities);
-		return capabilities;
+		catch (Exception ex)
+		{
+			throw new DataAccessException(ex);
+		}
+
+		return capabilityVOs;
 	}
 
 	@Override
@@ -460,5 +477,41 @@ public class UserSecurityProfileManager implements
 				itemToUpdate.setUserProfile(itemToCopy.getUserProfile());
 			}
 		}));
+	}
+
+	private List<CapabilityVO> extractCapabilitiesFromRoles(
+			List<RoleVO> roles)
+	{
+		List<CapabilityVO> capabilities = new ArrayList<CapabilityVO>();
+		if (null != roles)
+		{
+			Set<CapabilityVO> uniqueCapabilities = new HashSet<CapabilityVO>();
+			for (RoleVO role : roles)
+			{
+				for (RoleCapabilityVO roleCapability : role.getRoleCapabilities())
+				{
+					uniqueCapabilities.add(roleCapability.getCapabilityVO());
+				}
+			}
+			capabilities.addAll(uniqueCapabilities);
+		}
+		return capabilities;
+	}
+
+	private Collection<? extends CapabilityVO> extractCapabilityVOsFromSecurityGroup(
+			SecurityGroup group) throws IllegalAccessException,
+			InvocationTargetException
+	{
+		Set<CapabilityVO> uniqueCapabilities = new HashSet<CapabilityVO>();
+		List<CapabilityVO> capabilities = new ArrayList<CapabilityVO>();
+		for (SecurityGroupRole groupRole : group.getGroupRoles())
+		{
+			for (RoleCapability roleCapability : groupRole.getRole().getCapabilities())
+			{
+				capabilities.add(SecurityEntityValueObjectConverter.toCapabilityVO(roleCapability.getCapability()));
+			}
+		}
+		uniqueCapabilities.addAll(capabilities);
+		return uniqueCapabilities;
 	}
 }

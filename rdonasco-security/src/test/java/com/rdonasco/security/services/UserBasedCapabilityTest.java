@@ -18,13 +18,13 @@ package com.rdonasco.security.services;
 
 import com.rdonasco.security.dao.RoleDAO;
 import com.rdonasco.security.dao.UserCapabilityDAO;
+import com.rdonasco.security.dao.UserGroupDAO;
 import com.rdonasco.security.dao.UserRoleDAO;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.model.Capability;
-import com.rdonasco.security.model.Action;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility;
 import com.rdonasco.security.vo.AccessRightsVO;
@@ -49,10 +49,10 @@ import static org.mockito.Mockito.*;
  *
  * @author Roy F. Donasco
  */
-public class SystemSecurityManagerImplTest
+public class UserBasedCapabilityTest
 {
 
-	private static final Logger LOG = Logger.getLogger(SystemSecurityManagerImplTest.class.getName());
+	private static final Logger LOG = Logger.getLogger(UserBasedCapabilityTest.class.getName());
 
 	private static UserSecurityProfileVO userSecurityProfileVOMock;
 
@@ -69,8 +69,9 @@ public class SystemSecurityManagerImplTest
 	private static RoleDAO roleDAO;
 
 	static private UserRoleDAO userRoleDAOMock;
+	private static UserGroupDAO userGroupDAOMock;
 
-	public SystemSecurityManagerImplTest()
+	public UserBasedCapabilityTest()
 	{
 	}
 
@@ -83,6 +84,7 @@ public class SystemSecurityManagerImplTest
 		capabilityManagerMock = mock(CapabilityManagerLocal.class);
 		userCapabilityDAOMock = mock(UserCapabilityDAO.class);
 		userRoleDAOMock = mock(UserRoleDAO.class);
+		userGroupDAOMock = mock(UserGroupDAO.class);
 		roleDAO = mock(RoleDAO.class);
 	}
 
@@ -318,6 +320,7 @@ public class SystemSecurityManagerImplTest
 		userSecurityProfileManager.setUserSecurityProfileDAO(userSecurityProfileDAOMock);
 		userSecurityProfileManager.setUserCapabilityDAO(userCapabilityDAOMock);
 		userSecurityProfileManager.setUserRoleDAO(userRoleDAOMock);
+		userSecurityProfileManager.setUserGroupDAO(userGroupDAOMock);
 		SystemSecurityManagerImpl systemSecurityManager = new SystemSecurityManagerImpl();
 		systemSecurityManager.setCapabilityManager(capabilityManagerMock);
 		systemSecurityManager.setUserSecurityProfileManager(userSecurityProfileManager);
