@@ -294,8 +294,9 @@ public class SecurityEntityValueObjectDataUtility
 	{
 		Capability capability = new Capability();
 		capability.setId(generateRandomID());
-		capability.setTitle("test capability");
-		capability.setDescription("test capability");
+		final String capabilityTitle = actionName + " " + resourceName;
+		capability.setTitle(capabilityTitle);
+		capability.setDescription(capabilityTitle);
 
 		if (null == actionName)
 		{

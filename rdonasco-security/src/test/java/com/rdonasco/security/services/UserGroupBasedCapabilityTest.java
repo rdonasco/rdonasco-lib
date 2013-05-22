@@ -21,6 +21,7 @@ import com.rdonasco.security.dao.UserCapabilityDAO;
 import com.rdonasco.security.dao.UserGroupDAO;
 import com.rdonasco.security.dao.UserRoleDAO;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
+import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.CapabilityAction;
@@ -31,6 +32,7 @@ import com.rdonasco.security.model.SecurityGroup;
 import com.rdonasco.security.model.SecurityGroupRole;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
+import com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
@@ -195,11 +197,12 @@ public class UserGroupBasedCapabilityTest
 			securityGroupRole.setId(getNextID());
 			securityGroupRole.setRole(role);
 			securityGroupRole.setSecurityGroup(group);
-			group.getGroupRoles().add(securityGroupRole);			
+			group.getGroupRoles().add(securityGroupRole);
 		}
 		securityGroups.add(group);
 		return securityGroups;
 	}
+
 	private SystemSecurityManagerImpl prepareSecurityManagerInstanceToTest()
 	{
 		userSecurityProfileManager = new UserSecurityProfileManager();
@@ -228,12 +231,7 @@ public class UserGroupBasedCapabilityTest
 	{
 		System.out.println("groupWithCapabilityToAddUser");
 		SystemSecurityManagerImpl instance = prepareSecurityManagerInstanceToTest();
-		final String addAction = "Add";
-		AccessRightsVO accessRights = new AccessRightsVOBuilder()
-				.setActionAsString(addAction)
-				.setResourceAsString(resourceName)
-				.setUserProfileVO(userSecurityProfileVOMock)
-				.createAccessRightsVO();
+		AccessRightsVO accessRights = prepareAccessrightsRequestDataFor("add");
 
 		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
@@ -244,5 +242,94 @@ public class UserGroupBasedCapabilityTest
 		when(userGroupDAOMock.loadGroupsOf(any(UserSecurityProfile.class))).thenReturn(getUserGroupsThatCanDoThisToAUser("add", "edit", "delete"));
 		instance.checkAccessRights(accessRights);
 		verify(userRoleDAOmock, times(1)).loadRolesOf(any(UserSecurityProfile.class));
+	}
+
+	@Test
+	public void testGroupThatCanAddUserAndRoleThatCanEditOrDeleteUser() throws
+			Exception
+	{
+		System.out.println("groupThatCanAddUserAndRoleThatCanEditOrDeleteUser");
+		SystemSecurityManagerImpl instance = prepareSecurityManagerInstanceToTest();
+		AccessRightsVO accessrightsToAdd = prepareAccessrightsRequestDataFor("add");
+		AccessRightsVO accessrightsToEdit = prepareAccessrightsRequestDataFor("edit");
+		AccessRightsVO accessrightsToDelete = prepareAccessrightsRequestDataFor("Delete");
+
+		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
+		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
+		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
+		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getEmptyUserCapabilities());
+		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessrightsToAdd.getResource().getName())).thenReturn(resourceVO);
+		when(userRoleDAOmock.loadRolesOf(any(UserSecurityProfile.class))).thenReturn(getUserRolesThatCanDoThisToAUser("edit", "delete"));
+		when(userGroupDAOMock.loadGroupsOf(any(UserSecurityProfile.class))).thenReturn(getUserGroupsThatCanDoThisToAUser("add"));
+		instance.checkAccessRights(accessrightsToAdd);
+		instance.checkAccessRights(accessrightsToEdit);
+		instance.checkAccessRights(accessrightsToDelete);
+
+	}
+
+	@Test(expected = SecurityAuthorizationException.class)
+	public void testGroupThatCanAddUserAndRoleThatCanEditUserButCannotDelete()
+			throws Exception
+	{
+		System.out.println("groupThatCanAddUserAndRoleThatCanEditUserButCannotDelete");
+		SystemSecurityManagerImpl instance = prepareSecurityManagerInstanceToTest();
+		AccessRightsVO accessrightsToAdd = prepareAccessrightsRequestDataFor("add");
+		AccessRightsVO accessrightsToEdit = prepareAccessrightsRequestDataFor("edit");
+		AccessRightsVO accessrightsToDelete = prepareAccessrightsRequestDataFor("Delete");
+
+		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
+		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
+		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
+		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getEmptyUserCapabilities());
+		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessrightsToAdd.getResource().getName())).thenReturn(resourceVO);
+		when(userRoleDAOmock.loadRolesOf(any(UserSecurityProfile.class))).thenReturn(getUserRolesThatCanDoThisToAUser("edit"));
+		when(userGroupDAOMock.loadGroupsOf(any(UserSecurityProfile.class))).thenReturn(getUserGroupsThatCanDoThisToAUser("add"));
+		instance.checkAccessRights(accessrightsToAdd);
+		instance.checkAccessRights(accessrightsToEdit);
+		instance.checkAccessRights(accessrightsToDelete);
+	}
+
+	@Test
+	public void testGroupThatCanAddUserAndRoleThatCanEditUserAndCapabilityThatCanDeleteUser()
+			throws Exception
+	{
+		System.out.println("groupThatCanAddUserAndRoleThatCanEditUserAndCapabilityThatCanDeleteUser");
+		SystemSecurityManagerImpl instance = prepareSecurityManagerInstanceToTest();
+		AccessRightsVO accessrightsToAdd = prepareAccessrightsRequestDataFor("add");
+		AccessRightsVO accessrightsToEdit = prepareAccessrightsRequestDataFor("edit");
+		AccessRightsVO accessrightsToDelete = prepareAccessrightsRequestDataFor("Delete");
+		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
+		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
+		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
+		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class)))
+				.thenReturn(getUserCapabilityThatCanDoThisToAUser("delete"));
+		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessrightsToAdd.getResource().getName())).thenReturn(resourceVO);
+		when(userRoleDAOmock.loadRolesOf(any(UserSecurityProfile.class))).thenReturn(getUserRolesThatCanDoThisToAUser("edit"));
+		when(userGroupDAOMock.loadGroupsOf(any(UserSecurityProfile.class))).thenReturn(getUserGroupsThatCanDoThisToAUser("add"));
+		instance.checkAccessRights(accessrightsToAdd);
+		instance.checkAccessRights(accessrightsToEdit);
+		instance.checkAccessRights(accessrightsToDelete);
+	}
+
+	private AccessRightsVO prepareAccessrightsRequestDataFor(String action)
+	{
+		AccessRightsVO accessRights = new AccessRightsVOBuilder()
+				.setActionAsString(action)
+				.setResourceAsString(resourceName)
+				.setUserProfileVO(userSecurityProfileVOMock)
+				.createAccessRightsVO();
+		return accessRights;
+	}
+
+	private List<Capability> getUserCapabilityThatCanDoThisToAUser(
+			String... actions)
+	{
+		List<Capability> capabilities = new ArrayList<Capability>();
+		for (String action : actions)
+		{
+			capabilities.add(SecurityEntityValueObjectDataUtility
+					.createTestDataCapabilityOnResourceAndAction("User", action));
+		}
+		return capabilities;
 	}
 }
