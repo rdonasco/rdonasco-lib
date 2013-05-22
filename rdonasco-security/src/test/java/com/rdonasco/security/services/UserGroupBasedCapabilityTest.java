@@ -153,7 +153,6 @@ public class UserGroupBasedCapabilityTest
 			final String... actionNames)
 	{
 		List<Role> roles = new ArrayList<Role>();
-		long id = 1;
 		for (String actionName : actionNames)
 		{
 			Role role = new Role();
