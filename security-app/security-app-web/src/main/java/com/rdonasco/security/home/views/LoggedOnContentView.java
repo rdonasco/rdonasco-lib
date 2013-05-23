@@ -6,7 +6,6 @@
 package com.rdonasco.security.home.views;
 
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
-import com.rdonasco.common.vaadin.view.ControlledView;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.Label;
 
@@ -14,7 +13,7 @@ import com.vaadin.ui.Label;
  *
  * @author Roy F. Donasco
  */
-public class DefaultContentView extends CssLayout implements ControlledView
+public class LoggedOnContentView extends CssLayout implements ContentView
 {
 	private static final long serialVersionUID = 1L;
 

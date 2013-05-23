@@ -10,6 +10,8 @@ import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.utils.NotificationHelper;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.home.controllers.HomeFrameViewController;
+import com.rdonasco.security.services.LoggedOnSession;
+import com.rdonasco.security.services.LoggedOnSessionProvider;
 import com.vaadin.Application;
 import com.vaadin.terminal.gwt.server.WebApplicationContext;
 import com.vaadin.ui.VerticalLayout;
@@ -28,12 +30,12 @@ import javax.servlet.http.HttpSession;
 @SessionScoped
 public class SecurityApplication extends Application implements
 		ApplicationExceptionPopupProvider, ApplicationPopupProvider,
-		HttpSessionProvider
+		HttpSessionProvider, LoggedOnSessionProvider
 {
 
 	private static final Logger LOG = Logger.getLogger(SecurityApplication.class.getName());
 	private static final long serialVersionUID = 1L;
-
+	
 	static
 	{
 		I18NResource.setBundle(java.util.ResourceBundle.getBundle("com/rdonasco/security/i18n/i18nResource"));
@@ -41,6 +43,9 @@ public class SecurityApplication extends Application implements
 	@Inject
 	private HomeFrameViewController homeFrameController;
 	private NotificationHelper notificationHelper;
+
+	@Inject
+	private LoggedOnSession loggedOnSession;
 
 	@Override
 	public void init()
@@ -122,5 +127,11 @@ public class SecurityApplication extends Application implements
 	public void beforeDestroy()
 	{
 		((WebApplicationContext) getContext()).valueUnbound(null);
+	}
+
+	@Override
+	public LoggedOnSession getLoggedOnSession()
+	{
+		return loggedOnSession;
 	}
 }

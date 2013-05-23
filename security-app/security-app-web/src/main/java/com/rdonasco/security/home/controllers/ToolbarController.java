@@ -15,9 +15,11 @@ import com.rdonasco.security.app.controllers.HttpSessionProvider;
 import com.rdonasco.security.home.views.ToolbarView;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.BaseTheme;
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
@@ -25,6 +27,7 @@ import javax.inject.Inject;
  *
  * @author Roy F. Donasco
  */
+@SessionScoped
 public class ToolbarController implements ViewController<ToolbarView>
 {
 	private static final long serialVersionUID = 1L;
@@ -64,7 +67,7 @@ public class ToolbarController implements ViewController<ToolbarView>
 				@Override
 				public void buttonClick(Button.ClickEvent event)
 				{
-					homeFrameViewControllerProvider.get().setWorkspaceContent(homeViewController.getControlledView());
+					homeFrameViewControllerProvider.get().setWorkspaceContent((Component) homeViewController.getControlledView());
 				}
 			});
 			logoutLink.addListener(new Button.ClickListener()
