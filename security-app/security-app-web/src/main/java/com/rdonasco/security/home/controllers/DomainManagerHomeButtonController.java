@@ -12,7 +12,6 @@ import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.home.views.FeatureHomeButton;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Label;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -23,6 +22,7 @@ import javax.inject.Inject;
 public class DomainManagerHomeButtonController implements
 		HomeViewButtonController
 {
+	private static final long serialVersionUID = 1L;
 
 	@Inject
 	private FeatureHomeButton featureButton;
