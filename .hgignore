@@ -20,3 +20,4 @@ rdonasco-security-interceptor/target
 security-app/security-app-ear/target
 security-app/security-app-ejb/target
 security-app/security-app-web/target
+rdonasco-security-auth/target
