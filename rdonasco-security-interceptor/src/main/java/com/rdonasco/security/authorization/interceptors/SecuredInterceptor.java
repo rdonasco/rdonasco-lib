@@ -93,9 +93,9 @@ public class SecuredInterceptor
 				useExceptionHandler = securedCapabilityMethodAnnotation.useExceptionHandler();
 			}
 
+			Throwable cause = e.getCause();
 			if (useExceptionHandler && null != securityExceptionHandler)
-			{
-				Throwable cause = e.getCause();
+			{				
 				if (null != cause)
 				{
 					securityExceptionHandler.handleSecurityException(cause);
@@ -107,7 +107,14 @@ public class SecuredInterceptor
 			}
 			else
 			{
-				throw e;
+				if (null != cause && cause instanceof Exception)
+				{
+					throw (Exception) cause;
+				}
+				else
+				{
+					throw e;
+				}
 			}
 		}
 		return returnValue;
