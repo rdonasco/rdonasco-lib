@@ -132,7 +132,6 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 				parent = getConfigElementDAO().findData(parent.getId());
 				parent.getSubConfigElements().add(configElement);
 				getConfigElementDAO().update(parent);
-
 			}
 
 		}
@@ -452,9 +451,9 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 			}
 			if (element == null)
 			{
-				if (configData.getParentConfig() != null && configData.getParentConfig().getId() == null)
+				if (parent != null && !parent.equals(configData.getParentConfig()))
 				{
-					saveData((ConfigElement) configData.getParentConfig());
+					configData.setParentConfig(parent);
 				}
 				element = saveData((ConfigElement) configData);
 			}

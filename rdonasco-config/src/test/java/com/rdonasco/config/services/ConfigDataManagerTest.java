@@ -54,6 +54,7 @@ public class ConfigDataManagerTest
 	}
 	@EJB
 	private ConfigDataManagerLocal configDataManagerUnderTest;
+
 	private static int rootElementSeed;
 
 	@Deployment
@@ -335,7 +336,7 @@ public class ConfigDataManagerTest
 				findConfigElementsWithXpath(sub.getXpath());
 		assertEquals(2, foundSubElements.size());
 	}
-	
+
 	@Test
 	public void testNotFoundElementsWithXpath() throws
 			Exception
@@ -345,7 +346,6 @@ public class ConfigDataManagerTest
 				findConfigElementsWithXpath("/element/that/cannot/be/found");
 		assertTrue(foundSubElements.isEmpty());
 	}
-	
 
 	@Test
 	public void testFindAttributeWithXpath() throws Exception
@@ -358,14 +358,14 @@ public class ConfigDataManagerTest
 				findConfigAttributeWithXpath(attrib.getXpath());
 		assertNotNull(foundAttribute);
 	}
-	
+
 	@Test(expected = NonExistentEntityException.class)
 	public void testNotFoundAttributeWithXpath() throws Exception
 	{
 		System.out.println("NotFoundAttributeWithXpath");
 		configDataManagerUnderTest.
 				findConfigAttributeWithXpath("/attribute/that/cannot/be/found");
-	}	
+	}
 
 	@Test(expected = com.rdonasco.common.exceptions.DataAccessException.class)
 	public void testFindAttributeWithXpathReturningMultipleRecords() throws
@@ -524,11 +524,12 @@ public class ConfigDataManagerTest
 		System.out.println("getDefaultBooleanValue");
 		final String SYSTEM_INTERCEPTOR_ENABLED_XPATH = "/system/interceptors/enabled";
 		Boolean defaultBooleanValue = Boolean.FALSE;
-		configDataManagerUnderTest.loadValue(SYSTEM_INTERCEPTOR_ENABLED_XPATH, Boolean.class, Boolean.FALSE);
-		Boolean savedValue = configDataManagerUnderTest.loadValue(SYSTEM_INTERCEPTOR_ENABLED_XPATH, Boolean.class);
-		assertEquals("boolean value did not match", defaultBooleanValue, savedValue);
-		String stringValue = configDataManagerUnderTest.loadValue(SYSTEM_INTERCEPTOR_ENABLED_XPATH, String.class);
-		System.out.println("stringValue = " + stringValue);
-		assertNotNull(stringValue);
+		Boolean savedValue = configDataManagerUnderTest.loadValue(SYSTEM_INTERCEPTOR_ENABLED_XPATH, Boolean.class, Boolean.FALSE);
+		assertEquals(defaultBooleanValue, savedValue);
+		Boolean nonDefaultValue = configDataManagerUnderTest.loadValue(SYSTEM_INTERCEPTOR_ENABLED_XPATH, Boolean.class);
+		assertEquals("boolean value did not match", defaultBooleanValue, nonDefaultValue);
+//		String stringValue = configDataManagerUnderTest.loadValue(SYSTEM_INTERCEPTOR_ENABLED_XPATH, String.class);
+//		System.out.println("stringValue = " + stringValue);
+//		assertNotNull(stringValue);
 	}
 }
