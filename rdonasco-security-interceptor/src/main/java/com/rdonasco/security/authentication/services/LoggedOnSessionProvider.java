@@ -14,14 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.rdonasco.security.interceptors;
+package com.rdonasco.security.authentication.services;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public interface SecurityExceptionHandler
+public interface LoggedOnSessionProvider
 {
-	void handleSecurityException(Throwable e);
+
+	LoggedOnSession getLoggedOnSession();
+
 }

@@ -9,7 +9,7 @@ import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.security.home.views.HomeFrameViewLayout;
-import com.rdonasco.security.services.LoggedOnSessionProvider;
+import com.rdonasco.security.authentication.services.LoggedOnSessionProvider;
 import com.vaadin.ui.Component;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;

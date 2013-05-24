@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-package com.rdonasco.security.factories;
+package com.rdonasco.security.authentication.factories;
 
 import com.rdonasco.security.exceptions.LogonServiceNotFoundException;
-import com.rdonasco.security.services.LogonService;
+import com.rdonasco.security.authentication.services.LogonService;
 
 /**
  *

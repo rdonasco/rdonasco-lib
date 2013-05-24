@@ -15,9 +15,11 @@
  * limitations under the License.
  */
 
-package com.rdonasco.security.services;
+package com.rdonasco.security.authentication.services;
 
 import com.rdonasco.security.exceptions.SecurityManagerException;
+import com.rdonasco.security.services.SystemSecurityManager;
+import com.rdonasco.security.services.SystemSecurityManagerRemote;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;

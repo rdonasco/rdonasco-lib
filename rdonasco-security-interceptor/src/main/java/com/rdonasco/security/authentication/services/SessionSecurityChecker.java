@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rdonasco.security.services;
+package com.rdonasco.security.authentication.services;
 
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;

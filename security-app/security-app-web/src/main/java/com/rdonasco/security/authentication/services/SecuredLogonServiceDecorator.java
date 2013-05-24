@@ -17,14 +17,13 @@
 package com.rdonasco.security.authentication.services;
 
 import com.rdonasco.security.exceptions.SecurityAuthenticationException;
-import com.rdonasco.security.interceptors.InvocationEventType;
-import com.rdonasco.security.interceptors.Secured;
-import com.rdonasco.security.interceptors.SecuredCapability;
-import com.rdonasco.security.services.LoggedOnSessionProvider;
-import com.rdonasco.security.services.LogonService;
+import com.rdonasco.security.authorization.interceptors.InvocationEventType;
+import com.rdonasco.security.authorization.interceptors.Secured;
+import com.rdonasco.security.authorization.interceptors.SecuredCapability;
 import com.rdonasco.security.user.services.SecuredLogonServiceLocal;
 import com.rdonasco.security.vo.LogonVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
+import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -34,11 +33,12 @@ import javax.inject.Inject;
  *
  * @author Roy F. Donasco
  */
-public class SecuredLogonServiceDecorator implements LogonService
+public class SecuredLogonServiceDecorator implements LogonService, Serializable
 {
 
 	private static final Logger LOG = Logger.getLogger(SecuredLogonServiceDecorator.class.getName());
 	public static final String LOGON_SERVICE = "SecuredLogonService";
+	private static final long serialVersionUID = 1L;
     @EJB
 	private SecuredLogonServiceLocal securedLogonService;
 	@Inject
@@ -52,7 +52,7 @@ public class SecuredLogonServiceDecorator implements LogonService
 
 	@Override
 	@Secured
-	@SecuredCapability(action = "logon", resource = "system", invocationEventType = InvocationEventType.AFTER)
+	@SecuredCapability(action = "logon", resource = "system", invocationEventType = InvocationEventType.AFTER, useExceptionHandler = false)
 	public UserSecurityProfileVO logon(LogonVO logonVO)
 			throws SecurityAuthenticationException
 	{

@@ -1,6 +1,6 @@
 /*
  * Copyright 2013 Roy F. Donasco.
- * File Created on: 07-Mar-2013
+ * File Created on: 19-Mar-2013
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rdonasco.security.interceptors;
-
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import java.lang.annotation.Target;
-import javax.interceptor.InterceptorBinding;
+package com.rdonasco.security.authorization.interceptors;
 
 /**
  *
  * @author Roy F. Donasco
  */
-@InterceptorBinding 
-@Retention(RUNTIME) @Target({TYPE, METHOD})
-public @interface Secured
+public enum InvocationEventType
 {
+	BEFORE, AFTER
 }

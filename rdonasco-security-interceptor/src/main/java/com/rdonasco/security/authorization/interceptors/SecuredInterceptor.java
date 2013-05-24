@@ -14,12 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rdonasco.security.interceptors;
+package com.rdonasco.security.authorization.interceptors;
 
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
-import com.rdonasco.security.services.LoggedOnSessionProvider;
-import com.rdonasco.security.services.SystemSecurityManager;
+import com.rdonasco.security.authentication.services.LoggedOnSessionProvider;
 import com.rdonasco.security.services.SystemSecurityManagerRemote;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;

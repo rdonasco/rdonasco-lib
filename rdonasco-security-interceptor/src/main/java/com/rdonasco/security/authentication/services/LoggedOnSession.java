@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.rdonasco.security.services;
+package com.rdonasco.security.authentication.services;
 
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import java.io.Serializable;

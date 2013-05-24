@@ -17,8 +17,8 @@
 package com.rdonasco.security.authentication.factory;
 
 import com.rdonasco.security.exceptions.LogonServiceNotFoundException;
-import com.rdonasco.security.factories.LogonServiceFactory;
-import com.rdonasco.security.services.LogonService;
+import com.rdonasco.security.authentication.factories.LogonServiceFactory;
+import com.rdonasco.security.authentication.services.LogonService;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;

@@ -16,6 +16,7 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.security.authentication.services.LoggedOnSession;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import java.util.logging.Level;

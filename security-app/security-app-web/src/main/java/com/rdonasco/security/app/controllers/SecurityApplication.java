@@ -10,8 +10,9 @@ import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.utils.NotificationHelper;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.home.controllers.HomeFrameViewController;
-import com.rdonasco.security.services.LoggedOnSession;
-import com.rdonasco.security.services.LoggedOnSessionProvider;
+import com.rdonasco.security.authorization.interceptors.SecurityExceptionHandler;
+import com.rdonasco.security.authentication.services.LoggedOnSession;
+import com.rdonasco.security.authentication.services.LoggedOnSessionProvider;
 import com.vaadin.Application;
 import com.vaadin.terminal.gwt.server.WebApplicationContext;
 import com.vaadin.ui.VerticalLayout;
@@ -30,7 +31,7 @@ import javax.servlet.http.HttpSession;
 @SessionScoped
 public class SecurityApplication extends Application implements
 		ApplicationExceptionPopupProvider, ApplicationPopupProvider,
-		HttpSessionProvider, LoggedOnSessionProvider
+		HttpSessionProvider, LoggedOnSessionProvider, SecurityExceptionHandler
 {
 
 	private static final Logger LOG = Logger.getLogger(SecurityApplication.class.getName());
@@ -133,5 +134,11 @@ public class SecurityApplication extends Application implements
 	public LoggedOnSession getLoggedOnSession()
 	{
 		return loggedOnSession;
+	}
+
+	@Override
+	public void handleSecurityException(Throwable e)
+	{
+		popUpErrorException(e);
 	}
 }

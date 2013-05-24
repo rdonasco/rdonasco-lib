@@ -14,31 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rdonasco.security.interceptors;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import java.lang.annotation.Target;
+package com.rdonasco.security.authorization.interceptors;
 
 /**
  *
  * @author Roy F. Donasco
  */
-@Retention(RUNTIME)
-@Target(
+public interface SecurityExceptionHandler
 {
-	TYPE, METHOD
-})
-public @interface SecuredCapability
-{
-
-	String resource();
-
-	String action() default "";
-
-	boolean useExceptionHandler() default true;
-
-	InvocationEventType invocationEventType() default InvocationEventType.BEFORE;
+	void handleSecurityException(Throwable e);
 }

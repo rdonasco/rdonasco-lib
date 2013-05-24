@@ -14,15 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rdonasco.security.services;
+package com.rdonasco.security.authorization.interceptors;
+
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.annotation.Target;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public interface LoggedOnSessionProvider
+@Retention(RUNTIME)
+@Target(
+{
+	TYPE, METHOD
+})
+public @interface SecuredCapability
 {
 
-	LoggedOnSession getLoggedOnSession();
+	String resource();
 
+	String action() default "";
+
+	boolean useExceptionHandler() default true;
+
+	InvocationEventType invocationEventType() default InvocationEventType.BEFORE;
 }
