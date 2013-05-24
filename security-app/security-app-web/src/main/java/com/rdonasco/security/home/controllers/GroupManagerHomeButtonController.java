@@ -56,7 +56,14 @@ public class GroupManagerHomeButtonController implements
 				@Override
 				public void buttonClick(Button.ClickEvent event)
 				{
-					homeFrameViewControllers.get().setWorkspaceContent(getGroupViewLayoutController().getControlledView());
+					try
+					{
+						homeFrameViewControllers.get().setWorkspaceContent(getGroupViewLayoutController().getControlledView());
+					}
+					catch (Exception e)
+					{
+						exceptionPopupProvider.popUpErrorException(e);
+					}
 				}
 			});
 		}

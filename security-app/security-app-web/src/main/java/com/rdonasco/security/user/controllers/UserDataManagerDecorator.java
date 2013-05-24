@@ -24,7 +24,7 @@ import com.rdonasco.security.capability.utils.IconHelper;
 import com.rdonasco.security.common.controllers.ClickListenerProvider;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.services.SystemSecurityManager;
-import com.rdonasco.security.services.SystemSecurityManagerLocal;
+import com.rdonasco.security.services.SystemSecurityManagerRemote;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVOBuilder;
 import com.rdonasco.security.utils.EncryptionUtil;
@@ -44,7 +44,7 @@ public class UserDataManagerDecorator implements
 		DataManager<UserSecurityProfileItemVO>
 {
 	@EJB
-	private SystemSecurityManagerLocal securityManager;
+	private SystemSecurityManagerRemote securityManager;
 	private ClickListenerProvider clickListenerProvider;
 
 	public ClickListenerProvider getClickListenerProvider()

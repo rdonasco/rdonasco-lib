@@ -24,13 +24,12 @@ import javax.inject.Inject;
 public class UserManagerHomeButtonController implements
 		HomeViewButtonController
 {
+	private static final long serialVersionUID = 1L;
 
 	@Inject
 	private FeatureHomeButton featureButton;
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
-	@Inject
-	private ApplicationPopupProvider popupProvider;
 	@Inject
 	private Instance<UserViewLayoutController> userViewLayoutControllerInstances;
 	private UserViewLayoutController userViewLayoutController;
@@ -49,7 +48,14 @@ public class UserManagerHomeButtonController implements
 				@Override
 				public void buttonClick(Button.ClickEvent event)
 				{
-					homeFrameViewControllers.get().setWorkspaceContent(getUserViewLayoutController().getControlledView());
+					try
+					{
+						homeFrameViewControllers.get().setWorkspaceContent(getUserViewLayoutController().getControlledView());
+					}
+					catch (Exception e)
+					{
+						exceptionPopupProvider.popUpErrorException(e);
+					}
 				}
 			});
 		}

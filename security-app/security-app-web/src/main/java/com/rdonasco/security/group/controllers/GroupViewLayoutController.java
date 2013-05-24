@@ -19,6 +19,9 @@ package com.rdonasco.security.group.controllers;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
+import com.rdonasco.security.authorization.interceptors.InvocationEventType;
+import com.rdonasco.security.authorization.interceptors.Secured;
+import com.rdonasco.security.authorization.interceptors.SecuredCapability;
 import com.rdonasco.security.common.views.ThreeColumnFlexibleCenterViewLayout;
 import com.rdonasco.security.group.vo.GroupItemVO;
 import com.rdonasco.security.role.controllers.AvailableRolesViewController;
@@ -88,6 +91,8 @@ public class GroupViewLayoutController implements
 		}
 	}
 
+	@Secured
+	@SecuredCapability(action = "view", resource = "user group", useExceptionHandler = false)
 	@Override
 	public ThreeColumnFlexibleCenterViewLayout getControlledView()
 	{
