@@ -107,6 +107,7 @@ public class GroupDataManagerDecorator implements DataManager<GroupItemVO>,
 				.setIcon(icon)
 				.setRoleVO(groupVO)
 				.createGroupItemVO();
+		icon.addListener(clickListenerProvider.provideClickListenerFor(groupItemVO));
 		return groupItemVO;
 	}
 }

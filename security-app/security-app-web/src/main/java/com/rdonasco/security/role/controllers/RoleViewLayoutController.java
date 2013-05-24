@@ -41,6 +41,9 @@ public class RoleViewLayoutController implements
 {
 
 	private static final long serialVersionUID = 1L;
+	private static final String RESOURCE_ROLES = "roles";
+
+	private static final String ACTION_VIEW = "view";
 
 	@Inject
 	private ThreeColumnFlexibleCenterViewLayout roleViewLayout;
@@ -96,7 +99,7 @@ public class RoleViewLayoutController implements
 
 	@Override
 	@Secured
-	@SecuredCapability(action = "view", resource = "roles")
+	@SecuredCapability(action = ACTION_VIEW, resource = RESOURCE_ROLES)
 	public ThreeColumnFlexibleCenterViewLayout getControlledView()
 	{
 		return roleViewLayout;

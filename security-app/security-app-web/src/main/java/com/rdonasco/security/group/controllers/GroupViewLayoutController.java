@@ -19,7 +19,6 @@ package com.rdonasco.security.group.controllers;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
-import com.rdonasco.security.authorization.interceptors.InvocationEventType;
 import com.rdonasco.security.authorization.interceptors.Secured;
 import com.rdonasco.security.authorization.interceptors.SecuredCapability;
 import com.rdonasco.security.common.views.ThreeColumnFlexibleCenterViewLayout;
@@ -41,6 +40,9 @@ public class GroupViewLayoutController implements
 {
 
 	private static final long serialVersionUID = 1L;
+	private static final String RESOURCE_USER_GROUP = "user group";
+
+	private static final String ACTION_VIEW = "view";
 
 	@Inject
 	private ThreeColumnFlexibleCenterViewLayout groupViewLayout;
@@ -92,7 +94,7 @@ public class GroupViewLayoutController implements
 	}
 
 	@Secured
-	@SecuredCapability(action = "view", resource = "user group", useExceptionHandler = false)
+	@SecuredCapability(action = ACTION_VIEW, resource = RESOURCE_USER_GROUP, useExceptionHandler = false)
 	@Override
 	public ThreeColumnFlexibleCenterViewLayout getControlledView()
 	{

@@ -12,6 +12,8 @@ import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.datamanager.listeditor.controller.ListEditorViewPanelController;
 import com.rdonasco.datamanager.services.DataManager;
+import com.rdonasco.security.authorization.interceptors.Secured;
+import com.rdonasco.security.authorization.interceptors.SecuredCapability;
 import com.rdonasco.security.capability.vo.ActionItemVO;
 import com.rdonasco.security.capability.vo.ActionItemVOBuilder;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
@@ -103,6 +105,8 @@ public class CapabilityViewLayoutController implements
 	}
 
 	@Override
+	@Secured
+	@SecuredCapability(action = "view", resource = "capability", useExceptionHandler = false)
 	public ThreeColumnFlexibleCenterViewLayout getControlledView()
 	{
 		return capabilityViewLayout;
