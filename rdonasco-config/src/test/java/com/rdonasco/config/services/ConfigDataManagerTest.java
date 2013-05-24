@@ -507,7 +507,7 @@ public class ConfigDataManagerTest
 	}
 
 	@Test
-	public void testGetDefaultValue() throws Exception
+	public void testGetDefaultStringValue() throws Exception
 	{
 		System.out.println("getDefaultValue");
 		String defaultValue = "baligya";
@@ -516,5 +516,19 @@ public class ConfigDataManagerTest
 		assertEquals(defaultValue, value);
 		String savedValue = configDataManagerUnderTest.loadValue("/system/name", String.class);
 		assertEquals(defaultValue, savedValue);
+	}
+
+	@Test
+	public void testGetDefaultBooleanValue() throws Exception
+	{
+		System.out.println("getDefaultBooleanValue");
+		final String SYSTEM_INTERCEPTOR_ENABLED_XPATH = "/system/interceptors/enabled";
+		Boolean defaultBooleanValue = Boolean.FALSE;
+		configDataManagerUnderTest.loadValue(SYSTEM_INTERCEPTOR_ENABLED_XPATH, Boolean.class, Boolean.FALSE);
+		Boolean savedValue = configDataManagerUnderTest.loadValue(SYSTEM_INTERCEPTOR_ENABLED_XPATH, Boolean.class);
+		assertEquals("boolean value did not match", defaultBooleanValue, savedValue);
+		String stringValue = configDataManagerUnderTest.loadValue(SYSTEM_INTERCEPTOR_ENABLED_XPATH, String.class);
+		System.out.println("stringValue = " + stringValue);
+		assertNotNull(stringValue);
 	}
 }

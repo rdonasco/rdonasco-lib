@@ -123,10 +123,10 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 			DataAccessException
 	{
 		try
-		{
-			ConfigElement parent = (ConfigElement) configElement.getParentConfig();
+		{			
 			configureXpath(configElement);
 			getConfigElementDAO().create(configElement);
+			ConfigElement parent = (ConfigElement) configElement.getParentConfig();
 			if (parent != null)
 			{
 				parent = getConfigElementDAO().findData(parent.getId());
@@ -362,10 +362,11 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 					Logger.getLogger(this.getClass().getName()).
 							log(Level.WARNING, ex.getMessage(), ex);
 				}
-				if (value != null)
+				if (value != null && value.getClass().isAssignableFrom(t))
 				{
 					break;
 				}
+				value = null;
 			}
 			if (value == null)
 			{
@@ -451,6 +452,10 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 			}
 			if (element == null)
 			{
+				if (configData.getParentConfig() != null && configData.getParentConfig().getId() == null)
+				{
+					saveData((ConfigElement) configData.getParentConfig());
+				}
 				element = saveData((ConfigElement) configData);
 			}
 			if (parent != null && !parent.equals(element.getParentConfig()))
