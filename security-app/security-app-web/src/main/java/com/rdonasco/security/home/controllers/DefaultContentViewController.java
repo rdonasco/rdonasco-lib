@@ -6,6 +6,7 @@ package com.rdonasco.security.home.controllers;
 
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
+import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
@@ -18,6 +19,7 @@ import com.rdonasco.security.home.views.LoggedOutContentView;
 import com.rdonasco.security.authentication.services.LoggedOnSessionProvider;
 import com.rdonasco.security.exceptions.LogonServiceNotFoundException;
 import com.rdonasco.security.authentication.services.LogonService;
+import com.rdonasco.security.authentication.services.SecuredLogonServiceDecorator;
 import com.rdonasco.security.vo.LogonVO;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Component;
@@ -72,15 +74,14 @@ public class DefaultContentViewController implements
 	@Inject
 	private Instance<HomeFrameViewController> homeFrameViewControllerProvider;
 
-	@Inject
 	private LogonService logonService;
 
 	private LogonService getLogonService() throws LogonServiceNotFoundException
 	{
-//		if (null == logonService)
-//		{
-//			logonService = securedLogonServiceFactory.createLogonService(configDataManager.loadValue("/security/logonService", String.class, SecuredLogonServiceDecorator.LOGON_SERVICE));
-//		}
+		if (null == logonService)
+		{
+			logonService = securedLogonServiceFactory.createLogonService(configDataManager.loadValue("/security/logonService", String.class, SecuredLogonServiceDecorator.LOGON_SERVICE));
+		}
 		return logonService;
 	}
 
@@ -111,7 +112,8 @@ public class DefaultContentViewController implements
 					}
 					catch (Throwable ex)
 					{
-						applicationPopupProvider.popUpError(ex.getMessage());
+						LOG.log(Level.WARNING, ex.getMessage(), ex);
+						applicationPopupProvider.popUpError(I18NResource.localize("Logon failed"));
 					}
 				}
 			});
