@@ -51,7 +51,9 @@ import javax.inject.Inject;
 public class GroupListPanelViewController implements
 		ViewController<GroupListPanelView>
 {
+
 	private static final long serialVersionUID = 1L;
+
 	private static final Logger LOG = Logger.getLogger(GroupListPanelViewController.class.getName());
 
 	@Inject
@@ -189,7 +191,7 @@ public class GroupListPanelViewController implements
 
 	private void setupDeleteClickListener()
 	{
-		ClickListenerProvider<GroupItemVO> deleteClickBuilder = new DeleteClickListenerBuilder<GroupItemVO>()
+		ClickListenerProvider<GroupItemVO> deleteClickListenerProvider = new DeleteClickListenerBuilder<GroupItemVO>()
 				.setComponent(getControlledView())
 				.setDeleteListener(new DeleteClickListenerBuilder.DeleteListener<GroupItemVO>()
 		{
@@ -198,6 +200,7 @@ public class GroupListPanelViewController implements
 			{
 				try
 				{
+					LOG.log(Level.FINE, "delete clicked");
 					GroupItemVO nextItem = groupItemDataContainer.nextItemId(itemToDelete);
 					groupItemDataContainer.removeItem(itemToDelete);
 					if (nextItem != null)
@@ -212,9 +215,8 @@ public class GroupListPanelViewController implements
 					getExceptionPopupProvider().popUpErrorException(e);
 				}
 			}
-		})
-				.createClickListenerProvider();
-		dataManager.setClickListenerProvider(deleteClickBuilder);
+		}).createClickListenerProvider();
+		dataManager.setClickListenerProvider(deleteClickListenerProvider);
 	}
 
 	private void refreshList()
