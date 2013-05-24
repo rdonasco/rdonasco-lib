@@ -16,6 +16,10 @@
  */
 package com.rdonasco.security.authentication.services;
 
+import com.rdonasco.security.authentication.services.LoggedOnSessionProvider;
+import com.rdonasco.security.authentication.services.LoggedOnSessionProvider;
+import com.rdonasco.security.authentication.services.LogonService;
+import com.rdonasco.security.authentication.services.LogonService;
 import com.rdonasco.security.exceptions.SecurityAuthenticationException;
 import com.rdonasco.security.authorization.interceptors.InvocationEventType;
 import com.rdonasco.security.authorization.interceptors.Secured;

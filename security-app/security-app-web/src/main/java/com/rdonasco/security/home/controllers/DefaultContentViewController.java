@@ -10,7 +10,7 @@ import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
-import com.rdonasco.security.authentication.factory.SecuredLogonServiceFactory;
+import com.rdonasco.security.authentication.factories.SecuredLogonServiceFactory;
 import com.rdonasco.security.home.views.ContentView;
 import com.rdonasco.security.home.views.FeatureHomeButton;
 import com.rdonasco.security.home.views.LoggedOnContentView;
