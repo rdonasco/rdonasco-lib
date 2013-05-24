@@ -4,6 +4,8 @@ import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.security.authorization.interceptors.Secured;
+import com.rdonasco.security.authorization.interceptors.SecuredCapability;
 import com.rdonasco.security.home.views.FeatureHomeButton;
 import com.rdonasco.security.role.controllers.RoleViewLayoutController;
 import com.vaadin.terminal.ThemeResource;
@@ -34,6 +36,9 @@ public class RoleManagerHomeButtonController implements
 	@Inject
 	private Instance<RoleViewLayoutController> viewLayoutProvider;
 
+	@Inject
+	private ApplicationExceptionPopupProvider applicationExceptionPopupProvider;
+
 	private RoleViewLayoutController roleViewLayoutController;
 
 	public RoleViewLayoutController getRoleViewLayoutController()
@@ -58,7 +63,15 @@ public class RoleManagerHomeButtonController implements
 				@Override
 				public void buttonClick(Button.ClickEvent event)
 				{
-					homeFrameViewControllers.get().setWorkspaceContent(getRoleViewLayoutController().getControlledView());
+					try
+					{
+						homeFrameViewControllers.get().setWorkspaceContent(getRoleViewLayoutController().getControlledView());
+					}
+					catch (Exception e)
+					{
+						applicationExceptionPopupProvider.popUpErrorException(e);
+					}
+					
 				}
 			});
 		}

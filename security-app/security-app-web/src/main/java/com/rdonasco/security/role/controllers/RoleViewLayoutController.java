@@ -20,6 +20,8 @@ import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
+import com.rdonasco.security.authorization.interceptors.Secured;
+import com.rdonasco.security.authorization.interceptors.SecuredCapability;
 import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewController;
 import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewControllerBuilder;
 import com.rdonasco.security.common.views.ThreeColumnFlexibleCenterViewLayout;
@@ -73,6 +75,7 @@ public class RoleViewLayoutController implements
 					.addListener(new Property.ValueChangeListener()
 			{
 				private static final long serialVersionUID = 1L;
+
 				@Override
 				public void valueChange(Property.ValueChangeEvent event)
 				{
@@ -92,6 +95,8 @@ public class RoleViewLayoutController implements
 	}
 
 	@Override
+	@Secured
+	@SecuredCapability(action = "view", resource = "roles")
 	public ThreeColumnFlexibleCenterViewLayout getControlledView()
 	{
 		return roleViewLayout;
