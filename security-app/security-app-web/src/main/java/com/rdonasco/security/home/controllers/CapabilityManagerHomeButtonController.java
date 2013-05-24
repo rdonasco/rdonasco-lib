@@ -50,7 +50,15 @@ public class CapabilityManagerHomeButtonController implements
 				@Override
 				public void buttonClick(Button.ClickEvent event)
 				{
-					homeFrameViewControllers.get().setWorkspaceContent(getCapabilityViewLayoutController().getControlledView());
+					try
+					{
+						homeFrameViewControllers.get().setWorkspaceContent(getCapabilityViewLayoutController().getControlledView());
+					}
+					catch (Exception e)
+					{
+						exceptionPopupProvider.popUpErrorException(e);
+					}
+					
 				}
 			});
 		}
