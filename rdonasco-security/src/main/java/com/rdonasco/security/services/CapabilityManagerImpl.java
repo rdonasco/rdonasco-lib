@@ -35,6 +35,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 /**
@@ -243,6 +245,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public ActionVO findOrAddActionNamedAs(String name) throws
 			CapabilityManagerException
 	{
