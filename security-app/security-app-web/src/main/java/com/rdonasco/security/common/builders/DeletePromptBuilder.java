@@ -28,6 +28,7 @@ import de.steinwedel.vaadin.MessageBox;
 public class DeletePromptBuilder
 {
 	private Window parentWindow;
+	private String deletePromptMessage;
 
 	public DeletePromptBuilder setParentWindow(Window parentWindow)
 	{
@@ -39,10 +40,29 @@ public class DeletePromptBuilder
 	{
 		MessageBox messageBox = new MessageBox(parentWindow,
 				I18NResource.localize(MessageKeys.ARE_YOU_SURE),
-				MessageBox.Icon.QUESTION,
-				I18NResource.localize(MessageKeys.DO_YOU_REALLY_WANT_TO_DELETE_THIS),
+				MessageBox.Icon.QUESTION, preparePromptMessage(),
 				new MessageBox.ButtonConfig(MessageBox.ButtonType.YES, I18NResource.localize(MessageKeys.YES)),
 				new MessageBox.ButtonConfig(MessageBox.ButtonType.NO, I18NResource.localize(MessageKeys.NO)));
 		return messageBox;
+	}
+
+	public DeletePromptBuilder setDeletePromptMessage(String deletePromptMessage)
+	{
+		this.deletePromptMessage = deletePromptMessage;
+		return this;
+	}
+
+	private String preparePromptMessage()
+	{
+		String promptMessage;
+		if (null == deletePromptMessage)
+		{
+			promptMessage = I18NResource.localize(MessageKeys.DO_YOU_REALLY_WANT_TO_DELETE_THIS);
+		}
+		else
+		{
+			promptMessage = deletePromptMessage;
+		}
+		return promptMessage;
 	}
 }

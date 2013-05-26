@@ -194,6 +194,7 @@ public class RoleListPanelViewController implements
 	{
 		ClickListenerProvider<RoleItemVO> deleteClickBuilder = new DeleteClickListenerBuilder<RoleItemVO>()
 				.setComponent(getControlledView())
+				.setDeletePromptMessage("deleting role will also remove its assignment to users, and groups")
 				.setDeleteListener(new DeleteClickListenerBuilder.DeleteListener<RoleItemVO>()
 		{
 			@Override

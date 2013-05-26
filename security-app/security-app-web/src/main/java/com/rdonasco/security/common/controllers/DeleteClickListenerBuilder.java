@@ -32,6 +32,8 @@ public class DeleteClickListenerBuilder<T>
 
 	private Component component;
 
+	private String deletePromptMessage;
+
 	public DeleteClickListenerBuilder<T> setDeleteListener(
 			DeleteListener<T> listener)
 	{
@@ -42,6 +44,13 @@ public class DeleteClickListenerBuilder<T>
 	public DeleteClickListenerBuilder<T> setComponent(Component component)
 	{
 		this.component = component;
+		return this;
+	}
+
+	public DeleteClickListenerBuilder<T> setDeletePromptMessage(
+			String deletePrompt)
+	{
+		this.deletePromptMessage = deletePrompt;
 		return this;
 	}
 
@@ -66,6 +75,7 @@ public class DeleteClickListenerBuilder<T>
 					{
 						new DeletePromptBuilder()
 								.setParentWindow(component.getWindow())
+								.setDeletePromptMessage(deletePromptMessage)
 								.createDeletePrompt()
 								.show(new MessageBox.EventListener()
 						{

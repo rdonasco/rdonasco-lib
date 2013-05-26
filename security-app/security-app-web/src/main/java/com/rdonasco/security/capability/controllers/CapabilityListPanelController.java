@@ -164,6 +164,7 @@ public class CapabilityListPanelController implements
 	{
 		ClickListenerProvider<CapabilityItemVO> deleteClickBuilder = new DeleteClickListenerBuilder<CapabilityItemVO>()
 				.setComponent(getControlledView())
+				.setDeletePromptMessage("deleting capability will also remove its assignment to users, and roles")
 				.setDeleteListener(new DeleteClickListenerBuilder.DeleteListener<CapabilityItemVO>()
 		{
 			@Override

@@ -193,6 +193,7 @@ public class GroupListPanelViewController implements
 	{
 		ClickListenerProvider<GroupItemVO> deleteClickListenerProvider = new DeleteClickListenerBuilder<GroupItemVO>()
 				.setComponent(getControlledView())
+				.setDeletePromptMessage(I18NResource.localize("deleting group will also remove its assignment to users"))
 				.setDeleteListener(new DeleteClickListenerBuilder.DeleteListener<GroupItemVO>()
 		{
 			@Override
