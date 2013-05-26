@@ -16,9 +16,7 @@
  */
 package com.rdonasco.security.authorization.interceptors;
 
-import com.rdonasco.security.authorization.interceptors.SecuredCapability;
-import com.rdonasco.security.authorization.interceptors.Secured;
-import com.rdonasco.security.authorization.interceptors.SecuredInterceptor;
+import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.authentication.services.LoggedOnSession;
 import com.rdonasco.security.authentication.services.LoggedOnSessionProvider;
@@ -49,7 +47,7 @@ public class SecuredInterceptorTest
 	SystemSecurityManagerRemote systemSecurityManagerMock = mock(SystemSecurityManagerRemote.class);
 	LoggedOnSessionProvider loggedOnSessionProviderMock = mock(LoggedOnSessionProvider.class);
 	LoggedOnSession loggedOnSessionMock = mock(LoggedOnSession.class);
-
+	ConfigDataManagerVODecoratorRemote configDataManager = mock(ConfigDataManagerVODecoratorRemote.class);
 	public SecuredInterceptorTest()
 	{
 	}
