@@ -10,6 +10,7 @@ import com.rdonasco.common.vaadin.view.ControlledView;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
@@ -30,6 +31,8 @@ public class CapabilityListPanel extends Panel implements
 
 	private Button addCapabilityButton = new Button();
 
+	private Button refreshButton = new Button();
+
 	public CapabilityListPanel()
 	{
 		setCaption(I18NResource.localize("Capabilities"));
@@ -46,6 +49,11 @@ public class CapabilityListPanel extends Panel implements
 		return addCapabilityButton;
 	}
 
+	public Button getRefreshButton()
+	{
+		return refreshButton;
+	}
+
 	public void setDataViewListTable(Table dataViewListTable)
 	{
 		this.dataViewListTable = dataViewListTable;
@@ -60,6 +68,14 @@ public class CapabilityListPanel extends Panel implements
 		addCapabilityButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_ADD));
 		addCapabilityButton.setWidth(100, UNITS_PERCENTAGE);
 		addCapabilityButton.addStyleName(SecurityDefaultTheme.CSS_SMALL);
+		refreshButton.setCaption(I18NResource.localize("Refresh"));
+		refreshButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_REFRESH));
+		refreshButton.addStyleName(SecurityDefaultTheme.CSS_SMALL);
+		HorizontalLayout buttonLayout = new HorizontalLayout();
+		buttonLayout.setSpacing(true);
+		buttonLayout.addComponent(addCapabilityButton);
+		buttonLayout.addComponent(refreshButton);
+		buttonLayout.setExpandRatio(addCapabilityButton, 1);
 		VerticalLayout content = ((VerticalLayout) getContent());
 		content.setMargin(true);
 		content.setHeight(600, UNITS_PIXELS);
@@ -67,7 +83,7 @@ public class CapabilityListPanel extends Panel implements
 		if (null != getDataViewListTable())
 		{
 			getDataViewListTable().setSizeFull();
-			content.addComponent(addCapabilityButton);
+			content.addComponent(buttonLayout);
 			content.addComponent(getDataViewListTable());
 			content.setExpandRatio(getDataViewListTable(), 1);
 			content.setSpacing(true);

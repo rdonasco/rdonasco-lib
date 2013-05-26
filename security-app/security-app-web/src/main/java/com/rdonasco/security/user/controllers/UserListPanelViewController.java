@@ -28,8 +28,11 @@ import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.datamanager.listeditor.controller.ListEditorAttachStrategy;
 import com.rdonasco.datamanager.utils.TableHelper;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.security.authentication.services.SessionSecurityChecker;
 import com.rdonasco.security.common.builders.DeletePromptBuilder;
 import com.rdonasco.security.common.controllers.ClickListenerProvider;
+import com.rdonasco.security.common.utils.ActionConstants;
+import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.i18n.MessageKeys;
 import com.rdonasco.security.user.utils.UserConfigConstants;
 import com.rdonasco.security.user.utils.UserConstants;
@@ -59,20 +62,31 @@ public class UserListPanelViewController implements
 {
 
 	private static final Logger LOG = Logger.getLogger(UserListPanelViewController.class.getName());
+	
 	private static final long serialVersionUID = 1L;
+	
 	@Inject
 	private UserListPanelView userListPanelView;
+	
 	@Inject
 	private UserDataManagerDecorator userDataManager;
+	
 	@EJB
 	private ConfigDataManagerVODecoratorRemote configDataManager;
+	
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
+	
 	@Inject
 	private ApplicationPopupProvider popupProvider;
+	
 	private Table userListTable = new Table();
+	
 	private DataManagerContainer<UserSecurityProfileItemVO> userItemTableContainer = new DataManagerContainer(UserSecurityProfileItemVO.class);
-
+	
+	@Inject
+	private SessionSecurityChecker sessionSecurityChecker;
+	
 	public UserListPanelViewController()
 	{
 	}
@@ -169,6 +183,7 @@ public class UserListPanelViewController implements
 				.createUserSecurityProfileVO();
 		try
 		{
+			sessionSecurityChecker.checkAccess(UserConstants.RESOURCE_USERS, ActionConstants.ADD);
 			UserSecurityProfileItemVO newItemVO = new UserSecurityProfileItemVOBuilder()
 					.setUserSecurityProfileVO(newUserProfile)
 					.setRequirePasswordChange(true)
@@ -209,7 +224,9 @@ public class UserListPanelViewController implements
 	{
 
 		private static final long serialVersionUID = 1L;
+		
 		private final MessageBox deletePrompt;
+		
 		private final UserSecurityProfileItemVO data;
 
 		public DeleteUserClickListener(MessageBox deletePrompt,
@@ -230,20 +247,22 @@ public class UserListPanelViewController implements
 				public void buttonClicked(
 						MessageBox.ButtonType buttonType)
 				{
-					if (MessageBox.ButtonType.YES.equals(buttonType))
+					try
 					{
-						try
+						sessionSecurityChecker.checkAccess(UserConstants.RESOURCE_USERS, ActionConstants.DELETE);
+						if (MessageBox.ButtonType.YES.equals(buttonType))
 						{
 							userItemTableContainer.removeItem(data);
 							popupProvider.popUpInfo(I18NResource.localize(MessageKeys.USER_PROFILE_DELETED));
 
-						}
-						catch (Exception e)
-						{
-							exceptionPopupProvider.popUpErrorException(e);
-						}
 
+						}
 					}
+					catch (Exception e)
+					{
+						exceptionPopupProvider.popUpErrorException(e);
+					}
+					
 				}
 			});
 		}

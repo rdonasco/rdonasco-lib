@@ -24,11 +24,14 @@ import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
+import com.rdonasco.security.authentication.services.SessionSecurityChecker;
 import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewControllerBuilder;
+import com.rdonasco.security.common.utils.ActionConstants;
 import com.rdonasco.security.group.controllers.AvailableGroupsViewController;
 import com.rdonasco.security.group.controllers.AvailableGroupsViewControllerBuilder;
 import com.rdonasco.security.role.controllers.AvailableRolesViewController;
 import com.rdonasco.security.role.controllers.AvailableRolesViewControllerBuilder;
+import com.rdonasco.security.user.utils.UserConstants;
 import com.rdonasco.security.user.views.UserEditorView;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
 import com.vaadin.data.Buffered;
@@ -84,6 +87,9 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 
 	@Inject
 	private AvailableRolesViewControllerBuilder availableRolesViewControllerBuilder;
+
+	@Inject
+	private SessionSecurityChecker sessionSecurityChecker;
 
 	private BeanItem<UserSecurityProfileItemVO> currentItem;
 
@@ -242,6 +248,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 				ShortcutAction.KeyCode.E, keyModifiers)
 		{
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void handleAction(Object sender, Object target)
 			{
@@ -267,6 +274,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 				ShortcutAction.KeyCode.ESCAPE, null)
 		{
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void handleAction(Object sender, Object target)
 			{
@@ -398,18 +406,26 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 
 	public void changeViewToEditMode()
 	{
-		setViewToReadOnly(false);
-		getControlledView().getSaveButton().setVisible(true);
-		getControlledView().getCancelButton().setVisible(true);
-		getControlledView().getEditButton().setVisible(false);
-		getControlledView().getPasswordField().setVisible(true);
-		getControlledView().getRetypedPasswordField().setVisible(true);
-		userCapabilitiesViewController.enableEditing();
-		userRolesViewController.enableEditing();
-		userGroupsViewController.enableEditing();
-		getAvailableCapabilitiesViewController().allowDraggingMultipleRows();
-		getAvailableRolesViewController().allowDraggingMultipleRows();
-		getAvailableGroupsViewController().allowDraggingMultipleRows();
+		try
+		{
+			sessionSecurityChecker.checkAccess(UserConstants.RESOURCE_USERS, ActionConstants.EDIT);
+			setViewToReadOnly(false);
+			getControlledView().getSaveButton().setVisible(true);
+			getControlledView().getCancelButton().setVisible(true);
+			getControlledView().getEditButton().setVisible(false);
+			getControlledView().getPasswordField().setVisible(true);
+			getControlledView().getRetypedPasswordField().setVisible(true);
+			userCapabilitiesViewController.enableEditing();
+			userRolesViewController.enableEditing();
+			userGroupsViewController.enableEditing();
+			getAvailableCapabilitiesViewController().allowDraggingMultipleRows();
+			getAvailableRolesViewController().allowDraggingMultipleRows();
+			getAvailableGroupsViewController().allowDraggingMultipleRows();
+		}
+		catch (Exception e)
+		{
+			exceptionPopupProvider.popUpErrorException(e.getCause());
+		}
 	}
 
 	public void changeViewToViewMode()

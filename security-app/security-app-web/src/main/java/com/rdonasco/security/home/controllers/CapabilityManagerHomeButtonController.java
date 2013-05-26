@@ -12,6 +12,8 @@ import com.rdonasco.security.capability.controllers.CapabilityViewLayoutControll
 import com.rdonasco.security.home.views.FeatureHomeButton;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
@@ -91,6 +93,17 @@ public class CapabilityManagerHomeButtonController implements
 		if (capabilityViewLayoutController == null)
 		{
 			capabilityViewLayoutController = viewLayoutProvider.get();
+		}
+		else
+		{
+			try
+			{
+				capabilityViewLayoutController.refreshView();
+			}
+			catch (WidgetException ex)
+			{
+				exceptionPopupProvider.popUpErrorException(ex);
+			}
 		}
 		return capabilityViewLayoutController;
 	}

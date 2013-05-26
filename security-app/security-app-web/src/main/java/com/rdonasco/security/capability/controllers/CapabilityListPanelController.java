@@ -25,6 +25,8 @@ import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Table;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Instance;
@@ -87,6 +89,23 @@ public class CapabilityListPanelController implements
 				public void buttonClick(Button.ClickEvent event)
 				{
 					addNewCapability();
+				}
+			});
+			capabilityListPanel.getRefreshButton().addListener(new Button.ClickListener()
+			{
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void buttonClick(Button.ClickEvent event)
+				{
+					try
+					{
+						refreshView();
+					}
+					catch (WidgetException ex)
+					{
+						exceptionPopupProvider.popUpErrorException(ex);
+					}
 				}
 			});
 			capabilityItemTableContainer.refresh();

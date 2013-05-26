@@ -1,6 +1,6 @@
 /*
  * Copyright 2013 Roy F. Donasco.
- * File Created on: 17-Apr-2013
+ * File Created on: 26-May-2013
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rdonasco.security.user.utils;
 
-import com.rdonasco.common.i18.I18NResource;
+package com.rdonasco.security.common.utils;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public interface UserConstants
+public class ActionConstants 
 {
+	public static final String ADD = "add";
 
-	public static final Object[] TABLE_VISIBLE_COLUMNS = new Object[]
-	{
-		"icon", "logonId"
-	};
-	public static final String[] TABLE_VISIBLE_HEADERS = new String[]
-	{
-		"",
-		I18NResource.localize("Logon ID")
-	};
+	public static final String EDIT = "edit";
 
-	public static final String RESOURCE_USERS = "users";
+	public static final String DELETE = "delete";
+
+	public static final String VIEW = "view";
 }

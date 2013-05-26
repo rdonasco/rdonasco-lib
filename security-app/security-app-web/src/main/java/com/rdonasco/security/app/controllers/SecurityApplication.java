@@ -66,30 +66,34 @@ public class SecurityApplication extends Application implements
 	@Override
 	public void popUpInfoException(Throwable t)
 	{
-		LOG.log(Level.INFO, t.getMessage(), t);
-		popUpInfo(t.getMessage());
+		Throwable cause = extractRealCause(t);
+		LOG.log(Level.INFO, cause.getMessage(), cause);
+		popUpInfo(cause.getMessage());
 	}
 
 	@Override
 	public void popUpErrorException(Throwable t)
 	{
-		LOG.log(Level.SEVERE, t.getMessage(), t);
-		popUpError(t.getMessage());
+		Throwable cause = extractRealCause(t);
+		LOG.log(Level.SEVERE, cause.getMessage(), cause);
+		popUpError(cause.getMessage());
 	}
 
 	@Override
 	public void popUpWarningException(Throwable t)
 	{
-		LOG.log(Level.WARNING, t.getMessage(), t);
-		popUpWarning(t.getMessage());
+		Throwable cause = extractRealCause(t);
+		LOG.log(Level.WARNING, cause.getMessage(), cause);
+		popUpWarning(cause.getMessage());
 
 	}
 
 	@Override
 	public void popUpDebugException(Throwable t)
 	{
-		LOG.log(Level.FINE, t.getMessage(), t);
-		popUpInfo(t.getMessage());
+		Throwable cause = extractRealCause(t);
+		LOG.log(Level.FINE, cause.getMessage(), cause);
+		popUpInfo(cause.getMessage());
 
 	}
 
@@ -140,5 +144,15 @@ public class SecurityApplication extends Application implements
 	public void handleSecurityException(Throwable e)
 	{
 		popUpErrorException(e);
+	}
+
+	private Throwable extractRealCause(Throwable throwable)
+	{
+		Throwable cause = throwable;
+		if (throwable.getCause() != null)
+		{
+			cause = throwable.getCause();
+		}
+		return cause;
 	}
 }
