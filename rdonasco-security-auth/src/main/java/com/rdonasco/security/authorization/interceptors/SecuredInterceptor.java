@@ -237,12 +237,17 @@ public class SecuredInterceptor
 		this.configDataManager = configDataManager;
 	}
 
+	// TODO: Get rid of this duplicate and use SystemSecurityManagerDecorator
 	boolean isEnabled()
 	{
 		Boolean isEnabled = Boolean.TRUE;
 		try
 		{
 			isEnabled = configDataManager.loadValue("/security/interceptor/enabled", Boolean.class, Boolean.FALSE);
+			if (!isEnabled)
+			{
+				LOG.log(Level.WARNING, "/security/interceptor/enabled = {0}", isEnabled);
+			}
 		}
 		catch (Exception e)
 		{

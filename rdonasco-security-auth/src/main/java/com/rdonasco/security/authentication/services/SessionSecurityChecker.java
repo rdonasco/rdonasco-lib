@@ -62,6 +62,21 @@ public class SessionSecurityChecker
 		}
 	}
 
+	public boolean hasTheCapabilityTo(String action, String resource)
+	{
+		boolean hasTheCapability = false;
+		try
+		{
+			checkAccess(resource, action);
+			hasTheCapability = true;
+		}
+		catch (Exception e)
+		{
+			LOG.log(Level.FINE, e.getMessage(), e);
+		}
+		return hasTheCapability;
+	}
+
 	public LoggedOnSessionProvider getLoggedOnSessionProvider()
 	{
 		if (null == loggedOnSessionProvider && loggedOnSessionInstances != null)

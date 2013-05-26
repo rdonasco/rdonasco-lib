@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.rdonasco.security.authentication.services;
 
+import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.services.SystemSecurityManager;
 import com.rdonasco.security.services.SystemSecurityManagerRemote;
@@ -24,6 +24,8 @@ import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 
 /**
@@ -32,13 +34,41 @@ import javax.ejb.EJB;
  */
 public class SystemSecurityManagerDecorator implements SystemSecurityManager
 {
+
+	private static final Logger LOG = Logger.getLogger(SystemSecurityManagerDecorator.class.getName());
+
 	@EJB
 	private SystemSecurityManagerRemote systemSecurityManager;
+
+	@EJB
+	private ConfigDataManagerVODecoratorRemote configDataManager;
+
+	private boolean isEnabled()
+	{
+		Boolean isEnabled = Boolean.TRUE;
+		try
+		{
+			isEnabled = configDataManager.loadValue("/security/interceptor/enabled", Boolean.class, Boolean.FALSE);
+			if (!isEnabled)
+			{
+				LOG.log(Level.WARNING, "/security/interceptor/enabled = {0}", isEnabled);
+			}
+		}
+		catch (Exception e)
+		{
+			LOG.log(Level.WARNING, e.getMessage(), e);
+		}
+
+		return isEnabled;
+	}
 
 	@Override
 	public void checkAccessRights(AccessRightsVO accessRights)
 	{
-		systemSecurityManager.checkAccessRights(accessRights);
+		if (isEnabled())
+		{
+			systemSecurityManager.checkAccessRights(accessRights);
+		}
 	}
 
 	@Override
