@@ -52,28 +52,45 @@ public class Capability implements Serializable
 {
 
 	public static final String NAMED_QUERY_FIND_BY_RESOURCE_NAME = "findCapabilityByResourceName";
+
 	public static final String NAMED_QUERY_FIND_BY_TITLE = "findCapabilityByTitle";
+
 	public static final String QUERY_PARAM_RESOURCE_NAME = "resource_name";
+
 	public static final String QUERY_PARAM_ACTION = "action";
+
 	public static final String QUERY_PARAM_TITLE = "title";
+
 	private static final long serialVersionUID = 1L;
+
 	private static final String GENERATOR_KEY = "CAPABILITY_IDGEN";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = GENERATOR_KEY)
 	@TableGenerator(name = GENERATOR_KEY, table = SecurityConstants.TABLE_SEQUENCE)
 	@Column(name = "id", nullable = false)
 	private Long id;
+
 	@Basic(optional = false)
 	@Column(name = "title", nullable = false, length = 256, unique = true)
 	private String title;
+
 	@Basic(optional = true)
 	@Column(name = "description", nullable = false, length = 256)
 	private String description;
+
 	@JoinColumn(name = "resource_id", referencedColumnName = "id", nullable = true)
 	@ManyToOne(optional = false, fetch = FetchType.EAGER)
 	private Resource resource;
+
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "capability", fetch = FetchType.EAGER)
 	private Collection<CapabilityAction> actions;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "capability", fetch = FetchType.LAZY)
+	private Collection<RoleCapability> rolesWithThisCapability;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "capability", fetch = FetchType.LAZY)
+	private Collection<UserCapability> usersWithThisCapability;
 
 	public Long getId()
 	{
@@ -129,6 +146,28 @@ public class Capability implements Serializable
 		}
 	}
 
+	public Collection<RoleCapability> getRolesWithThisCapability()
+	{
+		return rolesWithThisCapability;
+	}
+
+	public void setRolesWithThisCapability(
+			Collection<RoleCapability> rolesWithThisCapability)
+	{
+		this.rolesWithThisCapability = rolesWithThisCapability;
+	}
+
+	public Collection<UserCapability> getUsersWithThisCapability()
+	{
+		return usersWithThisCapability;
+	}
+
+	public void setUsersWithThisCapability(
+			Collection<UserCapability> usersWithThisCapability)
+	{
+		this.usersWithThisCapability = usersWithThisCapability;
+	}
+
 	@Override
 	public int hashCode()
 	{
@@ -140,17 +179,20 @@ public class Capability implements Serializable
 	@Override
 	public boolean equals(Object object)
 	{
-		// TODO: Warning - this method won't work in the case the id fields are not set
+		boolean isEqual = true;
 		if (!(object instanceof Capability))
 		{
-			return false;
+			isEqual = false;
 		}
-		Capability other = (Capability) object;
-		if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
+		else
 		{
-			return false;
+			Capability other = (Capability) object;
+			if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
+			{
+				isEqual = false;
+			}
 		}
-		return true;
+		return isEqual;
 	}
 
 	@Override
@@ -158,6 +200,4 @@ public class Capability implements Serializable
 	{
 		return "Capability{" + "id=" + id + ", title=" + title + ", description=" + description + '}';
 	}
-
-
 }

@@ -58,6 +58,9 @@ public class SecurityGroup implements Serializable
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "securityGroup", fetch = FetchType.LAZY)
 	private Collection<SecurityGroupRole> groupRoles;
 
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "group", fetch = FetchType.LAZY)
+	private Collection<UserGroup> userGroups;
+
 	public Long getId()
 	{
 		return id;
@@ -91,6 +94,21 @@ public class SecurityGroup implements Serializable
 			Collection<SecurityGroupRole> groupRoles)
 	{
 		this.groupRoles = groupRoles;
+	}
+
+	public Collection<UserGroup> getUserGroups()
+	{
+		if (null == userGroups)
+		{
+			userGroups = new ArrayList<UserGroup>();
+		}
+		return userGroups;
+	}
+
+	public void setUserGroups(
+			Collection<UserGroup> userGroups)
+	{
+		this.userGroups = userGroups;
 	}
 
 	@Override

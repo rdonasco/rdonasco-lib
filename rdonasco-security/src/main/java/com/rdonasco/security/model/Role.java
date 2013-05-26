@@ -58,6 +58,12 @@ public class Role implements Serializable
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "role", fetch = FetchType.EAGER)
 	private Collection<RoleCapability> capabilities = new ArrayList<RoleCapability>();
 
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "role", fetch = FetchType.EAGER)
+	private Collection<SecurityGroupRole> groupsWithThisRole = new ArrayList<SecurityGroupRole>();
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "role", fetch = FetchType.EAGER)
+	private Collection<UserRole> usersWithThisRole = new ArrayList<UserRole>();
+
 	public Long getId()
 	{
 		return id;
@@ -87,6 +93,28 @@ public class Role implements Serializable
 			Collection<RoleCapability> capabilities)
 	{
 		this.capabilities = capabilities;
+	}
+
+	public Collection<SecurityGroupRole> getGroupsWithThisRole()
+	{
+		return groupsWithThisRole;
+	}
+
+	public void setGroupsWithThisRole(
+			Collection<SecurityGroupRole> groupsWithThisRole)
+	{
+		this.groupsWithThisRole = groupsWithThisRole;
+	}
+
+	public Collection<UserRole> getUsersWithThisRole()
+	{
+		return usersWithThisRole;
+	}
+
+	public void setUsersWithThisRole(
+			Collection<UserRole> usersWithThisRole)
+	{
+		this.usersWithThisRole = usersWithThisRole;
 	}
 
 	@Override
