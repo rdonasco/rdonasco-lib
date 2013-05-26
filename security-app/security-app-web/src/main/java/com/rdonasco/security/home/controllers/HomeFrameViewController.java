@@ -68,6 +68,7 @@ public class HomeFrameViewController implements
 	public void refreshView() throws WidgetException
 	{
 		homeFrame.setToolbarContent(toolbarController.getControlledView());
+		toolbarController.refreshView();
 		setWorkspaceContent((Component) homeViewController.getControlledView());
 	}
 

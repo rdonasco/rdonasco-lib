@@ -12,6 +12,7 @@ import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.common.vaadin.view.ButtonUtil;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.security.app.controllers.HttpSessionProvider;
+import com.rdonasco.security.authentication.services.LoggedOnSessionProvider;
 import com.rdonasco.security.home.views.ToolbarView;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Button;
@@ -46,6 +47,9 @@ public class ToolbarController implements ViewController<ToolbarView>
 	private Instance<HttpSessionProvider> httpSessionInstanceProvider;
 	@Inject
 	private DefaultContentViewController homeViewController;
+
+	@Inject
+	private LoggedOnSessionProvider loggedOnSessionProvider;
 
 	@PostConstruct
 	@Override
@@ -96,6 +100,17 @@ public class ToolbarController implements ViewController<ToolbarView>
 	@Override
 	public void refreshView() throws WidgetException
 	{
+		if (loggedOnSessionProvider != null && loggedOnSessionProvider.getLoggedOnSession() != null && loggedOnSessionProvider.getLoggedOnSession().isLoggedOn())
+		{
+			profileLink.setCaption(loggedOnSessionProvider.getLoggedOnSession().getLoggedOnUser().getLogonId());
+			profileLink.setVisible(true);
+			logoutLink.setVisible(true);
+		}
+		else
+		{
+			profileLink.setVisible(false);
+			logoutLink.setVisible(false);
+		}
 
 	}
 }
