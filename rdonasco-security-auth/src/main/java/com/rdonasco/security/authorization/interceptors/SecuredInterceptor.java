@@ -16,6 +16,7 @@
  */
 package com.rdonasco.security.authorization.interceptors;
 
+import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.authentication.services.LoggedOnSessionProvider;
@@ -41,9 +42,15 @@ public class SecuredInterceptor
 {
 
 	private static final Logger LOG = Logger.getLogger(SecuredInterceptor.class.getName());
+
 	@EJB
 	private SystemSecurityManagerRemote systemSecurityManager;
+
+	@EJB
+	private ConfigDataManagerVODecoratorRemote configDataManager;
+
 	private LoggedOnSessionProvider loggedOnSessionProvider;
+
 	private SecurityExceptionHandler securityExceptionHandler;
 
 	public SecuredInterceptor()
@@ -73,15 +80,21 @@ public class SecuredInterceptor
 		{
 			if (InvocationEventType.BEFORE == invocationEventType)
 			{
-				LOG.log(Level.INFO, "executing doTheInvocationCheck before method {0}", joinPoint.getMethod().getName());
-				doTheInvocationCheck(resource, action);
+				if (isEnabled())
+				{
+					LOG.log(Level.INFO, "executing doTheInvocationCheck before method {0}", joinPoint.getMethod().getName());
+					doTheInvocationCheck(resource, action);
+				}
 				returnValue = joinPoint.proceed();
 			}
 			else
 			{
 				returnValue = joinPoint.proceed();
-				LOG.log(Level.INFO, "executing doTheInvocationCheck after method {0}", joinPoint.getMethod().getName());
-				doTheInvocationCheck(resource, action);
+				if (isEnabled())
+				{
+					LOG.log(Level.INFO, "executing doTheInvocationCheck after method {0}", joinPoint.getMethod().getName());
+					doTheInvocationCheck(resource, action);
+				}
 			}
 		}
 		catch (Exception e)
@@ -95,7 +108,7 @@ public class SecuredInterceptor
 
 			Throwable cause = e.getCause();
 			if (useExceptionHandler && null != securityExceptionHandler)
-			{				
+			{
 				if (null != cause)
 				{
 					securityExceptionHandler.handleSecurityException(cause);
@@ -216,5 +229,26 @@ public class SecuredInterceptor
 			SystemSecurityManagerRemote systemSecurityManager)
 	{
 		this.systemSecurityManager = systemSecurityManager;
+	}
+
+	void setConfigDataManager(
+			ConfigDataManagerVODecoratorRemote configDataManager)
+	{
+		this.configDataManager = configDataManager;
+	}
+
+	boolean isEnabled()
+	{
+		Boolean isEnabled = Boolean.TRUE;
+		try
+		{
+			isEnabled = configDataManager.loadValue("/security/interceptor/enabled", Boolean.class, Boolean.FALSE);
+		}
+		catch (Exception e)
+		{
+			LOG.log(Level.WARNING, e.getMessage(), e);
+		}
+
+		return isEnabled;
 	}
 }
