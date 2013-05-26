@@ -106,6 +106,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 				}
 				if (!accessRightsSet.contains(requestedAccessRight))
 				{
+					logAccessRights(accessRightsSet);
 					throwSecurityAuthorizationExceptionFor(requestedAccessRight);
 				}
 			}
@@ -241,5 +242,18 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			SecurityManagerException
 	{
 		return userSecurityProfileManager.findAllProfiles();
+	}
+
+	private void logAccessRights(
+			Set<AccessRightsVO> accessRightsSet)
+	{
+		for (AccessRightsVO accessRightsVO : accessRightsSet)
+		{
+			Object[] params =
+			{
+				accessRightsVO.getAction(), accessRightsVO.getResource()
+			};
+			LOG.log(Level.FINE, "access right action: {0}, resource: {1}", params);
+		}
 	}
 }
