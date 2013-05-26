@@ -25,6 +25,7 @@ import static com.vaadin.terminal.Sizeable.UNITS_PERCENTAGE;
 import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
@@ -43,15 +44,20 @@ public class RoleListPanelView extends Panel implements
 
 	private Button addRoleButton;
 
+	private Button refreshButton;
+
 	public RoleListPanelView()
 	{
 		this.roleListTable = new Table();
 		this.roleListTable.addStyleName(SecurityDefaultTheme.CSS_TABLE_SMALL_STRIPED);
 		this.roleListTable.addStyleName(SecurityDefaultTheme.CSS_TABLE_BORDERLESS);
 		this.addRoleButton = new Button(I18NResource.localize("Add new role"));
+		this.refreshButton = new Button(I18NResource.localize("Refresh"));
 		addRoleButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_ADD));
 		addRoleButton.setWidth(100, UNITS_PERCENTAGE);
 		addRoleButton.addStyleName(SecurityDefaultTheme.CSS_SMALL);
+		refreshButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_REFRESH));
+		refreshButton.addStyleName(SecurityDefaultTheme.CSS_SMALL);
 	}
 
 	public Table getRoleListTable()
@@ -64,6 +70,11 @@ public class RoleListPanelView extends Panel implements
 		return addRoleButton;
 	}
 
+	public Button getRefreshButton()
+	{
+		return refreshButton;
+	}
+
 	@Override
 	public void initWidget() throws WidgetInitalizeException
 	{
@@ -74,11 +85,16 @@ public class RoleListPanelView extends Panel implements
 		content.setHeight(600, UNITS_PIXELS);
 		content.removeAllComponents();
 		getRoleListTable().setSizeFull();
-		content.addComponent(addRoleButton);
+		HorizontalLayout buttonLayout = new HorizontalLayout();
+		buttonLayout.setSpacing(true);
+		buttonLayout.setWidth(100F, UNITS_PERCENTAGE);
+		buttonLayout.addComponent(addRoleButton);
+		buttonLayout.addComponent(refreshButton);				
+		buttonLayout.setExpandRatio(addRoleButton, 1);
+		content.addComponent(buttonLayout);
 		content.addComponent(getRoleListTable());
 		content.setExpandRatio(getRoleListTable(), 1);
 		content.setSpacing(true);
-
 	}
 
 	public void setAttachStrategy(ListEditorAttachStrategy attachStrategy)

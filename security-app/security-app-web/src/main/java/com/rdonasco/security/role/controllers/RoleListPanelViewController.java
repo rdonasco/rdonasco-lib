@@ -98,6 +98,16 @@ public class RoleListPanelViewController implements
 					addNewRole();
 				}
 			});
+			roleListPanelView.getRefreshButton().addListener(new Button.ClickListener()
+			{
+				private static final long serialVersionUID = 1L;
+
+				@Override
+				public void buttonClick(Button.ClickEvent event)
+				{
+					refreshList();
+				}
+			});
 			roleListPanelView.setAttachStrategy(new ListEditorAttachStrategy()
 			{
 				@Override
