@@ -90,7 +90,7 @@ public class ConfigDataValueObjectConverter
 			if (configElement.getAttributes() != null)
 			{
 				List<ConfigAttributeVO> attributes = new ArrayList<ConfigAttributeVO>();
-				for (ConfigAttribute attribute : configElement.getAttributes())
+				for (ConfigAttribute attribute : configElement.getSortedAttributes())
 				{
 					ConfigAttributeVO attributeVO = toConfigAttributeVO(attribute);
 					attributes.add(attributeVO);
@@ -100,7 +100,7 @@ public class ConfigDataValueObjectConverter
 			if (configElement.getSubConfigElements() != null)
 			{
 				List<ConfigElementVO> subElements = new ArrayList<ConfigElementVO>();
-				for (ConfigElement subElement : configElement.getSubConfigElements())
+				for (ConfigElement subElement : configElement.getSortedSubConfigElements())
 				{
 					ConfigElementVO elementVO = toConfigElementVOIncludingAggregates(subElement);
 					subElements.add(elementVO);

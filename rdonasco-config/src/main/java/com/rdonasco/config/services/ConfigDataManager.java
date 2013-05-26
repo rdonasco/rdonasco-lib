@@ -40,6 +40,8 @@ import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.datamanager.utils.CommonConstants;
 import com.rdonasco.common.i18.I18NResource;
+import com.rdonasco.config.util.ConfigConstants;
+import java.util.Collections;
 
 /**
  *
@@ -91,17 +93,18 @@ public class ConfigDataManager implements ConfigDataManagerLocal
 	@Override
 	public List<ConfigElement> retrieveAllData() throws DataAccessException
 	{
-		List<ConfigElement> configElement = null;
+		List<ConfigElement> configElements = null;
 		try
 		{
-			configElement = getConfigElementDAO().findAllDataUsingNamedQuery(
+			configElements = getConfigElementDAO().findAllDataUsingNamedQuery(
 					ConfigElement.NAMED_QUERY_FIND_ROOT_ELEMENTS, null);
+			Collections.sort(configElements, ConfigConstants.CONFIG_DATA_COMPARATOR);
 		}
 		catch (Exception e)
 		{
 			throw new DataAccessException(e);
 		}
-		return configElement;
+		return configElements;
 	}
 
 	@Override

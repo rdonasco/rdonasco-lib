@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
 /**
  *
@@ -43,6 +45,7 @@ public class ConfigDataManagerVODecorator implements
 	private ConfigDataManagerLocal configDataManager;
 	
 	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public ConfigAttributeVO saveAttribute(ConfigAttributeVO attribute) throws
 			DataAccessException
 	{
@@ -52,6 +55,7 @@ public class ConfigDataManagerVODecorator implements
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void updateAttribute(ConfigAttributeVO attribute) throws
 			DataAccessException
 	{
@@ -60,6 +64,7 @@ public class ConfigDataManagerVODecorator implements
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void deleteAttribute(ConfigAttributeVO configAttribute) throws
 			DataAccessException
 	{
@@ -68,6 +73,7 @@ public class ConfigDataManagerVODecorator implements
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public ConfigElementVO findConfigElementWithXpath(String xpath) throws
 			DataAccessException, NonExistentEntityException
 	{
@@ -76,6 +82,7 @@ public class ConfigDataManagerVODecorator implements
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public ConfigAttributeVO findConfigAttributeWithXpath(String xpath) throws
 			DataAccessException, NonExistentEntityException
 	{
@@ -84,6 +91,7 @@ public class ConfigDataManagerVODecorator implements
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public List<ConfigElementVO> findConfigElementsWithXpath(String xpath)
 			throws DataAccessException
 	{
@@ -97,6 +105,7 @@ public class ConfigDataManagerVODecorator implements
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public List<ConfigAttributeVO> findConfigAttributesWithXpath(String xpath)
 			throws DataAccessException
 	{
@@ -110,6 +119,7 @@ public class ConfigDataManagerVODecorator implements
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public <T> T loadValue(String xpath,
 			Class<T> t) throws LoadValueException
 	{
@@ -117,6 +127,7 @@ public class ConfigDataManagerVODecorator implements
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public <T> T loadValue(String xpath,
 			Class<T> t, T defaultValue)
 	{
@@ -125,6 +136,7 @@ public class ConfigDataManagerVODecorator implements
 
 //	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public ConfigAttributeVO createAttributeFromXpath(String xpath, Object value)
 			throws DataAccessException, ConfigXPathException
 	{
@@ -132,6 +144,7 @@ public class ConfigDataManagerVODecorator implements
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public ConfigElementVO saveConfigElement(ConfigElementVO configElementVO)
 			throws DataAccessException
 	{
@@ -144,6 +157,7 @@ public class ConfigDataManagerVODecorator implements
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public ConfigElementVO loadConfigElement(ConfigElementVO savedParentConfig)
 			throws DataAccessException
 	{
@@ -155,6 +169,7 @@ public class ConfigDataManagerVODecorator implements
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void deleteConfigElement(ConfigElementVO configElementVO) throws
 			DataAccessException
 	{
@@ -163,6 +178,7 @@ public class ConfigDataManagerVODecorator implements
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public List<ConfigElementVO> retrieveAllData() throws DataAccessException
 	{
 		List<ConfigElement> allConfigElement = configDataManager.retrieveAllData();
@@ -175,6 +191,7 @@ public class ConfigDataManagerVODecorator implements
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void updateData(ConfigElementVO configElementVO) throws
 			DataAccessException
 	{
@@ -182,6 +199,7 @@ public class ConfigDataManagerVODecorator implements
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public ConfigElementVO saveData(ConfigElementVO configElement) throws
 			DataAccessException
 	{
@@ -190,6 +208,7 @@ public class ConfigDataManagerVODecorator implements
 	}
 
 	@Override
+	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void deleteData(ConfigElementVO configElement) throws
 			DataAccessException
 	{

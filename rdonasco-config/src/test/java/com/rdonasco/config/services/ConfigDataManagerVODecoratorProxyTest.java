@@ -110,6 +110,7 @@ public class ConfigDataManagerVODecoratorProxyTest
 
 		ConfigElementVO result = configDataManagerProxyUnderTest.saveConfigElement(configElement);
 		assertNotNull(result.getId());
+		assertTrue("Version not updated", result.getVersion() > 0);
 	}
 
 	@Test
@@ -181,9 +182,11 @@ public class ConfigDataManagerVODecoratorProxyTest
 				.setName("subConfigElement")
 				.setParentConfig(savedParentConfig)
 				.createConfigElementVO();
+		int version = subConfigElement.getVersion();
 		ConfigElementVO savedSubConfig = configDataManagerProxyUnderTest.saveConfigElement(subConfigElement);
 		assertNotNull("failed to save sub config element",
 				savedSubConfig.getId());
+		assertEquals("version did not increment", version + 1, savedSubConfig.getVersion());
 		return savedSubConfig;
 	}
 
@@ -195,6 +198,7 @@ public class ConfigDataManagerVODecoratorProxyTest
 				.createConfigElementVO();
 		ConfigElementVO savedParentConfig = configDataManagerProxyUnderTest.saveConfigElement(configElement);
 		assertNotNull("failed to save parent config", savedParentConfig.getId());
+		assertEquals("version did not increment", configElement.getVersion() + 1, savedParentConfig.getVersion());
 		return savedParentConfig;
 	}
 

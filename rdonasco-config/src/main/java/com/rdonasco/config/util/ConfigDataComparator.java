@@ -1,6 +1,6 @@
 /*
  * Copyright 2013 Roy F. Donasco.
- * File Created on: 04-Apr-2013
+ * File Created on: 26-May-2013
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,24 @@
 
 package com.rdonasco.config.util;
 
+import com.rdonasco.config.data.ConfigData;
+import java.util.Comparator;
+
 /**
  *
  * @author Roy F. Donasco
  */
-public final class ConfigConstants
+public class ConfigDataComparator implements Comparator<ConfigData> 
 {
-	public static final String TABLE_SEQUENCE = "CONFIG_SEQUENCE";
 
-	public static final ConfigDataComparator CONFIG_DATA_COMPARATOR = new ConfigDataComparator();
+	public ConfigDataComparator()
+	{
+	}
+
+	@Override
+	public int compare(ConfigData configData01, ConfigData configData02)
+	{
+		return configData01.getName().compareTo(configData02.getName());
+	}
+
 }

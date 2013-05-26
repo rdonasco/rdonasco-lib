@@ -108,6 +108,7 @@ public class ConfigDataManagerTest
 
 		ConfigElement result = configDataManagerUnderTest.saveData(configElement);
 		assertNotNull(result.getId());
+		assertTrue("Version not saved", result.getVersion() > 0);
 	}
 
 	@Test
@@ -180,6 +181,7 @@ public class ConfigDataManagerTest
 				subConfigElement);
 		assertNotNull("failed to save sub config element",
 				savedSubConfig.getId());
+		assertTrue("version not updated", savedSubConfig.getVersion() > 0);
 		return savedSubConfig;
 	}
 
@@ -190,6 +192,7 @@ public class ConfigDataManagerTest
 		ConfigElement savedParentConfig = configDataManagerUnderTest.saveData(
 				configElement);
 		assertNotNull("failed to save parent config", savedParentConfig.getId());
+		assertTrue("version not updated", savedParentConfig.getVersion() > 0);
 		return savedParentConfig;
 	}
 
