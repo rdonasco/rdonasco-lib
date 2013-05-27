@@ -22,9 +22,12 @@ import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
+import com.rdonasco.security.authentication.services.SessionSecurityChecker;
 import com.rdonasco.security.capability.utils.IconHelper;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
+import com.rdonasco.security.common.utils.ActionConstants;
 import com.rdonasco.security.common.views.ListItemIconCellStyleGenerator;
+import com.rdonasco.security.user.utils.UserConstants;
 import com.rdonasco.security.user.views.UserCapabilitiesView;
 import com.vaadin.data.util.BeanItemContainer;
 import com.rdonasco.security.user.vo.UserCapabilityItemVO;
@@ -56,24 +59,40 @@ public class UserCapabilitiesViewController implements
 {
 
 	private static final Logger LOG = Logger.getLogger(UserCapabilitiesViewController.class.getName());
+
 	private static final long serialVersionUID = 1L;
+
 	private static final String CONSTANT_ICON = "icon";
+
 	private static final String COLUMN_CAPABILITY_TITLE = "capability.title";
+
 	@Inject
 	private UserCapabilitiesView userCapabilitiesView;
+
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
+
 	@Inject
 	private ApplicationPopupProvider popupProvider;
+
+	@Inject
+	private SessionSecurityChecker sessionSecurityChecker;
+
 	private BeanItemContainer<UserCapabilityItemVO> userCapabilityItemContainer = new BeanItemContainer(UserCapabilityItemVO.class);
+
 	private BeanItem<UserSecurityProfileItemVO> currentProfile;
+
 	private DropHandler userCapabilitiesDropHandler;
+
 	private AcceptCriterion validDraggedObjectSource = AcceptAll.get();
+
 	private boolean editEnabled;
+
 	private final String[] editableColumns = new String[]
 	{
 		CONSTANT_ICON, COLUMN_CAPABILITY_TITLE
 	};
+
 	private final String[] readOnlyColumns = new String[]
 	{
 		COLUMN_CAPABILITY_TITLE
@@ -138,41 +157,28 @@ public class UserCapabilitiesViewController implements
 			@Override
 			public void drop(DragAndDropEvent dropEvent)
 			{
-				final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
-				if (null != transferredData && transferredData.getItemId() instanceof CapabilityItemVO)
+				try
 				{
-					LOG.log(Level.FINE, "drop allowed at user capability panel");
-					final CapabilityItemVO droppedCapabilityItemVO = (CapabilityItemVO) transferredData.getItemId();
-					Embedded icon = IconHelper.createDeleteIcon(I18NResource.localize("Remove Capability"));
-					final UserCapabilityItemVO newUserCapabilityItem = new UserCapabilityItemVOBuilder()
-							.setIcon(icon)
-							.setUserCapabilityVO(new UserCapabilityVOBuilder()
-							.setCapability(droppedCapabilityItemVO.getCapabilityVO())
-							.setUserProfile(currentProfile.getBean().getUserSecurityProfileVO())
-							.createUserCapabilityVO())
-							.createUserCapabilityItemVO();
-					BeanItem<UserCapabilityItemVO> addedItem = userCapabilityItemContainer.addItem(newUserCapabilityItem);
-					LOG.log(Level.FINE, "addedItem = {0}", addedItem);
-					icon.addListener(new MouseEvents.ClickListener()
+					final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
+					if (null != transferredData && transferredData.getItemId() instanceof CapabilityItemVO)
 					{
-						private static final long serialVersionUID = 1L;
-
-						@Override
-						public void click(MouseEvents.ClickEvent event)
-						{
-							if (!getControlledView().isReadOnly() && !userCapabilityItemContainer.removeItem(newUserCapabilityItem))
-							{
-								popupProvider.popUpError(I18NResource
-										.localizeWithParameter("Unable to remove capability _",
-										newUserCapabilityItem.getCapability().getTitle()));
-
-							}
-						}
-					});
+						sessionSecurityChecker.checkAccess(UserConstants.RESOURCE_USER_CAPABILITIES, ActionConstants.ADD);
+						LOG.log(Level.FINE, "drop allowed at user capability panel");
+						final CapabilityItemVO droppedCapabilityItemVO = (CapabilityItemVO) transferredData.getItemId();
+						final UserCapabilityVO newUserCapabilityVO = new UserCapabilityVOBuilder()
+								.setCapability(droppedCapabilityItemVO.getCapabilityVO())
+								.setUserProfile(currentProfile.getBean().getUserSecurityProfileVO())
+								.createUserCapabilityVO();
+						userCapabilityItemContainer.addItem(prepareUserCapabilityItemVO(newUserCapabilityVO));
+					}
+					else
+					{
+						LOG.log(Level.FINE, "invalid data dropped in user capability panel");
+					}
 				}
-				else
+				catch (Exception e)
 				{
-					LOG.log(Level.FINE, "invalid data dropped in user capability panel");
+					exceptionPopupProvider.popUpErrorException(e);
 				}
 			}
 
@@ -223,26 +229,8 @@ public class UserCapabilitiesViewController implements
 		getControlledView().getUserCapabilitiesTable().setSelectable(true);
 		for (UserCapabilityVO userCapability : currentProfile.getBean().getCapabilities())
 		{
-			Embedded icon = IconHelper.createDeleteIcon("Remove capability");
-			final UserCapabilityItemVO userCapabilityItemVO = new UserCapabilityItemVOBuilder()
-					.setIcon(icon)
-					.setUserCapabilityVO(userCapability)
-					.createUserCapabilityItemVO();
+			UserCapabilityItemVO userCapabilityItemVO = prepareUserCapabilityItemVO(userCapability);
 			userCapabilityItemContainer.addItem(userCapabilityItemVO);
-			icon.addListener(new MouseEvents.ClickListener()
-			{
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void click(MouseEvents.ClickEvent event)
-				{
-					if (!getControlledView().isReadOnly() && !userCapabilityItemContainer.removeItem(userCapabilityItemVO))
-					{
-						popupProvider.popUpError(I18NResource.localizeWithParameter("Unable to remove action _", userCapabilityItemVO));
-
-					}
-				}
-			});
 		}
 	}
 
@@ -259,5 +247,38 @@ public class UserCapabilitiesViewController implements
 			editedCapabilities.add(capabilityItem.getUserCapabilityVO());
 		}
 		currentProfile.getItemProperty("capabilities").setValue(editedCapabilities);
+	}
+
+	private UserCapabilityItemVO prepareUserCapabilityItemVO(
+			UserCapabilityVO userCapability)
+	{
+		Embedded icon = IconHelper.createDeleteIcon("Remove capability");
+		final UserCapabilityItemVO userCapabilityItemVO = new UserCapabilityItemVOBuilder()
+				.setIcon(icon)
+				.setUserCapabilityVO(userCapability)
+				.createUserCapabilityItemVO();
+		icon.addListener(new MouseEvents.ClickListener()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void click(MouseEvents.ClickEvent event)
+			{
+				try
+				{
+					sessionSecurityChecker.checkAccess(UserConstants.RESOURCE_USER_CAPABILITIES, ActionConstants.DELETE);
+					if (!getControlledView().isReadOnly() && !userCapabilityItemContainer.removeItem(userCapabilityItemVO))
+					{
+						popupProvider.popUpError(I18NResource.localizeWithParameter("Unable to remove capability _", userCapabilityItemVO));
+
+					}
+				}
+				catch (Exception e)
+				{
+					exceptionPopupProvider.popUpErrorException(e);
+				}
+			}
+		});
+		return userCapabilityItemVO;
 	}
 }

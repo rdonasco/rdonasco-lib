@@ -22,9 +22,12 @@ import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
+import com.rdonasco.security.authentication.services.SessionSecurityChecker;
 import com.rdonasco.security.capability.utils.IconHelper;
+import com.rdonasco.security.common.utils.ActionConstants;
 import com.rdonasco.security.common.views.ListItemIconCellStyleGenerator;
 import com.rdonasco.security.role.vo.RoleItemVO;
+import com.rdonasco.security.user.utils.UserConstants;
 import com.rdonasco.security.user.views.UserRolesView;
 import com.vaadin.data.util.BeanItemContainer;
 import com.rdonasco.security.user.vo.UserRoleItemVO;
@@ -56,24 +59,40 @@ public class UserRolesViewController implements
 {
 
 	private static final Logger LOG = Logger.getLogger(UserRolesViewController.class.getName());
+
 	private static final long serialVersionUID = 1L;
+
 	private static final String CONSTANT_ICON = "icon";
+
 	private static final String COLUMN_ROLE_NAME = "role.name";
+
 	@Inject
 	private UserRolesView userRolesView;
+
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
+
 	@Inject
 	private ApplicationPopupProvider popupProvider;
+
+	@Inject
+	private SessionSecurityChecker sessionSecurityChecker;
+
 	private BeanItemContainer<UserRoleItemVO> userRoleItemContainer = new BeanItemContainer(UserRoleItemVO.class);
+
 	private BeanItem<UserSecurityProfileItemVO> currentProfile;
+
 	private DropHandler userRolesDropHandler;
+
 	private AcceptCriterion validDraggedObjectSource = AcceptAll.get();
+
 	private boolean editEnabled;
+
 	private final String[] editableColumns = new String[]
 	{
 		CONSTANT_ICON, COLUMN_ROLE_NAME
 	};
+
 	private final String[] readOnlyColumns = new String[]
 	{
 		COLUMN_ROLE_NAME
@@ -138,41 +157,34 @@ public class UserRolesViewController implements
 			@Override
 			public void drop(DragAndDropEvent dropEvent)
 			{
-				final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
-				if (null != transferredData && transferredData.getItemId() instanceof RoleItemVO)
+				try
 				{
-					LOG.log(Level.FINE, "drop allowed at user capability panel");
-					final RoleItemVO droppedCapabilityItemVO = (RoleItemVO) transferredData.getItemId();
-					Embedded icon = IconHelper.createDeleteIcon(I18NResource.localize("Remove Capability"));
-					final UserRoleItemVO newUserRoleItemVO = new UserRoleItemVOBuilder()
-							.setIcon(icon)
-							.setUserRoleVO(new UserRoleVOBuilder()
-							.setRole(droppedCapabilityItemVO.getRoleVO())
-							.setUserProfile(currentProfile.getBean().getUserSecurityProfileVO())
-							.createUserRoleVO())
-							.createUserRoleItemVO();
-					BeanItem<UserRoleItemVO> addedItem = userRoleItemContainer.addItem(newUserRoleItemVO);
-					LOG.log(Level.FINE, "addedItem = {0}", addedItem);
-					icon.addListener(new MouseEvents.ClickListener()
+					final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
+					if (null != transferredData && transferredData.getItemId() instanceof RoleItemVO)
 					{
-						private static final long serialVersionUID = 1L;
-
-						@Override
-						public void click(MouseEvents.ClickEvent event)
-						{
-							if (!getControlledView().isReadOnly() && !userRoleItemContainer.removeItem(newUserRoleItemVO))
-							{
-								popupProvider.popUpError(I18NResource
-										.localizeWithParameter("Unable to remove role _",
-										newUserRoleItemVO.getRole().getName()));
-
-							}
-						}
-					});
+						sessionSecurityChecker.checkAccess(UserConstants.RESOURCE_USER_ROLES, ActionConstants.ADD);
+						LOG.log(Level.FINE, "drop allowed at user capability panel");
+						final RoleItemVO droppedCapabilityItemVO = (RoleItemVO) transferredData.getItemId();
+						Embedded icon = IconHelper.createDeleteIcon(I18NResource.localize("Remove Role"));
+						final UserRoleItemVO newUserRoleItemVO = new UserRoleItemVOBuilder()
+								.setIcon(icon)
+								.setUserRoleVO(new UserRoleVOBuilder()
+								.setRole(droppedCapabilityItemVO.getRoleVO())
+								.setUserProfile(currentProfile.getBean().getUserSecurityProfileVO())
+								.createUserRoleVO())
+								.createUserRoleItemVO();
+						BeanItem<UserRoleItemVO> addedItem = userRoleItemContainer.addItem(newUserRoleItemVO);
+						LOG.log(Level.FINE, "addedItem = {0}", addedItem);
+						icon.addListener(prepareDeleteRoleClickListener(newUserRoleItemVO));
+					}
+					else
+					{
+						LOG.log(Level.FINE, "invalid data dropped in user role panel");
+					}
 				}
-				else
+				catch (Exception e)
 				{
-					LOG.log(Level.FINE, "invalid data dropped in user role panel");
+					exceptionPopupProvider.popUpErrorException(e);
 				}
 			}
 
@@ -229,20 +241,7 @@ public class UserRolesViewController implements
 					.setUserRoleVO(userRole)
 					.createUserRoleItemVO();
 			userRoleItemContainer.addItem(userRoleItemVO);
-			icon.addListener(new MouseEvents.ClickListener()
-			{
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void click(MouseEvents.ClickEvent event)
-				{
-					if (!getControlledView().isReadOnly() && !userRoleItemContainer.removeItem(userRoleItemVO))
-					{
-						popupProvider.popUpError(I18NResource.localizeWithParameter("Unable to remove role _", userRoleItemVO));
-
-					}
-				}
-			});
+			icon.addListener(prepareDeleteRoleClickListener(userRoleItemVO));
 		}
 	}
 
@@ -259,5 +258,32 @@ public class UserRolesViewController implements
 			editedCapabilities.add(roleItem.getUserRoleVO());
 		}
 		currentProfile.getItemProperty("roles").setValue(editedCapabilities);
+	}
+
+	private MouseEvents.ClickListener prepareDeleteRoleClickListener(
+			final UserRoleItemVO userRoleItemVO)
+	{
+		return new MouseEvents.ClickListener()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void click(MouseEvents.ClickEvent event)
+			{
+				try
+				{
+					sessionSecurityChecker.checkAccess(UserConstants.RESOURCE_USER_ROLES, ActionConstants.DELETE);
+					if (!getControlledView().isReadOnly() && !userRoleItemContainer.removeItem(userRoleItemVO))
+					{
+						popupProvider.popUpError(I18NResource.localizeWithParameter("Unable to remove role _", userRoleItemVO));
+
+					}
+				}
+				catch (Exception e)
+				{
+					exceptionPopupProvider.popUpErrorException(e);
+				}
+			}
+		};
 	}
 }

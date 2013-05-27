@@ -22,10 +22,12 @@ import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
+import com.rdonasco.security.authentication.services.SessionSecurityChecker;
 import com.rdonasco.security.capability.utils.IconHelper;
+import com.rdonasco.security.common.utils.ActionConstants;
 import com.rdonasco.security.common.views.ListItemIconCellStyleGenerator;
 import com.rdonasco.security.group.vo.GroupItemVO;
-import com.rdonasco.security.role.vo.RoleItemVO;
+import com.rdonasco.security.user.utils.UserConstants;
 import com.rdonasco.security.user.views.UserGroupsView;
 import com.vaadin.data.util.BeanItemContainer;
 import com.rdonasco.security.user.vo.UserGroupItemVO;
@@ -57,24 +59,40 @@ public class UserGroupsViewController implements
 {
 
 	private static final Logger LOG = Logger.getLogger(UserGroupsViewController.class.getName());
+
 	private static final long serialVersionUID = 1L;
+
 	private static final String CONSTANT_ICON = "icon";
+
 	private static final String COLUMN_GROUP_NAME = "group.name";
+
 	@Inject
 	private UserGroupsView userGroupsView;
+
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
+
 	@Inject
 	private ApplicationPopupProvider popupProvider;
+
+	@Inject
+	private SessionSecurityChecker sessionSecurityChecker;
+
 	private BeanItemContainer<UserGroupItemVO> userGroupItemContainer = new BeanItemContainer(UserGroupItemVO.class);
+
 	private BeanItem<UserSecurityProfileItemVO> currentProfile;
+
 	private DropHandler userGroupsDropHandler;
+
 	private AcceptCriterion validDraggedObjectSource = AcceptAll.get();
+
 	private boolean editEnabled;
+
 	private final String[] editableColumns = new String[]
 	{
 		CONSTANT_ICON, COLUMN_GROUP_NAME
 	};
+
 	private final String[] readOnlyColumns = new String[]
 	{
 		COLUMN_GROUP_NAME
@@ -139,41 +157,28 @@ public class UserGroupsViewController implements
 			@Override
 			public void drop(DragAndDropEvent dropEvent)
 			{
-				final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
-				if (null != transferredData && transferredData.getItemId() instanceof GroupItemVO)
+				try
 				{
-					LOG.log(Level.FINE, "drop allowed at user group panel");
-					final GroupItemVO droppedCapabilityItemVO = (GroupItemVO) transferredData.getItemId();
-					Embedded icon = IconHelper.createDeleteIcon(I18NResource.localize("Remove Group"));
-					final UserGroupItemVO newUserGroupItemVO = new UserGroupItemVOBuilder()
-							.setIcon(icon)
-							.setUserGroupVO(new UserGroupVOBuilder()
-							.setGroup(droppedCapabilityItemVO.getSecurityGroupVO())
-							.setUserProfile(currentProfile.getBean().getUserSecurityProfileVO())
-							.createUserGroupVO())
-							.createUserGroupItemVO();
-					BeanItem<UserGroupItemVO> addedItem = userGroupItemContainer.addItem(newUserGroupItemVO);
-					LOG.log(Level.FINE, "addedItem = {0}", addedItem);
-					icon.addListener(new MouseEvents.ClickListener()
+					final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
+					if (null != transferredData && transferredData.getItemId() instanceof GroupItemVO)
 					{
-						private static final long serialVersionUID = 1L;
-
-						@Override
-						public void click(MouseEvents.ClickEvent event)
-						{
-							if (!getControlledView().isReadOnly() && !userGroupItemContainer.removeItem(newUserGroupItemVO))
-							{
-								popupProvider.popUpError(I18NResource
-										.localizeWithParameter("Unable to remove group _",
-										newUserGroupItemVO.getGroup().getName()));
-
-							}
-						}
-					});
+						sessionSecurityChecker.checkAccess(UserConstants.RESOURCE_USER_GROUPS, ActionConstants.ADD);
+						LOG.log(Level.FINE, "drop allowed at user group panel");
+						final GroupItemVO droppedCapabilityItemVO = (GroupItemVO) transferredData.getItemId();
+						final UserGroupVO newUserGroupVO = new UserGroupVOBuilder()
+								.setGroup(droppedCapabilityItemVO.getSecurityGroupVO())
+								.setUserProfile(currentProfile.getBean().getUserSecurityProfileVO())
+								.createUserGroupVO();
+						userGroupItemContainer.addItem(prepareUserGroupItemVO(newUserGroupVO));
+					}
+					else
+					{
+						LOG.log(Level.FINE, "invalid data dropped in user group panel");
+					}
 				}
-				else
+				catch (Exception e)
 				{
-					LOG.log(Level.FINE, "invalid data dropped in user group panel");
+					exceptionPopupProvider.popUpErrorException(e);
 				}
 			}
 
@@ -224,26 +229,8 @@ public class UserGroupsViewController implements
 		getControlledView().getUserGroupsTable().setSelectable(true);
 		for (UserGroupVO userGroup : currentProfile.getBean().getGroups())
 		{
-			Embedded icon = IconHelper.createDeleteIcon("Remove group");
-			final UserGroupItemVO userRoleItemVO = new UserGroupItemVOBuilder()
-					.setIcon(icon)
-					.setUserGroupVO(userGroup)
-					.createUserGroupItemVO();
-			userGroupItemContainer.addItem(userRoleItemVO);
-			icon.addListener(new MouseEvents.ClickListener()
-			{
-				private static final long serialVersionUID = 1L;
-
-				@Override
-				public void click(MouseEvents.ClickEvent event)
-				{
-					if (!getControlledView().isReadOnly() && !userGroupItemContainer.removeItem(userRoleItemVO))
-					{
-						popupProvider.popUpError(I18NResource.localizeWithParameter("Unable to remove group _", userRoleItemVO));
-
-					}
-				}
-			});
+			UserGroupItemVO userGroupItemVO = prepareUserGroupItemVO(userGroup);
+			userGroupItemContainer.addItem(userGroupItemVO);
 		}
 	}
 
@@ -260,5 +247,37 @@ public class UserGroupsViewController implements
 			editedCapabilities.add(roleItem.getUserGroupVO());
 		}
 		currentProfile.getItemProperty("groups").setValue(editedCapabilities);
+	}
+
+	private UserGroupItemVO prepareUserGroupItemVO(UserGroupVO userGroup)
+	{
+		Embedded icon = IconHelper.createDeleteIcon("Remove group");
+		final UserGroupItemVO userRoleItemVO = new UserGroupItemVOBuilder()
+				.setIcon(icon)
+				.setUserGroupVO(userGroup)
+				.createUserGroupItemVO();
+		icon.addListener(new MouseEvents.ClickListener()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void click(MouseEvents.ClickEvent event)
+			{
+				try
+				{
+					sessionSecurityChecker.checkAccess(UserConstants.RESOURCE_USER_GROUPS, ActionConstants.DELETE);
+					if (!getControlledView().isReadOnly() && !userGroupItemContainer.removeItem(userRoleItemVO))
+					{
+						popupProvider.popUpError(I18NResource.localizeWithParameter("Unable to remove group _", userRoleItemVO));
+
+					}
+				}
+				catch (Exception e)
+				{
+					exceptionPopupProvider.popUpErrorException(e);
+				}
+			}
+		});
+		return userRoleItemVO;
 	}
 }

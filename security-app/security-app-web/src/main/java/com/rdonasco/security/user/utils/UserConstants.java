@@ -36,4 +36,10 @@ public interface UserConstants
 	};
 
 	public static final String RESOURCE_USERS = "users";
+
+	public static final String RESOURCE_USER_ROLES = "userRoles";
+
+	public static final String RESOURCE_USER_CAPABILITIES = "userCapabilities";
+
+	public static final String RESOURCE_USER_GROUPS = "userGroups";
 }
