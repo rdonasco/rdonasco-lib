@@ -14,12 +14,15 @@ import com.rdonasco.datamanager.controller.DataRetrieveListStrategy;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.security.authentication.services.SessionSecurityChecker;
+import com.rdonasco.security.capability.utils.CapabilityConstants;
 import com.rdonasco.security.capability.utils.IconHelper;
 import com.rdonasco.security.capability.views.CapabilityEditorView;
 import com.rdonasco.security.capability.vo.ActionItemVO;
 import com.rdonasco.security.capability.vo.ActionItemVOBuilder;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.capability.vo.ResourceItemVO;
+import com.rdonasco.security.common.utils.ActionConstants;
 import com.rdonasco.security.common.views.ListItemIconCellStyleGenerator;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.vo.ActionVO;
@@ -62,27 +65,42 @@ public class CapabilityEditorViewController implements
 {
 
 	private DropHandler resourceDropHander;
+
 	@Inject
 	private ApplicationPopupProvider popupProvider;
+
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
+
+	@Inject
+	private SessionSecurityChecker sessionSecurityChecker;
 
 	public enum EditorMode
 	{
 
 		EDIT, VIEW
+
 	};
 	private EditorMode editorMode = EditorMode.VIEW;
+
 	private static final Logger LOG = Logger.getLogger(CapabilityEditorViewController.class.getName());
+
 	private static final long serialVersionUID = 1L;
+
 	@Inject
 	private CapabilityEditorView editorView;
+
 	@Inject
 	private CapabilityDataManagerDecorator capabilityDataManager;
+
 	private BeanItemContainer<ActionItemVO> actionsContainer = new BeanItemContainer<ActionItemVO>(ActionItemVO.class);
+
 	private BeanItem<CapabilityItemVO> currentItem;
+
 	private DataManagerContainer<ResourceVO> resourceComboboxDataContainer = new DataManagerContainer<ResourceVO>(ResourceVO.class);
+
 	private Table actionTableSource;
+
 	@Inject
 	private Application application;
 
@@ -120,10 +138,18 @@ public class CapabilityEditorViewController implements
 			@Override
 			public void click(MouseEvents.ClickEvent event)
 			{
-				if (!editorView.getEditorForm().isReadOnly() && !actionsContainer.removeItem(actionItemVO))
+				try
 				{
-					popupProvider.popUpError(I18NResource.localizeWithParameter("Unable to remove action _", actionItemVO));
+					sessionSecurityChecker.checkAccess(CapabilityConstants.RESOURCE_CAPABILITY_ACTION, ActionConstants.DELETE);
+					if (!editorView.getEditorForm().isReadOnly() && !actionsContainer.removeItem(actionItemVO))
+					{
+						popupProvider.popUpError(I18NResource.localizeWithParameter("Unable to remove action _", actionItemVO));
 
+					}
+				}
+				catch (Exception e)
+				{
+					exceptionPopupProvider.popUpErrorException(e);
 				}
 			}
 		});
@@ -249,26 +275,34 @@ public class CapabilityEditorViewController implements
 
 	public void setViewToEditMode()
 	{
-		setEditorMode(EditorMode.EDIT);
 		try
 		{
-			resourceComboboxDataContainer.refresh();
+			sessionSecurityChecker.checkAccess(CapabilityConstants.RESOURCE_CAPABILITY, ActionConstants.EDIT);
+			setEditorMode(EditorMode.EDIT);
+			try
+			{
+				resourceComboboxDataContainer.refresh();
+			}
+			catch (DataAccessException ex)
+			{
+				exceptionPopupProvider.popUpErrorException(ex);
+			}
+			editorView.getEditorForm().setReadOnly(false);
+			editorView.getActionsTable().setReadOnly(false);
+			editorView.getCancelButton().setVisible(true);
+			editorView.getCancelButton().setEnabled(true);
+			editorView.getEditButton().setEnabled(false);
+			editorView.getEditButton().setVisible(false);
+			editorView.getSaveButton().setEnabled(true);
+			editorView.getSaveButton().setVisible(true);
+			editorView.getActionsTable().setDropHandler(actionDropHandler);
+			editorView.getResourceDragAndDropWrapper().setDropHandler(resourceDropHander);
+			editorView.getTitleField().focus();
 		}
-		catch (DataAccessException ex)
+		catch (Exception e)
 		{
-			exceptionPopupProvider.popUpErrorException(ex);
+			exceptionPopupProvider.popUpErrorException(e);
 		}
-		editorView.getEditorForm().setReadOnly(false);
-		editorView.getActionsTable().setReadOnly(false);
-		editorView.getCancelButton().setVisible(true);
-		editorView.getCancelButton().setEnabled(true);
-		editorView.getEditButton().setEnabled(false);
-		editorView.getEditButton().setVisible(false);
-		editorView.getSaveButton().setEnabled(true);
-		editorView.getSaveButton().setVisible(true);
-		editorView.getActionsTable().setDropHandler(actionDropHandler);
-		editorView.getResourceDragAndDropWrapper().setDropHandler(resourceDropHander);
-		editorView.getTitleField().focus();
 	}
 
 	private void configureActionTable()
@@ -425,15 +459,26 @@ public class CapabilityEditorViewController implements
 					.getTransferable();
 			final Container sourceContainer = transferredData.getSourceContainer();
 			final Object sourceItemId = transferredData.getItemId();
-			addActionVOToContainer(((ActionItemVO) sourceItemId).getAction());
-			for (Object object : sourceContainer.getItemIds())
+			if (sourceItemId != null && sourceItemId instanceof ActionItemVO)
 			{
-				if (getActionTableSource().isSelected(object))
+				try
 				{
-					addActionVOToContainer(((ActionItemVO) object).getAction());
+					sessionSecurityChecker.checkAccess(CapabilityConstants.RESOURCE_CAPABILITY_ACTION, ActionConstants.ADD);
+					addActionVOToContainer(((ActionItemVO) sourceItemId).getAction());
+					for (Object object : sourceContainer.getItemIds())
+					{
+						if (getActionTableSource().isSelected(object))
+						{
+							addActionVOToContainer(((ActionItemVO) object).getAction());
+						}
+					}
+					LOG.info("drop event allowed");
+				}
+				catch (Exception e)
+				{
+					exceptionPopupProvider.popUpErrorException(e);
 				}
 			}
-			LOG.info("drop event allowed");
 		}
 
 		@Override
@@ -443,4 +488,5 @@ public class CapabilityEditorViewController implements
 			return new And(sourceCriterion);
 		}
 	};
+
 }

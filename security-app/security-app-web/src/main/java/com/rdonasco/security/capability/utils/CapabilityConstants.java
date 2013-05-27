@@ -22,4 +22,6 @@ public interface CapabilityConstants
 		"",
 		I18NResource.localize("Title")
 	};
+	public static final String RESOURCE_CAPABILITY = "capability";
+	public static final String RESOURCE_CAPABILITY_ACTION = "capabilityAction";
 }

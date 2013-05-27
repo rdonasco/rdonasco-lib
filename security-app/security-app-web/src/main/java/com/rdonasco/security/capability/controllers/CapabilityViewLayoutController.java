@@ -14,11 +14,13 @@ import com.rdonasco.datamanager.listeditor.controller.ListEditorViewPanelControl
 import com.rdonasco.datamanager.services.DataManager;
 import com.rdonasco.security.authorization.interceptors.Secured;
 import com.rdonasco.security.authorization.interceptors.SecuredCapability;
+import com.rdonasco.security.capability.utils.CapabilityConstants;
 import com.rdonasco.security.capability.vo.ActionItemVO;
 import com.rdonasco.security.capability.vo.ActionItemVOBuilder;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.capability.vo.ResourceItemVO;
 import com.rdonasco.security.capability.vo.ResourceItemVOBuilder;
+import com.rdonasco.security.common.utils.ActionConstants;
 import com.rdonasco.security.common.views.ThreeColumnFlexibleCenterViewLayout;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.vo.ActionVO;
@@ -106,7 +108,7 @@ public class CapabilityViewLayoutController implements
 
 	@Override
 	@Secured
-	@SecuredCapability(action = "view", resource = "capability", useExceptionHandler = false)
+	@SecuredCapability(action = ActionConstants.VIEW, resource = CapabilityConstants.RESOURCE_CAPABILITY, useExceptionHandler = false)
 	public ThreeColumnFlexibleCenterViewLayout getControlledView()
 	{
 		return capabilityViewLayout;

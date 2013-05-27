@@ -15,18 +15,18 @@ import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.capability.utils.CapabilityConstants;
 import com.rdonasco.datamanager.utils.TableHelper;
+import com.rdonasco.security.authentication.services.SessionSecurityChecker;
 import com.rdonasco.security.capability.views.CapabilityListPanel;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.capability.vo.CapabilityItemVOBuilder;
 import com.rdonasco.security.common.controllers.DeleteClickListenerBuilder;
+import com.rdonasco.security.common.utils.ActionConstants;
 import com.rdonasco.security.i18n.MessageKeys;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Table;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Instance;
@@ -58,6 +58,9 @@ public class CapabilityListPanelController implements
 
 	@Inject
 	private Instance<ApplicationPopupProvider> popupProviderFactory;
+
+	@Inject
+	private SessionSecurityChecker sessionSecurityChecker;
 
 	private ApplicationPopupProvider popupProvider;
 
@@ -161,6 +164,7 @@ public class CapabilityListPanelController implements
 				.createCapabilityVO();
 		try
 		{
+			sessionSecurityChecker.checkAccess(CapabilityConstants.RESOURCE_CAPABILITY, ActionConstants.ADD);
 			CapabilityItemVO newItemVO = new CapabilityItemVOBuilder()
 					.setCapabilityVO(newCapabilityVO)
 					.createCapabilityItemVO();
@@ -191,6 +195,7 @@ public class CapabilityListPanelController implements
 			{
 				try
 				{
+					sessionSecurityChecker.checkAccess(CapabilityConstants.RESOURCE_CAPABILITY, ActionConstants.DELETE);
 					capabilityItemTableContainer.removeItem(itemToDelete);
 					getPopupProvider().popUpInfo(I18NResource.localize(MessageKeys.CAPABILITY_DELETED));
 				}
