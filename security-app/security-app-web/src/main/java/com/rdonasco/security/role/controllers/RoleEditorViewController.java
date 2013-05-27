@@ -24,8 +24,11 @@ import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.security.authentication.services.SessionSecurityChecker;
 import com.rdonasco.security.capability.utils.IconHelper;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
+import com.rdonasco.security.common.utils.ActionConstants;
+import com.rdonasco.security.role.utils.RoleConstants;
 import com.rdonasco.security.role.views.RoleEditorView;
 import com.rdonasco.security.role.vo.RoleCapabilityItemVO;
 import com.rdonasco.security.role.vo.RoleCapabilityItemVOBuilder;
@@ -73,6 +76,9 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 
 	@Inject
 	private RoleEditorView roleEditorView;
+
+	@Inject
+	private SessionSecurityChecker sessionSecurityChecker;
 
 	private BeanItem<RoleItemVO> currentItem;
 
@@ -302,14 +308,22 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 
 	private void changeViewToEditMode()
 	{
-		getControlledView().getForm().setReadOnly(false);
-		getControlledView().getSaveButton().setVisible(true);
-		getControlledView().getCancelButton().setVisible(true);
-		getControlledView().getEditButton().setVisible(false);
-		getControlledView().getRoleCapabilitiesTable().setVisibleColumns(EDITABLE_COLUMNS);
-		getControlledView().getRoleCapabilitiesTable().setColumnHeaders(EDITABLE_HEADERS);
-		getControlledView().getRoleCapabilitiesTable().setCellStyleGenerator(CELL_STYLE_GENERATOR);
-		getControlledView().getRoleCapabilitiesTable().setDropHandler(roleCapabilitiesDropHandler);
+		try
+		{
+			sessionSecurityChecker.checkAccess(RoleConstants.RESOURCE_ROLES, ActionConstants.EDIT);
+			getControlledView().getForm().setReadOnly(false);
+			getControlledView().getSaveButton().setVisible(true);
+			getControlledView().getCancelButton().setVisible(true);
+			getControlledView().getEditButton().setVisible(false);
+			getControlledView().getRoleCapabilitiesTable().setVisibleColumns(EDITABLE_COLUMNS);
+			getControlledView().getRoleCapabilitiesTable().setColumnHeaders(EDITABLE_HEADERS);
+			getControlledView().getRoleCapabilitiesTable().setCellStyleGenerator(CELL_STYLE_GENERATOR);
+			getControlledView().getRoleCapabilitiesTable().setDropHandler(roleCapabilitiesDropHandler);
+		}
+		catch (Exception e)
+		{
+			exceptionPopupProvider.popUpErrorException(e);
+		}
 	}
 
 	private void configureButtonListenters()
@@ -344,6 +358,7 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 				final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
 				if (null != transferredData && transferredData.getItemId() instanceof CapabilityItemVO)
 				{
+					sessionSecurityChecker.checkAccess(RoleConstants.RESOURCES_ROLE_CAPABILITY, ActionConstants.ADD);
 					LOG.log(Level.FINE, "drop allowed at role capability panel");
 					final CapabilityItemVO droppedCapabilityItemVO = (CapabilityItemVO) transferredData.getItemId();
 
@@ -385,12 +400,20 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 			@Override
 			public void click(MouseEvents.ClickEvent event)
 			{
-				if (!getControlledView().isReadOnly() && !roleCapabilitiesContainer.removeItem(newRoleCapability))
+				try
 				{
-					popupProvider.popUpError(I18NResource
-							.localizeWithParameter("Unable to remove capability _",
-							newRoleCapability.getCapability().getTitle()));
+					sessionSecurityChecker.checkAccess(RoleConstants.RESOURCES_ROLE_CAPABILITY, ActionConstants.DELETE);
+					if (!getControlledView().isReadOnly() && !roleCapabilitiesContainer.removeItem(newRoleCapability))
+					{
+						popupProvider.popUpError(I18NResource
+								.localizeWithParameter("Unable to remove capability _",
+								newRoleCapability.getCapability().getTitle()));
 
+					}
+				}
+				catch (Exception e)
+				{
+					exceptionPopupProvider.popUpErrorException(e);
 				}
 			}
 		});

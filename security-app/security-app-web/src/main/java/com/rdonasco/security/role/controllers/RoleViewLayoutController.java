@@ -24,7 +24,9 @@ import com.rdonasco.security.authorization.interceptors.Secured;
 import com.rdonasco.security.authorization.interceptors.SecuredCapability;
 import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewController;
 import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewControllerBuilder;
+import com.rdonasco.security.common.utils.ActionConstants;
 import com.rdonasco.security.common.views.ThreeColumnFlexibleCenterViewLayout;
+import com.rdonasco.security.role.utils.RoleConstants;
 import com.rdonasco.security.role.vo.RoleItemVO;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
@@ -41,10 +43,6 @@ public class RoleViewLayoutController implements
 {
 
 	private static final long serialVersionUID = 1L;
-	private static final String RESOURCE_ROLES = "roles";
-
-	private static final String ACTION_VIEW = "view";
-
 	@Inject
 	private ThreeColumnFlexibleCenterViewLayout roleViewLayout;
 
@@ -99,7 +97,7 @@ public class RoleViewLayoutController implements
 
 	@Override
 	@Secured
-	@SecuredCapability(action = ACTION_VIEW, resource = RESOURCE_ROLES)
+	@SecuredCapability(action = ActionConstants.VIEW, resource = RoleConstants.RESOURCE_ROLES)
 	public ThreeColumnFlexibleCenterViewLayout getControlledView()
 	{
 		return roleViewLayout;

@@ -25,8 +25,10 @@ import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.datamanager.listeditor.controller.ListEditorAttachStrategy;
 import com.rdonasco.datamanager.utils.TableHelper;
+import com.rdonasco.security.authentication.services.SessionSecurityChecker;
 import com.rdonasco.security.common.controllers.ClickListenerProvider;
 import com.rdonasco.security.common.controllers.DeleteClickListenerBuilder;
+import com.rdonasco.security.common.utils.ActionConstants;
 import com.rdonasco.security.i18n.MessageKeys;
 import com.rdonasco.security.role.utils.RoleConstants;
 import com.rdonasco.security.role.views.RoleListPanelView;
@@ -71,6 +73,9 @@ public class RoleListPanelViewController implements
 
 	@Inject
 	private RoleDataManagerDecorator roleDataManager;
+
+	@Inject
+	private SessionSecurityChecker sessionSecurityChecker;
 
 	private DataManagerContainer<RoleItemVO> roleItemTableContainer = new DataManagerContainer(RoleItemVO.class);
 
@@ -133,23 +138,31 @@ public class RoleListPanelViewController implements
 
 	private void addNewRole()
 	{
-		RoleVO newRoleVO = new RoleVOBuilder()
-				.setName(MessageKeys.NEW_ROLE)
-				.createUserRoleVO();
 		try
 		{
-			RoleItemVO newRoleItemVO = new RoleItemVOBuilder()
-					.setRoleVO(newRoleVO)
-					.createRoleItemVO();
+			sessionSecurityChecker.checkAccess(RoleConstants.RESOURCE_ROLES, ActionConstants.ADD);
+			RoleVO newRoleVO = new RoleVOBuilder()
+					.setName(MessageKeys.NEW_ROLE)
+					.createUserRoleVO();
+			try
+			{
+				RoleItemVO newRoleItemVO = new RoleItemVOBuilder()
+						.setRoleVO(newRoleVO)
+						.createRoleItemVO();
 
-			BeanItem<RoleItemVO> newItemAdded = roleItemTableContainer.addItem(newRoleItemVO);
-			roleListPanelView.getRoleListTable().setCurrentPageFirstItemId(newItemAdded.getBean());
-			roleListPanelView.getRoleListTable().select(newItemAdded.getBean());
+				BeanItem<RoleItemVO> newItemAdded = roleItemTableContainer.addItem(newRoleItemVO);
+				roleListPanelView.getRoleListTable().setCurrentPageFirstItemId(newItemAdded.getBean());
+				roleListPanelView.getRoleListTable().select(newItemAdded.getBean());
+			}
+			catch (Exception e)
+			{
+				logger.log(Level.SEVERE, e.getMessage(), e);
+				getPopupProvider().popUpError(I18NResource.localizeWithParameter(MessageKeys.UNABLE_TO_ADD_NEW_ROLE, newRoleVO.getName()));
+			}
 		}
 		catch (Exception e)
 		{
-			logger.log(Level.SEVERE, e.getMessage(), e);
-			getPopupProvider().popUpError(I18NResource.localizeWithParameter(MessageKeys.UNABLE_TO_ADD_NEW_ROLE, newRoleVO.getName()));
+			getExceptionPopupProvider().popUpErrorException(e);
 		}
 	}
 
@@ -202,6 +215,7 @@ public class RoleListPanelViewController implements
 			{
 				try
 				{
+					sessionSecurityChecker.checkAccess(RoleConstants.RESOURCE_ROLES, ActionConstants.DELETE);
 					RoleItemVO nextItem = roleItemTableContainer.nextItemId(itemToDelete);
 					roleItemTableContainer.removeItem(itemToDelete);
 					if (nextItem != null)

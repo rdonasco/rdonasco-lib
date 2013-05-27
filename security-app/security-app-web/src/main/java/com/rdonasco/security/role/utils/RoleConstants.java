@@ -35,4 +35,6 @@ public class RoleConstants
 		"",
 		I18NResource.localize("name")
 	};
+	public static final String RESOURCE_ROLES = "roles";
+	public static final String RESOURCES_ROLE_CAPABILITY = "roleCapability";
 }
