@@ -4,12 +4,12 @@
     <parent>
     <artifactId>rdonasco</artifactId>
     <groupId>com.rdonasco</groupId>
-    <version>1.0-SNAPSHOT</version>
+	<version>1.0.0</version>
   </parent>
 
     <groupId>com.rdonasco</groupId>
     <artifactId>rdonasco-security-client</artifactId>
-    <version>1.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 
     <name>rdonasco-security-client</name>
 
@@ -45,7 +45,7 @@
 		<dependency>
 			<groupId>com.rdonasco</groupId>
 			<artifactId>rdonasco-common-i18</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0.0</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>
