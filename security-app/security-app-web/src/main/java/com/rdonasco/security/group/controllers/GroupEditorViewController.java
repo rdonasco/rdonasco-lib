@@ -25,9 +25,12 @@ import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.security.authentication.services.SessionSecurityChecker;
 import com.rdonasco.security.capability.utils.IconHelper;
 import com.rdonasco.security.capability.vo.CapabilityItemVO;
+import com.rdonasco.security.common.utils.ActionConstants;
 import com.rdonasco.security.common.views.ListItemIconCellStyleGenerator;
+import com.rdonasco.security.group.utils.GroupConstants;
 import com.rdonasco.security.group.views.GroupEditorView;
 import com.rdonasco.security.group.vo.GroupItemVO;
 import com.rdonasco.security.group.vo.GroupRoleItemVO;
@@ -77,6 +80,9 @@ public class GroupEditorViewController implements
 
 	@Inject
 	private GroupEditorView groupEditorView;
+
+	@Inject
+	private SessionSecurityChecker sessionSecurityChecker;
 
 	private BeanItem<GroupItemVO> currentItem;
 
@@ -287,14 +293,22 @@ public class GroupEditorViewController implements
 
 	private void changeViewToEditMode()
 	{
-		getControlledView().getForm().setReadOnly(false);
-		getControlledView().getSaveButton().setVisible(true);
-		getControlledView().getCancelButton().setVisible(true);
-		getControlledView().getEditButton().setVisible(false);
-		getControlledView().getGroupRolesTable().setCellStyleGenerator(CELL_STYLE_GENERATOR);
-		getControlledView().getGroupRolesTable().setVisibleColumns(EDITABLE_COLUMNS);
-		getControlledView().getGroupRolesTable().setColumnHeaders(EDITABLE_HEADERS);
-		getControlledView().getGroupRolesTable().setDropHandler(groupRolesDropHandler);
+		try
+		{
+			sessionSecurityChecker.checkAccess(GroupConstants.RESOURCE_GROUPS, ActionConstants.EDIT);
+			getControlledView().getForm().setReadOnly(false);
+			getControlledView().getSaveButton().setVisible(true);
+			getControlledView().getCancelButton().setVisible(true);
+			getControlledView().getEditButton().setVisible(false);
+			getControlledView().getGroupRolesTable().setCellStyleGenerator(CELL_STYLE_GENERATOR);
+			getControlledView().getGroupRolesTable().setVisibleColumns(EDITABLE_COLUMNS);
+			getControlledView().getGroupRolesTable().setColumnHeaders(EDITABLE_HEADERS);
+			getControlledView().getGroupRolesTable().setDropHandler(groupRolesDropHandler);
+		}
+		catch (Exception e)
+		{
+			exceptionPopupProvider.popUpErrorException(e);
+		}
 	}
 
 	private void configureButtonListenters()
@@ -325,20 +339,28 @@ public class GroupEditorViewController implements
 			@Override
 			public void drop(DragAndDropEvent dropEvent)
 			{
-				final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
-				if (null != transferredData && transferredData.getItemId() instanceof RoleItemVO)
+				try
 				{
-					LOG.log(Level.FINE, "drop allowed at group role panel");
-					final RoleItemVO roleItemVO = (RoleItemVO) transferredData.getItemId();
+					final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
+					if (null != transferredData && transferredData.getItemId() instanceof RoleItemVO)
+					{
+						sessionSecurityChecker.checkAccess(GroupConstants.RESOURCE_GROUP_ROLES, ActionConstants.ADD);
+						LOG.log(Level.FINE, "drop allowed at group role panel");
+						final RoleItemVO roleItemVO = (RoleItemVO) transferredData.getItemId();
 
-					final GroupRoleItemVO newGroupRoleItemVO = createGroupRoleItemVO(roleItemVO.getRoleVO());
-					BeanItem<GroupRoleItemVO> addedItem = groupRolesContainer.addItem(newGroupRoleItemVO);
-					LOG.log(Level.FINE, "addedItem = {0}", addedItem);
+						final GroupRoleItemVO newGroupRoleItemVO = createGroupRoleItemVO(roleItemVO.getRoleVO());
+						BeanItem<GroupRoleItemVO> addedItem = groupRolesContainer.addItem(newGroupRoleItemVO);
+						LOG.log(Level.FINE, "addedItem = {0}", addedItem);
 
+					}
+					else
+					{
+						LOG.log(Level.FINE, "invalid data dropped in group role panel");
+					}
 				}
-				else
+				catch (Exception e)
 				{
-					LOG.log(Level.FINE, "invalid data dropped in group role panel");
+					exceptionPopupProvider.popUpErrorException(e);
 				}
 			}
 
@@ -369,12 +391,20 @@ public class GroupEditorViewController implements
 			@Override
 			public void click(MouseEvents.ClickEvent event)
 			{
-				if (!getControlledView().isReadOnly() && !groupRolesContainer.removeItem(groupRoleItemVO))
+				try
 				{
-					popupProvider.popUpError(I18NResource
-							.localizeWithParameter("Unable to remove role _",
-							groupRoleItemVO.getSecurityGroupRoleVO().getRoleVO().getName()));
+					sessionSecurityChecker.checkAccess(GroupConstants.RESOURCE_GROUP_ROLES, ActionConstants.DELETE);
+					if (!getControlledView().isReadOnly() && !groupRolesContainer.removeItem(groupRoleItemVO))
+					{
+						popupProvider.popUpError(I18NResource
+								.localizeWithParameter("Unable to remove role _",
+								groupRoleItemVO.getSecurityGroupRoleVO().getRoleVO().getName()));
 
+					}
+				}
+				catch (Exception e)
+				{
+					exceptionPopupProvider.popUpErrorException(e);
 				}
 			}
 		});

@@ -21,7 +21,9 @@ import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.security.authorization.interceptors.Secured;
 import com.rdonasco.security.authorization.interceptors.SecuredCapability;
+import com.rdonasco.security.common.utils.ActionConstants;
 import com.rdonasco.security.common.views.ThreeColumnFlexibleCenterViewLayout;
+import com.rdonasco.security.group.utils.GroupConstants;
 import com.rdonasco.security.group.vo.GroupItemVO;
 import com.rdonasco.security.role.controllers.AvailableRolesViewController;
 import com.rdonasco.security.role.controllers.AvailableRolesViewControllerBuilder;
@@ -94,7 +96,7 @@ public class GroupViewLayoutController implements
 	}
 
 	@Secured
-	@SecuredCapability(action = ACTION_VIEW, resource = RESOURCE_USER_GROUP, useExceptionHandler = false)
+	@SecuredCapability(action = ActionConstants.VIEW, resource = GroupConstants.RESOURCE_GROUPS, useExceptionHandler = false)
 	@Override
 	public ThreeColumnFlexibleCenterViewLayout getControlledView()
 	{

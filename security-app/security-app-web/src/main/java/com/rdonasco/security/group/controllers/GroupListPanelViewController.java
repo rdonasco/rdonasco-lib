@@ -25,8 +25,10 @@ import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.datamanager.listeditor.controller.ListEditorAttachStrategy;
 import com.rdonasco.datamanager.utils.TableHelper;
+import com.rdonasco.security.authentication.services.SessionSecurityChecker;
 import com.rdonasco.security.common.controllers.ClickListenerProvider;
 import com.rdonasco.security.common.controllers.DeleteClickListenerBuilder;
+import com.rdonasco.security.common.utils.ActionConstants;
 import com.rdonasco.security.group.utils.GroupConstants;
 import com.rdonasco.security.group.views.GroupListPanelView;
 import com.rdonasco.security.group.vo.GroupItemVO;
@@ -71,6 +73,9 @@ public class GroupListPanelViewController implements
 
 	@Inject
 	private GroupDataManagerDecorator dataManager;
+
+	@Inject
+	private SessionSecurityChecker sessionSecurityChecker;
 
 	private DataManagerContainer<GroupItemVO> groupItemDataContainer = new DataManagerContainer(GroupItemVO.class);
 
@@ -132,23 +137,31 @@ public class GroupListPanelViewController implements
 
 	private void addNewGroup()
 	{
-		SecurityGroupVO newGroupVO = new SecurityGroupVOBuilder()
-				.setName(MessageKeys.NEW_GROUP)
-				.createSecurityGroupVO();
 		try
 		{
-			GroupItemVO newGroupItemVO = new GroupItemVOBuilder()
-					.setRoleVO(newGroupVO)
-					.createGroupItemVO();
+			sessionSecurityChecker.checkAccess(GroupConstants.RESOURCE_GROUPS, ActionConstants.ADD);
+			SecurityGroupVO newGroupVO = new SecurityGroupVOBuilder()
+					.setName(MessageKeys.NEW_GROUP)
+					.createSecurityGroupVO();
+			try
+			{
+				GroupItemVO newGroupItemVO = new GroupItemVOBuilder()
+						.setRoleVO(newGroupVO)
+						.createGroupItemVO();
 
-			BeanItem<GroupItemVO> newItemAdded = groupItemDataContainer.addItem(newGroupItemVO);
-			groupListPanelView.getGroupListTable().setCurrentPageFirstItemId(newItemAdded.getBean());
-			groupListPanelView.getGroupListTable().select(newItemAdded.getBean());
+				BeanItem<GroupItemVO> newItemAdded = groupItemDataContainer.addItem(newGroupItemVO);
+				groupListPanelView.getGroupListTable().setCurrentPageFirstItemId(newItemAdded.getBean());
+				groupListPanelView.getGroupListTable().select(newItemAdded.getBean());
+			}
+			catch (Exception e)
+			{
+				LOG.log(Level.SEVERE, e.getMessage(), e);
+				getPopupProvider().popUpError(I18NResource.localizeWithParameter(MessageKeys.UNABLE_TO_ADD_NEW_GROUP, newGroupVO.getName()));
+			}
 		}
 		catch (Exception e)
 		{
-			LOG.log(Level.SEVERE, e.getMessage(), e);
-			getPopupProvider().popUpError(I18NResource.localizeWithParameter(MessageKeys.UNABLE_TO_ADD_NEW_GROUP, newGroupVO.getName()));
+			getExceptionPopupProvider().popUpErrorException(e);
 		}
 	}
 
@@ -201,6 +214,7 @@ public class GroupListPanelViewController implements
 			{
 				try
 				{
+					sessionSecurityChecker.checkAccess(GroupConstants.RESOURCE_GROUPS, ActionConstants.DELETE);
 					LOG.log(Level.FINE, "delete clicked");
 					GroupItemVO nextItem = groupItemDataContainer.nextItemId(itemToDelete);
 					groupItemDataContainer.removeItem(itemToDelete);

@@ -35,4 +35,7 @@ public class GroupConstants
 		"",
 		I18NResource.localize("name")
 	};
+
+	public static final String RESOURCE_GROUPS = "groups";
+	public static final String RESOURCE_GROUP_ROLES = "groupRoles";
 }
