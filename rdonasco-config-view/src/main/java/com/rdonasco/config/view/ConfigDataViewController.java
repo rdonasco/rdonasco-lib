@@ -32,6 +32,7 @@ import com.rdonasco.common.vaadin.view.NotificationFactory;
  */
 public class ConfigDataViewController implements ViewController<ConfigDataView>
 {
+	private static final long serialVersionUID = 1L;
 
 	@Inject Application application;
 	@Inject
