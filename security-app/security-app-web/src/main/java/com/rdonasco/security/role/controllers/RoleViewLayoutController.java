@@ -97,7 +97,7 @@ public class RoleViewLayoutController implements
 
 	@Override
 	@Secured
-	@SecuredCapability(action = ActionConstants.VIEW, resource = RoleConstants.RESOURCE_ROLES)
+	@SecuredCapability(action = ActionConstants.VIEW, resource = RoleConstants.RESOURCE_ROLES, useExceptionHandler = false)
 	public ThreeColumnFlexibleCenterViewLayout getControlledView()
 	{
 		return roleViewLayout;
