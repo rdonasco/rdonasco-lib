@@ -119,7 +119,6 @@ public class DefaultContentViewController implements
 					{
 						LOG.log(Level.WARNING, ex.getMessage(), ex);
 						applicationPopupProvider.popUpError(I18NResource.localize("Logon failed"));
-						((WebApplicationContext) application.getContext()).reinitializeSession();
 					}
 				}
 			});
