@@ -68,8 +68,15 @@ public class SettingsHomeButtonController implements
 				@Override
 				public void buttonClick(Button.ClickEvent event)
 				{
-					sessionSecurityChecker.checkAccess(CONSTANTS_SETTINGS, ACTION_VIEW);
-					homeFrameViewControllers.get().setWorkspaceContent(getWorkspaceContent());
+					try
+					{
+						sessionSecurityChecker.checkAccess(CONSTANTS_SETTINGS, ACTION_VIEW);
+						homeFrameViewControllers.get().setWorkspaceContent(getWorkspaceContent());
+					}
+					catch (Exception e)
+					{
+						exceptionPopupProvider.popUpErrorException(e);
+					}
 				}
 			});
 		}

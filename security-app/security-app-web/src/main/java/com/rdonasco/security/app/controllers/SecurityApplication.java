@@ -132,6 +132,7 @@ public class SecurityApplication extends Application implements
 	public void beforeDestroy()
 	{
 		((WebApplicationContext) getContext()).valueUnbound(null);
+		getSession().invalidate();
 	}
 
 	@Override

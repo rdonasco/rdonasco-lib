@@ -21,6 +21,8 @@ import com.rdonasco.security.exceptions.LogonServiceNotFoundException;
 import com.rdonasco.security.authentication.services.LogonService;
 import com.rdonasco.security.authentication.services.SecuredLogonServiceDecorator;
 import com.rdonasco.security.vo.LogonVO;
+import com.vaadin.Application;
+import com.vaadin.terminal.gwt.server.WebApplicationContext;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.LoginForm;
@@ -76,6 +78,9 @@ public class DefaultContentViewController implements
 
 	private LogonService logonService;
 
+	@Inject
+	private Application application;
+
 	private LogonService getLogonService() throws LogonServiceNotFoundException
 	{
 		if (null == logonService)
@@ -114,6 +119,7 @@ public class DefaultContentViewController implements
 					{
 						LOG.log(Level.WARNING, ex.getMessage(), ex);
 						applicationPopupProvider.popUpError(I18NResource.localize("Logon failed"));
+						((WebApplicationContext) application.getContext()).reinitializeSession();
 					}
 				}
 			});
