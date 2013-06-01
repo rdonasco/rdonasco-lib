@@ -12,6 +12,7 @@ import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
 import com.rdonasco.security.authentication.factories.SecuredLogonServiceFactory;
+import com.rdonasco.security.authentication.services.DefaultLogonService;
 import com.rdonasco.security.home.views.ContentView;
 import com.rdonasco.security.home.views.FeatureHomeButton;
 import com.rdonasco.security.home.views.LoggedOnContentView;
@@ -85,7 +86,7 @@ public class DefaultContentViewController implements
 	{
 		if (null == logonService)
 		{
-			logonService = securedLogonServiceFactory.createLogonService(configDataManager.loadValue("/security/logonService", String.class, SecuredLogonServiceDecorator.LOGON_SERVICE));
+			logonService = securedLogonServiceFactory.createLogonService(configDataManager.loadValue("/security/logonService", String.class, DefaultLogonService.SERVICE_ID));
 		}
 		return logonService;
 	}
