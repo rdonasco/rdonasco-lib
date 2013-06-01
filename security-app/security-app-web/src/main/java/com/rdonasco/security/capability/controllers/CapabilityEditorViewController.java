@@ -140,7 +140,7 @@ public class CapabilityEditorViewController implements
 			{
 				try
 				{
-					sessionSecurityChecker.checkAccess(CapabilityConstants.RESOURCE_CAPABILITY_ACTION, ActionConstants.DELETE);
+					sessionSecurityChecker.checkCapabilityTo(ActionConstants.DELETE, CapabilityConstants.RESOURCE_CAPABILITY_ACTION);
 					if (!editorView.getEditorForm().isReadOnly() && !actionsContainer.removeItem(actionItemVO))
 					{
 						popupProvider.popUpError(I18NResource.localizeWithParameter("Unable to remove action _", actionItemVO));
@@ -277,7 +277,7 @@ public class CapabilityEditorViewController implements
 	{
 		try
 		{
-			sessionSecurityChecker.checkAccess(CapabilityConstants.RESOURCE_CAPABILITY, ActionConstants.EDIT);
+			sessionSecurityChecker.checkCapabilityTo(ActionConstants.EDIT, CapabilityConstants.RESOURCE_CAPABILITY);
 			setEditorMode(EditorMode.EDIT);
 			try
 			{
@@ -463,7 +463,7 @@ public class CapabilityEditorViewController implements
 			{
 				try
 				{
-					sessionSecurityChecker.checkAccess(CapabilityConstants.RESOURCE_CAPABILITY_ACTION, ActionConstants.ADD);
+					sessionSecurityChecker.checkCapabilityTo(ActionConstants.ADD, CapabilityConstants.RESOURCE_CAPABILITY_ACTION);
 					addActionVOToContainer(((ActionItemVO) sourceItemId).getAction());
 					for (Object object : sourceContainer.getItemIds())
 					{

@@ -310,7 +310,7 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 	{
 		try
 		{
-			sessionSecurityChecker.checkAccess(RoleConstants.RESOURCE_ROLES, ActionConstants.EDIT);
+			sessionSecurityChecker.checkCapabilityTo(ActionConstants.EDIT, RoleConstants.RESOURCE_ROLES);
 			getControlledView().getForm().setReadOnly(false);
 			getControlledView().getSaveButton().setVisible(true);
 			getControlledView().getCancelButton().setVisible(true);
@@ -358,7 +358,7 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 				final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
 				if (null != transferredData && transferredData.getItemId() instanceof CapabilityItemVO)
 				{
-					sessionSecurityChecker.checkAccess(RoleConstants.RESOURCES_ROLE_CAPABILITY, ActionConstants.ADD);
+					sessionSecurityChecker.checkCapabilityTo(ActionConstants.ADD, RoleConstants.RESOURCES_ROLE_CAPABILITY);
 					LOG.log(Level.FINE, "drop allowed at role capability panel");
 					final CapabilityItemVO droppedCapabilityItemVO = (CapabilityItemVO) transferredData.getItemId();
 
@@ -402,7 +402,7 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 			{
 				try
 				{
-					sessionSecurityChecker.checkAccess(RoleConstants.RESOURCES_ROLE_CAPABILITY, ActionConstants.DELETE);
+					sessionSecurityChecker.checkCapabilityTo(ActionConstants.DELETE, RoleConstants.RESOURCES_ROLE_CAPABILITY);
 					if (!getControlledView().isReadOnly() && !roleCapabilitiesContainer.removeItem(newRoleCapability))
 					{
 						popupProvider.popUpError(I18NResource

@@ -70,7 +70,7 @@ public class SettingsHomeButtonController implements
 				{
 					try
 					{
-						sessionSecurityChecker.checkAccess(CONSTANTS_SETTINGS, ACTION_VIEW);
+						sessionSecurityChecker.checkCapabilityTo(ACTION_VIEW, CONSTANTS_SETTINGS);
 						homeFrameViewControllers.get().setWorkspaceContent(getWorkspaceContent());
 					}
 					catch (Exception e)

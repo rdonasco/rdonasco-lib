@@ -408,7 +408,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	{
 		try
 		{
-			sessionSecurityChecker.checkAccess(UserConstants.RESOURCE_USERS, ActionConstants.EDIT);
+			sessionSecurityChecker.checkCapabilityTo(ActionConstants.EDIT, UserConstants.RESOURCE_USERS);
 			setViewToReadOnly(false);
 			getControlledView().getSaveButton().setVisible(true);
 			getControlledView().getCancelButton().setVisible(true);

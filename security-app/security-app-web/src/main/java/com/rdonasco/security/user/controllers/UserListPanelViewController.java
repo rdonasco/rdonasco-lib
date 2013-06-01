@@ -183,7 +183,7 @@ public class UserListPanelViewController implements
 				.createUserSecurityProfileVO();
 		try
 		{
-			sessionSecurityChecker.checkAccess(UserConstants.RESOURCE_USERS, ActionConstants.ADD);
+			sessionSecurityChecker.checkCapabilityTo(ActionConstants.ADD, UserConstants.RESOURCE_USERS);
 			UserSecurityProfileItemVO newItemVO = new UserSecurityProfileItemVOBuilder()
 					.setUserSecurityProfileVO(newUserProfile)
 					.setRequirePasswordChange(true)
@@ -249,7 +249,7 @@ public class UserListPanelViewController implements
 				{
 					try
 					{
-						sessionSecurityChecker.checkAccess(UserConstants.RESOURCE_USERS, ActionConstants.DELETE);
+						sessionSecurityChecker.checkCapabilityTo(ActionConstants.DELETE, UserConstants.RESOURCE_USERS);
 						if (MessageBox.ButtonType.YES.equals(buttonType))
 						{
 							userItemTableContainer.removeItem(data);

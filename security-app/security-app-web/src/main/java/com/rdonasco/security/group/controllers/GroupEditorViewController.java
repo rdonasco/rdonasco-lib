@@ -295,7 +295,7 @@ public class GroupEditorViewController implements
 	{
 		try
 		{
-			sessionSecurityChecker.checkAccess(GroupConstants.RESOURCE_GROUPS, ActionConstants.EDIT);
+			sessionSecurityChecker.checkCapabilityTo(ActionConstants.EDIT, GroupConstants.RESOURCE_GROUPS);
 			getControlledView().getForm().setReadOnly(false);
 			getControlledView().getSaveButton().setVisible(true);
 			getControlledView().getCancelButton().setVisible(true);
@@ -344,7 +344,7 @@ public class GroupEditorViewController implements
 					final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
 					if (null != transferredData && transferredData.getItemId() instanceof RoleItemVO)
 					{
-						sessionSecurityChecker.checkAccess(GroupConstants.RESOURCE_GROUP_ROLES, ActionConstants.ADD);
+						sessionSecurityChecker.checkCapabilityTo(ActionConstants.ADD, GroupConstants.RESOURCE_GROUP_ROLES);
 						LOG.log(Level.FINE, "drop allowed at group role panel");
 						final RoleItemVO roleItemVO = (RoleItemVO) transferredData.getItemId();
 
@@ -393,7 +393,7 @@ public class GroupEditorViewController implements
 			{
 				try
 				{
-					sessionSecurityChecker.checkAccess(GroupConstants.RESOURCE_GROUP_ROLES, ActionConstants.DELETE);
+					sessionSecurityChecker.checkCapabilityTo(ActionConstants.DELETE, GroupConstants.RESOURCE_GROUP_ROLES);
 					if (!getControlledView().isReadOnly() && !groupRolesContainer.removeItem(groupRoleItemVO))
 					{
 						popupProvider.popUpError(I18NResource

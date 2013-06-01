@@ -162,7 +162,7 @@ public class UserRolesViewController implements
 					final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
 					if (null != transferredData && transferredData.getItemId() instanceof RoleItemVO)
 					{
-						sessionSecurityChecker.checkAccess(UserConstants.RESOURCE_USER_ROLES, ActionConstants.ADD);
+						sessionSecurityChecker.checkCapabilityTo(ActionConstants.ADD, UserConstants.RESOURCE_USER_ROLES);
 						LOG.log(Level.FINE, "drop allowed at user capability panel");
 						final RoleItemVO droppedCapabilityItemVO = (RoleItemVO) transferredData.getItemId();
 						Embedded icon = IconHelper.createDeleteIcon(I18NResource.localize("Remove Role"));
@@ -272,7 +272,7 @@ public class UserRolesViewController implements
 			{
 				try
 				{
-					sessionSecurityChecker.checkAccess(UserConstants.RESOURCE_USER_ROLES, ActionConstants.DELETE);
+					sessionSecurityChecker.checkCapabilityTo(ActionConstants.DELETE, UserConstants.RESOURCE_USER_ROLES);
 					if (!getControlledView().isReadOnly() && !userRoleItemContainer.removeItem(userRoleItemVO))
 					{
 						popupProvider.popUpError(I18NResource.localizeWithParameter("Unable to remove role _", userRoleItemVO));

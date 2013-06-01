@@ -140,7 +140,7 @@ public class RoleListPanelViewController implements
 	{
 		try
 		{
-			sessionSecurityChecker.checkAccess(RoleConstants.RESOURCE_ROLES, ActionConstants.ADD);
+			sessionSecurityChecker.checkCapabilityTo(ActionConstants.ADD, RoleConstants.RESOURCE_ROLES);
 			RoleVO newRoleVO = new RoleVOBuilder()
 					.setName(MessageKeys.NEW_ROLE)
 					.createUserRoleVO();
@@ -215,7 +215,7 @@ public class RoleListPanelViewController implements
 			{
 				try
 				{
-					sessionSecurityChecker.checkAccess(RoleConstants.RESOURCE_ROLES, ActionConstants.DELETE);
+					sessionSecurityChecker.checkCapabilityTo(ActionConstants.DELETE, RoleConstants.RESOURCE_ROLES);
 					RoleItemVO nextItem = roleItemTableContainer.nextItemId(itemToDelete);
 					roleItemTableContainer.removeItem(itemToDelete);
 					if (nextItem != null)

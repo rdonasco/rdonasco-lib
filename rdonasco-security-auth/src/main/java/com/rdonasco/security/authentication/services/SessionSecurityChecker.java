@@ -42,11 +42,11 @@ public class SessionSecurityChecker implements Serializable
 	@Inject
 	private SystemSecurityManagerDecorator securityManager;
 
-	public void checkAccess(String resource, String action)
+	public void checkCapabilityTo(String action, String resource)
 	{
-		LOG.log(Level.INFO, "executing checkAccess(resource = {0}, action= {1})", new Object[]
+		LOG.log(Level.INFO, "executing checkCapabilityTo(action = {0}, resource= {1})", new Object[]
 		{
-			resource, action
+			action, resource
 		});
 		if (null != getLoggedOnSessionProvider())
 		{
@@ -69,7 +69,7 @@ public class SessionSecurityChecker implements Serializable
 		boolean hasTheCapability = false;
 		try
 		{
-			checkAccess(resource, action);
+			checkCapabilityTo(action, resource);
 			hasTheCapability = true;
 		}
 		catch (Exception e)

@@ -162,7 +162,7 @@ public class UserCapabilitiesViewController implements
 					final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
 					if (null != transferredData && transferredData.getItemId() instanceof CapabilityItemVO)
 					{
-						sessionSecurityChecker.checkAccess(UserConstants.RESOURCE_USER_CAPABILITIES, ActionConstants.ADD);
+						sessionSecurityChecker.checkCapabilityTo(ActionConstants.ADD, UserConstants.RESOURCE_USER_CAPABILITIES);
 						LOG.log(Level.FINE, "drop allowed at user capability panel");
 						final CapabilityItemVO droppedCapabilityItemVO = (CapabilityItemVO) transferredData.getItemId();
 						final UserCapabilityVO newUserCapabilityVO = new UserCapabilityVOBuilder()
@@ -266,7 +266,7 @@ public class UserCapabilitiesViewController implements
 			{
 				try
 				{
-					sessionSecurityChecker.checkAccess(UserConstants.RESOURCE_USER_CAPABILITIES, ActionConstants.DELETE);
+					sessionSecurityChecker.checkCapabilityTo(ActionConstants.DELETE, UserConstants.RESOURCE_USER_CAPABILITIES);
 					if (!getControlledView().isReadOnly() && !userCapabilityItemContainer.removeItem(userCapabilityItemVO))
 					{
 						popupProvider.popUpError(I18NResource.localizeWithParameter("Unable to remove capability _", userCapabilityItemVO));

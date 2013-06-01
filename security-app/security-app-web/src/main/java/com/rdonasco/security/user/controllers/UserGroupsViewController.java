@@ -162,7 +162,7 @@ public class UserGroupsViewController implements
 					final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
 					if (null != transferredData && transferredData.getItemId() instanceof GroupItemVO)
 					{
-						sessionSecurityChecker.checkAccess(UserConstants.RESOURCE_USER_GROUPS, ActionConstants.ADD);
+						sessionSecurityChecker.checkCapabilityTo(ActionConstants.ADD, UserConstants.RESOURCE_USER_GROUPS);
 						LOG.log(Level.FINE, "drop allowed at user group panel");
 						final GroupItemVO droppedCapabilityItemVO = (GroupItemVO) transferredData.getItemId();
 						final UserGroupVO newUserGroupVO = new UserGroupVOBuilder()
@@ -265,7 +265,7 @@ public class UserGroupsViewController implements
 			{
 				try
 				{
-					sessionSecurityChecker.checkAccess(UserConstants.RESOURCE_USER_GROUPS, ActionConstants.DELETE);
+					sessionSecurityChecker.checkCapabilityTo(ActionConstants.DELETE, UserConstants.RESOURCE_USER_GROUPS);
 					if (!getControlledView().isReadOnly() && !userGroupItemContainer.removeItem(userRoleItemVO))
 					{
 						popupProvider.popUpError(I18NResource.localizeWithParameter("Unable to remove group _", userRoleItemVO));

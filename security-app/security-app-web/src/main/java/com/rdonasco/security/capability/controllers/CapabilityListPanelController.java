@@ -164,7 +164,7 @@ public class CapabilityListPanelController implements
 				.createCapabilityVO();
 		try
 		{
-			sessionSecurityChecker.checkAccess(CapabilityConstants.RESOURCE_CAPABILITY, ActionConstants.ADD);
+			sessionSecurityChecker.checkCapabilityTo(ActionConstants.ADD, CapabilityConstants.RESOURCE_CAPABILITY);
 			CapabilityItemVO newItemVO = new CapabilityItemVOBuilder()
 					.setCapabilityVO(newCapabilityVO)
 					.createCapabilityItemVO();
@@ -195,7 +195,7 @@ public class CapabilityListPanelController implements
 			{
 				try
 				{
-					sessionSecurityChecker.checkAccess(CapabilityConstants.RESOURCE_CAPABILITY, ActionConstants.DELETE);
+					sessionSecurityChecker.checkCapabilityTo(ActionConstants.DELETE, CapabilityConstants.RESOURCE_CAPABILITY);
 					capabilityItemTableContainer.removeItem(itemToDelete);
 					getPopupProvider().popUpInfo(I18NResource.localize(MessageKeys.CAPABILITY_DELETED));
 				}

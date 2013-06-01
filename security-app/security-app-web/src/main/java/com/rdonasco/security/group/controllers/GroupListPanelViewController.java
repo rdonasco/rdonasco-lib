@@ -139,7 +139,7 @@ public class GroupListPanelViewController implements
 	{
 		try
 		{
-			sessionSecurityChecker.checkAccess(GroupConstants.RESOURCE_GROUPS, ActionConstants.ADD);
+			sessionSecurityChecker.checkCapabilityTo(ActionConstants.ADD, GroupConstants.RESOURCE_GROUPS);
 			SecurityGroupVO newGroupVO = new SecurityGroupVOBuilder()
 					.setName(MessageKeys.NEW_GROUP)
 					.createSecurityGroupVO();
@@ -214,7 +214,7 @@ public class GroupListPanelViewController implements
 			{
 				try
 				{
-					sessionSecurityChecker.checkAccess(GroupConstants.RESOURCE_GROUPS, ActionConstants.DELETE);
+					sessionSecurityChecker.checkCapabilityTo(ActionConstants.DELETE, GroupConstants.RESOURCE_GROUPS);
 					LOG.log(Level.FINE, "delete clicked");
 					GroupItemVO nextItem = groupItemDataContainer.nextItemId(itemToDelete);
 					groupItemDataContainer.removeItem(itemToDelete);
