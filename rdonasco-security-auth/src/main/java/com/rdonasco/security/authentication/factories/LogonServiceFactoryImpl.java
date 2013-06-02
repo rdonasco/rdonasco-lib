@@ -17,7 +17,6 @@
 package com.rdonasco.security.authentication.factories;
 
 import com.rdonasco.security.exceptions.LogonServiceNotFoundException;
-import com.rdonasco.security.authentication.factories.LogonServiceFactory;
 import com.rdonasco.security.authentication.services.LogonService;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -30,7 +29,7 @@ import javax.inject.Inject;
  *
  * @author Roy F. Donasco
  */
-public class SecuredLogonServiceFactory implements LogonServiceFactory,
+public class LogonServiceFactoryImpl implements LogonServiceFactory,
 		Serializable
 {
 	private static final long serialVersionUID = 1L;
