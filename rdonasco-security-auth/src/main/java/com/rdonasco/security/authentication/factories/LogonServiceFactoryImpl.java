@@ -21,6 +21,8 @@ import com.rdonasco.security.authentication.services.LogonService;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -32,6 +34,9 @@ import javax.inject.Inject;
 public class LogonServiceFactoryImpl implements LogonServiceFactory,
 		Serializable
 {
+
+	private static final Logger LOG = Logger.getLogger(LogonServiceFactoryImpl.class.getName());
+
 	private static final long serialVersionUID = 1L;
 
 	@Inject
@@ -44,6 +49,7 @@ public class LogonServiceFactoryImpl implements LogonServiceFactory,
 		for (LogonService service : logonServiceInstances)
 		{
 			instanceMap.put(service.getServiceID(), service);
+			LOG.log(Level.INFO, "loaded LogonService.serviceID={0}", service.getServiceID());
 		}
 	}
 
