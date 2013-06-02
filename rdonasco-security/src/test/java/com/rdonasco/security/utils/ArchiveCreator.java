@@ -30,6 +30,11 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  */
 public class ArchiveCreator
 {
+
+	static
+	{
+		I18NResource.setBundle(java.util.ResourceBundle.getBundle("com/rdonasco/security/i18n/i18nResource"));
+	}
 	public static JavaArchive createCommonArchive()
 	{
 		return ShrinkWrap.create(JavaArchive.class, "SecurityEJBTest.jar")

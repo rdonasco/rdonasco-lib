@@ -7,6 +7,7 @@ import com.rdonasco.config.services.ConfigDataManagerLocal;
 import com.rdonasco.config.util.ConfigDataValueObjectConverter;
 import com.rdonasco.config.vo.ConfigAttributeVO;
 import com.rdonasco.security.dao.ActionDAO;
+import com.rdonasco.security.exceptions.DefaultAdminSecurityProfileAlreadyExist;
 import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.vo.AccessRightsVO;
@@ -23,11 +24,15 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import com.rdonasco.security.utils.ArchiveCreator;
+import com.rdonasco.security.utils.EncryptionUtil;
 import com.rdonasco.security.utils.UserSecurityProfileTestUtility;
+import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for simple App.
@@ -35,12 +40,17 @@ import org.junit.Before;
 @RunWith(Arquillian.class)
 public class SystemSecurityManagerLocalTest
 {
+
 	private static final Logger LOG = Logger.getLogger(SystemSecurityManagerLocalTest.class.getName());
+
+	private static final String CONSTANT_ADMIN = "admin";
 
 	@EJB
 	private SystemSecurityManagerLocal systemSecurityManager;
+
 	@EJB
 	private CapabilityManagerLocal capabilityManager;
+
 	@EJB
 	private SystemSecurityInitializerLocal systemSecurityInitializerLocal;
 
@@ -68,6 +78,46 @@ public class SystemSecurityManagerLocalTest
 	public void setUp()
 	{
 		userSecurityProfileTestUtility = new UserSecurityProfileTestUtility(capabilityManager, systemSecurityManager);
+	}
+
+	@Test
+	public void testCreateDefaultAdminSecurityProfile() throws Exception
+	{
+		System.out.println("CreateDefaultAdminSecurityProfile");
+		SystemSecurityManagerImpl systemSecurityManager = new SystemSecurityManagerImpl();
+		final UserSecurityProfileManagerLocal userSecurityProfileManagerMock = mock(UserSecurityProfileManagerLocal.class);
+		systemSecurityManager.setUserSecurityProfileManager(userSecurityProfileManagerMock);
+		String password = EncryptionUtil.encryptWithPassword(CONSTANT_ADMIN, CONSTANT_ADMIN);
+		when(userSecurityProfileManagerMock.findAllProfiles()).thenReturn(new ArrayList<UserSecurityProfileVO>());
+		when(userSecurityProfileManagerMock.createNewUserSecurityProfile(any(UserSecurityProfileVO.class))).thenReturn(new UserSecurityProfileVOBuilder()
+				.setId(Long.MIN_VALUE)
+				.setLoginId(CONSTANT_ADMIN)
+				.setPassword(password)
+				.createUserSecurityProfileVO());
+		UserSecurityProfileVO newAdminProfile = systemSecurityManager.createDefaultAdminSecurityProfile();
+		assertNotNull("null admin profile", newAdminProfile);
+		assertEquals("wrong admin id", CONSTANT_ADMIN, newAdminProfile.getLogonId());
+		assertEquals("wrong admin password", password, newAdminProfile.getPassword());
+	}
+
+	@Test(expected = DefaultAdminSecurityProfileAlreadyExist.class)
+	public void testCreateDefaultAdminSecurityProfileWhenItAlreadyExist() throws
+			Exception
+	{
+		System.out.println("CreateDefaultAdminSecurityProfileWhenItAlreadyExist");
+		SystemSecurityManagerImpl systemSecurityManager = new SystemSecurityManagerImpl();
+		final UserSecurityProfileManagerLocal userSecurityProfileManagerMock = mock(UserSecurityProfileManagerLocal.class);
+		systemSecurityManager.setUserSecurityProfileManager(userSecurityProfileManagerMock);
+		String password = EncryptionUtil.encryptWithPassword(CONSTANT_ADMIN, CONSTANT_ADMIN);
+		final ArrayList<UserSecurityProfileVO> userProfileList = new ArrayList<UserSecurityProfileVO>();
+		final UserSecurityProfileVO adminUserProfileVO = new UserSecurityProfileVOBuilder()
+				.setId(Long.MIN_VALUE)
+				.setLoginId(CONSTANT_ADMIN)
+				.setPassword(password)
+				.createUserSecurityProfileVO();
+		userProfileList.add(adminUserProfileVO);
+		when(userSecurityProfileManagerMock.findAllProfiles()).thenReturn(userProfileList);
+		systemSecurityManager.createDefaultAdminSecurityProfile();
 	}
 
 	@Test
@@ -219,5 +269,4 @@ public class SystemSecurityManagerLocalTest
 
 		systemSecurityManager.checkAccessRights(accessRights);
 	}
-
 }
