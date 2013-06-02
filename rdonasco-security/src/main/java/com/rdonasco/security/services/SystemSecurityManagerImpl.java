@@ -17,12 +17,15 @@
 package com.rdonasco.security.services;
 
 import com.rdonasco.common.exceptions.NonExistentEntityException;
+import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.security.dao.UserCapabilityDAO;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
+import com.rdonasco.security.exceptions.DefaultAdminSecurityProfileAlreadyExist;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
+import com.rdonasco.security.utils.EncryptionUtil;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
 import com.rdonasco.security.vo.CapabilityActionVO;
@@ -30,6 +33,7 @@ import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
+import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,6 +53,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 {
 
 	private static final Logger LOG = Logger.getLogger(SystemSecurityManagerImpl.class.getName());
+
 	@EJB
 	private CapabilityManagerLocal capabilityManager;
 
@@ -130,6 +135,38 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			throws SecurityManagerException
 	{
 		return userSecurityProfileManager.createNewUserSecurityProfile(userSecurityProfile);
+	}
+
+	@Override
+	public UserSecurityProfileVO createDefaultAdminSecurityProfile() throws
+			SecurityManagerException
+	{
+		UserSecurityProfileVO defaultAdminSecurityProfile = null;
+		try
+		{
+			List<UserSecurityProfileVO> allProfiles = userSecurityProfileManager.findAllProfiles();
+			if (allProfiles == null || allProfiles.isEmpty())
+			{
+				String defaultPassword = "admin";
+				defaultAdminSecurityProfile = userSecurityProfileManager.createNewUserSecurityProfile(new UserSecurityProfileVOBuilder()
+						.setLoginId("admin")
+						.setPassword(EncryptionUtil.encryptWithPassword(defaultPassword, defaultPassword))
+						.createUserSecurityProfileVO());
+			}
+			else
+			{
+				throw new DefaultAdminSecurityProfileAlreadyExist(I18NResource.localize("Creation of admin profile is only allowed if there are no users"));
+			}
+		}
+		catch (DefaultAdminSecurityProfileAlreadyExist ex)
+		{
+			throw ex;
+		}
+		catch (Exception ex)
+		{
+			throw new SecurityManagerException(ex);
+		}
+		return defaultAdminSecurityProfile;
 	}
 
 	@Override

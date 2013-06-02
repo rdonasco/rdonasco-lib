@@ -128,4 +128,11 @@ public class SystemSecurityManagerDecorator implements SystemSecurityManager
 	{
 		return systemSecurityManager.findAllProfiles();
 	}
+
+	@Override
+	public UserSecurityProfileVO createDefaultAdminSecurityProfile() throws
+			SecurityManagerException
+	{
+		return systemSecurityManager.createDefaultAdminSecurityProfile();
+	}
 }

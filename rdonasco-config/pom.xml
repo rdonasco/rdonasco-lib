@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>rdonasco</artifactId>
 		<groupId>com.rdonasco</groupId>
-		<version>1.0.0</version>
+		<version>1.0.3</version>
 	</parent>
 
 	<groupId>com.rdonasco</groupId>
