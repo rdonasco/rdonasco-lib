@@ -121,6 +121,10 @@ public class EmbeddedResourceBuilder
 		{
 			embedded = createUsingResourceId();
 		}
+		else
+		{
+			throw new InvalidBuilderParameter("bytes or resource ID is not set");
+		}
 		embedded.setDescription(description);
 		embedded.setAlternateText(alternateText);
 		if(null != height)
