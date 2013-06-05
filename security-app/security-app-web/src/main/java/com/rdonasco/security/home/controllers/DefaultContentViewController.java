@@ -11,7 +11,7 @@ import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
-import com.rdonasco.security.authentication.factories.SecuredLogonServiceFactory;
+import com.rdonasco.security.authentication.factories.LogonServiceFactory;
 import com.rdonasco.security.authentication.services.DefaultLogonService;
 import com.rdonasco.security.home.views.ContentView;
 import com.rdonasco.security.home.views.FeatureHomeButton;
@@ -20,10 +20,8 @@ import com.rdonasco.security.home.views.LoggedOutContentView;
 import com.rdonasco.security.authentication.services.LoggedOnSessionProvider;
 import com.rdonasco.security.exceptions.LogonServiceNotFoundException;
 import com.rdonasco.security.authentication.services.LogonService;
-import com.rdonasco.security.authentication.services.SecuredLogonServiceDecorator;
 import com.rdonasco.security.vo.LogonVO;
 import com.vaadin.Application;
-import com.vaadin.terminal.gwt.server.WebApplicationContext;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.LoginForm;
@@ -69,7 +67,7 @@ public class DefaultContentViewController implements
 	private LoggedOnSessionProvider loggedOnSessionProvider;
 
 	@Inject
-	private SecuredLogonServiceFactory securedLogonServiceFactory;
+	private LogonServiceFactory logonServiceFactory;
 
 	@EJB
 	private ConfigDataManagerVODecoratorRemote configDataManager;
@@ -86,7 +84,7 @@ public class DefaultContentViewController implements
 	{
 		if (null == logonService)
 		{
-			logonService = securedLogonServiceFactory.createLogonService(configDataManager.loadValue("/security/logonService", String.class, DefaultLogonService.SERVICE_ID));
+			logonService = logonServiceFactory.createLogonService(configDataManager.loadValue("/security/logonService", String.class, DefaultLogonService.SERVICE_ID));
 		}
 		return logonService;
 	}
