@@ -11,9 +11,7 @@
 	<artifactId>security-app-web</artifactId>
 	<version>1.0.0</version>
 	<packaging>war</packaging>
-
 	<name>security-app-web</name>
-
 	<properties>
 		<endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
