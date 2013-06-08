@@ -26,6 +26,7 @@ import com.rdonasco.common.vaadin.controller.OnAttachStrategy;
 import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.DateField;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
@@ -48,6 +49,9 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 	private TextField logonIdField;
 	private PasswordField passwordField;
 	private PasswordField retypedPasswordField;
+	private DateField registrationTokenExpirationField;
+	private TextField registrationTokenField;
+
 	private TabSheet otherDetailTab;
 	private HorizontalLayout buttonsLayout;
 	private HorizontalLayout capabilitiesLayout;
@@ -65,6 +69,8 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 		this.retypedPasswordField = new PasswordField();
 		this.passwordField = new PasswordField();
 		this.logonIdField = new TextField();
+		this.registrationTokenField = new TextField();
+		this.registrationTokenExpirationField = new DateField();
 
 		this.employeeDetailPanel = new Panel();
 		this.otherDetailTab = new TabSheet();
@@ -118,6 +124,16 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 		return retypedPasswordField;
 	}
 
+	public DateField getRegistrationTokenExpirationField()
+	{
+		return registrationTokenExpirationField;
+	}
+
+	public TextField getRegistrationTokenField()
+	{
+		return registrationTokenField;
+	}
+
 	@Override
 	public void initWidget() throws WidgetInitalizeException
 	{
@@ -168,9 +184,16 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 		retypedPasswordField.setCaption(I18NResource.localize("Retype Password"));
 		retypedPasswordField.addValidator(FieldMatchedValueValidator.createFieldMatchValidatorWithErrorMessage(passwordField, I18NResource.localize("Password mismatch")));
 
+		registrationTokenField.setCaption(I18NResource.localize("Registration Token"));
+		registrationTokenField.setWidth(300f, UNITS_PIXELS);
+		registrationTokenExpirationField.setCaption(I18NResource.localize("Registration Token Expiry"));
+		registrationTokenExpirationField.setResolution(DateField.RESOLUTION_MIN);
+
 		employeeDetailPanel.addComponent(logonIdField);
 		employeeDetailPanel.addComponent(passwordField);
 		employeeDetailPanel.addComponent(retypedPasswordField);
+		employeeDetailPanel.addComponent(registrationTokenField);
+		employeeDetailPanel.addComponent(registrationTokenExpirationField);
 		setReadOnly(true);
 	}
 

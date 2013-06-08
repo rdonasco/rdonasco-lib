@@ -396,6 +396,9 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		getControlledView().getLogonIdField().setReadOnly(readOnly);
 		getControlledView().getPasswordField().setReadOnly(readOnly);
 		getControlledView().getRetypedPasswordField().setReadOnly(readOnly);
+		getControlledView().getRegistrationTokenField().setReadOnly(readOnly);
+		getControlledView().getRegistrationTokenExpirationField().setReadOnly(readOnly);
+
 		getControlledView().getSaveButton().setReadOnly(readOnly);
 		getControlledView().getCancelButton().setReadOnly(readOnly);
 		getControlledView().getEditButton().setReadOnly(!readOnly);
@@ -415,6 +418,8 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 			getControlledView().getEditButton().setVisible(false);
 			getControlledView().getPasswordField().setVisible(true);
 			getControlledView().getRetypedPasswordField().setVisible(true);
+			getControlledView().getRegistrationTokenField().setVisible(true);
+			getControlledView().getRegistrationTokenExpirationField().setVisible(true);
 			userCapabilitiesViewController.enableEditing();
 			userRolesViewController.enableEditing();
 			userGroupsViewController.enableEditing();
@@ -436,6 +441,9 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		getControlledView().getEditButton().setVisible(true);
 		getControlledView().getPasswordField().setVisible(false);
 		getControlledView().getRetypedPasswordField().setVisible(false);
+		getControlledView().getRegistrationTokenField().setVisible(false);
+		getControlledView().getRegistrationTokenExpirationField().setVisible(false);
+
 		userCapabilitiesViewController.disableEditing();
 		userRolesViewController.disableEditing();
 		userGroupsViewController.disableEditing();
