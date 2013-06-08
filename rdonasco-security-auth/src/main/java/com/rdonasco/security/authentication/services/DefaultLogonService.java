@@ -33,7 +33,10 @@ public class DefaultLogonService implements LogonService
 	private SystemSecurityManagerDecorator systemSecurityManager;
 
 	@Inject
-	LoggedOnSessionProvider loggedOnSessionProvider;
+	private LoggedOnSessionProvider loggedOnSessionProvider;
+
+	@Inject
+	private SessionSecurityChecker sessionSecurityChecker;
 
 	public void setSystemSecurityManager(
 			SystemSecurityManagerDecorator systemSecurityManager)
@@ -47,6 +50,12 @@ public class DefaultLogonService implements LogonService
 		this.loggedOnSessionProvider = loggedOnSessionProvider;
 	}
 
+	public void setSessionSecurityChecker(
+			SessionSecurityChecker sessionSecurityChecker)
+	{
+		this.sessionSecurityChecker = sessionSecurityChecker;
+	}
+
 	@Override
 	public String getServiceID()
 	{
@@ -54,8 +63,6 @@ public class DefaultLogonService implements LogonService
 	}
 
 	@Override
-	@Secured
-	@SecuredCapability(action = "logon", resource = "system", invocationEventType = InvocationEventType.AFTER, useExceptionHandler = false)
 	public UserSecurityProfileVO logon(LogonVO logonVO) throws
 			SecurityAuthenticationException
 	{
@@ -78,15 +85,19 @@ public class DefaultLogonService implements LogonService
 			if (!encryptedPassword.equals(userSecurityProfile.getPassword()))
 			{
 				throw new SecurityAuthenticationException("Authentication failed for user:" + userID);
-			}			
+			}
+			loggedOnSessionProvider.getLoggedOnSession().setLoggedOnUser(userSecurityProfile);
+			sessionSecurityChecker.checkCapabilityTo("logon", "system");
 		}
 		catch (SecurityAuthenticationException ex)
 		{
+			loggedOnSessionProvider.getLoggedOnSession().clear();
 			LOG.log(Level.WARNING, ex.getMessage(), ex);
 			throw ex;
 		}
 		catch (SecurityProfileNotFoundException ex)
 		{
+			loggedOnSessionProvider.getLoggedOnSession().clear();
 			try
 			{
 				userSecurityProfile = createDefaultAdminSecurityProfileForTheFirstTime();
@@ -102,17 +113,18 @@ public class DefaultLogonService implements LogonService
 		}
 		catch (SecurityManagerException ex)
 		{
+			loggedOnSessionProvider.getLoggedOnSession().clear();
 			throw new SecurityAuthenticationException(ex);
 		}
 		catch (Exception ex)
 		{
+			loggedOnSessionProvider.getLoggedOnSession().clear();
 			throw new SecurityAuthenticationException(ex);
 		}
 		finally
 		{
 			LOG.log(Level.FINE, "ended DefaultLogonService.logon()");
 		}
-		loggedOnSessionProvider.getLoggedOnSession().setLoggedOnUser(userSecurityProfile);
 		return userSecurityProfile;
 	}
 

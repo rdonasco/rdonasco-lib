@@ -65,9 +65,11 @@ public class DefaultLogonServiceTest
 				.createUserSecurityProfileVO();
 		final LoggedOnSessionProvider loggedOnSessionProviderMock = mock(LoggedOnSessionProvider.class);
 		final LoggedOnSession loggedOnSession = mock(LoggedOnSession.class);
+		final SessionSecurityChecker sessionSecurityChecker = mock(SessionSecurityChecker.class);
 		instance.setLoggedOnSessionProvider(loggedOnSessionProviderMock);
 		final SystemSecurityManagerDecorator systemSecurityManager = mock(SystemSecurityManagerDecorator.class);
 		instance.setSystemSecurityManager(systemSecurityManager);
+		instance.setSessionSecurityChecker(sessionSecurityChecker);
 		when(systemSecurityManager.findSecurityProfileWithLogonID(logonVO.getLogonID())).thenReturn(expResult);
 		when(loggedOnSessionProviderMock.getLoggedOnSession()).thenReturn(loggedOnSession);
 		UserSecurityProfileVO result = instance.logon(logonVO);
