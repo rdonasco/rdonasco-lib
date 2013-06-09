@@ -43,9 +43,9 @@
   </build>
   <dependencies>
 	  <dependency>
-		  <groupId>com.rdonasco</groupId>
+		  <groupId>${project.groupId}</groupId>
 		  <artifactId>security-app-ejb</artifactId>
-		  <version>1.0.0</version>
+		  <version>${project.version}</version>
 		  <type>ejb</type>
 	  </dependency>
 	  <dependency>
@@ -61,9 +61,9 @@
 		  <type>ejb</type>
 	  </dependency>	  
 	  <dependency>
-		  <groupId>com.rdonasco</groupId>
+		  <groupId>${project.groupId}</groupId>
 		  <artifactId>security-app-web</artifactId>
-		  <version>1.0.0</version>
+		  <version>${project.version}</version>
 		  <type>war</type>
 	  </dependency>
   </dependencies>

@@ -43,9 +43,9 @@
 			<type>jar</type>
 		</dependency>
 		<dependency>
-			<groupId>com.rdonasco</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>rdonasco-common-i18</artifactId>
-			<version>1.0.0</version>
+			<version>${project.version}</version>
 			<type>jar</type>
 		</dependency>
 		<dependency>
