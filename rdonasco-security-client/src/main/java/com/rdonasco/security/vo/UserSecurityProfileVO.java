@@ -39,7 +39,11 @@ public class UserSecurityProfileVO implements Serializable
 	private Collection<UserRoleVO> roles;
 	private Collection<UserGroupVO> groups;
 
-	UserSecurityProfileVO(Long id, String loginId, String password,
+	public UserSecurityProfileVO()
+	{
+	}
+
+	public UserSecurityProfileVO(Long id, String loginId, String password,
 			String token, Date expiryDate,
 			Collection<UserCapabilityVO> capabilities,
 			Collection<UserRoleVO> roles,

@@ -15,5 +15,6 @@
 		<module>security-app-ear</module>
 		<module>security-app-web</module>
 		<module>security-app-ejb</module>
-	</modules>
+    <module>security-ws-client</module>
+  </modules>
 </project>

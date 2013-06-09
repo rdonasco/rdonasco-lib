@@ -21,3 +21,17 @@ security-app/security-app-ear/target
 security-app/security-app-ejb/target
 security-app/security-app-web/target
 rdonasco-security-auth/target
+rdonasco-common-dao/src/main/resources/rebel.xml
+rdonasco-common-i18/src/main/resources/rebel.xml
+rdonasco-common-vaadin/src/main/resources/rebel.xml
+rdonasco-common-validator/src/main/resources/rebel.xml
+rdonasco-common/src/main/resources/rebel.xml
+rdonasco-config-client/src/main/resources/rebel.xml
+rdonasco-config-view/src/main/resources/rebel.xml
+rdonasco-config/src/main/resources/rebel.xml
+rdonasco-security-auth/src/main/resources/rebel.xml
+rdonasco-security-client/src/main/resources/rebel.xml
+rdonasco-security/src/main/resources/rebel.xml
+security-app/security-app-web/src/main/resources/rebel.xml
+rebel.xml
+security-app/security-ws-client/target

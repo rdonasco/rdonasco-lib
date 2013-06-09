@@ -1,0 +1,140 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI at http://jax-ws.dev.java.net. RI's version is Metro/2.2.0-1 (tags/2.2.0u1-7139; 2012-06-02T10:55:19+0000) JAXWS-RI/2.2.6-2 JAXWS/2.2 svn-revision#unknown. --><xs:schema xmlns:tns="http://webservices.security.rdonasco.com/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://webservices.security.rdonasco.com/">
+
+<xs:element name="SecurityAuthenticationException" type="tns:SecurityAuthenticationException"/>
+
+<xs:element name="checkUserCapability" type="tns:checkUserCapability"/>
+
+<xs:element name="checkUserCapabilityResponse" type="tns:checkUserCapabilityResponse"/>
+
+<xs:element name="logon" type="tns:logon"/>
+
+<xs:element name="logonResponse" type="tns:logonResponse"/>
+
+<xs:complexType name="checkUserCapability">
+<xs:sequence>
+<xs:element name="profile" type="tns:userSecurityProfileVO" minOccurs="0"/>
+<xs:element name="action" type="xs:string" minOccurs="0"/>
+<xs:element name="resource" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="userSecurityProfileVO">
+<xs:sequence>
+<xs:element name="capabilities" type="tns:userCapabilityVO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="groups" type="tns:userGroupVO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="logonId" type="xs:string" minOccurs="0"/>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+<xs:element name="registrationToken" type="xs:string" minOccurs="0"/>
+<xs:element name="registrationTokenExpiration" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="roles" type="tns:userRoleVO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="userCapabilityVO">
+<xs:sequence>
+<xs:element name="capability" type="tns:capabilityVO" minOccurs="0"/>
+<xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="userProfile" type="tns:userSecurityProfileVO" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="capabilityVO">
+<xs:sequence>
+<xs:element name="actions" type="tns:capabilityActionVO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="description" type="xs:string" minOccurs="0"/>
+<xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="resource" type="tns:resourceVO" minOccurs="0"/>
+<xs:element name="title" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="capabilityActionVO">
+<xs:sequence>
+<xs:element name="actionVO" type="tns:actionVO" minOccurs="0"/>
+<xs:element name="capabilityVO" type="tns:capabilityVO" minOccurs="0"/>
+<xs:element name="id" type="xs:long" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="actionVO">
+<xs:sequence>
+<xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="resourceVO">
+<xs:sequence>
+<xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="userGroupVO">
+<xs:sequence>
+<xs:element name="group" type="tns:securityGroupVO" minOccurs="0"/>
+<xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="userProfile" type="tns:userSecurityProfileVO" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="securityGroupVO">
+<xs:sequence>
+<xs:element name="groupRoleVOs" type="tns:securityGroupRoleVO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="securityGroupRoleVO">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="userRoleVO">
+<xs:sequence>
+<xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="role" type="tns:roleVO" minOccurs="0"/>
+<xs:element name="userProfile" type="tns:userSecurityProfileVO" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="roleVO">
+<xs:sequence>
+<xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+<xs:element name="roleCapabilities" type="tns:roleCapabilityVO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="roleCapabilityVO">
+<xs:sequence>
+<xs:element name="capabilityVO" type="tns:capabilityVO" minOccurs="0"/>
+<xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="roleVO" type="tns:roleVO" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="checkUserCapabilityResponse">
+<xs:sequence/>
+</xs:complexType>
+
+<xs:complexType name="SecurityAuthenticationException">
+<xs:sequence>
+<xs:element name="message" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="logon">
+<xs:sequence>
+<xs:element name="logonID" type="xs:string" minOccurs="0"/>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="logonResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:userSecurityProfileVO" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>
