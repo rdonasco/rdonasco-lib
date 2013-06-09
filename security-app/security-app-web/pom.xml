@@ -33,12 +33,6 @@
 			<type>jar</type>
 		</dependency>
 		<dependency>
-			<groupId>com.rdonasco</groupId>
-			<artifactId>rdonasco-common-vaadin</artifactId>
-			<version>1.0.0</version>
-			<type>jar</type>
-		</dependency>
-		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>security-app-ejb</artifactId>
 			<version>${project.version}</version>
@@ -47,24 +41,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>rdonasco-common-i18</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>rdonasco-datamanager</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.rdonasco</groupId>
-			<artifactId>rdonasco-security</artifactId>
-			<version>1.0.0</version>
-			<type>jar</type>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>rdonasco-config-view</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -73,15 +50,20 @@
 			<version>2.1.2</version>
 		</dependency>
 		<dependency>
-			<artifactId>rdonasco-common</artifactId>
-			<groupId>com.rdonasco</groupId>
-			<type>jar</type>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>rdonasco-security-auth</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>rdonasco-config-view</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>rdonasco-security</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax</groupId>

@@ -22,11 +22,10 @@
 
     <dependencies>
 		<dependency>
-			<groupId>com.rdonasco</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>rdonasco-security</artifactId>
-			<version>1.0.0</version>
+			<version>${project.version}</version>
 			<scope>provided</scope>
-			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>javax</groupId>
