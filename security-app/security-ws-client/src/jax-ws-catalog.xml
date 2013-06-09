@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+	<system systemId="http://macbookniroy.local:8081/security-app-web/SystemSecurityManager?wsdl" uri="wsdl/macbookniroy.local_8081/security-app-web/SystemSecurityManager.wsdl"/>
+	<system systemId="http://macbookniroy.local:8081/security-app-web/SystemSecurityManager?xsd=1" uri="wsdl/macbookniroy.local_8081/security-app-web/SystemSecurityManager.xsd_1.xsd"/>
+</catalog>
