@@ -38,12 +38,12 @@
 					  </goals>
 					  <configuration>
 						  <wsdlFiles>
-							  <wsdlFile>macbookniroy.local_8081/SystemSecurityManagerWebService/SystemSecurityManagerWebService.wsdl</wsdlFile>
+							  <wsdlFile>macbookniroy.local_8081/security-app-web/SystemSecurityManager.wsdl</wsdlFile>
 						  </wsdlFiles>
-						  <wsdlLocation>http://macbookniroy.local:8081/SystemSecurityManagerWebService/SystemSecurityManagerWebService?wsdl</wsdlLocation>
-						  <staleFile>${project.build.directory}/jaxws/stale/SystemSecurityManagerWebService.stale</staleFile>
+						  <wsdlLocation>http://macbookniroy.local:8081/security-app-web/SystemSecurityManager?wsdl</wsdlLocation>
+						  <staleFile>${project.build.directory}/jaxws/stale/SystemSecurityManager.stale</staleFile>
 					  </configuration>
-					  <id>wsimport-generate-SystemSecurityManagerWebService</id>
+					  <id>wsimport-generate-SystemSecurityManager</id>
 					  <phase>generate-sources</phase>
 				  </execution>
 			  </executions>

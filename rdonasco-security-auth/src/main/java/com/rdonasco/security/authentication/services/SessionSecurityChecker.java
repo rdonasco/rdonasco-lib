@@ -21,6 +21,7 @@ import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
+import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,12 +34,16 @@ import javax.inject.Inject;
  */
 public class SessionSecurityChecker implements Serializable
 {
+
 	private static final Logger LOG = Logger.getLogger(SessionSecurityChecker.class.getName());
+
 	private static final long serialVersionUID = 1L;
 
 	@Inject
 	private Instance<LoggedOnSessionProvider> loggedOnSessionInstances;
+
 	private LoggedOnSessionProvider loggedOnSessionProvider;
+
 	@Inject
 	private SystemSecurityManagerDecorator securityManager;
 

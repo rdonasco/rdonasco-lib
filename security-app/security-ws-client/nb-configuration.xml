@@ -14,5 +14,6 @@ That way multiple projects can share the same settings (useful for formatting ru
 Any value defined here will override the pom.xml file value but is only applicable to the current project.
 -->
         <org-netbeans-modules-maven-jaxws._5f_C_5f_SystemSecurityManagerWebService>http://macbookniroy.local:8081/SystemSecurityManagerWebService/SystemSecurityManagerWebService?wsdl</org-netbeans-modules-maven-jaxws._5f_C_5f_SystemSecurityManagerWebService>
+        <org-netbeans-modules-maven-jaxws._5f_C_5f_SystemSecurityManager>http://macbookniroy.local:8081/security-app-web/SystemSecurityManager?wsdl</org-netbeans-modules-maven-jaxws._5f_C_5f_SystemSecurityManager>
     </properties>
 </project-shared-configuration>
