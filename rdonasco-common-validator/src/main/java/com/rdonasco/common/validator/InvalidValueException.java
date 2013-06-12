@@ -14,7 +14,7 @@
  *  limitations under the License.
  *  under the License.
  */
-package aero.champ.commons.validator;
+package com.rdonasco.common.validator;
 
 public class InvalidValueException extends Exception
 {
