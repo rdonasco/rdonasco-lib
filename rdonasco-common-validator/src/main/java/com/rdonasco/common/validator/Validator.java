@@ -1,7 +1,7 @@
 /*
  * Inspired by Vaadin Validator implementation
  */
-package aero.champ.commons.validator;
+package com.rdonasco.common.validator;
 
 /**
  *

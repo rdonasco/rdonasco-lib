@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package aero.champ.commons.validator;
+package com.rdonasco.common.validator;
 
 /**
  *
