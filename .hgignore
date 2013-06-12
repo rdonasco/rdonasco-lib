@@ -36,3 +36,6 @@ security-app/security-app-web/src/main/resources/rebel.xml
 rebel.xml
 security-app/security-ws-client/target
 *.bak
+security-sample-usage-app/security-sample-usage-app-ear/target
+security-sample-usage-app/security-sample-usage-app-ejb/target
+security-sample-usage-app/security-sample-usage-app-web/target
