@@ -21,7 +21,6 @@ import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
-import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
