@@ -35,3 +35,4 @@ rdonasco-security/src/main/resources/rebel.xml
 security-app/security-app-web/src/main/resources/rebel.xml
 rebel.xml
 security-app/security-ws-client/target
+*.bak
