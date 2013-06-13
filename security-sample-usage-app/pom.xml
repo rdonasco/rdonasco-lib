@@ -15,5 +15,6 @@
     <module>security-sample-usage-app-ear</module>
     <module>security-sample-usage-app-web</module>
     <module>security-sample-usage-app-ejb</module>
+    <module>security-sample-usage-ejb-client</module>
   </modules>
 </project>

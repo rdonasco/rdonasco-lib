@@ -22,7 +22,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>javax</groupId>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>security-sample-usage-ejb-client</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <version>6.0</version>
             <scope>provided</scope>

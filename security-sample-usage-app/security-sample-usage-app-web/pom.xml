@@ -21,10 +21,11 @@
 	</properties>
 
     <dependencies>
-        <dependency>
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>rdonasco-security-auth</artifactId>
 			<version>1.0.0</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax</groupId>
