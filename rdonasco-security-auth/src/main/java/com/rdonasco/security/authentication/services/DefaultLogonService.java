@@ -4,9 +4,6 @@
  */
 package com.rdonasco.security.authentication.services;
 
-import com.rdonasco.security.authorization.interceptors.InvocationEventType;
-import com.rdonasco.security.authorization.interceptors.Secured;
-import com.rdonasco.security.authorization.interceptors.SecuredCapability;
 import com.rdonasco.security.exceptions.DefaultAdminSecurityProfileAlreadyExist;
 import com.rdonasco.security.exceptions.SecurityAuthenticationException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
