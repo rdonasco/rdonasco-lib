@@ -199,6 +199,10 @@ public class SecuredInterceptor
 		});
 		if (!resource.isEmpty())
 		{
+			if (loggedOnSessionProvider.getLoggedOnSession() == null || !loggedOnSessionProvider.getLoggedOnSession().isLoggedOn())
+			{
+				throw new SecurityAuthorizationException("User is not logged on");
+			}
 			UserSecurityProfileVO userSecurityProfileVO = loggedOnSessionProvider.getLoggedOnSession().getLoggedOnUser();
 			AccessRightsVO accessRights = new AccessRightsVOBuilder()
 					.setActionAsString(action)

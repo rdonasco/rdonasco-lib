@@ -258,7 +258,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 		catch (NonExistentEntityException e)
 		{
 			LOG.log(Level.WARNING, "Action {0} not found. Creating one", name);
-			LOG.log(Level.FINE, e.getMessage(), e);
+			LOG.log(Level.FINEST, e.getMessage(), e);
 			action = new Action();
 			action.setName(name);
 			try

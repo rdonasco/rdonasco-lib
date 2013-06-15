@@ -5,10 +5,12 @@
 package com.rdonasco.security.sample;
 
 import com.rdonasco.security.authentication.services.SessionSecurityChecker;
+import com.rdonasco.security.authorization.interceptors.SecurityExceptionHandler;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,9 +24,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "GreetingServlet", urlPatterns =
 {
-	"/GreetingServlet"
+	"/greeting"
 })
-public class GreetingServlet extends HttpServlet
+public class GreetingServlet extends HttpServlet implements
+		SecurityExceptionHandler
 {
 
 	private static final Logger LOG = Logger.getLogger(GreetingServlet.class.getName());
@@ -36,6 +39,19 @@ public class GreetingServlet extends HttpServlet
 
 	@Inject
 	private SessionSecurityChecker sessionSecurityChecker;
+
+	@Inject
+	private Instance<GreetingServiceWrapper> greetingServiceInstances;
+	private GreetingServiceWrapper greetingServiceInstance;
+
+	public GreetingServiceWrapper getGreetingServiceInstance()
+	{
+		if (null == greetingServiceInstance)
+		{
+			greetingServiceInstance = greetingServiceInstances.get();
+		}
+		return greetingServiceInstance;
+	}
 
 	/**
 	 * Processes requests for both HTTP
@@ -64,6 +80,7 @@ public class GreetingServlet extends HttpServlet
 			out.println("<body>");
 			out.println("<h1>Servlet GreetingServlet at " + request.getContextPath() + "</h1>");
 			out.println(printHello());
+			out.println(printHelloFromEJB());
 			out.println("</body>");
 			out.println("</html>");
 		}
@@ -135,4 +152,23 @@ public class GreetingServlet extends HttpServlet
 	}
 
 
+	public String printHelloFromEJB()
+	{
+		String message = "can't say it from EJB";
+		try
+		{
+			message = getGreetingServiceInstance().getGreetingMessage("empty");
+		}
+		catch (Exception e)
+		{
+			LOG.log(Level.WARNING, e.getMessage(), e);
+		}
+		return message;
+	}
+
+	@Override
+	public void handleSecurityException(Throwable e)
+	{
+		LOG.log(Level.WARNING, e.getMessage(), e);
+	}
 }

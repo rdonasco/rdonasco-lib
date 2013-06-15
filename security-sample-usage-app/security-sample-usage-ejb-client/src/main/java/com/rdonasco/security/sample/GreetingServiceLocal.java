@@ -16,6 +16,6 @@ import javax.ejb.Local;
 public interface GreetingServiceLocal
 {
 	@Secured
-	@SecuredCapability(action = "get", resource = "greeting")
+	@SecuredCapability(action = "get", resource = "local greeting")
 	String getGreetingMessage();
 }
