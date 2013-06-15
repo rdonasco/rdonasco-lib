@@ -9,6 +9,7 @@
     </head>
     <body>
         <h1>Hello World!</h1>
+		<a href="<c:url value="/UserRegistrationForm.jsp"/>">Register</a><br/>
 		<a href="<c:url value="/logon"/>">logon</a><br/>
 		<a href="<c:url value="/greeting"/>">greeting</a><br/>
 		<a href="<c:url value="/logout"/>">logout</a>
