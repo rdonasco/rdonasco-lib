@@ -17,6 +17,7 @@
 package com.rdonasco.security.webservices;
 
 import com.rdonasco.security.authentication.services.SystemSecurityManagerDecorator;
+import com.rdonasco.security.authorization.utils.AuthConstants;
 import com.rdonasco.security.exceptions.SecurityAuthenticationException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
@@ -100,6 +101,7 @@ public class SystemSecurityManagerWebService
 			{
 				throw new SecurityAuthenticationException("Authentication failed for user with logon ID:" + logonID);
 			}
+			checkCapabilityOfUserTo(userSecurityProfile, AuthConstants.ACTION_LOGON, AuthConstants.RESOURCE_SYSTEM);
 		}
 		catch (SecurityAuthenticationException ex)
 		{

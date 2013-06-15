@@ -4,6 +4,7 @@
  */
 package com.rdonasco.security.authentication.services;
 
+import com.rdonasco.security.authorization.utils.AuthConstants;
 import com.rdonasco.security.exceptions.DefaultAdminSecurityProfileAlreadyExist;
 import com.rdonasco.security.exceptions.SecurityAuthenticationException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
@@ -84,7 +85,7 @@ public class DefaultLogonService implements LogonService
 				throw new SecurityAuthenticationException("Authentication failed for user:" + userID);
 			}
 			loggedOnSessionProvider.getLoggedOnSession().setLoggedOnUser(userSecurityProfile);
-			sessionSecurityChecker.checkCapabilityTo("logon", "system");
+			sessionSecurityChecker.checkCapabilityTo(AuthConstants.ACTION_LOGON, AuthConstants.RESOURCE_SYSTEM);
 		}
 		catch (SecurityAuthenticationException ex)
 		{
