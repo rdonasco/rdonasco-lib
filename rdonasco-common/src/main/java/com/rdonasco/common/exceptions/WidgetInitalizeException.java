@@ -16,8 +16,9 @@
  */
 package com.rdonasco.common.exceptions;
 
-public class WidgetInitalizeException extends WidgetException
+public class WidgetInitalizeException extends RuntimeException
 {
+	private static final long serialVersionUID = 1L;
 
     public WidgetInitalizeException()
     {
