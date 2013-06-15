@@ -24,7 +24,7 @@ public class GreetingServiceWrapperImpl implements GreetingServiceWrapper,
 	@Override
 	@Secured
 	@SecuredCapability(action = "get", resource = "greetingMessage")
-	public String getGreetingMessage(String ss)
+	public String getGreetingMessage()
 	{
 		return greetingServiceLocal.getGreetingMessage();
 	}

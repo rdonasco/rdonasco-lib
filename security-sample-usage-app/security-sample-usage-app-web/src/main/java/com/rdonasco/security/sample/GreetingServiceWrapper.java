@@ -11,5 +11,5 @@ package com.rdonasco.security.sample;
 public interface GreetingServiceWrapper
 {
 
-	String getGreetingMessage(String id);
+	String getGreetingMessage();
 }
