@@ -2,17 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>rdonasco</artifactId>
+		<artifactId>security-app</artifactId>
 		<groupId>com.rdonasco</groupId>
-		<version>1.1.0</version>
+		<version>1.0.0</version>
 	</parent>
 
 	<groupId>com.rdonasco</groupId>
-	<artifactId>rdonasco-config</artifactId>
+	<artifactId>rdonasco-security</artifactId>
 	<version>1.0.0</version>
 	<packaging>ejb</packaging>
 
-	<name>rdonasco-config</name>
+	<name>rdonasco-security</name>
 
 	<properties>
 		<endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
@@ -69,6 +69,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>rdonasco-security-client</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>1.9.5</version>
@@ -76,12 +81,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>rdonasco-config-client</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>rdonasco-datamanager</artifactId>
+			<artifactId>rdonasco-config</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -105,6 +105,11 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>rdonasco-common-i18</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>rdonasco-datamanager</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -175,5 +180,5 @@
 			<layout>default</layout>
 			<name>Repository for library EclipseLink (JPA 2.0)</name>
 		</repository>
-	</repositories>
+	</repositories>	
 </project>

@@ -16,5 +16,9 @@
 		<module>security-app-web</module>
 		<module>security-app-ejb</module>
     <module>security-ws-client</module>
-  </modules>
+	<module>rdonasco-security</module>
+	<module>rdonasco-security-auth</module>
+	<module>rdonasco-security-client</module>
+	<module>security-sample-usage-app</module>
+	</modules>
 </project>

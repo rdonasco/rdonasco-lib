@@ -30,15 +30,9 @@
 	</build>
 	<modules>
 		<module>rdonasco-commons</module>
-		<module>rdonasco-security</module>
-		<module>rdonasco-security-client</module>
-		<module>rdonasco-security-auth</module>
-		<module>rdonasco-config</module>
-		<module>rdonasco-config-client</module>
-		<module>rdonasco-config-view</module>
+		<module>rdonasco-datamanager</module>
+		<module>rdonasco-config-app</module>		
 		<module>security-app</module>
-		<module>security-sample-usage-app</module>
-		
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
