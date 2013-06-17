@@ -4,13 +4,13 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.rdonasco</groupId>
-    <artifactId>rdonasco</artifactId>
-	<version>1.1.0</version>
+	<artifactId>rdonasco-commons</artifactId>
+	<version>1.0.0</version>
   </parent>
   <groupId>com.rdonasco</groupId>
-  <artifactId>rdonasco-common</artifactId>
+  <artifactId>rdonasco-common-dao</artifactId>
   <version>1.0.0</version>
-  <name>rdonasco-common</name>
+  <name>rdonasco-common-dao</name>
   <url>http://maven.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -23,16 +23,14 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-		<groupId>commons-beanutils</groupId>
-		<artifactId>commons-beanutils</artifactId>
-		<version>1.8.3</version>
-		<type>jar</type>
-	</dependency>
-	<dependency>
-		<groupId>javax</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>6.0</version>
-      <type>jar</type>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>rdonasco-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>rdonasco-common-i18</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 </project>

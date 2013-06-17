@@ -4,36 +4,35 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.rdonasco</groupId>
-    <artifactId>rdonasco</artifactId>
-	<version>1.1.0</version>
+	<artifactId>rdonasco-commons</artifactId>
+	<version>1.0.0</version>
   </parent>
   <groupId>com.rdonasco</groupId>
-  <artifactId>rdonasco-common-i18</artifactId>
+  <artifactId>rdonasco-common</artifactId>
   <version>1.0.0</version>
-  <name>rdonasco-common-i18</name>
+  <name>rdonasco-common</name>
   <url>http://maven.apache.org</url>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-    <properties>
+  <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.10</version>
+      <version>3.8.1</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+		<groupId>commons-beanutils</groupId>
+		<artifactId>commons-beanutils</artifactId>
+		<version>1.8.3</version>
+		<type>jar</type>
+	</dependency>
+	<dependency>
+		<groupId>javax</groupId>
+      <artifactId>javaee-api</artifactId>
+      <version>6.0</version>
+      <type>jar</type>
     </dependency>
   </dependencies>
 </project>

@@ -4,8 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.rdonasco</groupId>
-		<artifactId>rdonasco</artifactId>
-		<version>1.1.0</version>
+		<artifactId>rdonasco-commons</artifactId>
+		<version>1.0.0</version>
 	</parent>
 	<groupId>com.rdonasco</groupId>
 	<artifactId>rdonasco-common-validator</artifactId>
