@@ -114,7 +114,7 @@ public class DefaultContentViewController implements
 						getLogonService().logon(logonVO);
 						homeFrameViewControllerProvider.get().refreshView();
 					}
-					catch (Throwable ex)
+					catch (Exception ex)
 					{
 						LOG.log(Level.WARNING, ex.getMessage(), ex);
 						applicationPopupProvider.popUpError(I18NResource.localize("Logon failed"));
