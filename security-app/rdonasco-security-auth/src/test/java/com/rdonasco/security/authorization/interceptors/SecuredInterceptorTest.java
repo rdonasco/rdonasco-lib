@@ -44,10 +44,15 @@ public class SecuredInterceptorTest
 {
 
 	InvocationContext joinPointMock = mock(InvocationContext.class);
+
 	SystemSecurityManagerRemote systemSecurityManagerMock = mock(SystemSecurityManagerRemote.class);
+
 	LoggedOnSessionProvider loggedOnSessionProviderMock = mock(LoggedOnSessionProvider.class);
+
 	LoggedOnSession loggedOnSessionMock = mock(LoggedOnSession.class);
+
 	ConfigDataManagerVODecoratorRemote configDataManager = mock(ConfigDataManagerVODecoratorRemote.class);
+
 	public SecuredInterceptorTest()
 	{
 	}
@@ -86,10 +91,18 @@ public class SecuredInterceptorTest
 		System.out.println("checkSecuredInvocationAsAllowed");
 		SecuredInterceptor instance = new SecuredInterceptor();
 		setupConditionsForAllowedLogon(instance);
-		Object result = instance.checkSecuredInvocation(joinPointMock);
-//		verify(systemSecurityManagerMock).checkAccessRights(any(AccessRightsVO.class));
-//		verify(sessionMock).isLoggedOn();
+		Object result = instance.interceptSecuredMethodCall(joinPointMock);
 		assertEquals("Hello", result);
+	}
+
+	@Test
+	public void testCheckNotSecuredInvocationAsAllowed() throws Exception
+	{
+		System.out.println("checkNotSecuredInvocationAsAllowed");
+		SecuredInterceptor instance = new SecuredInterceptor();
+		setupConditionsForNotSecuredCall(instance);
+		Object result = instance.interceptSecuredMethodCall(joinPointMock);
+		assertEquals("HelloNotSecured", result);
 	}
 
 	@Test(expected = SecurityAuthorizationException.class)
@@ -107,7 +120,7 @@ public class SecuredInterceptorTest
 				throw new SecurityAuthorizationException();
 			}
 		}).when(systemSecurityManagerMock).checkAccessRights(any(AccessRightsVO.class));
-		instance.checkSecuredInvocation(joinPointMock);
+		instance.interceptSecuredMethodCall(joinPointMock);
 	}
 
 	@Secured
@@ -115,6 +128,12 @@ public class SecuredInterceptorTest
 	public String getGreeting()
 	{
 		return "Hello";
+	}
+
+	@Secured
+	public String getNonSecuredGreeting()
+	{
+		return "HelloNotSecured";
 	}
 
 	private UserSecurityProfileVO createTestDataLoggedOnUser()
@@ -142,5 +161,20 @@ public class SecuredInterceptorTest
 		when(systemSecurityManagerMock.isSecuredResource("person")).thenReturn(Boolean.TRUE);
 		when(loggedOnSessionProviderMock.getLoggedOnSession().isLoggedOn()).thenReturn(true);
 		when(loggedOnSessionProviderMock.getLoggedOnSession().getLoggedOnUser()).thenReturn(createTestDataLoggedOnUser());
+	}
+
+	private void setupConditionsForNotSecuredCall(SecuredInterceptor interceptor)
+			throws NoSuchMethodException, Exception,
+			SecurityException
+	{
+		Class[] parameterTypes = null;
+		Object[] parameters = null;
+		interceptor.setSystemSecurityManager(systemSecurityManagerMock);
+		interceptor.setLoggedOnSession(loggedOnSessionProviderMock);
+
+		Method method = this.getClass().getMethod("getNonSecuredGreeting", parameterTypes);
+		when(joinPointMock.getMethod()).thenReturn(method);
+		when(joinPointMock.proceed()).thenReturn(method.invoke(this, parameters));
+		when(joinPointMock.getTarget()).thenReturn(this);
 	}
 }

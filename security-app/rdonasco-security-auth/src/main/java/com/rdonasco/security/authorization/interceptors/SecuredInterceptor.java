@@ -24,6 +24,7 @@ import com.rdonasco.security.services.SystemSecurityManagerRemote;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
+import java.lang.annotation.Annotation;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -59,7 +60,22 @@ public class SecuredInterceptor
 	}
 
 	@AroundInvoke
-	public Object checkSecuredInvocation(InvocationContext joinPoint) throws
+	public Object interceptSecuredMethodCall(InvocationContext joinPoint) throws
+			Exception
+	{
+		Object returnValue;
+		if (isMethodAnnotatedBy(joinPoint, SecuredCapability.class))
+		{
+			returnValue = checkSecuredInvocation(joinPoint);
+		}
+		else
+		{
+			returnValue = joinPoint.proceed();
+		}
+		return returnValue;
+	}
+
+	private Object checkSecuredInvocation(InvocationContext joinPoint) throws
 			Exception
 	{
 		String action;
@@ -143,6 +159,12 @@ public class SecuredInterceptor
 			resource = typeAnnotation.resource();
 		}
 		return resource;
+	}
+
+	private <T extends Annotation> boolean isMethodAnnotatedBy(
+			InvocationContext joinPoint, Class<T> annotation)
+	{
+		return joinPoint.getMethod().getAnnotation(annotation) != null;
 	}
 
 	private String getResourceFromMethod(InvocationContext joinPoint)
