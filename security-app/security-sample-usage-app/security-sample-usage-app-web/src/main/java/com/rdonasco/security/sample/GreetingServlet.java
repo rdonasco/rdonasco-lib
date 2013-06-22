@@ -157,7 +157,7 @@ public class GreetingServlet extends HttpServlet implements
 		String message = "can't say it from EJB";
 		try
 		{
-			message = getGreetingServiceInstance().getGreetingMessage();
+			message = getGreetingServiceInstance().getGreetingMessage("ejbMessage");
 		}
 		catch (Exception e)
 		{
