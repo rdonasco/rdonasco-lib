@@ -38,7 +38,7 @@ public class DataManagerView<T> extends VerticalLayout implements ControlledView
     //@Inject
     private DataViewListPanel listView;
     //@Inject
-    private DataForm<T> dataForm;
+    private DataFormWrapper<T> dataForm;
 
     public DataManagerViewController getDataManagerViewFactory()
     {
@@ -62,7 +62,7 @@ public class DataManagerView<T> extends VerticalLayout implements ControlledView
         this.dataManager = dataManager;
     }        
 
-    public DataForm<T> getDataForm()
+    public DataFormWrapper<T> getDataForm()
     {
         return dataForm;
     }
@@ -72,7 +72,7 @@ public class DataManagerView<T> extends VerticalLayout implements ControlledView
         getListView().getTable().refreshData();
     }
 
-    public void setDataForm(DataForm<T> dataForm)
+    public void setDataForm(DataFormWrapper<T> dataForm)
     {
         this.dataForm = dataForm;
         dataForm.setView(this);
@@ -130,7 +130,7 @@ public class DataManagerView<T> extends VerticalLayout implements ControlledView
     public BeanItem displaySelectedRecordInTheForm()
     {
         BeanItem item = (BeanItem)getListView().getTable().getItem(getListView().getTable().getValue());
-        if (null != item && item != getDataForm().getItemDataSource())
+		if (null != item && item != getDataForm().getFormDelegate().getItemDataSource())
         {
             getDataForm().setCurrentRecord(item);
         }

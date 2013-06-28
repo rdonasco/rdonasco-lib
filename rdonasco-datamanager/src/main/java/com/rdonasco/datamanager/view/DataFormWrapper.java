@@ -20,7 +20,6 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
-import com.vaadin.ui.Form;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Window.Notification;
@@ -35,6 +34,10 @@ import com.rdonasco.common.vaadin.view.NotificationFactory;
 import com.rdonasco.common.vaadin.view.VaadinBeanUtils;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.datamanager.theme.DataManagerTheme;
+import com.vaadin.ui.Form;
+import com.vaadin.ui.FormFieldFactory;
+import com.vaadin.ui.Layout;
+import com.vaadin.ui.VerticalLayout;
 import de.steinwedel.vaadin.MessageBox;
 import de.steinwedel.vaadin.MessageBox.ButtonType;
 
@@ -42,10 +45,11 @@ import de.steinwedel.vaadin.MessageBox.ButtonType;
  *
  * @author Roy F. Donasco
  */
-public abstract class DataForm<T> extends Form implements ViewWidget
+public abstract class DataFormWrapper<T> extends VerticalLayout implements
+		ViewWidget
 {
-
-	public DataForm()
+	private Form formDelegate = null;
+	public DataFormWrapper()
 	{
 	}
 	private DataManagerView view;
@@ -55,11 +59,11 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 				@Override
 				public void buttonClick(ClickEvent event)
 				{
-					BeanItem beanItem = (BeanItem) getItemDataSource();
+					BeanItem beanItem = (BeanItem) getFormDelegate().getItemDataSource();
 					T data = (T) beanItem.getBean();
 					try
 					{
-						commit();
+						getFormDelegate().commit();
 						if (isItNewData(data))
 						{
 							persistNewData(data);
@@ -77,7 +81,7 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 						getApplication().getMainWindow().showNotification(
 								NotificationFactory.createFromException(
 								Notification.TYPE_WARNING_MESSAGE, ex));
-						Logger.getLogger(DataForm.class.getName()).log(
+						Logger.getLogger(DataFormWrapper.class.getName()).log(
 								Level.WARNING, ex.getMessage(), ex);
 					}
 				}
@@ -123,7 +127,7 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 				@Override
 				public void buttonClick(ClickEvent event)
 				{
-					discard();
+					getFormDelegate().discard();
 					if (null != getView() && null != getView().getListView().
 							getSelectedRecord())
 					{
@@ -177,14 +181,14 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 				{
 					try
 					{
-						BeanItem item = (BeanItem) getItemDataSource();
+						BeanItem item = (BeanItem) getFormDelegate().getItemDataSource();
 						getDeleteCommitStrategy().commit((T) item.getBean());
 						Table table = getView().getListView().getTable();
 						if (table != null)
 						{
 							table.removeItem(table.getValue());
 						}
-						setItemDataSource(null);
+						getFormDelegate().setItemDataSource(null);
 					}
 					catch (Exception ex)
 					{
@@ -192,7 +196,7 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 						{
 							getView().refreshData();
 						}
-						Logger.getLogger(DataForm.class.getName()).log(
+						Logger.getLogger(DataFormWrapper.class.getName()).log(
 								Level.WARNING, ex.getMessage(), ex);
 						String message = new StringBuilder(I18NResource.localize(
 								"Unable to delete record at this moment")).
@@ -212,8 +216,8 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 		{
 			T newData = initializeNewData();
 			BeanItem beanItem = new BeanItem(newData);
-			setItemDataSource(beanItem);
-			setVisibleItemProperties(getVisibleColumns());
+			getFormDelegate().setItemDataSource(beanItem);
+			getFormDelegate().setVisibleItemProperties(getVisibleColumns());
 			changeModeToCreateNew();
 		}
 	});
@@ -311,7 +315,7 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 		footer.addComponent(saveButton);
 		footer.addComponent(cancelButton);
 
-		setFooter(footer);
+		getFormDelegate().setFooter(footer);
 	}
 
 	private void setupButtonIcons()
@@ -357,7 +361,7 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 		ButtonUtil.hideButtons(saveButton, cancelButton, editButton,
 				deleteButton);
 		ButtonUtil.showButtons(createNewButton);
-		setItemDataSource(null);
+		getFormDelegate().setItemDataSource(null);
 		setComponentError(null);
 		setReadOnly(true);
 		changeCaptionToNoItemSelected();
@@ -426,6 +430,7 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 	@Override
 	public void initWidget()
 	{
+		setFormDelegate(instantiateForm());
 		setStyleName(DataManagerTheme.STYLE_DATA_ENTRY_FORM);
 		setupFormFieldsAndCaption();
 		setupButtonIcons();
@@ -433,7 +438,8 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 		// Enable buffering so that commit() must be called for the form
 		// before input is written to the data. (Form input is not written
 		// immediately through to the underlying object.)
-		setWriteThrough(false);
+		getFormDelegate().setWriteThrough(false);
+		addComponent(getFormDelegate());
 		changeModeToView();
 	}
 
@@ -443,20 +449,20 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 		{
 			BeanItem beanItem = (BeanItem) item;
 			refreshBeanItemUsingValuesFromDatabase(beanItem);
-			setItemDataSource(beanItem);
-			setVisibleItemProperties(getVisibleColumns());
+			getFormDelegate().setItemDataSource(beanItem);
+			getFormDelegate().setVisibleItemProperties(getVisibleColumns());
 			changeCaptionUsingCurrentItem();
 		}
 		catch (DataAccessException ex)
 		{
-			Logger.getLogger(DataForm.class.getName()).log(Level.WARNING, ex.
+			Logger.getLogger(DataFormWrapper.class.getName()).log(Level.WARNING, ex.
 					getMessage(), ex);
 		}
 	}
 
 	private void changeCaptionUsingCurrentItem()
 	{
-		BeanItem beanItem = (BeanItem) getItemDataSource();
+		BeanItem beanItem = (BeanItem) getFormDelegate().getItemDataSource();
 		if (beanItem != null && beanItem.getBean() != null)
 		{
 			String itemCaption = beanItem.getBean().toString();
@@ -482,7 +488,7 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 	{
 		try
 		{
-			BeanItem beanItem = (BeanItem) getItemDataSource();
+			BeanItem beanItem = (BeanItem) getFormDelegate().getItemDataSource();
 			refreshBeanItemUsingValuesFromDatabase(beanItem);
 		}
 		catch (DataAccessException ex)
@@ -491,12 +497,54 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 			{
 				getView().refreshData();
 			}
-			Logger.getLogger(DataForm.class.getName()).log(Level.WARNING, ex.
+			Logger.getLogger(DataFormWrapper.class.getName()).log(Level.WARNING, ex.
 					getMessage(), ex);
 			getApplication().getMainWindow().showNotification(NotificationFactory.createWarningNotification(I18NResource.localize(CommonConstants.SYSTEM_WARNING),
 					I18NResource.localize(CommonConstants.EDITING_OF_RECORD_FAILED)));
 			throw new RuntimeException(ex);
 		}
+	}
+
+	protected Form instantiateForm()
+	{
+		return new Form();
+	}
+
+	public void setFormFieldFactory(FormFieldFactory fieldFactory)
+	{
+		formDelegate.setFormFieldFactory(fieldFactory);
+	}
+
+	public FormFieldFactory getFormFieldFactory()
+	{
+		return formDelegate.getFormFieldFactory();
+	}
+
+	public void setLayout(Layout newLayout)
+	{
+		formDelegate.setLayout(newLayout);
+	}
+
+	public Item getItemDataSource()
+	{
+		return formDelegate.getItemDataSource();
+	}
+
+	public Layout getFooter()
+	{
+		return formDelegate.getFooter();
+	}
+
+	@Override
+	public String getCaption()
+	{
+		return formDelegate.getCaption();
+	}
+
+	@Override
+	public void setCaption(String caption)
+	{
+		formDelegate.setCaption(caption);
 	}
 
 	protected abstract Object[] getVisibleColumns();
@@ -506,4 +554,18 @@ public abstract class DataForm<T> extends Form implements ViewWidget
 	protected abstract boolean isItNewData(T data);
 
 	protected abstract T initializeNewData();
+
+	private void setFormDelegate(Form formDelegate)
+	{
+		this.formDelegate = formDelegate;
+	}
+
+	public Form getFormDelegate()
+	{
+		if (null == formDelegate)
+		{
+			formDelegate = instantiateForm();
+		}
+		return formDelegate;
+	}
 }
