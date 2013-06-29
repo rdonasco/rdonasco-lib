@@ -34,6 +34,7 @@ import com.rdonasco.common.vaadin.view.NotificationFactory;
 import com.rdonasco.common.vaadin.view.VaadinBeanUtils;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.datamanager.theme.DataManagerTheme;
+import com.vaadin.terminal.ErrorMessage;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.FormFieldFactory;
 import com.vaadin.ui.Layout;
@@ -49,9 +50,6 @@ public abstract class DataFormWrapper<T> extends VerticalLayout implements
 		ViewWidget
 {
 	private Form formDelegate = null;
-	public DataFormWrapper()
-	{
-	}
 	private DataManagerView view;
 	private Button saveButton = new Button(I18NResource.localize(CommonConstants.SAVE),
 			new Button.ClickListener()
@@ -257,6 +255,10 @@ public abstract class DataFormWrapper<T> extends VerticalLayout implements
 		}
 	};
 
+	public DataFormWrapper()
+	{
+	}
+
 	public DataFormCommitStrategy<T> getDeleteCommitStrategy()
 	{
 		return deleteCommitStrategy;
@@ -290,7 +292,7 @@ public abstract class DataFormWrapper<T> extends VerticalLayout implements
 		this.updatedDataCommitStrategy = updatedDataCommitStrategy;
 	}
 
-	private void refreshBeanItemUsingValuesFromDatabase(BeanItem beanItem)
+	protected void refreshBeanItemUsingValuesFromDatabase(BeanItem beanItem)
 			throws DataAccessException
 	{
 		T beanData = (T) beanItem.getBean();
@@ -355,6 +357,12 @@ public abstract class DataFormWrapper<T> extends VerticalLayout implements
 		focus();
 	}
 
+	@Override
+	public void focus()
+	{
+		formDelegate.focus();
+	}
+
 	public void changeModeToView()
 	{
 		clearErrors();
@@ -386,6 +394,13 @@ public abstract class DataFormWrapper<T> extends VerticalLayout implements
 		deleteButton.setComponentError(null);
 		editButton.setComponentError(null);
 	}
+
+	@Override
+	public void setComponentError(ErrorMessage componentError)
+	{
+		getFormDelegate().setComponentError(componentError);
+	}
+
 
 	public void setDataManager(DataManager<T> dataManager)
 	{
@@ -460,7 +475,7 @@ public abstract class DataFormWrapper<T> extends VerticalLayout implements
 		}
 	}
 
-	private void changeCaptionUsingCurrentItem()
+	protected void changeCaptionUsingCurrentItem()
 	{
 		BeanItem beanItem = (BeanItem) getFormDelegate().getItemDataSource();
 		if (beanItem != null && beanItem.getBean() != null)
@@ -539,6 +554,18 @@ public abstract class DataFormWrapper<T> extends VerticalLayout implements
 	public String getCaption()
 	{
 		return formDelegate.getCaption();
+	}
+
+	@Override
+	public void setReadOnly(boolean readOnly)
+	{
+		formDelegate.setReadOnly(readOnly);
+	}
+
+	@Override
+	public boolean isReadOnly()
+	{
+		return formDelegate.isReadOnly();
 	}
 
 	@Override
