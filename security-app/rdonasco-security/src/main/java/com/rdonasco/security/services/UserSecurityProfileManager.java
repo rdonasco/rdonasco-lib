@@ -36,6 +36,7 @@ import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.UserGroup;
 import com.rdonasco.security.model.UserRole;
 import com.rdonasco.security.model.UserSecurityProfile;
+import com.rdonasco.security.utils.EncryptionUtil;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.CapabilityVO;
@@ -119,6 +120,11 @@ public class UserSecurityProfileManager implements
 		UserSecurityProfileVO createdProfile = null;
 		try
 		{
+			if (null != userSecurityProfile.getPassword() && !userSecurityProfile.getPassword().isEmpty())
+			{
+				userSecurityProfile.setPassword(EncryptionUtil.encryptWithPassword(
+						userSecurityProfile.getPassword(), userSecurityProfile.getPassword()));
+			}
 			UserSecurityProfile profileToCreate = SecurityEntityValueObjectConverter.toUserProfile(userSecurityProfile);
 			userSecurityProfileDAO.create(profileToCreate);
 			createdProfile = SecurityEntityValueObjectConverter.toUserProfileVO(profileToCreate);
@@ -349,7 +355,8 @@ public class UserSecurityProfileManager implements
 			profileToUpdate.setRegistrationTokenExpiration(profileUpdateDetails.getRegistrationTokenExpiration());
 			if (profileUpdateDetails.getPassword() != null && !profileUpdateDetails.getPassword().isEmpty())
 			{
-
+				String password = profileUpdateDetails.getPassword();
+				profileUpdateDetails.setPassword(EncryptionUtil.encryptWithPassword(password, password));
 				profileToUpdate.setPassword(profileUpdateDetails.getPassword());
 			}
 
