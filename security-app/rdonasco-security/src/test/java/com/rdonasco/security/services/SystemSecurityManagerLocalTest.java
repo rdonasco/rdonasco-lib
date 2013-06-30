@@ -8,6 +8,7 @@ import com.rdonasco.config.util.ConfigDataValueObjectConverter;
 import com.rdonasco.config.vo.ConfigAttributeVO;
 import com.rdonasco.security.dao.ActionDAO;
 import com.rdonasco.security.exceptions.DefaultAdminSecurityProfileAlreadyExist;
+import com.rdonasco.security.exceptions.SecurityAuthenticationException;
 import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.vo.AccessRightsVO;
@@ -268,5 +269,23 @@ public class SystemSecurityManagerLocalTest
 				.createAccessRightsVO();
 
 		systemSecurityManager.checkAccessRights(accessRights);
+	}
+
+	@Test
+	public void testFindSecurityProfileWithLogonIDandPassword() throws Exception
+	{
+		System.out.println("findSecurityProfileWithLogonIDandPassword");
+		UserSecurityProfileVO newUser = userSecurityProfileTestUtility.createNewUserSecurityProfile();
+		UserSecurityProfileVO foundUser = systemSecurityManager.findSecurityProfileWithLogonIDandPassword(newUser.getLogonId(), "rdonasco");
+		assertNotNull("user not found", foundUser);
+	}
+
+	@Test(expected = SecurityAuthenticationException.class)
+	public void testFindSecurityProfileWithLogonIDandWrongPassword() throws
+			Exception
+	{
+		System.out.println("FindSecurityProfileWithLogonIDandWrongPassword");
+		UserSecurityProfileVO newUser = userSecurityProfileTestUtility.createNewUserSecurityProfile();
+		systemSecurityManager.findSecurityProfileWithLogonIDandPassword(newUser.getLogonId(), "xrdonasco");
 	}
 }
