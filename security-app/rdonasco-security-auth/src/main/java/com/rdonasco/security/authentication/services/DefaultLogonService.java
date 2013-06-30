@@ -85,7 +85,6 @@ public class DefaultLogonService implements LogonService
 		catch (SecurityAuthenticationException ex)
 		{
 			loggedOnSessionProvider.getLoggedOnSession().clear();
-			LOG.log(Level.WARNING, ex.getMessage(), ex);
 			throw ex;
 		}
 		catch (SecurityProfileNotFoundException ex)
