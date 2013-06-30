@@ -181,6 +181,7 @@ public class UserSecurityProfileManagerTest
 		}
 		userSecurityProfileVO.setGroups(groupsToUpdate);
 		createUserGroupsNamed(userSecurityProfileVO, "Idols");
+		userSecurityProfileVO.setPassword(null);
 		userSecurityProfileManager.updateUserSecurityProfile(userSecurityProfileVO);
 		UserSecurityProfileVO updatedUserSecurityProfileVO = userSecurityProfileManager.findSecurityProfileWithLogonID(userSecurityProfileVO.getLogonId());
 		assertNotNull("updated data not found", updatedUserSecurityProfileVO);
