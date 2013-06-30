@@ -49,7 +49,11 @@ public interface SystemSecurityManager
 			CapabilityVO capability) throws SecurityManagerException;
 
 	void removeSecurityProfile(UserSecurityProfileVO securityProfileToRemove) throws SecurityManagerException;
-	UserSecurityProfileVO findSecurityProfileWithLogonID(String logonID) throws SecurityManagerException;
+	UserSecurityProfileVO findSecurityProfileWithLogonID(String logonID) throws
+			SecurityManagerException;
+
+	UserSecurityProfileVO findSecurityProfileWithLogonIDandPassword(
+			String logonID, String password) throws SecurityManagerException;
 	boolean isSecuredResource(String resource);
 	List<UserSecurityProfileVO> findAllProfiles() throws SecurityManagerException;
 }
