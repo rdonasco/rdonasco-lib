@@ -70,7 +70,7 @@ public class DefaultLogonServiceTest
 		final SystemSecurityManagerDecorator systemSecurityManager = mock(SystemSecurityManagerDecorator.class);
 		instance.setSystemSecurityManager(systemSecurityManager);
 		instance.setSessionSecurityChecker(sessionSecurityChecker);
-		when(systemSecurityManager.findSecurityProfileWithLogonID(logonVO.getLogonID())).thenReturn(expResult);
+		when(systemSecurityManager.findSecurityProfileWithLogonIDandPassword(logonVO.getLogonID(), logonVO.getPassword())).thenReturn(expResult);
 		when(loggedOnSessionProviderMock.getLoggedOnSession()).thenReturn(loggedOnSession);
 		UserSecurityProfileVO result = instance.logon(logonVO);
 		assertEquals(expResult, result);
@@ -93,7 +93,7 @@ public class DefaultLogonServiceTest
 		instance.setLoggedOnSessionProvider(loggedOnSessionProviderMock);
 		final SystemSecurityManagerDecorator systemSecurityManager = mock(SystemSecurityManagerDecorator.class);
 		instance.setSystemSecurityManager(systemSecurityManager);
-		when(systemSecurityManager.findSecurityProfileWithLogonID(logonVO.getLogonID())).thenReturn(expResult);
+		when(systemSecurityManager.findSecurityProfileWithLogonIDandPassword(logonVO.getLogonID(), logonVO.getPassword())).thenReturn(expResult);
 		when(loggedOnSessionProviderMock.getLoggedOnSession()).thenReturn(loggedOnSession);
 		instance.logon(logonVO);
 	}
@@ -109,7 +109,7 @@ public class DefaultLogonServiceTest
 		instance.setLoggedOnSessionProvider(loggedOnSessionProviderMock);
 		final SystemSecurityManagerDecorator systemSecurityManager = mock(SystemSecurityManagerDecorator.class);
 		instance.setSystemSecurityManager(systemSecurityManager);
-		when(systemSecurityManager.findSecurityProfileWithLogonID(logonVO.getLogonID())).thenReturn(null);
+		when(systemSecurityManager.findSecurityProfileWithLogonIDandPassword(logonVO.getLogonID(), logonVO.getPassword())).thenReturn(null);
 		when(systemSecurityManager.createDefaultAdminSecurityProfile()).thenThrow(DefaultAdminSecurityProfileAlreadyExist.class);
 		when(loggedOnSessionProviderMock.getLoggedOnSession()).thenReturn(loggedOnSession);
 		instance.logon(logonVO);
