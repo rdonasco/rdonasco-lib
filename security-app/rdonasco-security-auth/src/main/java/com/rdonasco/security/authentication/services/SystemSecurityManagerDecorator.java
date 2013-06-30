@@ -95,6 +95,14 @@ public class SystemSecurityManagerDecorator implements SystemSecurityManager
 	}
 
 	@Override
+	public UserSecurityProfileVO findSecurityProfileWithLogonIDandPassword(
+			String logonID, String password) throws SecurityManagerException
+	{
+		return systemSecurityManager.findSecurityProfileWithLogonIDandPassword(logonID, password);
+	}
+
+
+	@Override
 	public boolean isSecuredResource(String resource)
 	{
 		return systemSecurityManager.isSecuredResource(resource);
