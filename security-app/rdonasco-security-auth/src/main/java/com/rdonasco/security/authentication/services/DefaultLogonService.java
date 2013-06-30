@@ -74,15 +74,10 @@ public class DefaultLogonService implements LogonService
 			{
 				throw new SecurityAuthenticationException("password cannot be empty");
 			}
-			userSecurityProfile = systemSecurityManager.findSecurityProfileWithLogonID(userID);
+			userSecurityProfile = systemSecurityManager.findSecurityProfileWithLogonIDandPassword(userID, password);
 			if (null == userSecurityProfile)
 			{
 				throw new SecurityProfileNotFoundException("Security Profile not found");
-			}
-			String encryptedPassword = EncryptionUtil.encryptWithPassword(password, password);
-			if (!encryptedPassword.equals(userSecurityProfile.getPassword()))
-			{
-				throw new SecurityAuthenticationException("Authentication failed for user:" + userID);
 			}
 			loggedOnSessionProvider.getLoggedOnSession().setLoggedOnUser(userSecurityProfile);
 			sessionSecurityChecker.checkCapabilityTo(AuthConstants.ACTION_LOGON, AuthConstants.RESOURCE_SYSTEM);
