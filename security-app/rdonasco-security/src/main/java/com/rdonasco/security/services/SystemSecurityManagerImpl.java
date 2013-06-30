@@ -23,6 +23,7 @@ import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.exceptions.DefaultAdminSecurityProfileAlreadyExist;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
+import com.rdonasco.security.exceptions.SecurityAuthenticationException;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.utils.EncryptionUtil;
@@ -184,6 +185,15 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	}
 
 	@Override
+	public UserSecurityProfileVO findSecurityProfileWithLogonIDandPassword(
+			String logonID, String password) throws SecurityManagerException
+	{
+		UserSecurityProfileVO userSecurityProfileVO = findSecurityProfileWithLogonID(logonID);
+		verifyPassword(userSecurityProfileVO, password);
+		return userSecurityProfileVO;
+	}
+
+	@Override
 	public void removeSecurityProfile(
 			UserSecurityProfileVO securityProfileToRemove) throws
 			SecurityManagerException
@@ -292,5 +302,31 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			};
 			LOG.log(Level.FINE, "access right action: {0}, resource: {1}", params);
 		}
+	}
+
+	private void verifyPassword(UserSecurityProfileVO userSecurityProfileVO,
+			String password) throws SecurityManagerException
+	{
+			if (null != userSecurityProfileVO)
+			{
+				String encrypted = null;
+				try
+				{
+					encrypted = EncryptionUtil.encryptWithPassword(password, password);
+				}
+				catch (Exception ex)
+				{
+					LOG.log(Level.WARNING, ex.getMessage(), ex);
+				}
+				if (!userSecurityProfileVO.getPassword().equals(encrypted))
+				{
+					throw new SecurityAuthenticationException(I18NResource.localize("Invalid Credentials"));
+				}
+			}
+			else
+			{
+				throw new SecurityAuthenticationException(I18NResource.localize("Invalid Credentials"));
+		}
+
 	}
 }
