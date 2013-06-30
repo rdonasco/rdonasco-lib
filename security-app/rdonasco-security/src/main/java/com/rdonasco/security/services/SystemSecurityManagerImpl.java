@@ -125,7 +125,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		}
 		catch (Exception e)
 		{
-			LOG.log(Level.FINE, e.getMessage(), e);
+			LOG.log(Level.FINER, e.getMessage(), e);
 			throw new SecurityAuthorizationException(e);
 		}
 	}
@@ -320,12 +320,12 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 				}
 				if (!userSecurityProfileVO.getPassword().equals(encrypted))
 				{
-					throw new SecurityAuthenticationException(I18NResource.localize("Invalid Credentials"));
+					throw new SecurityAuthenticationException("Invalid Credentials");
 				}
 			}
 			else
 			{
-				throw new SecurityAuthenticationException(I18NResource.localize("Invalid Credentials"));
+				throw new SecurityAuthenticationException("Invalid Credentials");
 		}
 
 	}
