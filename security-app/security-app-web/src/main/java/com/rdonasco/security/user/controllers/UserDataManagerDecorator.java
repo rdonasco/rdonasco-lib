@@ -123,11 +123,6 @@ public class UserDataManagerDecorator implements
 	{
 		try
 		{
-			String password = data.getUserSecurityProfileVO().getPassword();
-			if (password != null && !password.isEmpty())
-			{
-				data.getUserSecurityProfileVO().setPassword(EncryptionUtil.encryptWithPassword(password, password));
-			}
 			getSecurityManager().updateSecurityProfile(data.getUserSecurityProfileVO());
 		}
 		catch (Exception ex)
