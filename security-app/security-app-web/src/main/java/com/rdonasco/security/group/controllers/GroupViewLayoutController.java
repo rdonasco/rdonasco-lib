@@ -22,7 +22,7 @@ import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.security.authorization.interceptors.Secured;
 import com.rdonasco.security.authorization.interceptors.SecuredCapability;
 import com.rdonasco.security.common.utils.ActionConstants;
-import com.rdonasco.security.common.views.ThreeColumnFlexibleCenterViewLayout;
+import com.rdonasco.common.vaadin.view.layouts.ThreeColumnFlexibleCenterViewLayout;
 import com.rdonasco.security.group.utils.GroupConstants;
 import com.rdonasco.security.group.vo.GroupItemVO;
 import com.rdonasco.security.role.controllers.AvailableRolesViewController;

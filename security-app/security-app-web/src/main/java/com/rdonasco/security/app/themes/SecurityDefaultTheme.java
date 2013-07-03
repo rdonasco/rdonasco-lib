@@ -17,10 +17,7 @@ public final class SecurityDefaultTheme
 	public static final String CSS_TOOLBAR = "toolbar";
 	public static final String CSS_WORKSPACE = "workspace";
 	public static final String CSS_MAIN_WINDOW = "mainWindow";
-	public static final String CSS_LEFT_PANEL = "leftPanel";
-	public static final String CSS_CENTER_PANEL = "centerPanel";
-	public static final String CSS_RIGHT_PANEL = "rightPanel";
-	public static final String CSS_THREE_COLUMN_VIEW_LAYOUT = "threeColumnViewLayout";
+	
 	public static final String CSS_DATA_TABLE = "capabilityTable";
 	public static final String CSS_CAPABILITY_EDITOR = "capabilityEditor";
 	public static final String CSS_ROLE_EDITOR = "roleEditor";

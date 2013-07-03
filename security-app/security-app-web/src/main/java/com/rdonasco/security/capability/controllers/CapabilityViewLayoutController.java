@@ -21,7 +21,7 @@ import com.rdonasco.security.capability.vo.CapabilityItemVO;
 import com.rdonasco.security.capability.vo.ResourceItemVO;
 import com.rdonasco.security.capability.vo.ResourceItemVOBuilder;
 import com.rdonasco.security.common.utils.ActionConstants;
-import com.rdonasco.security.common.views.ThreeColumnFlexibleCenterViewLayout;
+import com.rdonasco.common.vaadin.view.layouts.ThreeColumnFlexibleCenterViewLayout;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.ResourceVO;

@@ -41,7 +41,8 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>rdonasco-datamanager</artifactId>
-			<version>${project.version}</version>
+			<version>1.0.1-SNAPSHOT</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.vaadin.addons</groupId>
@@ -57,6 +58,12 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>rdonasco-config-view</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>rdonasco-common-vaadin</artifactId>
+					<groupId>com.rdonasco</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

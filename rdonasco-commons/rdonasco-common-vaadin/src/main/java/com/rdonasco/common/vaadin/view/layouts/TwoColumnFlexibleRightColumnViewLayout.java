@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.rdonasco.security.common.views;
+package com.rdonasco.common.vaadin.view.layouts;
 
+import com.rdonasco.common.vaadin.themes.DefaultThemeCssConstants;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.view.ControlledView;
-import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
@@ -37,16 +37,16 @@ public class TwoColumnFlexibleRightColumnViewLayout extends HorizontalLayout imp
 	@Override
 	public void initWidget() throws WidgetInitalizeException
 	{
-		addStyleName(SecurityDefaultTheme.CSS_USER_PROFILE_WORKSPACE);
+		addStyleName(DefaultThemeCssConstants.CSS_TWO_COLUMN_VIEW_LAYOUT);
 		setSizeFull();
 		leftPanel.setWidth(250f, UNITS_PIXELS);
 		leftPanel.setHeight(100f, UNITS_PERCENTAGE);
 		leftPanel.setMargin(true, false, true, true);
-		leftPanel.addStyleName(SecurityDefaultTheme.CSS_LEFT_PANEL);
+		leftPanel.addStyleName(DefaultThemeCssConstants.CSS_LEFT_PANEL);
 
 		centerPanel.setSizeFull();
 		centerPanel.setMargin(true, true, true, true);
-		centerPanel.addStyleName(SecurityDefaultTheme.CSS_CENTER_PANEL);
+		centerPanel.addStyleName(DefaultThemeCssConstants.CSS_CENTER_PANEL);
 
 		addComponent(leftPanel);
 		addComponent(centerPanel);

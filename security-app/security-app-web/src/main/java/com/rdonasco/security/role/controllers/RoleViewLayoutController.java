@@ -25,7 +25,7 @@ import com.rdonasco.security.authorization.interceptors.SecuredCapability;
 import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewController;
 import com.rdonasco.security.capability.controllers.AvailableCapabilitiesViewControllerBuilder;
 import com.rdonasco.security.common.utils.ActionConstants;
-import com.rdonasco.security.common.views.ThreeColumnFlexibleCenterViewLayout;
+import com.rdonasco.common.vaadin.view.layouts.ThreeColumnFlexibleCenterViewLayout;
 import com.rdonasco.security.role.utils.RoleConstants;
 import com.rdonasco.security.role.vo.RoleItemVO;
 import com.vaadin.data.Property;

@@ -65,6 +65,7 @@ public class SettingsHomeButtonController implements
 			doTheRefresh();
 			featureButton.addListener(new Button.ClickListener()
 			{
+				private static final long serialVersionUID = 1L;
 				@Override
 				public void buttonClick(Button.ClickEvent event)
 				{

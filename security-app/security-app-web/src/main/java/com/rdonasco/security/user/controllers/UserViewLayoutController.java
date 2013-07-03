@@ -22,7 +22,7 @@ import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.security.authorization.interceptors.Secured;
 import com.rdonasco.security.authorization.interceptors.SecuredCapability;
-import com.rdonasco.security.common.views.TwoColumnFlexibleRightColumnViewLayout;
+import com.rdonasco.common.vaadin.view.layouts.TwoColumnFlexibleRightColumnViewLayout;
 import com.vaadin.data.Property;
 import com.vaadin.ui.Table;
 import javax.annotation.PostConstruct;

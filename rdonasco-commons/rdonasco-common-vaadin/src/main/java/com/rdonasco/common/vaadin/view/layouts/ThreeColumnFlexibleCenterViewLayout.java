@@ -2,11 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.rdonasco.security.common.views;
+package com.rdonasco.common.vaadin.view.layouts;
 
+import com.rdonasco.common.vaadin.themes.DefaultThemeCssConstants;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.view.ControlledView;
-import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import static com.vaadin.terminal.Sizeable.UNITS_PERCENTAGE;
 import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.ui.Component;
@@ -31,20 +31,20 @@ public class ThreeColumnFlexibleCenterViewLayout extends HorizontalLayout implem
 	@Override
 	public void initWidget() throws WidgetInitalizeException
 	{
-		addStyleName(SecurityDefaultTheme.CSS_THREE_COLUMN_VIEW_LAYOUT);
+		addStyleName(DefaultThemeCssConstants.CSS_THREE_COLUMN_VIEW_LAYOUT);
 		setSizeFull();
 		leftPanel.setWidth(250, UNITS_PIXELS);
 		leftPanel.setHeight(100F, UNITS_PERCENTAGE);
 		leftPanel.setMargin(true, false, true, true);
-		leftPanel.addStyleName(SecurityDefaultTheme.CSS_LEFT_PANEL);
+		leftPanel.addStyleName(DefaultThemeCssConstants.CSS_LEFT_PANEL);
 
 		centerPanel.setSizeFull();
 		centerPanel.setMargin(true);
-		centerPanel.addStyleName(SecurityDefaultTheme.CSS_CENTER_PANEL);
+		centerPanel.addStyleName(DefaultThemeCssConstants.CSS_CENTER_PANEL);
 
 		rightPanel.setWidth(250, UNITS_PIXELS);
 		rightPanel.setMargin(true, true, true, false);
-		rightPanel.addStyleName(SecurityDefaultTheme.CSS_RIGHT_PANEL);
+		rightPanel.addStyleName(DefaultThemeCssConstants.CSS_RIGHT_PANEL);
 		rightPanel.setSpacing(true);
 
 		addComponent(leftPanel);
