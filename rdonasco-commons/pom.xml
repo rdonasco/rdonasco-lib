@@ -4,7 +4,7 @@
   <parent>
     <artifactId>rdonasco</artifactId>
     <groupId>com.rdonasco</groupId>
-	<version>1.2.0</version>
+	<version>1.2.1</version>
   </parent>
   <groupId>com.rdonasco</groupId>
   <artifactId>rdonasco-commons</artifactId>
