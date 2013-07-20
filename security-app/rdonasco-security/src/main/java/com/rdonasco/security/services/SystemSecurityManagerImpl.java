@@ -18,8 +18,6 @@ package com.rdonasco.security.services;
 
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.common.i18.I18NResource;
-import com.rdonasco.security.dao.UserCapabilityDAO;
-import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.exceptions.DefaultAdminSecurityProfileAlreadyExist;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
@@ -42,7 +40,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 
 /**
  *
