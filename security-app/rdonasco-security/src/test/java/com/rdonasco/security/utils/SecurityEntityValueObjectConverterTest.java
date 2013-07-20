@@ -5,6 +5,7 @@
 package com.rdonasco.security.utils;
 
 import com.rdonasco.security.model.Action;
+import com.rdonasco.security.model.Application;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.CapabilityAction;
 import com.rdonasco.security.model.Resource;
@@ -15,6 +16,8 @@ import com.rdonasco.security.model.SecurityGroupRole;
 import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.ApplicationVO;
+import com.rdonasco.security.vo.ApplicationVOBuilder;
 import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
@@ -444,6 +447,36 @@ public class SecurityEntityValueObjectConverterTest
 		{
 			fail("role not included");
 		}
+
+	}
+
+	@Test
+	public void testToApplicationVO() throws Exception
+	{
+		System.out.println("toApplicationVO");
+		Application application = new Application();
+		application.setId(Long.MIN_VALUE);
+		application.setName("Security");
+		application.setToken("theToken");
+		ApplicationVO applicationVO = SecurityEntityValueObjectConverter.toApplicationVO(application);
+		assertEquals("applicationVO id mismatch", application.getId(), applicationVO.getId());
+		assertEquals("applicationVO name mismatch", application.getName(), applicationVO.getName());
+		assertEquals("applicationVO token mismatch", application.getToken(), applicationVO.getToken());
+	}
+
+	@Test
+	public void testToApplication() throws Exception
+	{
+		System.out.println("toApplication");
+		ApplicationVO applicationVO = new ApplicationVOBuilder()
+				.setId(Long.MIN_VALUE)
+				.setName("Security")
+				.setToken("Token")
+				.createApplicationVO();
+		Application application = SecurityEntityValueObjectConverter.toApplication(applicationVO);
+		assertEquals("application id mismatch", applicationVO.getId(), application.getId());
+		assertEquals("application name mismatch", applicationVO.getName(), application.getName());
+		assertEquals("application token mismatch", applicationVO.getToken(), application.getToken());
 
 	}
 }

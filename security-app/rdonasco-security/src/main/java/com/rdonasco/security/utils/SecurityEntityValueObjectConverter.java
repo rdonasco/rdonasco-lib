@@ -5,6 +5,7 @@
 package com.rdonasco.security.utils;
 
 import com.rdonasco.security.model.Action;
+import com.rdonasco.security.model.Application;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.CapabilityAction;
 import com.rdonasco.security.model.Resource;
@@ -17,6 +18,8 @@ import com.rdonasco.security.model.UserGroup;
 import com.rdonasco.security.model.UserRole;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.ApplicationVO;
+import com.rdonasco.security.vo.ApplicationVOBuilder;
 import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityActionVOBuilder;
 import com.rdonasco.security.vo.CapabilityVO;
@@ -599,5 +602,23 @@ public class SecurityEntityValueObjectConverter
 				.setId(userGroup.getId())
 				.setUserProfile(userSecurityProfileVO)
 				.createUserGroupVO();
+	}
+
+	public static ApplicationVO toApplicationVO(Application application)
+	{
+		ApplicationVO applicationVO = new ApplicationVOBuilder()
+				.setId(application.getId())
+				.setName(application.getName())
+				.setToken(application.getToken()).createApplicationVO();
+		return applicationVO;
+	}
+
+	static Application toApplication(ApplicationVO applicationVO)
+	{
+		Application application = new Application();
+		application.setId(applicationVO.getId());
+		application.setName(applicationVO.getName());
+		application.setToken(applicationVO.getToken());
+		return application;
 	}
 }
