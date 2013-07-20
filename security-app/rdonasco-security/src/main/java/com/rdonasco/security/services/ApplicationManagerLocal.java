@@ -30,4 +30,14 @@ public interface ApplicationManagerLocal
 
 	ApplicationVO createNewApplication(final ApplicationVO newApplicationVO)
 			throws ApplicationManagerException;
+
+	void updateApplication(final ApplicationVO applicationToUpdate)
+			throws ApplicationManagerException;
+
+	ApplicationVO loadApplicationWithID(Long id) throws
+			ApplicationManagerException;
+
+	ApplicationVO loadApplicationByNameAndToken(String applicationName,
+			String token) throws
+			ApplicationManagerException;
 }

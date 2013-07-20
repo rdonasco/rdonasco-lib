@@ -613,7 +613,7 @@ public class SecurityEntityValueObjectConverter
 		return applicationVO;
 	}
 
-	static Application toApplication(ApplicationVO applicationVO)
+	public static Application toApplication(ApplicationVO applicationVO)
 	{
 		Application application = new Application();
 		application.setId(applicationVO.getId());

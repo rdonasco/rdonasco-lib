@@ -18,7 +18,11 @@ package com.rdonasco.security.services;
 
 import com.rdonasco.security.dao.ApplicationDAO;
 import com.rdonasco.security.exceptions.ApplicationManagerException;
+import com.rdonasco.security.model.Application;
+import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.vo.ApplicationVO;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -27,9 +31,11 @@ import javax.inject.Inject;
  * @author Roy F. Donasco
  */
 @Stateless
-public class ApplicationManager implements 
+public class ApplicationManager implements
 		ApplicationManagerLocal
 {
+	private static final Logger LOG = Logger.getLogger(ApplicationManager.class.getName());
+
 	private ApplicationDAO applicationDAO;
 
 	@Inject
@@ -42,11 +48,69 @@ public class ApplicationManager implements
 	public ApplicationVO createNewApplication(ApplicationVO newApplicationVO)
 			throws ApplicationManagerException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method createNewApplication
-		throw new UnsupportedOperationException("Not supported yet.");
+		ApplicationVO savedApplicationVO = null;
+		try
+		{
+			Application application = SecurityEntityValueObjectConverter.toApplication(newApplicationVO);
+			applicationDAO.create(application);
+			savedApplicationVO = SecurityEntityValueObjectConverter.toApplicationVO(application);
+		}
+		catch (Exception e)
+		{
+			throw new ApplicationManagerException(e);
+		}
+		return savedApplicationVO;
 	}
+
 	// Add business logic below. (Right-click in editor and choose
 	// "Insert Code > Add Business Method")
+	@Override
+	public void updateApplication(ApplicationVO applicationToUpdate) throws
+			ApplicationManagerException
+	{
+		try
+		{
+			Application application = SecurityEntityValueObjectConverter.toApplication(applicationToUpdate);
+			applicationDAO.update(application);
+		}
+		catch (Exception e)
+		{
+			throw new ApplicationManagerException(e);
+		}
 
+	}
+
+	@Override
+	public ApplicationVO loadApplicationWithID(Long id) throws
+			ApplicationManagerException
+	{
+		ApplicationVO loadedApplicationVO = null;
+		try
+		{
+			Application loadedApplication = applicationDAO.findData(id);
+			if (null == loadedApplication)
+			{
+				LOG.log(Level.FINE, "loadedApplication = {0}", loadedApplication);
+			}
+			else
+			{
+				loadedApplicationVO = SecurityEntityValueObjectConverter.toApplicationVO(loadedApplication);
+			}			
+		}
+		catch (Exception e)
+		{
+			throw new ApplicationManagerException(e);
+		}
+		return loadedApplicationVO;
+	}
+
+	@Override
+	public ApplicationVO loadApplicationByNameAndToken(String applicationName,
+			String token) throws
+			ApplicationManagerException
+	{
+		// To change body of generated methods, choose Tools | Templates.
+		// TODO: Complete code for method loadApplicationByNameAndToken
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }

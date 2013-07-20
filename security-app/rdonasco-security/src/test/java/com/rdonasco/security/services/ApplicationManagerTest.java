@@ -34,6 +34,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
+
 /**
  *
  * @author Roy F. Donasco
@@ -44,6 +45,7 @@ public class ApplicationManagerTest
 
 	@EJB
 	private ApplicationManagerLocal applicationManager;
+
 	public ApplicationManagerTest()
 	{
 	}
@@ -89,11 +91,89 @@ public class ApplicationManagerTest
 	public void testCreateNewApplication() throws Exception
 	{
 		ApplicationVO applicationVO = new ApplicationVOBuilder()
-				.setId(Long.MIN_VALUE)
 				.setName("Security")
 				.setToken("Token")
 				.createApplicationVO();
-		ApplicationVO application = applicationManager.createNewApplication(applicationVO);
-		assertNotNull(application);
+		ApplicationVO savedApplication = applicationManager.createNewApplication(applicationVO);
+		assertNotNull("id is not set", savedApplication.getId());
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void testCreateNewApplicationWithNullName() throws Exception
+	{
+		ApplicationVO applicationVO = new ApplicationVOBuilder()
+				.setToken("Token")
+				.createApplicationVO();
+		applicationManager.createNewApplication(applicationVO);
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void testCreateNewApplicationWithNullToken() throws Exception
+	{
+		ApplicationVO applicationVO = new ApplicationVOBuilder()
+				.setName("Security")
+				.createApplicationVO();
+		applicationManager.createNewApplication(applicationVO);
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void testCreateNewApplicationWithDuplicateName() throws Exception
+	{
+		ApplicationVO applicationVO = new ApplicationVOBuilder()
+				.setName("SecurityTwo")
+				.setToken("Token1")
+				.createApplicationVO();
+		applicationManager.createNewApplication(applicationVO);
+		ApplicationVO duplicateApplicationVO = new ApplicationVOBuilder()
+				.setName("SecurityTwo")
+				.setToken("Token")
+				.createApplicationVO();
+		applicationManager.createNewApplication(duplicateApplicationVO);
+	}
+
+	@Test
+	public void testFindApplication() throws Exception
+	{
+		ApplicationVO applicationVO = new ApplicationVOBuilder()
+				.setName("ApplicationName to find")
+				.setToken("Token")
+				.createApplicationVO();
+		ApplicationVO savedApplication = applicationManager.createNewApplication(applicationVO);
+		ApplicationVO loadedApplication = applicationManager.loadApplicationWithID(savedApplication.getId());
+		assertEquals("name mismatch", savedApplication.getName(), loadedApplication.getName());
+	}
+
+	@Test
+	public void testFindNonExistingApplication() throws Exception
+	{
+		ApplicationVO loadedApplication = applicationManager.loadApplicationWithID(Long.MAX_VALUE);
+		assertNull("found an application?", loadedApplication);
+	}
+
+	@Test
+	public void testUpdateApplication() throws Exception
+	{
+		ApplicationVO applicationVO = new ApplicationVOBuilder()
+				.setName("ApplicationName to update")
+				.setToken("Token")
+				.createApplicationVO();
+		ApplicationVO savedApplication = applicationManager.createNewApplication(applicationVO);
+		savedApplication.setName("updated name");
+		applicationManager.updateApplication(savedApplication);
+		ApplicationVO loadedApplication = applicationManager.loadApplicationWithID(savedApplication.getId());
+		assertEquals("name mismatch", savedApplication.getName(), loadedApplication.getName());
+	}
+
+	@Test
+	public void testLoadApplicationByName() throws Exception
+	{
+		ApplicationVO applicationVO = new ApplicationVOBuilder()
+				.setName("ApplicationName to find")
+				.setToken("Token")
+				.createApplicationVO();
+		ApplicationVO savedApplication = applicationManager.createNewApplication(applicationVO);
+		ApplicationVO foundApplication = applicationManager
+				.loadApplicationByNameAndToken(savedApplication.getName(), savedApplication.getToken());
+		assertNotNull("application is not found", foundApplication);
 	}
 }

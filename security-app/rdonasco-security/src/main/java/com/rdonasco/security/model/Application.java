@@ -18,17 +18,14 @@ package com.rdonasco.security.model;
 
 import com.rdonasco.security.utils.SecurityConstants;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -37,13 +34,24 @@ import javax.persistence.TableGenerator;
  * @author Roy F. Donasco
  */
 @Entity
-@Table(name = "application")
+@Table(name = "application_data")
+@NamedQueries(
+		{
+	@NamedQuery(name = Application.NAMED_QUERY_FIND_BY_NAME_AND_TOKEN,
+			query = "SELECT app FROM Application app WHERE app.name = :name AND app.token = :token")
+})
 public class Application implements Serializable
 {
 
 	private static final long serialVersionUID = 1L;
 
 	private static final String GENERATOR_KEY = "APP_ID_IDGEN";
+
+	public static final String NAMED_QUERY_FIND_BY_NAME_AND_TOKEN = "Application.findByName";
+
+	public static final String QUERY_PARAM_NAME = "name";
+
+	public static final String QUERY_PARAM_TOKEN = "token";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = GENERATOR_KEY)
