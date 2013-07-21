@@ -6,6 +6,7 @@ package com.rdonasco.security.utils;
 
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.model.Application;
+import com.rdonasco.security.model.ApplicationHost;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.CapabilityAction;
 import com.rdonasco.security.model.Resource;
@@ -18,6 +19,7 @@ import com.rdonasco.security.model.UserGroup;
 import com.rdonasco.security.model.UserRole;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.ApplicationHostVO;
 import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.ApplicationVOBuilder;
 import com.rdonasco.security.vo.CapabilityActionVO;
@@ -57,11 +59,12 @@ import org.apache.commons.beanutils.BeanUtilsBean2;
 public class SecurityEntityValueObjectConverter
 {
 
+	private static final BeanUtilsBean BEAN_UTILS = BeanUtilsBean.getInstance();
+
 	static
 	{
 		BeanUtilsBean.setInstance(new BeanUtilsBean2());
 	}
-	static final BeanUtilsBean BEAN_UTILS = BeanUtilsBean.getInstance();
 
 	public static UserSecurityProfile toUserProfile(
 			UserSecurityProfileVO userSecurityProfileVO)
@@ -78,8 +81,8 @@ public class SecurityEntityValueObjectConverter
 			userSecurityProfile.setId(userSecurityProfileVO.getId());
 		}
 		userSecurityProfile.setCapabilities(new ArrayList<UserCapability>(userSecurityProfileVO.getCapabilities().size()));
-		UserCapability userCapability = null;
-		Capability capability = null;
+		UserCapability userCapability;
+		Capability capability;
 		for (UserCapabilityVO userCapabilityVO : userSecurityProfileVO.getCapabilities())
 		{
 			userCapability = new UserCapability();
@@ -536,7 +539,7 @@ public class SecurityEntityValueObjectConverter
 		}
 		return securityGroupRoles;
 	}
-	
+
 	private static SecurityGroupRole toSecurityGroupRole(
 			SecurityGroupRoleVO securityGroupRoleVO) throws
 			IllegalAccessException, InvocationTargetException
@@ -544,7 +547,7 @@ public class SecurityEntityValueObjectConverter
 		SecurityGroupRole securityGroupRole = new SecurityGroupRole();
 		securityGroupRole.setId(securityGroupRoleVO.getId());
 		securityGroupRole.setRole(toRole(securityGroupRoleVO.getRoleVO()));
-		
+
 		return securityGroupRole;
 	}
 
@@ -606,11 +609,18 @@ public class SecurityEntityValueObjectConverter
 
 	public static ApplicationVO toApplicationVO(Application application)
 	{
-		ApplicationVO applicationVO = new ApplicationVOBuilder()
+		ApplicationVOBuilder applicationVOBuilder = new ApplicationVOBuilder()
 				.setId(application.getId())
 				.setName(application.getName())
-				.setToken(application.getToken()).createApplicationVO();
-		return applicationVO;
+				.setToken(application.getToken());
+		if (application.getHosts() != null && !application.getHosts().isEmpty())
+		{
+			for (ApplicationHost applicationHost : application.getHosts())
+			{
+				applicationVOBuilder.addHost(toApplicationHostVO(applicationHost));
+			}
+		}
+		return applicationVOBuilder.createApplicationVO();
 	}
 
 	public static Application toApplication(ApplicationVO applicationVO)
@@ -619,6 +629,33 @@ public class SecurityEntityValueObjectConverter
 		application.setId(applicationVO.getId());
 		application.setName(applicationVO.getName());
 		application.setToken(applicationVO.getToken());
+		if (applicationVO.getHosts() != null && !applicationVO.getHosts().isEmpty())
+		{
+			application.setHosts(new ArrayList<ApplicationHost>(applicationVO.getHosts().size()));
+			for (ApplicationHostVO applicationHostVO : applicationVO.getHosts())
+			{
+				application.getHosts().add(toApplicationHost(applicationHostVO, application));
+			}
+		}
 		return application;
+	}
+
+	private static ApplicationHostVO toApplicationHostVO(
+			ApplicationHost applicationHost)
+	{
+		ApplicationHostVO applicationHostVO = new ApplicationHostVO();
+		applicationHostVO.setId(applicationHost.getId());
+		applicationHostVO.setHostNameOrIpAddress(applicationHost.getHostNameOrIpAddress());
+		return applicationHostVO;
+	}
+
+	private static ApplicationHost toApplicationHost(
+			ApplicationHostVO applicationHostVO, Application application)
+	{
+		ApplicationHost applicationHost = new ApplicationHost();
+		applicationHost.setId(applicationHostVO.getId());
+		applicationHost.setHostNameOrIpAddress(applicationHostVO.getHostNameOrIpAddress());
+		applicationHost.setApplication(application);
+		return applicationHost;
 	}
 }

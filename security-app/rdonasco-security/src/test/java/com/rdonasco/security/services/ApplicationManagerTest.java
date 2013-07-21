@@ -17,10 +17,10 @@
 package com.rdonasco.security.services;
 
 import com.rdonasco.security.dao.ApplicationDAO;
-import com.rdonasco.security.dao.ApplicationDAOJPAImpl;
 import com.rdonasco.security.model.Application;
 import com.rdonasco.security.utils.ArchiveCreator;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
+import com.rdonasco.security.vo.ApplicationHostVO;
 import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.ApplicationVOBuilder;
 import javax.ejb.EJB;
@@ -132,6 +132,22 @@ public class ApplicationManagerTest
 	}
 
 	@Test
+	public void testCreateNewApplicationWithHosts() throws Exception
+	{
+		ApplicationHostVO hostVO = new ApplicationHostVO();
+		hostVO.setHostNameOrIpAddress("roy.donasco.com");
+		ApplicationVO applicationVO = new ApplicationVOBuilder()
+				.setName("Security with hosts")
+				.setToken("Token")
+				.addHost(hostVO)
+				.createApplicationVO();
+		ApplicationVO savedApplication = applicationManager.createNewApplication(applicationVO);
+		assertNotNull("id is not set", savedApplication.getId());
+		ApplicationHostVO savedHost = savedApplication.getHosts().get(0);
+		assertEquals("host not saved", hostVO.getHostNameOrIpAddress(), savedHost.getHostNameOrIpAddress());
+	}
+
+	@Test
 	public void testFindApplication() throws Exception
 	{
 		ApplicationVO applicationVO = new ApplicationVOBuilder()
@@ -167,13 +183,13 @@ public class ApplicationManagerTest
 	@Test
 	public void testLoadApplicationByName() throws Exception
 	{
-//		ApplicationVO applicationVO = new ApplicationVOBuilder()
-//				.setName("ApplicationName to find")
-//				.setToken("Token")
-//				.createApplicationVO();
-//		ApplicationVO savedApplication = applicationManager.createNewApplication(applicationVO);
-//		ApplicationVO foundApplication = applicationManager
-//				.loadApplicationByNameAndToken(savedApplication.getName(), savedApplication.getToken());
-//		assertNotNull("application is not found", foundApplication);
+		ApplicationVO applicationVO = new ApplicationVOBuilder()
+				.setName("ApplicationName to find by name")
+				.setToken("Token")
+				.createApplicationVO();
+		ApplicationVO savedApplication = applicationManager.createNewApplication(applicationVO);
+		ApplicationVO foundApplication = applicationManager
+				.loadApplicationByNameAndToken(savedApplication.getName(), savedApplication.getToken());
+		assertNotNull("application is not found", foundApplication);
 	}
 }

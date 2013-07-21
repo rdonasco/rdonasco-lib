@@ -21,6 +21,8 @@ import com.rdonasco.security.exceptions.ApplicationManagerException;
 import com.rdonasco.security.model.Application;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.vo.ApplicationVO;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -109,8 +111,19 @@ public class ApplicationManager implements
 			String token) throws
 			ApplicationManagerException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method loadApplicationByNameAndToken
-		throw new UnsupportedOperationException("Not supported yet.");
+		ApplicationVO foundApplicationVO = null;
+		try
+		{
+			Map<String, Object> parameters = new HashMap<String, Object>();
+			parameters.put(Application.QUERY_PARAM_NAME, applicationName);
+			parameters.put(Application.QUERY_PARAM_TOKEN, token);
+			Application foundApplication = applicationDAO.findUniqueDataUsingNamedQuery(Application.NAMED_QUERY_FIND_BY_NAME_AND_TOKEN, parameters);
+			foundApplicationVO = SecurityEntityValueObjectConverter.toApplicationVO(foundApplication);
+		}
+		catch (Exception e)
+		{
+			throw new ApplicationManagerException(e);
+		}
+		return foundApplicationVO;
 	}
 }

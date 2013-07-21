@@ -18,14 +18,18 @@ package com.rdonasco.security.model;
 
 import com.rdonasco.security.utils.SecurityConstants;
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -67,6 +71,8 @@ public class Application implements Serializable
 	@Column(name = "token", nullable = false, length = 256)
 	private String token;
 
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "application", fetch = FetchType.LAZY)
+	private Collection<ApplicationHost> hosts;
 
 	public Long getId()
 	{
@@ -98,6 +104,16 @@ public class Application implements Serializable
 		this.token = token;
 	}
 
+	public Collection<ApplicationHost> getHosts()
+	{
+		return hosts;
+	}
+
+	public void setHosts(
+			Collection<ApplicationHost> hosts)
+	{
+		this.hosts = hosts;
+	}
 
 	@Override
 	public int hashCode()
