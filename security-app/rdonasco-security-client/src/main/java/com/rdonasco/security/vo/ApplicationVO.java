@@ -18,6 +18,8 @@
 package com.rdonasco.security.vo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -32,6 +34,8 @@ public class ApplicationVO implements Serializable
 	private String name;
 
 	private String token;
+
+	private List<ApplicationHostVO> hosts = new ArrayList<ApplicationHostVO>();
 
 	ApplicationVO(Long id, String name, String token)
 	{
@@ -69,6 +73,18 @@ public class ApplicationVO implements Serializable
 	{
 		this.token = token;
 	}
+
+	public List<ApplicationHostVO> getHosts()
+	{
+		return hosts;
+	}
+
+	public void setHosts(
+			List<ApplicationHostVO> hosts)
+	{
+		this.hosts = hosts;
+	}
+
 
 	@Override
 	public int hashCode()

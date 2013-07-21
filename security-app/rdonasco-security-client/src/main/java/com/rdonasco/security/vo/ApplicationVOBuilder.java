@@ -17,6 +17,8 @@
 
 package com.rdonasco.security.vo;
 
+import java.util.ArrayList;
+import java.util.List;
 
 public class ApplicationVOBuilder 
 {
@@ -25,6 +27,8 @@ public class ApplicationVOBuilder
 	private String name;
 
 	private String token;
+
+	private List<ApplicationHostVO> hosts = new ArrayList<ApplicationHostVO>();
 
 	public ApplicationVOBuilder()
 	{
@@ -48,9 +52,23 @@ public class ApplicationVOBuilder
 		return this;
 	}
 
+	public ApplicationVOBuilder addHost(ApplicationHostVO applicationHostVO)
+	{
+		hosts.add(applicationHostVO);
+		return this;
+	}
+
+	public ApplicationVOBuilder removeHost(ApplicationHostVO applicationHostVO)
+	{
+		hosts.remove(applicationHostVO);
+		return this;
+	}
+
 	public ApplicationVO createApplicationVO()
 	{
-		return new ApplicationVO(id, name, token);
+		ApplicationVO applicationVO = new ApplicationVO(id, name, token);
+		applicationVO.setHosts(new ArrayList<ApplicationHostVO>(hosts));
+		return applicationVO;
 	}
 
 }
