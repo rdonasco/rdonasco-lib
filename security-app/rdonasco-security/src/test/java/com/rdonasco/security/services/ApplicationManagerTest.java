@@ -24,6 +24,8 @@ import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.vo.ApplicationHostVO;
 import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.ApplicationVOBuilder;
+import java.util.ArrayList;
+import java.util.List;
 import javax.ejb.EJB;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -137,15 +139,79 @@ public class ApplicationManagerTest
 	{
 		ApplicationHostVO hostVO = new ApplicationHostVO();
 		hostVO.setHostNameOrIpAddress("roy.donasco.com");
-		ApplicationVO applicationVO = new ApplicationVOBuilder()
-				.setName("Security with hosts")
-				.setToken("Token")
-				.addHost(hostVO)
-				.createApplicationVO();
+		ApplicationVO applicationVO = createTestApplicationDataWithHosts("security with hosts", "roy.donasco.com");
 		ApplicationVO savedApplication = applicationManager.createNewApplication(applicationVO);
 		assertNotNull("id is not set", savedApplication.getId());
 		ApplicationHostVO savedHost = savedApplication.getHosts().get(0);
 		assertEquals("host not saved", hostVO.getHostNameOrIpAddress(), savedHost.getHostNameOrIpAddress());
+	}
+
+	@Test
+	public void testUpdateHostDataOfAnApplication() throws Exception
+	{
+		ApplicationVO applicationVO = createTestApplicationDataWithHosts("Security with hosts to be updated", "royf.donasco.com");
+		ApplicationVO savedApplication = applicationManager.createNewApplication(applicationVO);
+		ApplicationHostVO savedHost = savedApplication.getHosts().get(0);
+		savedHost.setHostNameOrIpAddress("heidi.donasco.com");
+		applicationManager.updateApplication(savedApplication);
+		ApplicationVO updatedApplication = applicationManager.loadApplicationWithID(savedApplication.getId());
+		ApplicationHostVO updatedHost = updatedApplication.getHosts().get(0);
+		assertEquals("hostNotUpdated", savedHost.getHostNameOrIpAddress(), updatedHost.getHostNameOrIpAddress());
+	}
+
+	@Test
+	public void testUpdateApplicationToAddAhost() throws Exception
+	{
+		ApplicationVO applicationVO = createTestApplicationDataWithHosts(
+				"Security with hosts to be added", "royf.donasco.com");
+		ApplicationVO savedApplication = applicationManager.createNewApplication(applicationVO);
+		ApplicationHostVO applicationHostVO = new ApplicationHostVO();
+		final String hostToAdd = "alexie.donasco.com";
+		applicationHostVO.setHostNameOrIpAddress(hostToAdd);
+		savedApplication.getHosts().add(applicationHostVO);
+		applicationManager.updateApplication(savedApplication);
+		ApplicationVO updatedApplicationVO = applicationManager.loadApplicationWithID(savedApplication.getId());
+		boolean foundHost = false;
+		for (ApplicationHostVO host : updatedApplicationVO.getHosts())
+		{
+			if (foundHost = hostToAdd.equals(host.getHostNameOrIpAddress()))
+			{
+				break;
+			}
+		}
+		assertTrue("added host not found", foundHost);
+	}
+
+	@Test
+	public void testUpdateApplicationToDeleteAHost() throws Exception
+	{
+		ApplicationVO applicationVO = createTestApplicationDataWithHosts(
+				"Security with hosts to be deleted", "royf.donasco.com", "heidi.donasco.com", "alexie.donasco.com");
+		ApplicationVO savedApplication = applicationManager.createNewApplication(applicationVO);
+		ApplicationHostVO hostToFind = new ApplicationHostVO();
+		hostToFind.setHostNameOrIpAddress("royf.donasco.com");
+		savedApplication.getHosts().remove(hostToFind);
+		applicationManager.updateApplication(savedApplication);
+		ApplicationVO updatedApplicationVO = applicationManager.loadApplicationWithID(savedApplication.getId());
+		assertFalse("host not removed", updatedApplicationVO.getHosts().contains(hostToFind));
+	}
+
+	@Test
+	public void testUpdateApplicationToDeleteAndAddHost() throws Exception
+	{
+		ApplicationVO applicationVO = createTestApplicationDataWithHosts(
+				"Security with hosts to be deleted and added", "royf.donasco.com", "heidi.donasco.com", "alexie.donasco.com");
+		ApplicationVO savedApplication = applicationManager.createNewApplication(applicationVO);
+		ApplicationHostVO hostToFind = new ApplicationHostVO();
+		hostToFind.setHostNameOrIpAddress("royf.donasco.com");
+		savedApplication.getHosts().remove(hostToFind);
+		ApplicationHostVO hostToAdd = new ApplicationHostVO();
+		hostToAdd.setHostNameOrIpAddress("nikka.donasco.com");
+		savedApplication.getHosts().add(hostToAdd);
+		applicationManager.updateApplication(savedApplication);
+		ApplicationVO updatedApplicationVO = applicationManager.loadApplicationWithID(savedApplication.getId());
+		assertFalse("host not removed", updatedApplicationVO.getHosts().contains(hostToFind));
+		assertTrue("added host not found", updatedApplicationVO.getHosts().contains(hostToAdd));
 	}
 
 	@Test
@@ -202,6 +268,21 @@ public class ApplicationManagerTest
 				.setToken("Token")
 				.createApplicationVO();
 		applicationManager
-				.loadApplicationByNameAndToken(applicationVO.getName(), applicationVO.getToken());		
-	}	
+				.loadApplicationByNameAndToken(applicationVO.getName(), applicationVO.getToken());
+	}
+
+	private ApplicationVO createTestApplicationDataWithHosts(
+			final String applicationName, final String... applicationHosts)
+	{
+		ApplicationVOBuilder builder = new ApplicationVOBuilder()
+				.setName(applicationName)
+				.setToken("Token");
+		for (String host : applicationHosts)
+		{
+			ApplicationHostVO hostVO = new ApplicationHostVO();
+			hostVO.setHostNameOrIpAddress(host);
+			builder.addHost(hostVO);
+		}
+		return builder.createApplicationVO();
+	}
 }

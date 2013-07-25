@@ -41,7 +41,7 @@ import javax.persistence.UniqueConstraint;
 		@UniqueConstraint(
 		columnNames =
 {
-	"application_id", "host_id"
+	"application_id", "hostNameOrIpAddress"
 }, name = "unique_application_host"))
 public class ApplicationHost implements Serializable
 {
@@ -61,7 +61,7 @@ public class ApplicationHost implements Serializable
 	private Application application;
 
 	@Basic(optional = false)
-	@Column(name = "hostNameOrIpAddress", nullable = false, length = 128, unique = true)
+	@Column(name = "hostNameOrIpAddress", nullable = false, length = 128, unique = false)
 	private String hostNameOrIpAddress;
 
 	public Long getId()
@@ -121,7 +121,7 @@ public class ApplicationHost implements Serializable
 				isEqual = false;
 			}
 			else if ((this.hostNameOrIpAddress == null)
-					? other.hostNameOrIpAddress != null : !this.hostNameOrIpAddress.equals(other.hostNameOrIpAddress))
+					? other.hostNameOrIpAddress != null : !this.hostNameOrIpAddress.equalsIgnoreCase(other.hostNameOrIpAddress))
 			{
 				isEqual = false;
 			}

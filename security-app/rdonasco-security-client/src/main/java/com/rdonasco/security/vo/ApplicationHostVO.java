@@ -74,7 +74,7 @@ public class ApplicationHostVO implements Serializable
 		else
 		{
 			final ApplicationHostVO other = (ApplicationHostVO) obj;
-			if ((this.hostNameOrIpAddress == null) ? (other.hostNameOrIpAddress != null) : !this.hostNameOrIpAddress.equals(other.hostNameOrIpAddress))
+			if ((this.hostNameOrIpAddress == null) ? (other.hostNameOrIpAddress != null) : !this.hostNameOrIpAddress.equalsIgnoreCase(other.hostNameOrIpAddress))
 			{
 				isEqual = false;
 			}
