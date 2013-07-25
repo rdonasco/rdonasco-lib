@@ -17,6 +17,7 @@
 package com.rdonasco.security.services;
 
 import com.rdonasco.security.dao.ApplicationDAO;
+import com.rdonasco.security.exceptions.ApplicationManagerException;
 import com.rdonasco.security.model.Application;
 import com.rdonasco.security.utils.ArchiveCreator;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
@@ -181,7 +182,7 @@ public class ApplicationManagerTest
 	}
 
 	@Test
-	public void testLoadApplicationByName() throws Exception
+	public void testLoadApplicationByNameAndToken() throws Exception
 	{
 		ApplicationVO applicationVO = new ApplicationVOBuilder()
 				.setName("ApplicationName to find by name")
@@ -192,4 +193,15 @@ public class ApplicationManagerTest
 				.loadApplicationByNameAndToken(savedApplication.getName(), savedApplication.getToken());
 		assertNotNull("application is not found", foundApplication);
 	}
+
+	@Test(expected = ApplicationManagerException.class)
+	public void testLoadApplicationByNameAndTokenNotFound() throws Exception
+	{
+		ApplicationVO applicationVO = new ApplicationVOBuilder()
+				.setName("ApplicationName that cannot be found")
+				.setToken("Token")
+				.createApplicationVO();
+		applicationManager
+				.loadApplicationByNameAndToken(applicationVO.getName(), applicationVO.getToken());		
+	}	
 }
