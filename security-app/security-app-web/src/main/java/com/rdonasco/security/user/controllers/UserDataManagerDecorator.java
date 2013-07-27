@@ -27,7 +27,6 @@ import com.rdonasco.security.services.SystemSecurityManager;
 import com.rdonasco.security.services.SystemSecurityManagerRemote;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
 import com.rdonasco.security.user.vo.UserSecurityProfileItemVOBuilder;
-import com.rdonasco.security.utils.EncryptionUtil;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.vaadin.ui.Embedded;
 import java.util.ArrayList;
@@ -43,9 +42,14 @@ import javax.ejb.EJB;
 public class UserDataManagerDecorator implements
 		DataManager<UserSecurityProfileItemVO>
 {
-	@EJB
 	private SystemSecurityManagerRemote securityManager;
 	private ClickListenerProvider clickListenerProvider;
+
+	@EJB
+	public void setSecurityManager(SystemSecurityManagerRemote securityManager)
+	{
+		this.securityManager = securityManager;
+	}
 
 	public ClickListenerProvider getClickListenerProvider()
 	{
@@ -142,10 +146,7 @@ public class UserDataManagerDecorator implements
 				.createUserSecurityProfileItemVO();
 		userSecurityProfileItemVO.setPassword(null);
 		userSecurityProfileItemVO.setRetypedPassword(null);
-		if(getClickListenerProvider() != null)
-		{
-			icon.addListener(getClickListenerProvider().provideClickListenerFor(userSecurityProfileItemVO));
-		}
+		addOptionalClickListener(icon, userSecurityProfileItemVO);
 		return userSecurityProfileItemVO;
 	}
 
@@ -160,6 +161,15 @@ public class UserDataManagerDecorator implements
 		catch (SecurityManagerException ex)
 		{
 			throw new DataAccessException(ex);
+		}
+	}
+
+	private void addOptionalClickListener(Embedded icon,
+			UserSecurityProfileItemVO userSecurityProfileItemVO)
+	{
+		if (getClickListenerProvider() != null)
+		{
+			icon.addListener(getClickListenerProvider().provideClickListenerFor(userSecurityProfileItemVO));
 		}
 	}
 
