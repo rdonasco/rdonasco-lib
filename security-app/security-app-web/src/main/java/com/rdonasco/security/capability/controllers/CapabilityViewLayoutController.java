@@ -87,7 +87,7 @@ public class CapabilityViewLayoutController implements
 		public List<ActionItemVO> retrieveAllData() throws
 				DataAccessException
 		{
-			List<ActionItemVO> actionItems = null;
+			List<ActionItemVO> actionItems;
 			try
 			{
 				List<ActionVO> actionVOs = capabilityManager.findAllActions();
