@@ -126,4 +126,13 @@ public class ApplicationManager implements
 		}
 		return foundApplicationVO;
 	}
+
+	@Override
+	public void deleteApplication(ApplicationVO applicationVO) throws
+			ApplicationManagerException
+	{
+		// To change body of generated methods, choose Tools | Templates.
+		// TODO: Complete code for method deleteApplication
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }

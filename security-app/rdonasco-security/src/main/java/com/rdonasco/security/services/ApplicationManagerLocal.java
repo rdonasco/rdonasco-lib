@@ -40,4 +40,7 @@ public interface ApplicationManagerLocal
 	ApplicationVO loadApplicationByNameAndToken(String applicationName,
 			String token) throws
 			ApplicationManagerException;
+
+	public void deleteApplication(ApplicationVO applicationVO) throws
+			ApplicationManagerException;
 }
