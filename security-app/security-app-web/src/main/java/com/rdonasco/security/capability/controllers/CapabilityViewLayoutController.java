@@ -61,8 +61,80 @@ public class CapabilityViewLayoutController implements
 	private ActionEditorController actionEditorController;
 	@Inject
 	private CapabilityDataManagerDecorator capabilityManager;
-//	@Inject
-//	private ActionEditorAndSelectorViewController actionEditorController;
+	private final DataManager<ActionItemVO> dataManager = new DataManager<ActionItemVO>()
+	{
+		@Override
+		public void deleteData(ActionItemVO data) throws DataAccessException
+		{
+			try
+			{
+				capabilityManager.removeAction(data.getAction());
+			}
+			catch (Exception ex)
+			{
+				throw new DataAccessException(ex);
+			}
+		}
+
+		@Override
+		public ActionItemVO loadData(ActionItemVO data) throws
+				DataAccessException
+		{
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+
+		@Override
+		public List<ActionItemVO> retrieveAllData() throws
+				DataAccessException
+		{
+			List<ActionItemVO> actionItems = null;
+			try
+			{
+				List<ActionVO> actionVOs = capabilityManager.findAllActions();
+				actionItems = new ArrayList<ActionItemVO>(actionVOs.size());
+				for (ActionVO action : actionVOs)
+				{
+					actionItems.add(new ActionItemVOBuilder()
+							.setAction(action)
+							.createActionItemVO());
+				}
+			}
+			catch (Exception ex)
+			{
+				throw new DataAccessException(ex);
+			}
+			return actionItems;
+
+		}
+
+		@Override
+		public ActionItemVO saveData(ActionItemVO data) throws
+				DataAccessException
+		{
+			try
+			{
+				data.setId(capabilityManager.createNewAction(data.getAction()).getId());
+			}
+			catch (Exception e)
+			{
+				throw new DataAccessException(e);
+			}
+			return data;
+		}
+
+		@Override
+		public void updateData(ActionItemVO data) throws DataAccessException
+		{
+			try
+			{
+				capabilityManager.updateAction(data.getAction());
+			}
+			catch (Exception e)
+			{
+				throw new DataAccessException(e);
+			}
+		}
+	};
 
 	@PostConstruct
 	@Override
@@ -119,85 +191,12 @@ public class CapabilityViewLayoutController implements
 	{
 		capabilityListPanelController.refreshView();
 	}
-
+	
 	private void configureActionEditor()
 	{
 		DataManagerContainer<ActionItemVO> actionsDataContainer = new DataManagerContainer(ActionItemVO.class);
 		getActionEditorController().setDataContainer(actionsDataContainer);
-		actionsDataContainer.setDataManager(new DataManager<ActionItemVO>()
-		{
-			@Override
-			public void deleteData(ActionItemVO data) throws DataAccessException
-			{
-				try
-				{
-					capabilityManager.removeAction(data.getAction());
-				}
-				catch (Exception ex)
-				{
-					throw new DataAccessException(ex);
-				}
-			}
-
-			@Override
-			public ActionItemVO loadData(ActionItemVO data) throws
-					DataAccessException
-			{
-				throw new UnsupportedOperationException("Not supported yet.");
-			}
-
-			@Override
-			public List<ActionItemVO> retrieveAllData() throws
-					DataAccessException
-			{
-				List<ActionItemVO> actionItems = null;
-				try
-				{
-					List<ActionVO> actionVOs = capabilityManager.findAllActions();
-					actionItems = new ArrayList<ActionItemVO>(actionVOs.size());
-					for (ActionVO action : actionVOs)
-					{
-						actionItems.add(new ActionItemVOBuilder()
-								.setAction(action)
-								.createActionItemVO());
-					}
-				}
-				catch (Exception ex)
-				{
-					throw new DataAccessException(ex);
-				}
-				return actionItems;
-
-			}
-
-			@Override
-			public ActionItemVO saveData(ActionItemVO data) throws
-					DataAccessException
-			{
-				try
-				{
-					data.setId(capabilityManager.createNewAction(data.getAction()).getId());
-				}
-				catch (Exception e)
-				{
-					throw new DataAccessException(e);
-				}
-				return data;
-			}
-
-			@Override
-			public void updateData(ActionItemVO data) throws DataAccessException
-			{
-				try
-				{
-					capabilityManager.updateAction(data.getAction());
-				}
-				catch (Exception e)
-				{
-					throw new DataAccessException(e);
-				}
-			}
-		});
+		actionsDataContainer.setDataManager(dataManager);
 
 		getActionEditorController().initializeControlledViewBehavior();
 	}
