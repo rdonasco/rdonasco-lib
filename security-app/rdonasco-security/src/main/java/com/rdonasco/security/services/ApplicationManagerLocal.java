@@ -18,6 +18,7 @@ package com.rdonasco.security.services;
 
 import com.rdonasco.security.exceptions.ApplicationManagerException;
 import com.rdonasco.security.vo.ApplicationVO;
+import java.util.List;
 import javax.ejb.Local;
 
 /**
@@ -43,4 +44,6 @@ public interface ApplicationManagerLocal
 
 	public void deleteApplication(ApplicationVO applicationVO) throws
 			ApplicationManagerException;
+
+	public List<ApplicationVO> retrieveAllApplication();
 }

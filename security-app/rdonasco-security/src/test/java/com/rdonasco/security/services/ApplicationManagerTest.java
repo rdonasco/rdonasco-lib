@@ -285,4 +285,28 @@ public class ApplicationManagerTest
 		}
 		return builder.createApplicationVO();
 	}
+
+	@Test
+	public void testDeleteApplication() throws Exception
+	{
+		ApplicationVO applicationVO = new ApplicationVOBuilder()
+				.setName("Security application to create and delete")
+				.setToken("Token")
+				.createApplicationVO();
+		ApplicationVO applicationToDelete = applicationManager.createNewApplication(applicationVO);
+		applicationManager.deleteApplication(applicationToDelete);
+		ApplicationVO deletedApplication = applicationManager.loadApplicationWithID(applicationToDelete.getId());
+		assertNull("application not deleted", deletedApplication);
+	}
+
+	@Test
+	public void testDeleteApplicationWithHosts() throws Exception
+	{
+		ApplicationVO applicationToSave = createTestApplicationDataWithHosts("applicationToDelete",
+				"host1", "host2", "host3");
+		ApplicationVO applicationVOToDelete = applicationManager.createNewApplication(applicationToSave);
+		applicationManager.deleteApplication(applicationVOToDelete);
+		ApplicationVO deletedApplicationVO = applicationManager.loadApplicationWithID(applicationVOToDelete.getId());
+		assertNull("application not deleted", deletedApplicationVO);
+	}
 }

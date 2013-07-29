@@ -16,12 +16,15 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.common.exceptions.IllegalOrphanException;
+import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.security.dao.ApplicationDAO;
 import com.rdonasco.security.exceptions.ApplicationManagerException;
 import com.rdonasco.security.model.Application;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.vo.ApplicationVO;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -131,8 +134,21 @@ public class ApplicationManager implements
 	public void deleteApplication(ApplicationVO applicationVO) throws
 			ApplicationManagerException
 	{
+		try
+		{
+			applicationDAO.delete(applicationVO.getId());
+		}
+		catch (Exception ex)
+		{
+			throw new ApplicationManagerException(ex);
+		}
+	}
+
+	@Override
+	public List<ApplicationVO> retrieveAllApplication()
+	{
 		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method deleteApplication
+		// TODO: Complete code for method retrieveAllApplication
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }
