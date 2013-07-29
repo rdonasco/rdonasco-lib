@@ -24,9 +24,9 @@ import com.rdonasco.security.application.vo.ApplicationItemVOBuilder;
 import com.rdonasco.security.capability.utils.IconHelper;
 import com.rdonasco.security.common.controllers.ClickListenerProvider;
 import com.rdonasco.security.services.ApplicationManagerLocal;
-import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
 import com.rdonasco.security.vo.ApplicationVO;
 import com.vaadin.ui.Embedded;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 
@@ -87,9 +87,8 @@ public class ApplicationDataManager implements DataManager<ApplicationItemVO>
 		ApplicationItemVO applicationItemVO;
 		try
 		{
-			Embedded icon = IconHelper.createDeleteIcon(I18NResource.localize("Delete"));
 			final ApplicationVO applicationVO = applicationManager.loadApplicationWithID(data.getId());
-			applicationItemVO = createApplicationItemVOWithClickListener(applicationVO, icon);
+			applicationItemVO = createApplicationItemVOWithIconAndListener(applicationVO);
 		}
 		catch (Exception e)
 		{
@@ -101,31 +100,49 @@ public class ApplicationDataManager implements DataManager<ApplicationItemVO>
 	@Override
 	public List<ApplicationItemVO> retrieveAllData() throws DataAccessException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method retrieveAllData
-		throw new UnsupportedOperationException("Not supported yet.");
+		List<ApplicationVO> applicationVOList = applicationManager.retrieveAllApplication();
+		List<ApplicationItemVO> applicationItemVOList = new ArrayList<ApplicationItemVO>(applicationVOList.size());
+		for (ApplicationVO applicationVO : applicationVOList)
+		{
+			applicationItemVOList.add(createApplicationItemVOWithIconAndListener(applicationVO));
+		}
+		return applicationItemVOList;
 	}
 
 	@Override
 	public ApplicationItemVO saveData(ApplicationItemVO data) throws
 			DataAccessException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method saveData
-		throw new UnsupportedOperationException("Not supported yet.");
+		ApplicationItemVO applicationItemVOtoReturn = null;
+		try
+		{
+			applicationItemVOtoReturn = createApplicationItemVOWithIconAndListener(
+					applicationManager.createNewApplication(data.getApplicationVO()));
+		}
+		catch (Exception e)
+		{
+			throw new DataAccessException(e);
+		}
+		return applicationItemVOtoReturn;
 	}
 
 	@Override
 	public void updateData(ApplicationItemVO data) throws DataAccessException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method updateData
-		throw new UnsupportedOperationException("Not supported yet.");
+		try
+		{
+			applicationManager.updateApplication(data.getApplicationVO());
+		}
+		catch (Exception e)
+		{
+			throw new DataAccessException(e);
+		}
 	}
 
-	private ApplicationItemVO createApplicationItemVOWithClickListener(
-			final ApplicationVO applicationVO, Embedded icon)
+	private ApplicationItemVO createApplicationItemVOWithIconAndListener(
+			final ApplicationVO applicationVO)
 	{
+		Embedded icon = IconHelper.createDeleteIcon(I18NResource.localize("Delete"));
 		ApplicationItemVO applicationItemVO = new ApplicationItemVOBuilder()
 				.setApplicationVO(applicationVO)
 				.setIcon(null)

@@ -309,4 +309,15 @@ public class ApplicationManagerTest
 		ApplicationVO deletedApplicationVO = applicationManager.loadApplicationWithID(applicationVOToDelete.getId());
 		assertNull("application not deleted", deletedApplicationVO);
 	}
+
+	@Test
+	public void testRetrieveAllApplications() throws Exception
+	{
+		ApplicationVO applicationToSave = createTestApplicationDataWithHosts("applicationToRetrieve",
+				"host1", "host2", "host3");
+		ApplicationVO applicationToCheck = applicationManager.createNewApplication(applicationToSave);
+		List<ApplicationVO> applicationList = applicationManager.retrieveAllApplication();
+		assertNotNull("empty application list", applicationList);
+		assertTrue(applicationList.contains(applicationToCheck));
+	}
 }

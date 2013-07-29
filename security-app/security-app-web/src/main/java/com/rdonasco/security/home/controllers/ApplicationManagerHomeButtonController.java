@@ -10,10 +10,12 @@ import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.security.application.controllers.ApplicationViewLayoutController;
 import com.rdonasco.security.home.views.FeatureHomeButton;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 /**
@@ -28,8 +30,12 @@ public class ApplicationManagerHomeButtonController implements
 	private FeatureHomeButton featureButton;
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
+
 	@Inject
-	private ApplicationPopupProvider popupProvider;
+	private Instance<HomeFrameViewController> homeFrameViewControllers;
+
+	@Inject
+	private ApplicationViewLayoutController applicationViewLayoutController;
 
 	@PostConstruct
 	@Override
@@ -43,7 +49,14 @@ public class ApplicationManagerHomeButtonController implements
 				@Override
 				public void buttonClick(Button.ClickEvent event)
 				{
-					popupProvider.popUpInfo("Application Manager Clicked");
+					try
+					{
+						homeFrameViewControllers.get().setWorkspaceContent(getApplicationViewLayoutController().getControlledView());
+					}
+					catch (Exception e)
+					{
+						exceptionPopupProvider.popUpErrorException(e);
+					}
 				}
 			});
 		}
@@ -52,6 +65,12 @@ public class ApplicationManagerHomeButtonController implements
 			exceptionPopupProvider.popUpErrorException(ex);
 		}
 	}
+
+	public ApplicationViewLayoutController getApplicationViewLayoutController()
+	{
+		return applicationViewLayoutController;
+	}
+
 
 	@Override
 	public FeatureHomeButton getControlledView()

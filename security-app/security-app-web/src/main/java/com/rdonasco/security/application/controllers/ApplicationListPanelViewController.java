@@ -28,18 +28,17 @@ import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.datamanager.listeditor.controller.ListEditorAttachStrategy;
 import com.rdonasco.datamanager.utils.TableHelper;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import com.rdonasco.security.application.utils.ApplicationConstants;
+import com.rdonasco.security.application.views.ApplicationListPanelView;
+import com.rdonasco.security.application.vo.ApplicationItemVO;
+import com.rdonasco.security.application.vo.ApplicationItemVOBuilder;
 import com.rdonasco.security.authentication.services.SessionSecurityChecker;
 import com.rdonasco.security.common.builders.DeletePromptBuilder;
 import com.rdonasco.security.common.controllers.ClickListenerProvider;
 import com.rdonasco.security.common.utils.ActionConstants;
 import com.rdonasco.security.i18n.MessageKeys;
-import com.rdonasco.security.user.utils.UserConfigConstants;
-import com.rdonasco.security.user.utils.UserConstants;
-import com.rdonasco.security.user.views.UserListPanelView;
-import com.rdonasco.security.user.vo.UserSecurityProfileItemVO;
-import com.rdonasco.security.user.vo.UserSecurityProfileItemVOBuilder;
-import com.rdonasco.security.vo.UserSecurityProfileVO;
-import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
+import com.rdonasco.security.vo.ApplicationVO;
+import com.rdonasco.security.vo.ApplicationVOBuilder;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.MouseEvents;
 import com.vaadin.ui.Button;
@@ -57,14 +56,14 @@ import javax.inject.Inject;
  * @author Roy F. Donasco
  */
 public class ApplicationListPanelViewController implements
-		ViewController<UserListPanelView>
+		ViewController<ApplicationListPanelView>
 {
 	private static final Logger LOG = Logger.getLogger(ApplicationListPanelViewController.class.getName());
 	
 	private static final long serialVersionUID = 1L;
 	
 	@Inject
-	private UserListPanelView userListPanelView;
+	private ApplicationListPanelView applicationListPanelView;
 	
 	@Inject
 	private ApplicationDataManager dataManager;
@@ -78,9 +77,9 @@ public class ApplicationListPanelViewController implements
 	@Inject
 	private ApplicationPopupProvider popupProvider;
 	
-	private Table userListTable = new Table();
+	private Table recordListTable = new Table();
 	
-	private DataManagerContainer<UserSecurityProfileItemVO> userItemTableContainer = new DataManagerContainer(UserSecurityProfileItemVO.class);
+	private DataManagerContainer<ApplicationItemVO> itemVOTableContainer = new DataManagerContainer(ApplicationItemVO.class);
 	
 	@Inject
 	private SessionSecurityChecker sessionSecurityChecker;
@@ -89,9 +88,9 @@ public class ApplicationListPanelViewController implements
 	{
 	}
 
-	public DataManagerContainer<UserSecurityProfileItemVO> getUserItemTableContainer()
+	public DataManagerContainer<ApplicationItemVO> getUserItemTableContainer()
 	{
-		return userItemTableContainer;
+		return itemVOTableContainer;
 	}
 
 	@PostConstruct
@@ -100,16 +99,16 @@ public class ApplicationListPanelViewController implements
 	{
 		try
 		{
-			userListTable.addStyleName(SecurityDefaultTheme.CSS_DATA_TABLE);
-			TableHelper.setupTable(userListTable);
-			userItemTableContainer.setDataManager(dataManager);
-			userListTable.setContainerDataSource(userItemTableContainer);
-			userListTable.setVisibleColumns(UserConstants.TABLE_VISIBLE_COLUMNS);
-			userListTable.setColumnHeaders(UserConstants.TABLE_VISIBLE_HEADERS);
-			userListPanelView.setDataViewListTable(userListTable);
-			userListPanelView.initWidget();
-			userListPanelView.getAddUserButton().addListener(new AddNewUserClickListener());
-			userListPanelView.setAttachStrategy(new ListEditorAttachStrategy()
+			recordListTable.addStyleName(SecurityDefaultTheme.CSS_DATA_TABLE);
+			TableHelper.setupTable(recordListTable);
+			itemVOTableContainer.setDataManager(dataManager);
+			recordListTable.setContainerDataSource(itemVOTableContainer);
+			recordListTable.setVisibleColumns(ApplicationConstants.TABLE_VISIBLE_COLUMNS);
+			recordListTable.setColumnHeaders(ApplicationConstants.TABLE_VISIBLE_HEADERS);
+			applicationListPanelView.setDataViewListTable(recordListTable);
+			applicationListPanelView.initWidget();
+			applicationListPanelView.getAddButton().addListener(new AddNewRecordClickListener());
+			applicationListPanelView.setAttachStrategy(new ListEditorAttachStrategy()
 			{
 				@Override
 				public void attached(Component component)
@@ -118,8 +117,9 @@ public class ApplicationListPanelViewController implements
 					selectTheFirstRecord();
 				}
 			});
-			userListPanelView.getRefreshButton().addListener(new Button.ClickListener()
+			applicationListPanelView.getRefreshButton().addListener(new Button.ClickListener()
 			{
+				private static final long serialVersionUID = 1L;
 				@Override
 				public void buttonClick(Button.ClickEvent event)
 				{
@@ -137,9 +137,9 @@ public class ApplicationListPanelViewController implements
 	}
 
 	@Override
-	public UserListPanelView getControlledView()
+	public ApplicationListPanelView getControlledView()
 	{
-		return userListPanelView;
+		return applicationListPanelView;
 	}
 
 	@Override
@@ -147,7 +147,7 @@ public class ApplicationListPanelViewController implements
 	{
 		try
 		{
-			userItemTableContainer.refresh();
+			itemVOTableContainer.refresh();
 		}
 		catch (DataAccessException ex)
 		{
@@ -157,11 +157,11 @@ public class ApplicationListPanelViewController implements
 
 	private void setupDeleteClickListener()
 	{
-		dataManager.setClickListenerProvider(new ClickListenerProvider<UserSecurityProfileItemVO>()
+		dataManager.setClickListenerProvider(new ClickListenerProvider<ApplicationItemVO>()
 		{
 			@Override
 			public MouseEvents.ClickListener provideClickListenerFor(
-					final UserSecurityProfileItemVO data)
+					final ApplicationItemVO data)
 			{
 				MessageBox deletePrompt = new DeletePromptBuilder()
 						.setParentWindow(getControlledView().getWindow())
@@ -172,49 +172,48 @@ public class ApplicationListPanelViewController implements
 		});
 	}
 
-	private void addNewUser()
+	private void addNewApplication()
 	{
-		int defaultPasswordLength = configDataManager.loadValue(UserConfigConstants.XPATH_DEFAULT_PASSWORD_LENGTH, Integer.class, 8);
-		UserSecurityProfileVO newUserProfile = new UserSecurityProfileVOBuilder()
-				.setLoginId(I18NResource.localize("new logon id"))
-				.setPassword(RandomTextGenerator.generate(defaultPasswordLength))
-				.createUserSecurityProfileVO();
+		int applicationTokenLength = configDataManager.loadValue(ApplicationConstants.XPATH_DEFAULT_TOKEN_LENGTH, Integer.class, 32);
+		ApplicationVO newApplication = new ApplicationVOBuilder()
+				.setName("new application")
+				.setToken(RandomTextGenerator.generate(applicationTokenLength))
+				.createApplicationVO();
 		try
 		{
-			sessionSecurityChecker.checkCapabilityTo(ActionConstants.ADD, UserConstants.RESOURCE_USERS);
-			UserSecurityProfileItemVO newItemVO = new UserSecurityProfileItemVOBuilder()
-					.setUserSecurityProfileVO(newUserProfile)
-					.setRequirePasswordChange(true)
-					.createUserSecurityProfileItemVO();
-			BeanItem<UserSecurityProfileItemVO> item = userItemTableContainer.addItem(newItemVO);
-			userListTable.setCurrentPageFirstItemId(item.getBean());
-			userListTable.select(item.getBean());
+			sessionSecurityChecker.checkCapabilityTo(ActionConstants.ADD, ApplicationConstants.RESOURCE_APPLICATIONS);
+			ApplicationItemVO newItemVO = new ApplicationItemVOBuilder()
+					.setApplicationVO(newApplication)
+					.createApplicationItemVO();
+			BeanItem<ApplicationItemVO> item = itemVOTableContainer.addItem(newItemVO);
+			recordListTable.setCurrentPageFirstItemId(item.getBean());
+			recordListTable.select(item.getBean());
 		}
 		catch (Exception e)
 		{
 			LOG.log(Level.WARNING, e.getMessage(), e);
-			popupProvider.popUpError(I18NResource.localizeWithParameter(MessageKeys.UNABLE_TO_ADD_NEW_USER, newUserProfile.getLogonId()));
+			popupProvider.popUpError(I18NResource.localizeWithParameter(MessageKeys.UNABLE_TO_ADD_NEW_APPLICATION, newApplication.getName()));
 		}
 	}
 
 	public Table getUserListTable()
 	{
-		return userListTable;
+		return recordListTable;
 	}
 
-	private class AddNewUserClickListener implements Button.ClickListener
+	private class AddNewRecordClickListener implements Button.ClickListener
 	{
 
 		private static final long serialVersionUID = 1L;
 
-		public AddNewUserClickListener()
+		public AddNewRecordClickListener()
 		{
 		}
 
 		@Override
 		public void buttonClick(Button.ClickEvent event)
 		{
-			addNewUser();
+			addNewApplication();
 		}
 	}
 
@@ -225,10 +224,10 @@ public class ApplicationListPanelViewController implements
 		
 		private final MessageBox deletePrompt;
 		
-		private final UserSecurityProfileItemVO data;
+		private final ApplicationItemVO data;
 
 		public DeleteUserClickListener(MessageBox deletePrompt,
-				UserSecurityProfileItemVO data)
+				ApplicationItemVO data)
 		{
 			this.deletePrompt = deletePrompt;
 			this.data = data;
@@ -247,11 +246,11 @@ public class ApplicationListPanelViewController implements
 				{
 					try
 					{
-						sessionSecurityChecker.checkCapabilityTo(ActionConstants.DELETE, UserConstants.RESOURCE_USERS);
+						sessionSecurityChecker.checkCapabilityTo(ActionConstants.DELETE, ApplicationConstants.RESOURCE_APPLICATIONS);
 						if (MessageBox.ButtonType.YES.equals(buttonType))
 						{
-							userItemTableContainer.removeItem(data);
-							popupProvider.popUpInfo(I18NResource.localize(MessageKeys.USER_PROFILE_DELETED));
+							itemVOTableContainer.removeItem(data);
+							popupProvider.popUpInfo(I18NResource.localize(MessageKeys.APPLICATION_DELETED));
 
 
 						}
