@@ -24,9 +24,9 @@ public class ThreeColumnFlexibleCenterViewLayout extends HorizontalLayout implem
 {
 
 	private static final long serialVersionUID = 1L;
-	private static final VerticalLayout leftPanel = new VerticalLayout();
-	private static final VerticalLayout centerPanel = new VerticalLayout();
-	private static final VerticalLayout rightPanel = new VerticalLayout();
+	private VerticalLayout leftPanel = new VerticalLayout();
+	private VerticalLayout centerPanel = new VerticalLayout();
+	private VerticalLayout rightPanel = new VerticalLayout();
 
 	@Override
 	public void initWidget() throws WidgetInitalizeException

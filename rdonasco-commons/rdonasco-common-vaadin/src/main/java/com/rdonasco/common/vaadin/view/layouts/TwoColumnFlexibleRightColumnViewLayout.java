@@ -22,17 +22,19 @@ import com.rdonasco.common.vaadin.view.ControlledView;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
+import javax.enterprise.context.Dependent;
 
 /**
  *
  * @author Roy F. Donasco
  */
+@Dependent
 public class TwoColumnFlexibleRightColumnViewLayout extends HorizontalLayout implements ControlledView
 {
 
 	private static final long serialVersionUID = 1L;
-	private static final VerticalLayout leftPanel = new VerticalLayout();
-	private static final VerticalLayout centerPanel = new VerticalLayout();
+	private VerticalLayout leftPanel = new VerticalLayout();
+	private VerticalLayout centerPanel = new VerticalLayout();
 
 	@Override
 	public void initWidget() throws WidgetInitalizeException
