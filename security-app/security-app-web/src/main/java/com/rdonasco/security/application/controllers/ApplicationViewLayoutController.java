@@ -45,7 +45,7 @@ public class ApplicationViewLayoutController implements
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
 	@Inject
-	private ApplicationListPanelViewController userListPanelController;
+	private ApplicationListPanelViewController dataListPanelController;
 //	@Inject
 //	private UserEditorViewController userEditorViewController;
 
@@ -57,18 +57,18 @@ public class ApplicationViewLayoutController implements
 		{
 			viewLayout.initWidget();
 //			viewLayout.setCenterPanelContent(userEditorViewController.getControlledView().getForm());
-			userListPanelController.getUserListTable().addListener(new Property.ValueChangeListener()
+			dataListPanelController.getRecordListTable().addListener(new Property.ValueChangeListener()
 			{
 				private static final long serialVersionUID = 1L;
 				@Override
 				public void valueChange(Property.ValueChangeEvent event)
 				{
-					Table tableSource = userListPanelController.getUserListTable();
+					Table tableSource = dataListPanelController.getRecordListTable();
 //					userEditorViewController.setItemDataSource(tableSource.getItem(tableSource.getValue()));
 				}
 			});
-//			userEditorViewController.setUserItemTableContainer(userListPanelController.getUserItemTableContainer());
-			viewLayout.setLeftPanelContent(userListPanelController.getControlledView());
+//			userEditorViewController.setUserItemTableContainer(userListPanelController.getItemTableContainer());
+			viewLayout.setLeftPanelContent(dataListPanelController.getControlledView());
 		}
 		catch (WidgetInitalizeException ex)
 		{

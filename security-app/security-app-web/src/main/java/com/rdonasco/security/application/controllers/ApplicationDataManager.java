@@ -145,7 +145,7 @@ public class ApplicationDataManager implements DataManager<ApplicationItemVO>
 		Embedded icon = IconHelper.createDeleteIcon(I18NResource.localize("Delete"));
 		ApplicationItemVO applicationItemVO = new ApplicationItemVOBuilder()
 				.setApplicationVO(applicationVO)
-				.setIcon(null)
+				.setIcon(icon)
 				.createApplicationItemVO();
 		addOptionalClickListener(icon, applicationItemVO);
 		return applicationItemVO;

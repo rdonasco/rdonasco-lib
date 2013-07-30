@@ -88,7 +88,7 @@ public class ApplicationListPanelViewController implements
 	{
 	}
 
-	public DataManagerContainer<ApplicationItemVO> getUserItemTableContainer()
+	public DataManagerContainer<ApplicationItemVO> getItemTableContainer()
 	{
 		return itemVOTableContainer;
 	}
@@ -166,7 +166,7 @@ public class ApplicationListPanelViewController implements
 				MessageBox deletePrompt = new DeletePromptBuilder()
 						.setParentWindow(getControlledView().getWindow())
 						.createDeletePrompt();
-				MouseEvents.ClickListener clickListener = new DeleteUserClickListener(deletePrompt, data);
+				MouseEvents.ClickListener clickListener = new DeleteDataClickListener(deletePrompt, data);
 				return clickListener;
 			}
 		});
@@ -196,7 +196,7 @@ public class ApplicationListPanelViewController implements
 		}
 	}
 
-	public Table getUserListTable()
+	public Table getRecordListTable()
 	{
 		return recordListTable;
 	}
@@ -217,7 +217,7 @@ public class ApplicationListPanelViewController implements
 		}
 	}
 
-	class DeleteUserClickListener implements MouseEvents.ClickListener
+	class DeleteDataClickListener implements MouseEvents.ClickListener
 	{
 
 		private static final long serialVersionUID = 1L;
@@ -226,7 +226,7 @@ public class ApplicationListPanelViewController implements
 		
 		private final ApplicationItemVO data;
 
-		public DeleteUserClickListener(MessageBox deletePrompt,
+		public DeleteDataClickListener(MessageBox deletePrompt,
 				ApplicationItemVO data)
 		{
 			this.deletePrompt = deletePrompt;

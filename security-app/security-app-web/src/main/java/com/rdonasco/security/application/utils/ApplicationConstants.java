@@ -27,7 +27,7 @@ public final class ApplicationConstants
 {
 	public static final String[] TABLE_VISIBLE_COLUMNS =
 	{
-		"name", "token"
+		"icon", "name"
 	};
 	public static final String[] TABLE_VISIBLE_HEADERS =
 	{
