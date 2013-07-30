@@ -31,8 +31,8 @@ public class TwoColumnFlexibleRightColumnViewLayout extends HorizontalLayout imp
 {
 
 	private static final long serialVersionUID = 1L;
-	private VerticalLayout leftPanel = new VerticalLayout();
-	private VerticalLayout centerPanel = new VerticalLayout();
+	private static final VerticalLayout leftPanel = new VerticalLayout();
+	private static final VerticalLayout centerPanel = new VerticalLayout();
 
 	@Override
 	public void initWidget() throws WidgetInitalizeException
@@ -51,6 +51,11 @@ public class TwoColumnFlexibleRightColumnViewLayout extends HorizontalLayout imp
 		addComponent(leftPanel);
 		addComponent(centerPanel);
 		setExpandRatio(centerPanel, 1);
+	}
+
+	public void setLeftPanelWidth(float width, int unit)
+	{
+		leftPanel.setWidth(width, unit);
 	}
 
 	public void setLeftPanelContent(Component leftComponent)

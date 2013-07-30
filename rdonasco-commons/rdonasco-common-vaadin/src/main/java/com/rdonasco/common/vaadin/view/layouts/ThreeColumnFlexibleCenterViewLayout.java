@@ -24,9 +24,9 @@ public class ThreeColumnFlexibleCenterViewLayout extends HorizontalLayout implem
 {
 
 	private static final long serialVersionUID = 1L;
-	private VerticalLayout leftPanel = new VerticalLayout();
-	private VerticalLayout centerPanel = new VerticalLayout();
-	private VerticalLayout rightPanel = new VerticalLayout();
+	private static final VerticalLayout leftPanel = new VerticalLayout();
+	private static final VerticalLayout centerPanel = new VerticalLayout();
+	private static final VerticalLayout rightPanel = new VerticalLayout();
 
 	@Override
 	public void initWidget() throws WidgetInitalizeException
@@ -53,6 +53,16 @@ public class ThreeColumnFlexibleCenterViewLayout extends HorizontalLayout implem
 
 		setExpandRatio(centerPanel, 1); // occupy all remaining space;
 
+	}
+
+	public void setLeftPanelWidth(float width, int unit)
+	{
+		leftPanel.setWidth(width, unit);
+	}
+
+	public void setRightPanelWidth(float width, int unit)
+	{
+		rightPanel.setWidth(width, unit);
 	}
 
 	public void setLeftPanelContent(Component leftComponent)
