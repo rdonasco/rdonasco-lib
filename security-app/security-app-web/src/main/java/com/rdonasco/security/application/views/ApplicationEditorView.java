@@ -17,9 +17,12 @@
 
 package com.rdonasco.security.application.views;
 
+import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.OnAttachStrategy;
 import com.rdonasco.common.vaadin.view.ButtonUtil;
+import com.rdonasco.common.vaadin.view.ControlledView;
+import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.HorizontalLayout;
@@ -32,7 +35,8 @@ import org.vaadin.addon.formbinder.ViewBoundForm;
  *
  * @author Roy F. Donasco
  */
-public class ApplicationEditorView extends VerticalLayout
+public class ApplicationEditorView extends VerticalLayout implements
+		ControlledView
 {
 	private static final long serialVersionUID = 1L;
 	private Panel applicationInfoPanel;
@@ -42,6 +46,7 @@ public class ApplicationEditorView extends VerticalLayout
 	private Button cancelButton;
 	private Button editButton;
 	private Button saveButton;
+	private Button generateTokenButton;
 	private Form form;
 	private OnAttachStrategy attachStrategy;
 
@@ -54,6 +59,7 @@ public class ApplicationEditorView extends VerticalLayout
 		cancelButton = new Button(I18NResource.localize("Cancel"));
 		saveButton = new Button(I18NResource.localize("Save"));
 		editButton = new Button(I18NResource.localize("Edit"));
+		generateTokenButton = new Button(I18NResource.localize("Generate token"));
 	}
 
 	public OnAttachStrategy getAttachStrategy()
@@ -103,5 +109,24 @@ public class ApplicationEditorView extends VerticalLayout
 		{
 			getAttachStrategy().onAttachOf(this);
 		}
+	}
+
+	@Override
+	public void initWidget() throws WidgetInitalizeException
+	{
+		configureApplicationInfoFields();
+		applicationInfoPanel.addStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
+		nameField.setRequired(true);
+		nameField.setRequiredError(I18NResource.localize("Application name is required"));
+		nameField.setWidth(200f, UNITS_PIXELS);
+		tokenField.setRequired(true);
+		tokenField.setRequiredError(I18NResource.localize("Token is required"));
+	}
+
+	private void configureApplicationInfoFields()
+	{
+		// To change body of generated methods, choose Tools | Templates.
+		// TODO: Complete code for method configureApplicationInfoFields
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }
