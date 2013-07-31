@@ -16,7 +16,6 @@
  */
 package com.rdonasco.security.application.controllers;
 
-import com.rdonasco.security.user.controllers.*;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
@@ -27,6 +26,7 @@ import com.rdonasco.common.vaadin.view.layouts.TwoColumnFlexibleRightColumnViewL
 import com.rdonasco.security.application.utils.ApplicationConstants;
 import com.rdonasco.security.common.utils.ActionConstants;
 import com.vaadin.data.Property;
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Table;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -46,8 +46,8 @@ public class ApplicationViewLayoutController implements
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
 	@Inject
 	private ApplicationListPanelViewController dataListPanelController;
-//	@Inject
-//	private UserEditorViewController userEditorViewController;
+	@Inject
+	private ApplicationEditorViewController applicationEditorViewController;
 
 	@PostConstruct
 	@Override
@@ -56,7 +56,7 @@ public class ApplicationViewLayoutController implements
 		try
 		{
 			viewLayout.initWidget();
-//			viewLayout.setCenterPanelContent(userEditorViewController.getControlledView().getForm());
+			viewLayout.setCenterPanelContent(applicationEditorViewController.getControlledView().getForm());
 			dataListPanelController.getRecordListTable().addListener(new Property.ValueChangeListener()
 			{
 				private static final long serialVersionUID = 1L;
@@ -64,10 +64,11 @@ public class ApplicationViewLayoutController implements
 				public void valueChange(Property.ValueChangeEvent event)
 				{
 					Table tableSource = dataListPanelController.getRecordListTable();
-//					userEditorViewController.setItemDataSource(tableSource.getItem(tableSource.getValue()));
+					applicationEditorViewController.setCurrentItem((BeanItem) tableSource.getItem(tableSource.getValue()));
 				}
 			});
 //			userEditorViewController.setUserItemTableContainer(userListPanelController.getItemTableContainer());
+			applicationEditorViewController.setDataManagerContainer(dataListPanelController.getItemTableContainer());
 			viewLayout.setLeftPanelContent(dataListPanelController.getControlledView());
 		}
 		catch (WidgetInitalizeException ex)
