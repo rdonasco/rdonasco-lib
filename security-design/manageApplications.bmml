@@ -50,75 +50,82 @@
         <text>Application%20Editor</text>
       </controlProperties>
     </control>
-    <control controlID="21" controlTypeID="com.balsamiq.mockups::Label" x="533" y="212" w="-1" h="-1" measuredW="45" measuredH="21" zOrder="9" locked="false" isInGroup="-1">
+    <control controlID="21" controlTypeID="com.balsamiq.mockups::Label" x="533" y="212" w="-1" h="-1" measuredW="46" measuredH="21" zOrder="9" locked="false" isInGroup="-1">
       <controlProperties>
         <align>right</align>
         <text>Token%3A</text>
       </controlProperties>
     </control>
-    <control controlID="22" controlTypeID="com.balsamiq.mockups::TextInput" x="584" y="208" w="297" h="-1" measuredW="56" measuredH="27" zOrder="10" locked="false" isInGroup="-1">
-      <controlProperties>
-        <text>*******</text>
-      </controlProperties>
-    </control>
-    <control controlID="38" controlTypeID="com.balsamiq.mockups::Label" x="526" y="174" w="52" h="21" measuredW="44" measuredH="21" zOrder="11" locked="false" isInGroup="-1">
+    <control controlID="38" controlTypeID="com.balsamiq.mockups::Label" x="526" y="174" w="52" h="21" measuredW="44" measuredH="21" zOrder="10" locked="false" isInGroup="-1">
       <controlProperties>
         <align>right</align>
         <text>Name%3A</text>
       </controlProperties>
     </control>
-    <control controlID="39" controlTypeID="com.balsamiq.mockups::TextInput" x="584" y="172" w="297" h="-1" measuredW="147" measuredH="27" zOrder="12" locked="false" isInGroup="-1">
+    <control controlID="39" controlTypeID="com.balsamiq.mockups::TextInput" x="584" y="172" w="297" h="-1" measuredW="147" measuredH="27" zOrder="11" locked="false" isInGroup="-1">
       <controlProperties>
         <text>rdonasco2@yahoo.com</text>
       </controlProperties>
     </control>
-    <control controlID="40" controlTypeID="com.balsamiq.mockups::PointyButton" x="594" y="578" w="-1" h="-1" measuredW="78" measuredH="31" zOrder="13" locked="false" isInGroup="-1">
+    <control controlID="40" controlTypeID="com.balsamiq.mockups::PointyButton" x="594" y="578" w="-1" h="-1" measuredW="78" measuredH="31" zOrder="12" locked="false" isInGroup="-1">
       <controlProperties>
         <direction>center</direction>
         <icon>SaveIcon%7Csmall</icon>
         <text>Save</text>
       </controlProperties>
     </control>
-    <control controlID="42" controlTypeID="com.balsamiq.mockups::PointyButton" x="510" y="577" w="-1" h="-1" measuredW="69" measuredH="31" zOrder="14" locked="false" isInGroup="-1">
+    <control controlID="42" controlTypeID="com.balsamiq.mockups::PointyButton" x="510" y="577" w="-1" h="-1" measuredW="69" measuredH="31" zOrder="13" locked="false" isInGroup="-1">
       <controlProperties>
         <direction>center</direction>
         <icon>PencilIcon%7Csmall</icon>
         <text>Edit</text>
       </controlProperties>
     </control>
-    <control controlID="43" controlTypeID="com.balsamiq.mockups::iPhoneMenu" x="233" y="165" w="239" h="-1" measuredW="215" measuredH="97" zOrder="15" locked="false" isInGroup="-1">
+    <control controlID="43" controlTypeID="com.balsamiq.mockups::iPhoneMenu" x="233" y="165" w="239" h="-1" measuredW="215" measuredH="97" zOrder="14" locked="false" isInGroup="-1">
       <controlProperties>
         <borderStyle>none</borderStyle>
         <text>-%20facebook%0A-%20inventory%20system%0A-%20confluence</text>
       </controlProperties>
     </control>
-    <control controlID="48" controlTypeID="com.balsamiq.mockups::LinkBar" x="213" y="76" w="-1" h="-1" measuredW="72" measuredH="21" zOrder="16" locked="false" isInGroup="-1">
+    <control controlID="48" controlTypeID="com.balsamiq.mockups::LinkBar" x="213" y="76" w="-1" h="-1" measuredW="72" measuredH="21" zOrder="15" locked="false" isInGroup="-1">
       <controlProperties>
         <text>Home</text>
       </controlProperties>
     </control>
-    <control controlID="52" controlTypeID="com.balsamiq.mockups::TabBar" x="510" y="245" w="763" h="327" measuredW="150" measuredH="100" zOrder="17" locked="false" isInGroup="-1">
+    <control controlID="52" controlTypeID="com.balsamiq.mockups::TabBar" x="510" y="245" w="763" h="327" measuredW="150" measuredH="100" zOrder="16" locked="false" isInGroup="-1">
       <controlProperties>
         <selectedIndex>0</selectedIndex>
         <text>Hosts</text>
       </controlProperties>
     </control>
-    <control controlID="59" controlTypeID="com.balsamiq.mockups::Canvas" x="516" y="272" w="750" h="291" measuredW="100" measuredH="70" zOrder="18" locked="false" isInGroup="-1">
+    <control controlID="59" controlTypeID="com.balsamiq.mockups::Canvas" x="516" y="272" w="750" h="291" measuredW="100" measuredH="70" zOrder="17" locked="false" isInGroup="-1">
       <controlProperties>
         <borderStyle>roundedSolid</borderStyle>
       </controlProperties>
     </control>
-    <control controlID="60" controlTypeID="com.balsamiq.mockups::iPhoneMenu" x="526" y="310" w="723" h="-1" measuredW="215" measuredH="97" zOrder="19" locked="false" isInGroup="-1">
+    <control controlID="60" controlTypeID="com.balsamiq.mockups::iPhoneMenu" x="526" y="310" w="723" h="-1" measuredW="215" measuredH="97" zOrder="18" locked="false" isInGroup="-1">
       <controlProperties>
         <borderStyle>none</borderStyle>
         <text>-%2010.1.1.0%0A-%20roy.donasco.com%0A-%20heidi.donasco.com</text>
       </controlProperties>
     </control>
-    <control controlID="63" controlTypeID="com.balsamiq.mockups::PointyButton" x="533" y="282" w="-1" h="-1" measuredW="100" measuredH="31" zOrder="20" locked="false" isInGroup="-1">
+    <control controlID="63" controlTypeID="com.balsamiq.mockups::PointyButton" x="533" y="282" w="-1" h="-1" measuredW="100" measuredH="31" zOrder="19" locked="false" isInGroup="-1">
       <controlProperties>
         <direction>center</direction>
         <icon>PencilIcon%7Csmall</icon>
         <text>Add%20Host</text>
+      </controlProperties>
+    </control>
+    <control controlID="64" controlTypeID="com.balsamiq.mockups::TextInput" x="584" y="208" w="297" h="-1" measuredW="247" measuredH="27" zOrder="20" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>kasdfkeqeroqweraasr434gdfgsryr%242@1</text>
+      </controlProperties>
+    </control>
+    <control controlID="65" controlTypeID="com.balsamiq.mockups::PointyButton" x="887" y="207" w="-1" h="-1" measuredW="135" measuredH="27" zOrder="21" locked="false" isInGroup="-1">
+      <controlProperties>
+        <direction>center</direction>
+        <icon>RedoIcon%7Cxsmall</icon>
+        <text>Generate%20Token</text>
       </controlProperties>
     </control>
   </controls>
