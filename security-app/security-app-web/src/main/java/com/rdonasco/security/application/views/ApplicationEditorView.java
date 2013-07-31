@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.rdonasco.security.application.views;
 
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
@@ -23,21 +22,26 @@ import com.rdonasco.common.vaadin.controller.OnAttachStrategy;
 import com.rdonasco.common.vaadin.view.ButtonUtil;
 import com.rdonasco.common.vaadin.view.ControlledView;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
+import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import javax.enterprise.context.Dependent;
 import org.vaadin.addon.formbinder.ViewBoundForm;
 
 /**
  *
  * @author Roy F. Donasco
  */
+@Dependent
 public class ApplicationEditorView extends VerticalLayout implements
 		ControlledView
 {
+
 	private static final long serialVersionUID = 1L;
 	private Panel applicationInfoPanel;
 	private TextField nameField;
@@ -56,9 +60,9 @@ public class ApplicationEditorView extends VerticalLayout implements
 		nameField = new TextField(I18NResource.localize("Name"));
 		tokenField = new TextField(I18NResource.localize("Token"));
 		buttonsLayout = new HorizontalLayout();
-		cancelButton = new Button(I18NResource.localize("Cancel"));
-		saveButton = new Button(I18NResource.localize("Save"));
-		editButton = new Button(I18NResource.localize("Edit"));
+		cancelButton = new Button();
+		saveButton = new Button();
+		editButton = new Button();
 		generateTokenButton = new Button(I18NResource.localize("Generate token"));
 	}
 
@@ -114,19 +118,53 @@ public class ApplicationEditorView extends VerticalLayout implements
 	@Override
 	public void initWidget() throws WidgetInitalizeException
 	{
-		configureApplicationInfoFields();
 		applicationInfoPanel.addStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
-		nameField.setRequired(true);
-		nameField.setRequiredError(I18NResource.localize("Application name is required"));
-		nameField.setWidth(200f, UNITS_PIXELS);
-		tokenField.setRequired(true);
-		tokenField.setRequiredError(I18NResource.localize("Token is required"));
+		configureApplicationInfoFields();
+		configureEditorButtons();
+		setSpacing(true);
+		addComponent(applicationInfoPanel);
+		addComponent(buttonsLayout);
+		getForm().setReadOnly(true);
+		getForm().setWriteThrough(true);
 	}
 
 	private void configureApplicationInfoFields()
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method configureApplicationInfoFields
-		throw new UnsupportedOperationException("Not supported yet.");
+		nameField.setWidth(200f, UNITS_PIXELS);
+		applicationInfoPanel.addComponent(nameField);
+		HorizontalLayout tokenFieldLayout = new HorizontalLayout();
+		tokenFieldLayout.addComponent(tokenField);
+		tokenFieldLayout.addComponent(generateTokenButton);
+		applicationInfoPanel.addComponent(tokenFieldLayout);
+	}
+
+	private void configureEditorButtons()
+	{
+		editButton.setCaption(I18NResource.localize("Edit"));
+		editButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_EDIT));
+		saveButton.setCaption(I18NResource.localize("Save"));
+		saveButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_SAVE));
+		cancelButton.setCaption(I18NResource.localize("Cancel"));
+		cancelButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_CANCEL));
+
+		buttonsLayout.setSpacing(true);
+		buttonsLayout.addComponent(editButton);
+		buttonsLayout.addComponent(saveButton);
+		buttonsLayout.addComponent(cancelButton);
+	}
+
+	public TextField getNameField()
+	{
+		return nameField;
+	}
+
+	public TextField getTokenField()
+	{
+		return tokenField;
+	}
+
+	public Button getGenerateTokenButton()
+	{
+		return generateTokenButton;
 	}
 }

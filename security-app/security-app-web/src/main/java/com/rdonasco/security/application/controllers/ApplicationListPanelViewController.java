@@ -181,7 +181,7 @@ public class ApplicationListPanelViewController implements
 				.createApplicationVO();
 		try
 		{
-			sessionSecurityChecker.checkCapabilityTo(ActionConstants.ADD, ApplicationConstants.RESOURCE_APPLICATIONS);
+			sessionSecurityChecker.checkCapabilityTo(ActionConstants.ADD, ApplicationConstants.RESOURCE_APPLICATION);
 			ApplicationItemVO newItemVO = new ApplicationItemVOBuilder()
 					.setApplicationVO(newApplication)
 					.createApplicationItemVO();
@@ -246,7 +246,7 @@ public class ApplicationListPanelViewController implements
 				{
 					try
 					{
-						sessionSecurityChecker.checkCapabilityTo(ActionConstants.DELETE, ApplicationConstants.RESOURCE_APPLICATIONS);
+						sessionSecurityChecker.checkCapabilityTo(ActionConstants.DELETE, ApplicationConstants.RESOURCE_APPLICATION);
 						if (MessageBox.ButtonType.YES.equals(buttonType))
 						{
 							itemVOTableContainer.removeItem(data);

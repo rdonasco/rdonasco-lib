@@ -77,7 +77,7 @@ public class ApplicationViewLayoutController implements
 	}
 
 	@Secured
-	@SecuredCapability(action = ActionConstants.VIEW, resource = ApplicationConstants.RESOURCE_APPLICATIONS, useExceptionHandler = false)
+	@SecuredCapability(action = ActionConstants.VIEW, resource = ApplicationConstants.RESOURCE_APPLICATION, useExceptionHandler = false)
 	@Override
 	public TwoColumnFlexibleRightColumnViewLayout getControlledView()
 	{
