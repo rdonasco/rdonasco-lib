@@ -43,7 +43,7 @@ public class DomainManagerHomeButtonController implements
 				@Override
 				public void buttonClick(Button.ClickEvent event)
 				{
-					popupProvider.popUpInfo("Domain Manager Clicked");
+					popupProvider.popUpInfo("Domain Manager Clicked. This feature is still a work in progress");
 				}
 			});
 		}
