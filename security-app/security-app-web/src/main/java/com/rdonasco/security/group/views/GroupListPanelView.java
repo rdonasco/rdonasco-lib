@@ -52,11 +52,11 @@ public class GroupListPanelView extends Panel implements ControlledView
 		groupListTable.addStyleName(SecurityDefaultTheme.CSS_TABLE_SMALL_STRIPED);
 		groupListTable.addStyleName(SecurityDefaultTheme.CSS_TABLE_BORDERLESS);
 		addGroupButton = new Button(I18NResource.localize("Add new group"));
-		addGroupButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_ADD));
+		addGroupButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_ADD));
 		addGroupButton.setWidth(100, UNITS_PERCENTAGE);
 		addGroupButton.addStyleName(SecurityDefaultTheme.CSS_SMALL);
 		refreshButton.setCaption("Refresh");
-		refreshButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_REFRESH));
+		refreshButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_REFRESH));
 		refreshButton.addStyleName(SecurityDefaultTheme.CSS_SMALL);
 	}
 

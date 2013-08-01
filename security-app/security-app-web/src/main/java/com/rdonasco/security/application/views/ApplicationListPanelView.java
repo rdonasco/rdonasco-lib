@@ -79,11 +79,11 @@ public class ApplicationListPanelView extends Panel implements ControlledView
 	{
 		getAddButton().setCaption(I18NResource.localize("Add new"));
 		getAddButton().setDescription(I18NResource.localize("Add new application"));
-		getAddButton().setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_ADD));
+		getAddButton().setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_ADD));
 		getAddButton().setWidth(100, UNITS_PERCENTAGE);
 		getAddButton().addStyleName(SecurityDefaultTheme.CSS_SMALL);
 		getRefreshButton().setCaption(I18NResource.localize("Refresh"));
-		getRefreshButton().setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_REFRESH));
+		getRefreshButton().setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_REFRESH));
 		getRefreshButton().addStyleName(SecurityDefaultTheme.CSS_SMALL);
 		VerticalLayout content = ((VerticalLayout) getContent());
 		content.setMargin(true);

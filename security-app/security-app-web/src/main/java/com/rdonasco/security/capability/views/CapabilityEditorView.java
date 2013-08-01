@@ -107,10 +107,11 @@ public class CapabilityEditorView extends VerticalLayout implements
 		capabilityDetailPanel.setCaption(I18NResource.localize("Capability Editor"));
 		capabilityDetailPanel.setStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
 		VerticalLayout fieldLayout = new VerticalLayout();
+		titleField.setWidth(300f, UNITS_PIXELS);
 		fieldLayout.addComponent(titleField);
 		descriptionField.setWidth(300f, UNITS_PIXELS);
-		fieldLayout.addComponent(descriptionField);
 		fieldLayout.addComponent(resourceField);
+		fieldLayout.addComponent(descriptionField);
 		fieldLayout.setSpacing(true);
 		resourceDragAndDropWrapper = new DragAndDropWrapper(fieldLayout);
 		capabilityDetailPanel.addComponent(resourceDragAndDropWrapper);
@@ -133,11 +134,11 @@ public class CapabilityEditorView extends VerticalLayout implements
 	private void configureEditorButtons()
 	{
 		editButton.setCaption(I18NResource.localize("Edit"));
-		editButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_EDIT));
+		editButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_EDIT));
 		saveButton.setCaption(I18NResource.localize("Save"));
-		saveButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_SAVE));
+		saveButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_SAVE));
 		cancelButton.setCaption(I18NResource.localize("Cancel"));
-		cancelButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_CANCEL));
+		cancelButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_CANCEL));
 
 		saveButton.addStyleName(SecurityDefaultTheme.CSS_BUTTON_DEFAULT);
 		buttonLayout.addComponent(editButton);

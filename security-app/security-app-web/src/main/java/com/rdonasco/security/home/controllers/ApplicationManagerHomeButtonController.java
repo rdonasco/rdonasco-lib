@@ -83,7 +83,7 @@ public class ApplicationManagerHomeButtonController implements
 	public void refreshView() throws WidgetException
 	{
 		featureButton.setCaption(I18NResource.localize("Manage Applications"));
-		featureButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_32x32_APPLICATIONS));
+		featureButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_32x32_APPLICATIONS));
 	}
 
 	private void doTheRefresh() throws WidgetException

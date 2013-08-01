@@ -97,7 +97,7 @@ public class SettingsHomeButtonController implements
 	public void refreshView() throws WidgetException
 	{
 		featureButton.setCaption(I18NResource.localize(CONSTANTS_SETTINGS));
-		featureButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_32x32_SETTINGS));
+		featureButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_32x32_SETTINGS));
 	}
 
 	private void doTheRefresh() throws WidgetException

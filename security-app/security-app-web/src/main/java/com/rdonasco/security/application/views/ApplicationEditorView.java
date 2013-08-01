@@ -24,12 +24,14 @@ import com.rdonasco.common.vaadin.view.ControlledView;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.terminal.ThemeResource;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.BaseTheme;
 import javax.enterprise.context.Dependent;
 import org.vaadin.addon.formbinder.ViewBoundForm;
 
@@ -63,7 +65,7 @@ public class ApplicationEditorView extends VerticalLayout implements
 		cancelButton = new Button();
 		saveButton = new Button();
 		editButton = new Button();
-		generateTokenButton = new Button(I18NResource.localize("Generate token"));
+		generateTokenButton = new Button();
 	}
 
 	public OnAttachStrategy getAttachStrategy()
@@ -132,20 +134,27 @@ public class ApplicationEditorView extends VerticalLayout implements
 	{
 		nameField.setWidth(200f, UNITS_PIXELS);
 		applicationInfoPanel.addComponent(nameField);
+		((VerticalLayout) applicationInfoPanel.getContent()).setSpacing(true);
 		HorizontalLayout tokenFieldLayout = new HorizontalLayout();
+		tokenFieldLayout.setSpacing(true);
+		tokenField.setWidth(300, UNITS_PIXELS);
 		tokenFieldLayout.addComponent(tokenField);
+		generateTokenButton.addStyleName(BaseTheme.BUTTON_LINK);
+		generateTokenButton.setDescription(I18NResource.localize("Generate token"));
+		generateTokenButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_32x32_RELOAD));
 		tokenFieldLayout.addComponent(generateTokenButton);
+		tokenFieldLayout.setComponentAlignment(generateTokenButton, Alignment.BOTTOM_LEFT);
 		applicationInfoPanel.addComponent(tokenFieldLayout);
 	}
 
 	private void configureEditorButtons()
 	{
 		editButton.setCaption(I18NResource.localize("Edit"));
-		editButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_EDIT));
+		editButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_EDIT));
 		saveButton.setCaption(I18NResource.localize("Save"));
-		saveButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_SAVE));
+		saveButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_SAVE));
 		cancelButton.setCaption(I18NResource.localize("Cancel"));
-		cancelButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_CANCEL));
+		cancelButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_CANCEL));
 
 		buttonsLayout.setSpacing(true);
 		buttonsLayout.addComponent(editButton);

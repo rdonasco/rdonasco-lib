@@ -19,16 +19,15 @@ package com.rdonasco.security.application.controllers;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
-import com.rdonasco.common.utils.RandomTextGenerator;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
-import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.datamanager.listeditor.controller.ListEditorAttachStrategy;
 import com.rdonasco.datamanager.utils.TableHelper;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.application.utils.ApplicationConstants;
+import com.rdonasco.security.application.utils.ApplicationTokenGenerator;
 import com.rdonasco.security.application.views.ApplicationListPanelView;
 import com.rdonasco.security.application.vo.ApplicationItemVO;
 import com.rdonasco.security.application.vo.ApplicationItemVOBuilder;
@@ -48,7 +47,6 @@ import de.steinwedel.vaadin.MessageBox;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.inject.Inject;
 
 /**
@@ -61,15 +59,14 @@ public class ApplicationListPanelViewController implements
 	private static final Logger LOG = Logger.getLogger(ApplicationListPanelViewController.class.getName());
 	
 	private static final long serialVersionUID = 1L;
+	@Inject
+	ApplicationTokenGenerator applicationTokenGenerator;
 	
 	@Inject
 	private ApplicationListPanelView applicationListPanelView;
 	
 	@Inject
 	private ApplicationDataManager dataManager;
-	
-	@EJB
-	private ConfigDataManagerVODecoratorRemote configDataManager;
 	
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
@@ -174,10 +171,9 @@ public class ApplicationListPanelViewController implements
 
 	private void addNewApplication()
 	{
-		int applicationTokenLength = configDataManager.loadValue(ApplicationConstants.XPATH_DEFAULT_TOKEN_LENGTH, Integer.class, 32);
 		ApplicationVO newApplication = new ApplicationVOBuilder()
 				.setName("new application")
-				.setToken(RandomTextGenerator.generate(applicationTokenLength))
+				.setToken(applicationTokenGenerator.generate())
 				.createApplicationVO();
 		try
 		{

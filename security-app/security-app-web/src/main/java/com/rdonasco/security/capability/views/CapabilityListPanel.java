@@ -65,11 +65,11 @@ public class CapabilityListPanel extends Panel implements
 	public void initWidget() throws WidgetInitalizeException
 	{
 		addCapabilityButton.setCaption(I18NResource.localize("Add new capability"));
-		addCapabilityButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_ADD));
+		addCapabilityButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_ADD));
 		addCapabilityButton.setWidth(100, UNITS_PERCENTAGE);
 		addCapabilityButton.addStyleName(SecurityDefaultTheme.CSS_SMALL);
 		refreshButton.setCaption(I18NResource.localize("Refresh"));
-		refreshButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_REFRESH));
+		refreshButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_REFRESH));
 		refreshButton.addStyleName(SecurityDefaultTheme.CSS_SMALL);
 		HorizontalLayout buttonLayout = new HorizontalLayout();
 		buttonLayout.setSpacing(true);

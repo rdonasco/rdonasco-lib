@@ -76,11 +76,11 @@ public class UserListPanelView extends Panel implements ControlledView
 	public void initWidget() throws WidgetInitalizeException
 	{
 		getAddUserButton().setCaption(I18NResource.localize("Add new user"));
-		getAddUserButton().setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_ADD));
+		getAddUserButton().setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_ADD));
 		getAddUserButton().setWidth(100, UNITS_PERCENTAGE);
 		getAddUserButton().addStyleName(SecurityDefaultTheme.CSS_SMALL);
 		getRefreshButton().setCaption("Refresh");
-		getRefreshButton().setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_REFRESH));
+		getRefreshButton().setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_REFRESH));
 		getRefreshButton().addStyleName(SecurityDefaultTheme.CSS_SMALL);
 		VerticalLayout content = ((VerticalLayout) getContent());
 		content.setMargin(true);

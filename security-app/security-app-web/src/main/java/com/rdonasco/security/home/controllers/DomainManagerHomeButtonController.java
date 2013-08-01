@@ -63,7 +63,7 @@ public class DomainManagerHomeButtonController implements
 	public void refreshView() throws WidgetException
 	{
 		featureButton.setCaption(I18NResource.localize("Manage Domains"));
-		featureButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_32x32_DOMAINS));
+		featureButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_32x32_DOMAINS));
 	}
 
 	private void doTheRefresh() throws WidgetException

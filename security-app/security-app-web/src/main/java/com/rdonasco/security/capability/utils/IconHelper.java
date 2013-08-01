@@ -18,7 +18,7 @@ public final class IconHelper
 
 	public static Embedded createDeleteIcon(String toolTip)
 	{
-		Embedded icon = new Embedded(null, new ThemeResource(SecurityDefaultTheme.ICONS_16x16_DELETE));
+		Embedded icon = new Embedded(null, new ThemeResource(SecurityDefaultTheme.ICON_16x16_DELETE));
 		icon.setDescription(I18NResource.localize(toolTip));
 		return icon;
 	}

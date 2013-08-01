@@ -228,11 +228,11 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 	private void configureEditorButtons()
 	{
 		editButton.setCaption(I18NResource.localize("Edit"));
-		editButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_EDIT));
+		editButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_EDIT));
 		saveButton.setCaption(I18NResource.localize("Save"));
-		saveButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_SAVE));
+		saveButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_SAVE));
 		cancelButton.setCaption(I18NResource.localize("Cancel"));
-		cancelButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_CANCEL));
+		cancelButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_CANCEL));
 
 		buttonsLayout.setSpacing(true);
 		buttonsLayout.addComponent(editButton);

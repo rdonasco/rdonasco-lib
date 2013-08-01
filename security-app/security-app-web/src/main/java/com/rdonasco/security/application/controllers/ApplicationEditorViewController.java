@@ -19,16 +19,19 @@ package com.rdonasco.security.application.controllers;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
+import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.DataEditorViewController;
 import com.rdonasco.common.vaadin.controller.utils.DataEditorButtonBehaviorBuilder;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.security.application.utils.ApplicationConstants;
+import com.rdonasco.security.application.utils.ApplicationTokenGenerator;
 import com.rdonasco.security.application.views.ApplicationEditorView;
 import com.rdonasco.security.application.vo.ApplicationItemVO;
 import com.rdonasco.security.authentication.services.SessionSecurityChecker;
 import com.rdonasco.security.common.utils.ActionConstants;
 import com.vaadin.data.Buffered;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.ui.Button;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -51,6 +54,10 @@ public class ApplicationEditorViewController implements
 	private ApplicationEditorView editorView;
 	private DataManagerContainer<ApplicationItemVO> dataManagerContainer;
 	private BeanItem<ApplicationItemVO> currentItem;
+	@Inject
+	private ApplicationPopupProvider popupProvider;
+	@Inject
+	private ApplicationTokenGenerator applicationTokenGenerator;
 
 	public void setDataManagerContainer(
 			DataManagerContainer<ApplicationItemVO> dataManagerContainer)
@@ -118,6 +125,16 @@ public class ApplicationEditorViewController implements
 				.setEditButton(getControlledView().getEditButton())
 				.setSaveButton(getControlledView().getSaveButton())
 				.build();
+		getControlledView().getGenerateTokenButton().addListener(new Button.ClickListener()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void buttonClick(Button.ClickEvent event)
+			{
+				getControlledView().getTokenField().setValue(applicationTokenGenerator.generate());
+			}
+		});
 	}
 
 	private void configureFieldValidators()
@@ -132,6 +149,10 @@ public class ApplicationEditorViewController implements
 	public void changeViewToDisplayMode()
 	{
 		getControlledView().getForm().setReadOnly(true);
+		getControlledView().getEditButton().setVisible(true);
+		getControlledView().getSaveButton().setVisible(false);
+		getControlledView().getCancelButton().setVisible(false);
+		getControlledView().getGenerateTokenButton().setVisible(false);
 	}
 
 	@Override
@@ -142,6 +163,10 @@ public class ApplicationEditorViewController implements
 			sessionSecurityChecker.checkCapabilityTo(ActionConstants.EDIT,
 					ApplicationConstants.RESOURCE_APPLICATION);
 			getControlledView().getForm().setReadOnly(false);
+			getControlledView().getEditButton().setVisible(false);
+			getControlledView().getSaveButton().setVisible(true);
+			getControlledView().getCancelButton().setVisible(true);
+			getControlledView().getGenerateTokenButton().setVisible(true);
 		}
 		catch (Exception e)
 		{
@@ -164,6 +189,9 @@ public class ApplicationEditorViewController implements
 		{
 			getControlledView().getForm().commit();
 			dataManagerContainer.updateItem(getCurrentItem().getBean());
+			changeViewToDisplayMode();
+			popupProvider.popUpInfo(I18NResource.localizeWithParameter("Application _ saved", getCurrentItem().getBean().getName()));
+
 		}
 		catch (Exception e)
 		{

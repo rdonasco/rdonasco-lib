@@ -29,6 +29,7 @@ public final class SecurityDefaultTheme
 	public static final String CSS_ICON_IN_A_CELL = "cellIcon";
 	public static final String CSS_FULL_WIDTH = "fullWidth";
 	public static final String CSS_BUTTON_DEFAULT = "default";
+	public static final String CSS_BUTTON_SMALL = "small";
 	public static final String CSS_SMALL = "small";
 	public static final String CSS_USER_PROFILE_WORKSPACE = "userProfileWorkspace";
 	/* start of 32x32 icon entries */
@@ -36,17 +37,18 @@ public final class SecurityDefaultTheme
 	public static final String ICON_32x32_ROLES = "images/danish_rf_icons/PNG/public.png";
 	public static final String ICON_32x32_GROUPS = "images/blueberry/friends_group.png";
 	public static final String ICON_32x32_USERS = "images/blueberry/user_friend.png";
-	public static final String ICONS_32x32_APPLICATIONS = "images/blueberry/home.png";
-	public static final String ICONS_32x32_DOMAINS = "images/blueberry/globe.png";
-	public static final String ICONS_32x32_SETTINGS = "images/blueberry/options_2.png";
+	public static final String ICON_32x32_APPLICATIONS = "images/blueberry/home.png";
+	public static final String ICON_32x32_DOMAINS = "images/blueberry/globe.png";
+	public static final String ICON_32x32_SETTINGS = "images/blueberry/options_2.png";
+	public static final String ICON_32x32_RELOAD = "images/toolbar/reload.png";
 	/* 16x16 icons */
 	public static final String ICON_16x16_CAPABILITIES = "images/silk-icons/shield.png";
 	public static final String ICON_16x16_ROLES = "images/silk-icons/user_suit.png";
 	public static final String ICON_16x16_GROUPS = "images/silk-icons/group.png";
-	public static final String ICONS_16x16_DELETE = "images/silk-icons/delete.png";
-	public static final String ICONS_16x16_ADD = "images/silk-icons/add.png";
-	public static final String ICONS_16x16_EDIT = "images/silk-icons/pencil.png";
-	public static final String ICONS_16x16_SAVE = "images/silk-icons/disk.png";
-	public static final String ICONS_16x16_CANCEL = "images/silk-icons/cancel.png";
-	public static final String ICONS_16x16_REFRESH = "images/toolbar/refresh.png";
+	public static final String ICON_16x16_DELETE = "images/silk-icons/delete.png";
+	public static final String ICON_16x16_ADD = "images/silk-icons/add.png";
+	public static final String ICON_16x16_EDIT = "images/silk-icons/pencil.png";
+	public static final String ICON_16x16_SAVE = "images/silk-icons/disk.png";
+	public static final String ICON_16x16_CANCEL = "images/silk-icons/cancel.png";
+	public static final String ICON_16x16_REFRESH = "images/toolbar/refresh.png";
 }
