@@ -47,7 +47,7 @@ public class ApplicationEditorView extends VerticalLayout implements
 
 	private static final long serialVersionUID = 1L;
 	private Panel applicationInfoPanel;
-	private Panel hostPanel;
+	private VerticalLayout hostViewContainer;
 	private TextField nameField;
 	private TextField tokenField;
 	private HorizontalLayout buttonsLayout;
@@ -61,7 +61,7 @@ public class ApplicationEditorView extends VerticalLayout implements
 	public ApplicationEditorView()
 	{
 		applicationInfoPanel = new Panel(I18NResource.localize("Application Editor"));
-		hostPanel = new Panel(I18NResource.localize("Hosts"));
+		hostViewContainer = new VerticalLayout();
 		nameField = new TextField(I18NResource.localize("Name"));
 		tokenField = new TextField(I18NResource.localize("Token"));
 		buttonsLayout = new HorizontalLayout();
@@ -124,12 +124,11 @@ public class ApplicationEditorView extends VerticalLayout implements
 	public void initWidget() throws WidgetInitalizeException
 	{
 		applicationInfoPanel.addStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
-		hostPanel.addStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
 		configureApplicationInfoFields();
 		configureEditorButtons();
 		setSpacing(true);
 		addComponent(applicationInfoPanel);
-		addComponent(hostPanel);
+		addComponent(hostViewContainer);
 		addComponent(buttonsLayout);
 		getForm().setReadOnly(true);
 		getForm().setWriteThrough(true);
@@ -184,7 +183,7 @@ public class ApplicationEditorView extends VerticalLayout implements
 
 	public void setHostPanelContent(ListEditorView controlledView)
 	{
-		hostPanel.removeAllComponents();
-		hostPanel.addComponent(controlledView);
+		hostViewContainer.removeAllComponents();
+		hostViewContainer.addComponent(controlledView);
 	}
 }
