@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.rdonasco.security.home.controllers;
 
 import com.rdonasco.common.exceptions.WidgetException;
@@ -14,6 +13,7 @@ import com.rdonasco.security.home.views.FeatureHomeButton;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
@@ -21,21 +21,22 @@ import javax.inject.Inject;
  *
  * @author Roy F. Donasco
  */
+@Dependent
 public class ApplicationManagerHomeButtonController implements
 		HomeViewButtonController
 {
-	private static final long serialVersionUID = 1L;
 
+	private static final long serialVersionUID = 1L;
 	@Inject
 	private FeatureHomeButton featureButton;
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
-
 	@Inject
 	private Instance<HomeFrameViewController> homeFrameViewControllers;
-
 	@Inject
+	private Instance<ApplicationViewLayoutController> applicationViewLayoutControllers;
 	private ApplicationViewLayoutController applicationViewLayoutController;
+	private HomeFrameViewController homeFrameViewController;
 
 	@PostConstruct
 	@Override
@@ -47,12 +48,13 @@ public class ApplicationManagerHomeButtonController implements
 			featureButton.addListener(new Button.ClickListener()
 			{
 				private static final long serialVersionUID = 1L;
+
 				@Override
 				public void buttonClick(Button.ClickEvent event)
 				{
 					try
 					{
-						homeFrameViewControllers.get().setWorkspaceContent(getApplicationViewLayoutController().getControlledView());
+						getHomeFrameViewController().setWorkspaceContent(getApplicationViewLayoutController().getControlledView());
 					}
 					catch (Exception e)
 					{
@@ -69,9 +71,12 @@ public class ApplicationManagerHomeButtonController implements
 
 	public ApplicationViewLayoutController getApplicationViewLayoutController()
 	{
+		if (applicationViewLayoutController == null)
+		{
+			applicationViewLayoutController = applicationViewLayoutControllers.get();
+		}
 		return applicationViewLayoutController;
 	}
-
 
 	@Override
 	public FeatureHomeButton getControlledView()
@@ -89,5 +94,14 @@ public class ApplicationManagerHomeButtonController implements
 	private void doTheRefresh() throws WidgetException
 	{
 		refreshView();
+	}
+
+	private HomeFrameViewController getHomeFrameViewController()
+	{
+		if (homeFrameViewController == null)
+		{
+			homeFrameViewController = homeFrameViewControllers.get();
+		}
+		return homeFrameViewController;
 	}
 }

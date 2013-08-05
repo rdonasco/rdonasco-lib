@@ -21,6 +21,7 @@ import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.OnAttachStrategy;
 import com.rdonasco.common.vaadin.view.ButtonUtil;
 import com.rdonasco.common.vaadin.view.ControlledView;
+import com.rdonasco.datamanager.listeditor.view.ListEditorView;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import static com.vaadin.terminal.Sizeable.UNITS_PIXELS;
 import com.vaadin.terminal.ThemeResource;
@@ -46,6 +47,7 @@ public class ApplicationEditorView extends VerticalLayout implements
 
 	private static final long serialVersionUID = 1L;
 	private Panel applicationInfoPanel;
+	private Panel hostPanel;
 	private TextField nameField;
 	private TextField tokenField;
 	private HorizontalLayout buttonsLayout;
@@ -59,6 +61,7 @@ public class ApplicationEditorView extends VerticalLayout implements
 	public ApplicationEditorView()
 	{
 		applicationInfoPanel = new Panel(I18NResource.localize("Application Editor"));
+		hostPanel = new Panel(I18NResource.localize("Hosts"));
 		nameField = new TextField(I18NResource.localize("Name"));
 		tokenField = new TextField(I18NResource.localize("Token"));
 		buttonsLayout = new HorizontalLayout();
@@ -121,10 +124,12 @@ public class ApplicationEditorView extends VerticalLayout implements
 	public void initWidget() throws WidgetInitalizeException
 	{
 		applicationInfoPanel.addStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
+		hostPanel.addStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
 		configureApplicationInfoFields();
 		configureEditorButtons();
 		setSpacing(true);
 		addComponent(applicationInfoPanel);
+		addComponent(hostPanel);
 		addComponent(buttonsLayout);
 		getForm().setReadOnly(true);
 		getForm().setWriteThrough(true);
@@ -175,5 +180,11 @@ public class ApplicationEditorView extends VerticalLayout implements
 	public Button getGenerateTokenButton()
 	{
 		return generateTokenButton;
+	}
+
+	public void setHostPanelContent(ListEditorView controlledView)
+	{
+		hostPanel.removeAllComponents();
+		hostPanel.addComponent(controlledView);
 	}
 }

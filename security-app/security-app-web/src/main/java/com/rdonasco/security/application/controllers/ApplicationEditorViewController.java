@@ -16,6 +16,7 @@
  */
 package com.rdonasco.security.application.controllers;
 
+import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
@@ -23,17 +24,25 @@ import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.DataEditorViewController;
 import com.rdonasco.common.vaadin.controller.utils.DataEditorButtonBehaviorBuilder;
 import com.rdonasco.datamanager.controller.DataManagerContainer;
+import com.rdonasco.datamanager.services.DataManager;
 import com.rdonasco.security.application.utils.ApplicationConstants;
 import com.rdonasco.security.application.utils.ApplicationTokenGenerator;
 import com.rdonasco.security.application.views.ApplicationEditorView;
+import com.rdonasco.security.application.vo.ApplicationHostItemVO;
+import com.rdonasco.security.application.vo.ApplicationHostItemVOBuilder;
 import com.rdonasco.security.application.vo.ApplicationItemVO;
 import com.rdonasco.security.authentication.services.SessionSecurityChecker;
 import com.rdonasco.security.common.utils.ActionConstants;
+import com.rdonasco.security.vo.ApplicationHostVO;
 import com.vaadin.data.Buffered;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Button;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 /**
@@ -58,6 +67,88 @@ public class ApplicationEditorViewController implements
 	private ApplicationPopupProvider popupProvider;
 	@Inject
 	private ApplicationTokenGenerator applicationTokenGenerator;
+	private ApplicationHostEditorViewController hostEditorViewController;
+	@Inject
+	private Instance<ApplicationHostEditorViewController> hostEditorViewControllers;
+	private DataManager<ApplicationHostItemVO> hostEditorDataManager = new DataManager<ApplicationHostItemVO>()
+	{
+		@Override
+		public void deleteData(ApplicationHostItemVO data) throws
+				DataAccessException
+		{
+			currentItem.getBean().getApplicationVO()
+					.getHosts().remove(data.getApplicationHostVO());
+		}
+
+		@Override
+		public ApplicationHostItemVO loadData(ApplicationHostItemVO data)
+				throws DataAccessException
+		{
+			// To change body of generated methods, choose Tools | Templates.
+			// TODO: Complete code for method loadData
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+
+		@Override
+		public List<ApplicationHostItemVO> retrieveAllData() throws
+				DataAccessException
+		{
+			List<ApplicationHostItemVO> applicationHostItemVOs = new ArrayList<ApplicationHostItemVO>();
+			if (null != currentItem)
+			{
+				for (ApplicationHostVO applicationHostVO : currentItem.getBean().getApplicationVO().getHosts())
+				{
+					applicationHostItemVOs.add(new ApplicationHostItemVOBuilder()
+							.setApplicationHostVO(applicationHostVO)
+							.createApplicationHostItemVO());
+				}
+			}
+			return applicationHostItemVOs;
+		}
+
+		@Override
+		public ApplicationHostItemVO saveData(ApplicationHostItemVO data)
+				throws DataAccessException
+		{
+			if (null != currentItem)
+			{
+				final List<ApplicationHostVO> currentItemHosts = currentItem.getBean().getApplicationVO().getHosts();
+				int dataIndex = currentItemHosts.indexOf(data.getApplicationHostVO());
+				if (dataIndex == -1)
+				{
+					currentItemHosts.add(data.getApplicationHostVO());
+
+				}
+				else
+				{
+					getHostEditorViewController().getControlledView().getEditorTable().select(data);
+				}
+			}
+			return data;
+		}
+
+		@Override
+		public void updateData(ApplicationHostItemVO data) throws
+				DataAccessException
+		{
+			final List<ApplicationHostVO> currentItemHosts = currentItem.getBean().getApplicationVO().getHosts();
+			int dataIndex = currentItemHosts.indexOf(data.getApplicationHostVO());
+			if (dataIndex != -1)
+			{
+				ApplicationHostVO currentHost = currentItemHosts.get(dataIndex);
+				currentHost.setHostNameOrIpAddress(data.getHostNameOrIpAddress());
+			}
+		}
+	};
+
+	public ApplicationHostEditorViewController getHostEditorViewController()
+	{
+		if (null == hostEditorViewController)
+		{
+			hostEditorViewController = hostEditorViewControllers.get();
+		}
+		return hostEditorViewController;
+	}
 
 	public void setDataManagerContainer(
 			DataManagerContainer<ApplicationItemVO> dataManagerContainer)
@@ -72,6 +163,14 @@ public class ApplicationEditorViewController implements
 		this.currentItem = currentItem;
 		getControlledView().getForm().setItemDataSource(currentItem);
 		changeViewToDisplayMode();
+		try
+		{
+			getHostEditorViewController().refreshView();
+		}
+		catch (WidgetException ex)
+		{
+			LOG.log(Level.WARNING, ex.getMessage(), ex);
+		}
 	}
 
 	@Override
@@ -90,6 +189,7 @@ public class ApplicationEditorViewController implements
 			configureInitialButtonState();
 			configureButtonListeners();
 			configureFieldValidators();
+			configureHostEditorController();
 			changeViewToDisplayMode();
 		}
 		catch (Exception e)
@@ -197,5 +297,14 @@ public class ApplicationEditorViewController implements
 		{
 			exceptionPopupProvider.popUpErrorException(e);
 		}
+	}
+
+	private void configureHostEditorController()
+	{
+		DataManagerContainer hostDataContainer = new DataManagerContainer(ApplicationHostItemVO.class);
+		getHostEditorViewController().setDataContainer(hostDataContainer);
+		hostDataContainer.setDataManager(hostEditorDataManager);
+		getControlledView().setHostPanelContent(getHostEditorViewController().getControlledView());
+		getHostEditorViewController().initializeControlledViewBehavior();
 	}
 }
