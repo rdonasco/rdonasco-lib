@@ -292,6 +292,7 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 				}
 				textField.setReadOnly(true);
 				textField.setWriteThrough(true);
+				textField.setWidth(100f, TextField.UNITS_PERCENTAGE);
 				addFieldToFieldCache(itemId, columnId, textField);
 				textField.addListener(new FieldEvents.BlurListener()
 				{
