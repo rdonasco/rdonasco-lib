@@ -131,7 +131,7 @@ public class ApplicationEditorView extends VerticalLayout implements
 		addComponent(hostViewContainer);
 		addComponent(buttonsLayout);
 		getForm().setReadOnly(true);
-		getForm().setWriteThrough(true);
+		getForm().setWriteThrough(false);
 	}
 
 	private void configureApplicationInfoFields()

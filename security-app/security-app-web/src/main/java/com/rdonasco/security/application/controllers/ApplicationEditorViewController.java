@@ -279,6 +279,7 @@ public class ApplicationEditorViewController implements
 	public void discardChanges() throws Buffered.SourceException
 	{
 		getControlledView().getForm().discard();
+		getHostEditorViewController().getControlledView().getEditorTable().discard();
 		changeViewToDisplayMode();
 	}
 
@@ -287,7 +288,8 @@ public class ApplicationEditorViewController implements
 	{
 		try
 		{
-			getControlledView().getForm().commit();
+			getHostEditorViewController().getControlledView().getEditorTable().commit();
+			getControlledView().getForm().commit();			
 			dataManagerContainer.updateItem(getCurrentItem().getBean());
 			changeViewToDisplayMode();
 			popupProvider.popUpInfo(I18NResource.localizeWithParameter("Application _ saved", getCurrentItem().getBean().getName()));
@@ -307,5 +309,6 @@ public class ApplicationEditorViewController implements
 		getControlledView().setHostPanelContent(getHostEditorViewController().getControlledView());
 		getHostEditorViewController().initializeControlledViewBehavior();
 		getHostEditorViewController().getControlledView().getEditorTable().setColumnExpandRatio("hostNameOrIpAddress", 1f);
+		getHostEditorViewController().getControlledView().getEditorTable().setWriteThrough(false);
 	}
 }

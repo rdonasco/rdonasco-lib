@@ -145,6 +145,12 @@ public class ApplicationListPanelViewController implements
 		try
 		{
 			itemVOTableContainer.refresh();
+			Object currentItem = getRecordListTable().getValue();
+			if (currentItem != null)
+			{
+				getRecordListTable().setValue(null);
+				getRecordListTable().setValue(currentItem);
+			}
 		}
 		catch (DataAccessException ex)
 		{
