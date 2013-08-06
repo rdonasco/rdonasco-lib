@@ -304,7 +304,14 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 						{
 							BeanItem<VO> itemToUpdate = (BeanItem) source.getItem(itemId);
 							textField.commit();
-							dataContainer.updateItem(itemToUpdate.getBean());
+							if (null != itemToUpdate)
+							{
+								dataContainer.updateItem(itemToUpdate.getBean());
+							}
+							else
+							{
+								LOG.log(Level.FINER, "warning, itemToUpdate is null");
+							}
 							textField.setReadOnly(true);
 						}
 						catch (Exception ex)
