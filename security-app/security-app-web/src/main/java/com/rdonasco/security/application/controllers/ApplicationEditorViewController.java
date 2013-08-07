@@ -170,7 +170,7 @@ public class ApplicationEditorViewController implements
 	public void setCurrentItem(
 			BeanItem<ApplicationItemVO> currentItem)
 	{
-		createClonedDataForEditor(currentItem);
+		this.currentItem = currentItem;
 		getControlledView().getForm().setItemDataSource(currentItem);
 		changeViewToDisplayMode();
 		refreshHostEditorViewController();
@@ -286,6 +286,14 @@ public class ApplicationEditorViewController implements
 		getControlledView().getForm().discard();
 		getHostEditorViewController().getControlledView().getEditorTable().discard();
 		setCurrentItem((BeanItem) dataManagerContainer.getItem(currentItem.getBean()));
+		try
+		{
+			applicationListPanelViewController.refreshView();
+		}
+		catch (Exception e)
+		{
+			exceptionPopupProvider.popUpErrorException(e);
+		}
 	}
 
 	@Override
@@ -330,31 +338,4 @@ public class ApplicationEditorViewController implements
 		}
 	}
 
-	private void createClonedDataForEditor(
-			BeanItem<ApplicationItemVO> currentItem)
-	{
-		ApplicationVO applicationVO = new ApplicationVOBuilder()
-				.createApplicationVO();
-		try
-		{
-			BeanUtils.copyProperties(applicationVO, currentItem.getBean().getApplicationVO());
-			List<ApplicationHostVO> clonedHostList = new ArrayList<ApplicationHostVO>();
-			for (Iterator<ApplicationHostVO> hostIterator = applicationVO.getHosts().iterator(); hostIterator.hasNext();)
-			{
-				ApplicationHostVO host = hostIterator.next();
-				ApplicationHostVO clone = new ApplicationHostVO();
-				BeanUtils.copyProperties(clone, host);
-				clonedHostList.add(clone);
-			}
-			applicationVO.setHosts(clonedHostList);
-		}
-		catch (Exception ex)
-		{
-			LOG.log(Level.WARNING, ex.getMessage(), ex);
-		}
-		ApplicationItemVO applicationItemVO = new ApplicationItemVOBuilder()
-				.setApplicationVO(applicationVO)
-				.createApplicationItemVO();
-		this.currentItem = new BeanItem(applicationItemVO);
-	}
 }
