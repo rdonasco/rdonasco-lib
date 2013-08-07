@@ -68,7 +68,6 @@ public class ApplicationEditorViewController implements
 	private ApplicationEditorView editorView;
 	private DataManagerContainer<ApplicationItemVO> dataManagerContainer;
 	private BeanItem<ApplicationItemVO> currentItem;
-	private BeanItem<ApplicationItemVO> backupItem;
 	@Inject
 	private ApplicationPopupProvider popupProvider;
 	@Inject
