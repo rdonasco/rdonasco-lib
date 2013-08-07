@@ -23,7 +23,6 @@ import com.rdonasco.common.vaadin.controller.ViewController;
 import com.rdonasco.common.vaadin.view.layouts.ThreeColumnFlexibleCenterViewLayout;
 import com.rdonasco.security.authorization.interceptors.Secured;
 import com.rdonasco.security.authorization.interceptors.SecuredCapability;
-import com.rdonasco.common.vaadin.view.layouts.TwoColumnFlexibleRightColumnViewLayout;
 import com.rdonasco.security.application.utils.ApplicationConstants;
 import com.rdonasco.security.common.utils.ActionConstants;
 import com.vaadin.data.Property;
