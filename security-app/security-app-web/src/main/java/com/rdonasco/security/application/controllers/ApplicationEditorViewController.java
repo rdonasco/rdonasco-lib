@@ -31,19 +31,24 @@ import com.rdonasco.security.application.views.ApplicationEditorView;
 import com.rdonasco.security.application.vo.ApplicationHostItemVO;
 import com.rdonasco.security.application.vo.ApplicationHostItemVOBuilder;
 import com.rdonasco.security.application.vo.ApplicationItemVO;
+import com.rdonasco.security.application.vo.ApplicationItemVOBuilder;
 import com.rdonasco.security.authentication.services.SessionSecurityChecker;
 import com.rdonasco.security.common.utils.ActionConstants;
 import com.rdonasco.security.vo.ApplicationHostVO;
+import com.rdonasco.security.vo.ApplicationVO;
+import com.rdonasco.security.vo.ApplicationVOBuilder;
 import com.vaadin.data.Buffered;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Button;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import org.apache.commons.beanutils.BeanUtils;
 
 /**
  *
@@ -63,11 +68,13 @@ public class ApplicationEditorViewController implements
 	private ApplicationEditorView editorView;
 	private DataManagerContainer<ApplicationItemVO> dataManagerContainer;
 	private BeanItem<ApplicationItemVO> currentItem;
+	private BeanItem<ApplicationItemVO> backupItem;
 	@Inject
 	private ApplicationPopupProvider popupProvider;
 	@Inject
 	private ApplicationTokenGenerator applicationTokenGenerator;
 	private ApplicationHostEditorViewController hostEditorViewController;
+	private ApplicationListPanelViewController applicationListPanelViewController;
 	@Inject
 	private Instance<ApplicationHostEditorViewController> hostEditorViewControllers;
 	private DataManager<ApplicationHostItemVO> hostEditorDataManager = new DataManager<ApplicationHostItemVO>()
@@ -84,8 +91,6 @@ public class ApplicationEditorViewController implements
 		public ApplicationHostItemVO loadData(ApplicationHostItemVO data)
 				throws DataAccessException
 		{
-			// To change body of generated methods, choose Tools | Templates.
-			// TODO: Complete code for method loadData
 			throw new UnsupportedOperationException("Not supported yet.");
 		}
 
@@ -141,6 +146,12 @@ public class ApplicationEditorViewController implements
 		}
 	};
 
+	public void setApplicationListPanelViewController(
+			ApplicationListPanelViewController applicationListPanelViewController)
+	{
+		this.applicationListPanelViewController = applicationListPanelViewController;
+	}
+
 	public ApplicationHostEditorViewController getHostEditorViewController()
 	{
 		if (null == hostEditorViewController)
@@ -160,17 +171,10 @@ public class ApplicationEditorViewController implements
 	public void setCurrentItem(
 			BeanItem<ApplicationItemVO> currentItem)
 	{
-		this.currentItem = currentItem;
+		createClonedDataForEditor(currentItem);
 		getControlledView().getForm().setItemDataSource(currentItem);
 		changeViewToDisplayMode();
-		try
-		{
-			getHostEditorViewController().refreshView();
-		}
-		catch (WidgetException ex)
-		{
-			LOG.log(Level.WARNING, ex.getMessage(), ex);
-		}
+		refreshHostEditorViewController();
 	}
 
 	@Override
@@ -280,7 +284,7 @@ public class ApplicationEditorViewController implements
 	{
 		getControlledView().getForm().discard();
 		getHostEditorViewController().getControlledView().getEditorTable().discard();
-		changeViewToDisplayMode();
+		setCurrentItem((BeanItem) dataManagerContainer.getItem(currentItem.getBean()));
 	}
 
 	@Override
@@ -292,6 +296,7 @@ public class ApplicationEditorViewController implements
 			getControlledView().getForm().commit();			
 			dataManagerContainer.updateItem(getCurrentItem().getBean());
 			changeViewToDisplayMode();
+			applicationListPanelViewController.refreshView();
 			popupProvider.popUpInfo(I18NResource.localizeWithParameter("Application _ saved", getCurrentItem().getBean().getName()));
 
 		}
@@ -310,5 +315,45 @@ public class ApplicationEditorViewController implements
 		getHostEditorViewController().initializeControlledViewBehavior();
 		getHostEditorViewController().getControlledView().getEditorTable().setColumnExpandRatio("hostNameOrIpAddress", 1f);
 		getHostEditorViewController().getControlledView().getEditorTable().setWriteThrough(false);
+	}
+
+	private void refreshHostEditorViewController()
+	{
+		try
+		{
+			getHostEditorViewController().refreshView();
+		}
+		catch (WidgetException ex)
+		{
+			LOG.log(Level.WARNING, ex.getMessage(), ex);
+		}
+	}
+
+	private void createClonedDataForEditor(
+			BeanItem<ApplicationItemVO> currentItem)
+	{
+		ApplicationVO applicationVO = new ApplicationVOBuilder()
+				.createApplicationVO();
+		try
+		{
+			BeanUtils.copyProperties(applicationVO, currentItem.getBean().getApplicationVO());
+			List<ApplicationHostVO> clonedHostList = new ArrayList<ApplicationHostVO>();
+			for (Iterator<ApplicationHostVO> hostIterator = applicationVO.getHosts().iterator(); hostIterator.hasNext();)
+			{
+				ApplicationHostVO host = hostIterator.next();
+				ApplicationHostVO clone = new ApplicationHostVO();
+				BeanUtils.copyProperties(clone, host);
+				clonedHostList.add(clone);
+			}
+			applicationVO.setHosts(clonedHostList);
+		}
+		catch (Exception ex)
+		{
+			LOG.log(Level.WARNING, ex.getMessage(), ex);
+		}
+		ApplicationItemVO applicationItemVO = new ApplicationItemVOBuilder()
+				.setApplicationVO(applicationVO)
+				.createApplicationItemVO();
+		this.currentItem = new BeanItem(applicationItemVO);
 	}
 }

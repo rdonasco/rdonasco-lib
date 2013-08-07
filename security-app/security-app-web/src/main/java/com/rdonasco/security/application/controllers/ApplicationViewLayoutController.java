@@ -67,9 +67,9 @@ public class ApplicationViewLayoutController implements
 					applicationEditorViewController.setCurrentItem((BeanItem) tableSource.getItem(tableSource.getValue()));
 				}
 			});
-//			userEditorViewController.setUserItemTableContainer(userListPanelController.getItemTableContainer());
 			applicationEditorViewController.setDataManagerContainer(dataListPanelController.getItemTableContainer());
 			viewLayout.setLeftPanelContent(dataListPanelController.getControlledView());
+			applicationEditorViewController.setApplicationListPanelViewController(dataListPanelController);
 		}
 		catch (WidgetInitalizeException ex)
 		{
