@@ -257,6 +257,7 @@ public class ApplicationEditorViewController implements
 		getControlledView().getSaveButton().setVisible(false);
 		getControlledView().getCancelButton().setVisible(false);
 		getControlledView().getGenerateTokenButton().setVisible(false);
+		getHostEditorViewController().disableEditing();
 	}
 
 	@Override
@@ -271,6 +272,7 @@ public class ApplicationEditorViewController implements
 			getControlledView().getSaveButton().setVisible(true);
 			getControlledView().getCancelButton().setVisible(true);
 			getControlledView().getGenerateTokenButton().setVisible(true);
+			getHostEditorViewController().enableEditing();
 		}
 		catch (Exception e)
 		{
@@ -311,7 +313,7 @@ public class ApplicationEditorViewController implements
 		DataManagerContainer hostDataContainer = new DataManagerContainer(ApplicationHostItemVO.class);
 		getHostEditorViewController().setDataContainer(hostDataContainer);
 		hostDataContainer.setDataManager(hostEditorDataManager);
-		getControlledView().setHostPanelContent(getHostEditorViewController().getControlledView());
+		//getControlledView().setHostPanelContent(getHostEditorViewController().getControlledView());
 		getHostEditorViewController().initializeControlledViewBehavior();
 		getHostEditorViewController().getControlledView().getEditorTable().setColumnExpandRatio("hostNameOrIpAddress", 1f);
 		getHostEditorViewController().getControlledView().getEditorTable().setWriteThrough(false);

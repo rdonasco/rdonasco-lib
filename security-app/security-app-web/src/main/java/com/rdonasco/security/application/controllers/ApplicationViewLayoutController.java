@@ -20,6 +20,7 @@ import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.exceptions.WidgetInitalizeException;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ViewController;
+import com.rdonasco.common.vaadin.view.layouts.ThreeColumnFlexibleCenterViewLayout;
 import com.rdonasco.security.authorization.interceptors.Secured;
 import com.rdonasco.security.authorization.interceptors.SecuredCapability;
 import com.rdonasco.common.vaadin.view.layouts.TwoColumnFlexibleRightColumnViewLayout;
@@ -36,12 +37,12 @@ import javax.inject.Inject;
  * @author Roy F. Donasco
  */
 public class ApplicationViewLayoutController implements
-		ViewController<TwoColumnFlexibleRightColumnViewLayout>
+		ViewController<ThreeColumnFlexibleCenterViewLayout>
 {
 
 	private static final long serialVersionUID = 1L;
 	@Inject
-	private TwoColumnFlexibleRightColumnViewLayout viewLayout;
+	private ThreeColumnFlexibleCenterViewLayout viewLayout;
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
 	@Inject
@@ -70,6 +71,7 @@ public class ApplicationViewLayoutController implements
 			applicationEditorViewController.setDataManagerContainer(dataListPanelController.getItemTableContainer());
 			viewLayout.setLeftPanelContent(dataListPanelController.getControlledView());
 			applicationEditorViewController.setApplicationListPanelViewController(dataListPanelController);
+			viewLayout.addRightPanelContent(applicationEditorViewController.getHostEditorViewController().getControlledView());
 		}
 		catch (WidgetInitalizeException ex)
 		{
@@ -80,7 +82,7 @@ public class ApplicationViewLayoutController implements
 	@Secured
 	@SecuredCapability(action = ActionConstants.VIEW, resource = ApplicationConstants.RESOURCE_APPLICATION, useExceptionHandler = false)
 	@Override
-	public TwoColumnFlexibleRightColumnViewLayout getControlledView()
+	public ThreeColumnFlexibleCenterViewLayout getControlledView()
 	{
 		return viewLayout;
 	}
