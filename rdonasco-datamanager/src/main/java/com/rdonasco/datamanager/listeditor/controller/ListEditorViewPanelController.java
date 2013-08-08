@@ -87,7 +87,11 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 				if (event.isDoubleClick())
 				{
 					TextField textField = getFieldFromCache(event.getItemId(), event.getPropertyId());
-					if (null != textField)
+					if (null == textField)
+					{
+						LOG.log(Level.WARNING, "field not found, editing not possible");
+					}
+					else
 					{
 						textField.setReadOnly(false);
 						textField.focus();
