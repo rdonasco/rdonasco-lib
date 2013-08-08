@@ -24,7 +24,6 @@ import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.vo.ApplicationHostVO;
 import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.ApplicationVOBuilder;
-import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import org.jboss.arquillian.container.test.api.Deployment;
