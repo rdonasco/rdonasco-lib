@@ -18,6 +18,7 @@ package com.rdonasco.security.model;
 
 import com.rdonasco.security.utils.SecurityConstants;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -72,7 +73,7 @@ public class Application implements Serializable
 	private String token;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "application", fetch = FetchType.LAZY)
-	private Collection<ApplicationHost> hosts;
+	private Collection<ApplicationHost> hosts = new ArrayList<ApplicationHost>();
 
 	public Long getId()
 	{

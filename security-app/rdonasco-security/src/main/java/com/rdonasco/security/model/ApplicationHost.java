@@ -98,42 +98,26 @@ public class ApplicationHost implements Serializable
 	public int hashCode()
 	{
 		int hash = 5;
-		hash = 71 * hash
-				+ (this.application == null ? 0 : this.application.hashCode());
-		hash = 71 * hash
-				+ (this.hostNameOrIpAddress == null ? 0 : this.hostNameOrIpAddress.hashCode());
+		hash = 97 * hash + (this.id != null ? this.id.hashCode() : 0);
 		return hash;
 	}
 
 	@Override
 	public boolean equals(Object obj)
 	{
-		boolean isEqual;
 		if (obj == null)
 		{
-			isEqual = false;
+			return false;
 		}
-		else if (getClass() == obj.getClass())
+		if (getClass() != obj.getClass())
 		{
-			final ApplicationHost other = (ApplicationHost) obj;
-			if (this.application != other.application && (this.application == null || !this.application.equals(other.application)))
-			{
-				isEqual = false;
-			}
-			else if ((this.hostNameOrIpAddress == null)
-					? other.hostNameOrIpAddress != null : !this.hostNameOrIpAddress.equalsIgnoreCase(other.hostNameOrIpAddress))
-			{
-				isEqual = false;
-			}
-			else
-			{
-				isEqual = true;
-			}
+			return false;
 		}
-		else
+		final ApplicationHost other = (ApplicationHost) obj;
+		if (this.id != other.id && (this.id == null || !this.id.equals(other.id)))
 		{
-			isEqual = false;
+			return false;
 		}
-		return isEqual;
+		return true;
 	}
 }

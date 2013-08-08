@@ -16,9 +16,15 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.common.exceptions.CollectionMergeException;
+import com.rdonasco.common.exceptions.IllegalOrphanException;
+import com.rdonasco.common.exceptions.NonExistentEntityException;
+import com.rdonasco.common.utils.CollectionsUtility;
 import com.rdonasco.security.dao.ApplicationDAO;
+import com.rdonasco.security.dao.ApplicationHostDAO;
 import com.rdonasco.security.exceptions.ApplicationManagerException;
 import com.rdonasco.security.model.Application;
+import com.rdonasco.security.model.ApplicationHost;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.vo.ApplicationVO;
 import java.util.ArrayList;
@@ -38,14 +44,21 @@ import javax.inject.Inject;
 public class ApplicationManager implements
 		ApplicationManagerLocal
 {
-	private static final Logger LOG = Logger.getLogger(ApplicationManager.class.getName());
 
+	private static final Logger LOG = Logger.getLogger(ApplicationManager.class.getName());
 	private ApplicationDAO applicationDAO;
+	private ApplicationHostDAO applicationHostDAO;
 
 	@Inject
 	public void setApplicationDAO(ApplicationDAO applicationDAO)
 	{
 		this.applicationDAO = applicationDAO;
+	}
+
+	@Inject
+	public void setApplicationHostDAO(ApplicationHostDAO applicationHostDAO)
+	{
+		this.applicationHostDAO = applicationHostDAO;
 	}
 
 	@Override
@@ -69,13 +82,46 @@ public class ApplicationManager implements
 	// Add business logic below. (Right-click in editor and choose
 	// "Insert Code > Add Business Method")
 	@Override
-	public void updateApplication(ApplicationVO applicationToUpdate) throws
+	public void updateApplication(ApplicationVO updatedApplicationVO) throws
 			ApplicationManagerException
 	{
 		try
 		{
-			Application application = SecurityEntityValueObjectConverter.toApplication(applicationToUpdate);
-			applicationDAO.update(application);
+			Application applicationUpdate = SecurityEntityValueObjectConverter.toApplication(updatedApplicationVO);
+			Application applicationToUpdate = applicationDAO.findData(applicationUpdate.getId());
+			applicationToUpdate.setName(applicationUpdate.getName());
+			applicationToUpdate.setToken(applicationUpdate.getToken());
+
+			applicationToUpdate.setHosts(CollectionsUtility.updateCollection(
+					applicationUpdate.getHosts(), applicationToUpdate.getHosts(),
+					new CollectionsUtility.CollectionItemDeleteStrategy<ApplicationHost>()
+			{
+				@Override
+				public void delete(ApplicationHost itemToDelete) throws
+						CollectionMergeException
+				{
+					try
+					{
+						applicationHostDAO.delete(itemToDelete.getId());
+					}
+					catch (Exception e)
+					{
+						throw new CollectionMergeException(e);
+					}
+				}
+			}, new CollectionsUtility.CollectionItemUpdateStrategy<ApplicationHost>()
+			{
+				@Override
+				public void update(ApplicationHost itemToUpdate,
+						ApplicationHost itemToCopy) throws
+						CollectionMergeException
+				{
+					itemToUpdate.setApplication(itemToCopy.getApplication());
+					itemToUpdate.setHostNameOrIpAddress(itemToCopy.getHostNameOrIpAddress());
+				}
+			}));
+
+			applicationDAO.update(applicationToUpdate);
 		}
 		catch (Exception e)
 		{
@@ -99,7 +145,7 @@ public class ApplicationManager implements
 			else
 			{
 				loadedApplicationVO = SecurityEntityValueObjectConverter.toApplicationVO(loadedApplication);
-			}			
+			}
 		}
 		catch (Exception e)
 		{

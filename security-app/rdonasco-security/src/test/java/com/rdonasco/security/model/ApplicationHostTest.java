@@ -52,24 +52,6 @@ public class ApplicationHostTest
 		assertEquals(COMPARISON_FAILED, expResult, result);
 	}
 
-	@Test
-	public void testNotEqualsWithApplication()
-	{
-		LOG.log(Level.INFO, "notEqualsWithApplication");
-		Application application = new Application();
-		application.setId(1L);
-		ApplicationHost instance = new ApplicationHost();
-		instance.setApplication(application);
-		Application applicationCompared = new Application();
-		applicationCompared.setId(2L);
-		ApplicationHost compared = new ApplicationHost();
-		compared.setApplication(applicationCompared);
-		Object obj = compared;
-
-		boolean expResult = false;
-		boolean result = instance.equals(obj);
-		assertEquals(COMPARISON_FAILED, expResult, result);
-	}
 
 	@Test
 	public void testEqualsWithHostName()
@@ -83,23 +65,6 @@ public class ApplicationHostTest
 		Object obj = compared;
 
 		boolean expResult = true;
-		boolean result = instance.equals(obj);
-		assertEquals(COMPARISON_FAILED, expResult, result);
-	}
-
-	@Test
-	public void testNotEqualsWithHostName()
-	{
-		LOG.log(Level.INFO, "notEqualsWithHostName");
-		ApplicationHost instance = new ApplicationHost();
-		String hostName = "roy.donasco.com";
-		instance.setHostNameOrIpAddress(hostName);
-
-		ApplicationHost compared = new ApplicationHost();
-		compared.setHostNameOrIpAddress("heidi.donasco.com");
-		Object obj = compared;
-
-		boolean expResult = false;
 		boolean result = instance.equals(obj);
 		assertEquals(COMPARISON_FAILED, expResult, result);
 	}
@@ -125,45 +90,4 @@ public class ApplicationHostTest
 		assertEquals(COMPARISON_FAILED, expResult, result);
 	}
 
-	@Test
-	public void testNotEqualHostWithApplicationAndHostName()
-	{
-		LOG.log(Level.INFO, "NotEqualsWithApplication");
-		Application application = new Application();
-		application.setId(1L);
-		ApplicationHost instance = new ApplicationHost();
-		instance.setApplication(application);
-		instance.setHostNameOrIpAddress("roy.donasco.comw");
-		Application applicationCompared = new Application();
-		applicationCompared.setId(1L);
-		ApplicationHost compared = new ApplicationHost();
-		compared.setApplication(applicationCompared);
-		compared.setHostNameOrIpAddress("roy.donasco.com");
-		Object obj = compared;
-
-		boolean expResult = false;
-		boolean result = instance.equals(obj);
-		assertEquals(COMPARISON_FAILED, expResult, result);
-	}
-
-	@Test
-	public void testNotEqualApplicationWithApplicationAndHostName()
-	{
-		LOG.log(Level.INFO, "equalsWithApplication");
-		Application application = new Application();
-		application.setId(1L);
-		ApplicationHost instance = new ApplicationHost();
-		instance.setApplication(application);
-		instance.setHostNameOrIpAddress("roy.donasco.com");
-		Application applicationCompared = new Application();
-		applicationCompared.setId(2L);
-		ApplicationHost compared = new ApplicationHost();
-		compared.setApplication(applicationCompared);
-		compared.setHostNameOrIpAddress("roy.donasco.com");
-		Object obj = compared;
-
-		boolean expResult = false;
-		boolean result = instance.equals(obj);
-		assertEquals(COMPARISON_FAILED, expResult, result);
-	}
 }
