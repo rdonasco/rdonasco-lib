@@ -22,6 +22,7 @@ import com.rdonasco.security.vo.ApplicationHostVO;
 public class ApplicationHostItemVOBuilder 
 {
 	private ApplicationHostVO applicationHostVO;
+	private Integer viewIndex;
 
 	public ApplicationHostItemVOBuilder()
 	{
@@ -36,7 +37,12 @@ public class ApplicationHostItemVOBuilder
 
 	public ApplicationHostItemVO createApplicationHostItemVO()
 	{
-		return new ApplicationHostItemVO(applicationHostVO);
+		return new ApplicationHostItemVO(applicationHostVO, viewIndex);
 	}
 
+	public ApplicationHostItemVOBuilder setViewIndex(Integer viewIndex)
+	{
+		this.viewIndex = viewIndex;
+		return this;
+	}
 }

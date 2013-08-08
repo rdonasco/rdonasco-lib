@@ -30,6 +30,8 @@ public class ApplicationHostItemVO implements ListEditorItem, Serializable
 	private static final long serialVersionUID = 1L;
 	private Embedded icon;
 	private ApplicationHostVO applicationHostVO;
+	private Integer viewIndex;
+	private String oldHostNameOrIpAddress;
 
 	public ApplicationHostItemVO()
 	{
@@ -40,9 +42,12 @@ public class ApplicationHostItemVO implements ListEditorItem, Serializable
 	 *
 	 * @param applicationHostVO the encapsulated application host VO
 	 */
-	public ApplicationHostItemVO(ApplicationHostVO applicationHostVO)
+	public ApplicationHostItemVO(ApplicationHostVO applicationHostVO,
+			Integer viewIndex)
 	{
 		this.applicationHostVO = applicationHostVO;
+		this.oldHostNameOrIpAddress = applicationHostVO.getHostNameOrIpAddress();
+		this.viewIndex = viewIndex;
 	}
 
 	public Long getId()
@@ -65,6 +70,11 @@ public class ApplicationHostItemVO implements ListEditorItem, Serializable
 		applicationHostVO.setHostNameOrIpAddress(hostNameOrIpAddress);
 	}
 
+	public String getOldHostNameOrIpAddress()
+	{
+		return oldHostNameOrIpAddress;
+	}
+
 	public ApplicationHostVO getApplicationHostVO()
 	{
 		ApplicationHostVO clonedHost = new ApplicationHostVO();
@@ -83,35 +93,30 @@ public class ApplicationHostItemVO implements ListEditorItem, Serializable
 	@Override
 	public int hashCode()
 	{
-		return applicationHostVO.hashCode();
+		int hash = 7;
+		hash = 61 * hash + (this.viewIndex != null ? this.viewIndex.hashCode() : 0);
+		return hash;
 	}
 
 	@Override
 	public boolean equals(Object obj)
 	{
-		boolean isEqual = true;
 		if (obj == null)
 		{
-			isEqual = false;
+			return false;
 		}
-		else if (getClass() != obj.getClass())
+		if (getClass() != obj.getClass())
 		{
-			isEqual = false;
+			return false;
 		}
+		final ApplicationHostItemVO other = (ApplicationHostItemVO) obj;
+		if (this.viewIndex != other.viewIndex && (this.viewIndex == null || !this.viewIndex.equals(other.viewIndex)))
 		{
-			final ApplicationHostItemVO other = (ApplicationHostItemVO) obj;
-			if (other == null)
-			{
-				isEqual = false;
-			}
-			else if (this.applicationHostVO == null || other.applicationHostVO == null
-					|| !this.applicationHostVO.equals(other.applicationHostVO))
-			{
-				isEqual = false;
-			}
+			return false;
 		}
-		return isEqual;
+		return true;
 	}
+
 
 	@Override
 	public Embedded getIcon()
@@ -123,5 +128,15 @@ public class ApplicationHostItemVO implements ListEditorItem, Serializable
 	public void setIcon(Embedded icon)
 	{
 		this.icon = icon;
+	}
+
+	public void setViewIndex(Integer viewIndex)
+	{
+		this.viewIndex = viewIndex;
+	}
+
+	public Integer getViewIndex()
+	{
+		return viewIndex;
 	}
 }

@@ -31,24 +31,19 @@ import com.rdonasco.security.application.views.ApplicationEditorView;
 import com.rdonasco.security.application.vo.ApplicationHostItemVO;
 import com.rdonasco.security.application.vo.ApplicationHostItemVOBuilder;
 import com.rdonasco.security.application.vo.ApplicationItemVO;
-import com.rdonasco.security.application.vo.ApplicationItemVOBuilder;
 import com.rdonasco.security.authentication.services.SessionSecurityChecker;
 import com.rdonasco.security.common.utils.ActionConstants;
 import com.rdonasco.security.vo.ApplicationHostVO;
-import com.rdonasco.security.vo.ApplicationVO;
-import com.rdonasco.security.vo.ApplicationVOBuilder;
 import com.vaadin.data.Buffered;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Button;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import org.apache.commons.beanutils.BeanUtils;
 
 /**
  *
@@ -82,8 +77,13 @@ public class ApplicationEditorViewController implements
 		public void deleteData(ApplicationHostItemVO data) throws
 				DataAccessException
 		{
-			currentItem.getBean().getApplicationVO()
-					.getHosts().remove(data.getApplicationHostVO());
+			final List<ApplicationHostVO> currentHosts = currentItem.getBean().getApplicationVO()
+					.getHosts();
+			ApplicationHostVO dataToFind = new ApplicationHostVO();
+			dataToFind.setHostNameOrIpAddress(data.getOldHostNameOrIpAddress());
+			int indexToDelete = currentHosts.indexOf(dataToFind);
+			ApplicationHostVO removedItem = currentHosts.remove(indexToDelete);
+			LOG.log(Level.FINE, "data deleted {0}", removedItem.getHostNameOrIpAddress());
 		}
 
 		@Override
@@ -100,10 +100,12 @@ public class ApplicationEditorViewController implements
 			List<ApplicationHostItemVO> applicationHostItemVOs = new ArrayList<ApplicationHostItemVO>();
 			if (null != currentItem)
 			{
-				for (ApplicationHostVO applicationHostVO : currentItem.getBean().getApplicationVO().getHosts())
+				final List<ApplicationHostVO> listOfHosts = currentItem.getBean().getApplicationVO().getHosts();
+				for (ApplicationHostVO applicationHostVO : listOfHosts)
 				{
 					applicationHostItemVOs.add(new ApplicationHostItemVOBuilder()
 							.setApplicationHostVO(applicationHostVO)
+							.setViewIndex(listOfHosts.indexOf(applicationHostVO))
 							.createApplicationHostItemVO());
 				}
 			}
@@ -117,16 +119,8 @@ public class ApplicationEditorViewController implements
 			if (null != currentItem)
 			{
 				final List<ApplicationHostVO> currentItemHosts = currentItem.getBean().getApplicationVO().getHosts();
-				int dataIndex = currentItemHosts.indexOf(data.getApplicationHostVO());
-				if (dataIndex == -1)
-				{
-					currentItemHosts.add(data.getApplicationHostVO());
-
-				}
-				else
-				{
-					getHostEditorViewController().getControlledView().getEditorTable().select(data);
-				}
+				currentItemHosts.add(data.getApplicationHostVO());
+				data.setViewIndex(currentItemHosts.size() - 1);
 			}
 			return data;
 		}
@@ -136,11 +130,15 @@ public class ApplicationEditorViewController implements
 				DataAccessException
 		{
 			final List<ApplicationHostVO> currentItemHosts = currentItem.getBean().getApplicationVO().getHosts();
-			int dataIndex = currentItemHosts.indexOf(data.getApplicationHostVO());
-			if (dataIndex != -1)
+			try
 			{
-				ApplicationHostVO currentHost = currentItemHosts.get(dataIndex);
+				ApplicationHostVO currentHost = currentItemHosts.get(data.getViewIndex());
+				LOG.log(Level.FINE, "updating existing host");
 				currentHost.setHostNameOrIpAddress(data.getHostNameOrIpAddress());
+			}
+			catch (IndexOutOfBoundsException e)
+			{
+				LOG.log(Level.WARNING, "Index out of bounds exception {0}, host not found, update cannot be done.", data.getViewIndex());
 			}
 		}
 	};
@@ -302,7 +300,7 @@ public class ApplicationEditorViewController implements
 		try
 		{
 			getHostEditorViewController().getControlledView().getEditorTable().commit();
-			getControlledView().getForm().commit();			
+			getControlledView().getForm().commit();
 			dataManagerContainer.updateItem(getCurrentItem().getBean());
 			changeViewToDisplayMode();
 			applicationListPanelViewController.refreshView();
@@ -337,5 +335,4 @@ public class ApplicationEditorViewController implements
 			LOG.log(Level.WARNING, ex.getMessage(), ex);
 		}
 	}
-
 }
