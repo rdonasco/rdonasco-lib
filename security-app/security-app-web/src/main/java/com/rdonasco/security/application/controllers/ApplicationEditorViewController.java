@@ -63,6 +63,8 @@ public class ApplicationEditorViewController implements
 	private ApplicationEditorView editorView;
 	private DataManagerContainer<ApplicationItemVO> dataManagerContainer;
 	private BeanItem<ApplicationItemVO> currentItem;
+	private List<ApplicationHostItemVO> currentHosts;
+	private Integer hostIndex = 0;
 	@Inject
 	private ApplicationPopupProvider popupProvider;
 	@Inject
@@ -77,13 +79,7 @@ public class ApplicationEditorViewController implements
 		public void deleteData(ApplicationHostItemVO data) throws
 				DataAccessException
 		{
-			final List<ApplicationHostVO> currentHosts = currentItem.getBean().getApplicationVO()
-					.getHosts();
-			ApplicationHostVO dataToFind = new ApplicationHostVO();
-			dataToFind.setHostNameOrIpAddress(data.getOldHostNameOrIpAddress());
-			int indexToDelete = currentHosts.indexOf(dataToFind);
-			ApplicationHostVO removedItem = currentHosts.remove(indexToDelete);
-			LOG.log(Level.FINE, "data deleted {0}", removedItem.getHostNameOrIpAddress());
+			currentHosts.remove(data);
 		}
 
 		@Override
@@ -97,31 +93,28 @@ public class ApplicationEditorViewController implements
 		public List<ApplicationHostItemVO> retrieveAllData() throws
 				DataAccessException
 		{
-			List<ApplicationHostItemVO> applicationHostItemVOs = new ArrayList<ApplicationHostItemVO>();
+			currentHosts = new ArrayList<ApplicationHostItemVO>();
+			hostIndex = 0;
 			if (null != currentItem)
 			{
 				final List<ApplicationHostVO> listOfHosts = currentItem.getBean().getApplicationVO().getHosts();
 				for (ApplicationHostVO applicationHostVO : listOfHosts)
 				{
-					applicationHostItemVOs.add(new ApplicationHostItemVOBuilder()
+					currentHosts.add(new ApplicationHostItemVOBuilder()
 							.setApplicationHostVO(applicationHostVO)
-							.setViewIndex(listOfHosts.indexOf(applicationHostVO))
+							.setViewIndex(hostIndex++)
 							.createApplicationHostItemVO());
 				}
 			}
-			return applicationHostItemVOs;
+			return currentHosts;
 		}
 
 		@Override
 		public ApplicationHostItemVO saveData(ApplicationHostItemVO data)
 				throws DataAccessException
 		{
-			if (null != currentItem)
-			{
-				final List<ApplicationHostVO> currentItemHosts = currentItem.getBean().getApplicationVO().getHosts();
-				currentItemHosts.add(data.getApplicationHostVO());
-				data.setViewIndex(currentItemHosts.size() - 1);
-			}
+			data.setViewIndex(hostIndex++);
+			currentHosts.add(data);
 			return data;
 		}
 
@@ -129,16 +122,14 @@ public class ApplicationEditorViewController implements
 		public void updateData(ApplicationHostItemVO data) throws
 				DataAccessException
 		{
-			final List<ApplicationHostVO> currentItemHosts = currentItem.getBean().getApplicationVO().getHosts();
-			try
+			int dataIndex = currentHosts.indexOf(data);
+			if (dataIndex != -1)
 			{
-				ApplicationHostVO currentHost = currentItemHosts.get(data.getViewIndex());
-				LOG.log(Level.FINE, "updating existing host");
-				currentHost.setHostNameOrIpAddress(data.getHostNameOrIpAddress());
+				currentHosts.get(dataIndex).setHostNameOrIpAddress(data.getHostNameOrIpAddress());
 			}
-			catch (IndexOutOfBoundsException e)
+			else
 			{
-				LOG.log(Level.WARNING, "Index out of bounds exception {0}, host not found, update cannot be done.", data.getViewIndex());
+				LOG.log(Level.FINE, "no data to update, index = {0}", dataIndex);
 			}
 		}
 	};
@@ -301,6 +292,13 @@ public class ApplicationEditorViewController implements
 		{
 			getHostEditorViewController().getControlledView().getEditorTable().commit();
 			getControlledView().getForm().commit();
+			final ArrayList<ApplicationHostVO> updatedHostList = new ArrayList<ApplicationHostVO>(currentHosts.size());
+			getCurrentItem().getBean().getApplicationVO()
+					.setHosts(updatedHostList);
+			for (ApplicationHostItemVO hostItemVO : currentHosts)
+			{
+				updatedHostList.add(hostItemVO.getApplicationHostVO());
+			}
 			dataManagerContainer.updateItem(getCurrentItem().getBean());
 			changeViewToDisplayMode();
 			applicationListPanelViewController.refreshView();
