@@ -82,13 +82,17 @@ public class Capability implements Serializable
 	@JoinColumn(name = "resource_id", referencedColumnName = "id", nullable = true)
 	@ManyToOne(optional = false, fetch = FetchType.EAGER)
 	private Resource resource;
-
+	
+	@JoinColumn(name = "application_id", referencedColumnName = "id", nullable = true)
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
+	 
+	private Application application;
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "capability", fetch = FetchType.EAGER)
 	private Collection<CapabilityAction> actions;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "capability", fetch = FetchType.LAZY)
 	private Collection<RoleCapability> rolesWithThisCapability;
-
+	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "capability", fetch = FetchType.LAZY)
 	private Collection<UserCapability> usersWithThisCapability;
 
@@ -136,6 +140,16 @@ public class Capability implements Serializable
 	{
 		return actions;
 	}
+
+	public Application getApplication()
+	{
+		return application;
+	}
+
+	public void setApplication(Application application)
+	{
+		this.application = application;
+	}	
 
 	public void setActions(Collection<CapabilityAction> actions)
 	{
