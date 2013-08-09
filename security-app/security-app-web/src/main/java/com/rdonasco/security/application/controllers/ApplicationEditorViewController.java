@@ -316,7 +316,6 @@ public class ApplicationEditorViewController implements
 		DataManagerContainer hostDataContainer = new DataManagerContainer(ApplicationHostItemVO.class);
 		getHostEditorViewController().setDataContainer(hostDataContainer);
 		hostDataContainer.setDataManager(hostEditorDataManager);
-		//getControlledView().setHostPanelContent(getHostEditorViewController().getControlledView());
 		getHostEditorViewController().initializeControlledViewBehavior();
 		getHostEditorViewController().getControlledView().getEditorTable().setColumnExpandRatio("hostNameOrIpAddress", 1f);
 		getHostEditorViewController().getControlledView().getEditorTable().setWriteThrough(false);
