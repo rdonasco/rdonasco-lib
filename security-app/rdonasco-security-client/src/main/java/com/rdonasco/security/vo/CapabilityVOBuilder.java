@@ -16,6 +16,7 @@ public class CapabilityVOBuilder
 	private String description;
 	private ResourceVO resource;
 	private Collection<CapabilityActionVO> actions;
+	private ApplicationVO application;
 
 	public CapabilityVOBuilder()
 	{
@@ -70,7 +71,8 @@ public class CapabilityVOBuilder
 	public CapabilityVO createCapabilityVO()
 	{
 		ensureActionsAreInitialized();
-		CapabilityVO capabilityVO = new CapabilityVO(id, title, description, resource, actions);
+		CapabilityVO capabilityVO = new CapabilityVO(id, title, description, resource, actions, application);
+		
 		for(CapabilityActionVO action : actions)
 		{
 			action.setCapabilityVO(capabilityVO);
@@ -85,6 +87,12 @@ public class CapabilityVOBuilder
 		{
 			actions = new ArrayList<CapabilityActionVO>();
 		}
+	}
+
+	public CapabilityVOBuilder setApplication(ApplicationVO application)
+	{
+		this.application = application;
+		return this;
 	}
 
 }

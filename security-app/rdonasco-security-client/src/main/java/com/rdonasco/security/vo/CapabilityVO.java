@@ -33,18 +33,20 @@ public class CapabilityVO implements Serializable
 	private String title;
 	private String description;
 	private ResourceVO resource;
+	private ApplicationVO applicationVO;
 	private Collection<CapabilityActionVO> actions;
 	private Map<String, CapabilityActionVO> actionsMap = new HashMap<String, CapabilityActionVO>();
 
 	public CapabilityVO(Long id, String title, String description,
 			ResourceVO resource,
-			Collection<CapabilityActionVO> actions)
+			Collection<CapabilityActionVO> actions,ApplicationVO applicationVO)
 	{
 		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.resource = resource;
 		this.actions = actions;
+		this.applicationVO = applicationVO;
 	}
 
 	public Long getId()
