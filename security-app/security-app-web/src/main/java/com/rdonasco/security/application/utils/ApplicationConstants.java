@@ -37,4 +37,5 @@ public final class ApplicationConstants
 	public static final String XPATH_DEFAULT_TOKEN_LENGTH = "/application/token/default/length";
 
 	public static final String RESOURCE_APPLICATION = "application";
+	public static final String RESOURCE_APPLICATION_HOST = "applicationHost";
 }

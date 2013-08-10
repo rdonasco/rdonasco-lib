@@ -79,6 +79,7 @@ public class ApplicationEditorViewController implements
 		public void deleteData(ApplicationHostItemVO data) throws
 				DataAccessException
 		{
+			sessionSecurityChecker.checkCapabilityTo(ActionConstants.DELETE, ApplicationConstants.RESOURCE_APPLICATION_HOST);
 			currentHosts.remove(data);
 		}
 
@@ -113,6 +114,7 @@ public class ApplicationEditorViewController implements
 		public ApplicationHostItemVO saveData(ApplicationHostItemVO data)
 				throws DataAccessException
 		{
+			sessionSecurityChecker.checkCapabilityTo(ActionConstants.ADD, ApplicationConstants.RESOURCE_APPLICATION_HOST);
 			data.setViewIndex(hostIndex++);
 			currentHosts.add(data);
 			return data;
@@ -122,6 +124,7 @@ public class ApplicationEditorViewController implements
 		public void updateData(ApplicationHostItemVO data) throws
 				DataAccessException
 		{
+			sessionSecurityChecker.checkCapabilityTo(ActionConstants.EDIT, ApplicationConstants.RESOURCE_APPLICATION_HOST);
 			int dataIndex = currentHosts.indexOf(data);
 			if (dataIndex != -1)
 			{
