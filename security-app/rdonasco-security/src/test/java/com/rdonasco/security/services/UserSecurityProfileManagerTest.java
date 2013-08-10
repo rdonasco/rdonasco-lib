@@ -24,6 +24,7 @@ import com.rdonasco.config.services.ConfigDataManagerLocal;
 import com.rdonasco.config.util.ConfigDataValueObjectConverter;
 import com.rdonasco.config.vo.ConfigAttributeVO;
 import com.rdonasco.security.dao.ActionDAO;
+import com.rdonasco.security.exceptions.ApplicationManagerException;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.model.Action;
@@ -66,6 +67,8 @@ public class UserSecurityProfileManagerTest
 
 	@EJB
 	private CapabilityManagerLocal capabilityManager;
+	@EJB
+	private ApplicationManagerLocal applicationManager;
 
 	private CapabilityTestUtility capabilityTestUtility;
 
@@ -122,7 +125,7 @@ public class UserSecurityProfileManagerTest
 	@Before
 	public void setUp()
 	{
-		capabilityTestUtility = new CapabilityTestUtility(capabilityManager);
+		capabilityTestUtility = new CapabilityTestUtility(capabilityManager,applicationManager);
 		roleTestUtility = new RoleTestUtility(userRoleManager);
 		groupTestUtility = new GroupTestUtility(securityGroupDataManager);
 		userSecurityProfileTestUtility = new UserSecurityProfileTestUtility(capabilityManager, systemSecurityManager);
@@ -224,10 +227,10 @@ public class UserSecurityProfileManagerTest
 			final String action, final String resource, final String roleTitle)
 			throws
 			CapabilityManagerException, DataAccessException,
-			SecurityManagerException
+			SecurityManagerException, ApplicationManagerException
 	{
 		// prepare the capabilities
-		CapabilityVO capability = capabilityTestUtility.createTestDataCapabilityWithActionAndResourceName(action, resource);
+		CapabilityVO capability = capabilityTestUtility.createTestDataCapabilityWithActionAndResourceNameOnSystem(action, resource, "secured system 1");
 		// prepare the roles with capability
 		RoleVO role = roleTestUtility.createRoleNamedAndWithCapability(roleTitle, capability);
 		// create new user profile

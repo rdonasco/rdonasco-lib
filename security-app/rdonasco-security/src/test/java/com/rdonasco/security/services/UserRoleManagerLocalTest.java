@@ -53,6 +53,9 @@ public class UserRoleManagerLocalTest
 
 	@EJB
 	private CapabilityManagerLocal capabilityManager;
+	
+	@EJB
+	private ApplicationManagerLocal applicationManager;
 
 	private CapabilityTestUtility testUtility;
 
@@ -65,6 +68,8 @@ public class UserRoleManagerLocalTest
 		archive.addPackage(RoleDAO.class.getPackage())
 				.addPackage(Role.class.getPackage())
 				.addPackage(RoleVO.class.getPackage())
+				.addClass(ApplicationManager.class)
+				.addClass(ApplicationManagerLocal.class)
 				.addClass(RoleManagerLocal.class)
 				.addClass(RoleManager.class)
 				.addClass(CapabilityManagerRemote.class)
@@ -79,7 +84,7 @@ public class UserRoleManagerLocalTest
 	@Before
 	public void setUp()
 	{
-		testUtility = new CapabilityTestUtility(capabilityManager);
+		testUtility = new CapabilityTestUtility(capabilityManager,applicationManager);
 		roleTestUtility = new RoleTestUtility(userRoleManager);
 	}
 
@@ -131,7 +136,7 @@ public class UserRoleManagerLocalTest
 	public void testAddRoleWithCapability() throws Exception
 	{
 		LOG.log(Level.INFO, "addRoleWithCapability");
-		CapabilityVO capability = testUtility.createTestDataCapabilityWithActionAndResourceName("edit", "user");
+		CapabilityVO capability = testUtility.createTestDataCapabilityWithActionAndResourceNameOnSystem("edit", "user","Secure System");
 		RoleVO savedrole = roleTestUtility.createRoleNamedAndWithCapability("sexy role", capability);
 		RoleVO newRole = userRoleManager.loadData(savedrole);
 		assertNotNull("role not saved", newRole);

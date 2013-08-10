@@ -32,17 +32,20 @@ import org.junit.Before;
 @RunWith(Arquillian.class)
 public class CapabilityManagerLocalTest
 {
-	private static final Logger LOG = Logger.getLogger(CapabilityManagerLocalTest.class.getName());
 
+	private static final Logger LOG = Logger.getLogger(CapabilityManagerLocalTest.class.getName());
+	private static int KEY = 0;
+	
 	@EJB
 	private CapabilityManagerLocal capabilityManager;
-
+	@EJB
+	private ApplicationManagerLocal applicationManager;
 	private CapabilityTestUtility testUtility;
 
 	@Before
 	public void setUp()
 	{
-		testUtility = new CapabilityTestUtility(capabilityManager);
+		testUtility = new CapabilityTestUtility(capabilityManager, applicationManager);
 	}
 
 	@Deployment
@@ -137,11 +140,24 @@ public class CapabilityManagerLocalTest
 		System.out.println("addCapability");
 		final String actionName = "add";
 		final String resourceName = "employee";
-		CapabilityVO savedCapabilityVO = testUtility.createTestDataCapabilityWithActionAndResourceName(actionName, resourceName);
+		final String applicationName = "hrSystem" + (KEY++);
+		CapabilityVO savedCapabilityVO = testUtility.createTestDataCapabilityWithActionAndResourceNameOnSystem(actionName, resourceName, applicationName);
 		assertNotNull(savedCapabilityVO);
 		assertNotNull(savedCapabilityVO.getId());
 	}
-	private static int KEY = 0;
+	
+	@Test
+	public void testAddCapabilityWithApplication() throws Exception
+	{
+		System.out.println("addCapabilityWithApplication");
+				
+		final String actionName = "add"+ (KEY++);;
+		final String resourceName = "hr.employee"+ (KEY++);;
+		final String applicationName = "hrjSystem" + (KEY++);
+		CapabilityVO savedCapabilityVO = testUtility.createTestDataCapabilityWithActionAndResourceNameOnSystem(actionName, resourceName, applicationName);
+		assertNotNull(savedCapabilityVO);
+		assertNotNull(savedCapabilityVO.getId());		
+	}
 
 	@Test
 	public void testUpdateCapabilityDetails() throws Exception
@@ -149,7 +165,7 @@ public class CapabilityManagerLocalTest
 		System.out.println("updateCapabilityDetails");
 		final String actionName = "add" + (KEY++);
 		final String resourceName = "employee" + (KEY++);
-		CapabilityVO capabilityVOtoUpdate = testUtility.createTestDataCapabilityWithActionAndResourceName(actionName, resourceName);
+		CapabilityVO capabilityVOtoUpdate = testUtility.createTestDataCapabilityWithActionAndResourceNameOnSystem(actionName, resourceName,"HR System"+ (KEY++));
 		capabilityVOtoUpdate.setDescription("updated description");
 		capabilityVOtoUpdate.setTitle("updated title");
 		capabilityManager.updateCapability(capabilityVOtoUpdate);
@@ -166,7 +182,7 @@ public class CapabilityManagerLocalTest
 		System.out.println("updateCapabilityAndAddActions");
 		final String actionName = "add" + (KEY++);
 		final String resourceName = "employee" + (KEY++);
-		CapabilityVO capabilityVOtoUpdate = testUtility.createTestDataCapabilityWithActionAndResourceName(actionName, resourceName);
+		CapabilityVO capabilityVOtoUpdate = testUtility.createTestDataCapabilityWithActionAndResourceNameOnSystem(actionName, resourceName, "HR system "+ (KEY++));
 		CapabilityActionVO capabilityActionToAdd = testUtility.createTestDataCapabilityActionNamed("edit" + (KEY++), capabilityVOtoUpdate);
 		capabilityVOtoUpdate.getActions().add(capabilityActionToAdd);
 		capabilityManager.updateCapability(capabilityVOtoUpdate);
@@ -180,7 +196,7 @@ public class CapabilityManagerLocalTest
 		System.out.println("updateCapabilityAndAddActions");
 		final String actionName = "add" + (KEY++);
 		final String resourceName = "employee" + (KEY++);
-		CapabilityVO capabilityVOtoUpdate = testUtility.createTestDataCapabilityWithActionAndResourceName(actionName, resourceName);
+		CapabilityVO capabilityVOtoUpdate = testUtility.createTestDataCapabilityWithActionAndResourceNameOnSystem(actionName, resourceName, "HR system" + (KEY++));
 		CapabilityActionVO capabilityActionToAdd = testUtility.createTestDataCapabilityActionNamed("edit" + (KEY++), capabilityVOtoUpdate);
 		capabilityVOtoUpdate.getActions().add(capabilityActionToAdd);
 		capabilityManager.updateCapability(capabilityVOtoUpdate);
@@ -204,7 +220,7 @@ public class CapabilityManagerLocalTest
 		System.out.println("updateCapabilityWithRemovedAndAddNewActions");
 		final String actionName = "add" + (KEY++);
 		final String resourceName = "employee" + (KEY++);
-		CapabilityVO capabilityVOtoUpdate = testUtility.createTestDataCapabilityWithActionAndResourceName(actionName, resourceName);
+		CapabilityVO capabilityVOtoUpdate = testUtility.createTestDataCapabilityWithActionAndResourceNameOnSystem(actionName, resourceName," HR System 4"+ (KEY++));
 		CapabilityActionVO capabilityActionToAdd = testUtility.createTestDataCapabilityActionNamed("edit" + (KEY++), capabilityVOtoUpdate);
 		capabilityVOtoUpdate.getActions().add(capabilityActionToAdd);
 		capabilityManager.updateCapability(capabilityVOtoUpdate);
@@ -255,7 +271,7 @@ public class CapabilityManagerLocalTest
 		System.out.println("deleteCapability");
 		final String actionName = "delete" + (KEY++);
 		final String resourceName = "employee" + (KEY++);
-		CapabilityVO capabilityVOtoDelete = testUtility.createTestDataCapabilityWithActionAndResourceName(actionName, resourceName);
+		CapabilityVO capabilityVOtoDelete = testUtility.createTestDataCapabilityWithActionAndResourceNameOnSystem(actionName, resourceName, "HR System 5"+ (KEY++));
 		capabilityManager.removeCapability(capabilityVOtoDelete);
 		CapabilityVO foundCapabilityVO = capabilityManager.findCapabilityWithId(capabilityVOtoDelete.getId());
 		assertNull(foundCapabilityVO);
@@ -268,7 +284,7 @@ public class CapabilityManagerLocalTest
 		System.out.println("addCapability");
 		final String actionName = "logon";
 		final String resourceName = "system";
-		CapabilityVO savedCapabilityVO = testUtility.createTestDataCapabilityWithActionAndResourceName(actionName, resourceName);
+		CapabilityVO savedCapabilityVO = testUtility.createTestDataCapabilityWithActionAndResourceNameOnSystem(actionName, resourceName,"HR SYSTEM 6"+ (KEY++));
 
 		CapabilityVO foundCapabilityVO = capabilityManager.findCapabilityWithTitle(savedCapabilityVO.getTitle());
 		assertNotNull(foundCapabilityVO);
@@ -280,7 +296,7 @@ public class CapabilityManagerLocalTest
 	{
 		System.out.println("addActionsToCapability");
 		ActionVO actionToAdd = testUtility.createTestDataActionNamed("missingInAction");
-		CapabilityVO capabilityToUpdate = testUtility.createTestDataCapabilityWithActionAndResourceName("currentAction", "newResource");
+		CapabilityVO capabilityToUpdate = testUtility.createTestDataCapabilityWithActionAndResourceNameOnSystem("currentAction", "newResource","hr SYSTEM 7"+ (KEY++));
 		List<ActionVO> actionsToAdd = new ArrayList<ActionVO>();
 		actionsToAdd.add(actionToAdd);
 		capabilityManager.addActionsToCapability(actionsToAdd, capabilityToUpdate);

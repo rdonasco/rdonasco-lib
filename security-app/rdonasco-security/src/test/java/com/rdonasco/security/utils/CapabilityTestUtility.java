@@ -16,9 +16,13 @@
  */
 package com.rdonasco.security.utils;
 
+import com.rdonasco.security.exceptions.ApplicationManagerException;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
+import com.rdonasco.security.services.ApplicationManagerLocal;
 import com.rdonasco.security.services.CapabilityManager;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.ApplicationVO;
+import com.rdonasco.security.vo.ApplicationVOBuilder;
 import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityActionVOBuilder;
 import com.rdonasco.security.vo.CapabilityVO;
@@ -36,16 +40,28 @@ public class CapabilityTestUtility
 {
 
 	private CapabilityManager capabilityManager;
+	private ApplicationManagerLocal applicationManager;
 
-	public CapabilityTestUtility(CapabilityManager capabilityManager)
+	public CapabilityTestUtility(CapabilityManager capabilityManager, ApplicationManagerLocal applicationManager)
 	{
 		this.capabilityManager = capabilityManager;
+		this.applicationManager = applicationManager;
 	}
 
 	public CapabilityManager getCapabilityManager()
 	{
 		return capabilityManager;
 	}
+
+	public void setApplicationManager(ApplicationManagerLocal applicationManager)
+	{
+		this.applicationManager = applicationManager;
+	}
+
+	public ApplicationManagerLocal getApplicationManager()
+	{
+		return applicationManager;
+	}	
 
 	public void setCapabilityManager(CapabilityManager capabilityManager)
 	{
@@ -72,15 +88,24 @@ public class CapabilityTestUtility
 		return resourceAdded;
 	}
 
-	public CapabilityVO createTestDataCapabilityWithActionAndResourceName(
+	private static int KEY = 0;
+	public CapabilityVO createTestDataCapabilityWithActionAndResourceNameOnSystem(
 			final String actionName,
-			final String resourceName) throws CapabilityManagerException
+			final String resourceName,
+			final String systemName) throws CapabilityManagerException, ApplicationManagerException
 	{
+		ApplicationVO applicationVO = new ApplicationVOBuilder()
+				.setName(systemName)
+				.setToken("hrSystemToken"+(KEY++))
+				.createApplicationVO();
+		ApplicationVO createdApplication = applicationManager.createNewApplication(applicationVO);
+		
 		ActionVO action = createTestDataActionNamed(actionName);
 		ResourceVO resource = createTestDataResourceNamed(resourceName);
 		final String capabilityTitle = "capability to " + actionName + " " + resourceName;
 		CapabilityVO capabilityVO = new CapabilityVOBuilder()
 				.addAction(action)
+				.setApplication(createdApplication)
 				.setResource(resource)
 				.setTitle(capabilityTitle)
 				.setDescription(capabilityTitle + " description")
