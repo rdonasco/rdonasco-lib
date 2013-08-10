@@ -305,28 +305,31 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 					@Override
 					public void blur(FieldEvents.BlurEvent event)
 					{
-						try
+						if (!textField.isReadOnly())
 						{
-							BeanItem<VO> itemToUpdate = (BeanItem) source.getItem(itemId);
-							textField.commit();
-							if (null != itemToUpdate)
+							try
 							{
-								dataContainer.updateItem(itemToUpdate.getBean());
+								BeanItem<VO> itemToUpdate = (BeanItem) source.getItem(itemId);
+								textField.commit();
+								if (null != itemToUpdate)
+								{
+									dataContainer.updateItem(itemToUpdate.getBean());
+								}
+								else
+								{
+									LOG.log(Level.FINER, "warning, itemToUpdate is null");
+								}
+								textField.setReadOnly(true);
 							}
-							else
+							catch (Exception ex)
 							{
-								LOG.log(Level.FINER, "warning, itemToUpdate is null");
-							}
-							textField.setReadOnly(true);
-						}
-						catch (Exception ex)
-						{
-							LOG.log(Level.SEVERE, ex.getMessage(), ex);
-							getPopupProvider().popUpError(I18NResource
-									.localizeWithParameter("unable.to.update.record._", getItemName()));
-							textField.focus();
-							textField.selectAll();
+								LOG.log(Level.SEVERE, ex.getMessage(), ex);
+								getPopupProvider().popUpError(I18NResource
+										.localizeWithParameter("unable.to.update.record._", getItemName()));
+								textField.focus();
+								textField.selectAll();
 
+							}
 						}
 					}
 				});
