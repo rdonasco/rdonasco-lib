@@ -265,6 +265,8 @@ public class CapabilityEditorViewController implements
 				}
 			}
 		});
+		applicationComboboxDataContainer.refresh();
+		editorView.getApplicationField().setContainerDataSource(applicationComboboxDataContainer);
 	}
 
 	public void setCurrentItem(BeanItem<CapabilityItemVO> currentItem)
@@ -308,6 +310,7 @@ public class CapabilityEditorViewController implements
 			try
 			{
 				resourceComboboxDataContainer.refresh();
+				applicationComboboxDataContainer.refresh();
 			}
 			catch (DataAccessException ex)
 			{
