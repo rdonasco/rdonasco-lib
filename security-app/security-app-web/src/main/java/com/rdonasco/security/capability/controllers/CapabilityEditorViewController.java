@@ -67,13 +67,10 @@ public class CapabilityEditorViewController implements
 {
 
 	private DropHandler resourceDropHander;
-
 	@Inject
 	private ApplicationPopupProvider popupProvider;
-
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
-
 	@Inject
 	private SessionSecurityChecker sessionSecurityChecker;
 
@@ -81,32 +78,22 @@ public class CapabilityEditorViewController implements
 	{
 
 		EDIT, VIEW
-
 	};
 	private EditorMode editorMode = EditorMode.VIEW;
-
 	private static final Logger LOG = Logger.getLogger(CapabilityEditorViewController.class.getName());
-
 	private static final long serialVersionUID = 1L;
-
 	@Inject
 	private CapabilityEditorView editorView;
-
 	@Inject
 	private CapabilityDataManagerDecorator capabilityDataManager;
-	
 	@EJB
 	private ApplicationManagerLocal applicationManager;
-
 	private BeanItemContainer<ActionItemVO> actionsContainer = new BeanItemContainer<ActionItemVO>(ActionItemVO.class);
-
 	private BeanItem<CapabilityItemVO> currentItem;
-
 	private DataManagerContainer<ResourceVO> resourceComboboxDataContainer = new DataManagerContainer<ResourceVO>(ResourceVO.class);
 	private DataManagerContainer<ApplicationVO> applicationComboboxDataContainer = new DataManagerContainer<ApplicationVO>(ApplicationVO.class);
-
+	private CapabilityListPanelController capabilityListPanelController;
 	private Table actionTableSource;
-
 	@Inject
 	private Application application;
 
@@ -128,6 +115,12 @@ public class CapabilityEditorViewController implements
 		{
 			LOG.log(Level.SEVERE, ex.getMessage(), ex);
 		}
+	}
+
+	public void setCapabilityListPanelController(
+			CapabilityListPanelController capabilityListPanelController)
+	{
+		this.capabilityListPanelController = capabilityListPanelController;
 	}
 
 	private void addActionVOToContainer(ActionVO action)
@@ -247,11 +240,11 @@ public class CapabilityEditorViewController implements
 		resourceComboboxDataContainer.refresh();
 		editorView.getResourceField().setContainerDataSource(resourceComboboxDataContainer);
 	}
-	
+
 	private void configureApplicationComboBox() throws DataAccessException
 	{
-		applicationComboboxDataContainer.setDataRetrieveListStrategy(new DataRetrieveListStrategy<ApplicationVO>() {
-
+		applicationComboboxDataContainer.setDataRetrieveListStrategy(new DataRetrieveListStrategy<ApplicationVO>()
+		{
 			@Override
 			public List<ApplicationVO> retrieve() throws DataAccessException
 			{
@@ -467,13 +460,21 @@ public class CapabilityEditorViewController implements
 			}
 			currentItem.getBean().setActions(actions);
 			CapabilityItemVO capabilityItemVO = ((BeanItem<CapabilityItemVO>) editorView.getEditorForm().getItemDataSource()).getBean();
-			capabilityDataManager.updateData(capabilityItemVO);
+			if (capabilityItemVO.getId() == null)
+			{
+				capabilityListPanelController.addNewItem(capabilityItemVO);
+			}
+			else
+			{
+				capabilityDataManager.updateData(capabilityItemVO);
+			}
 			setViewToReadOnly();
 			popupProvider.popUpInfo(I18NResource.localizeWithParameter("Capability _ Saved", capabilityItemVO.getTitle()));
 		}
-		catch (DataAccessException ex)
+		catch (Exception ex)
 		{
 			exceptionPopupProvider.popUpErrorException(ex);
+
 		}
 	}
 	private DropHandler actionDropHandler = new DropHandler()
@@ -517,5 +518,4 @@ public class CapabilityEditorViewController implements
 			return new And(sourceCriterion);
 		}
 	};
-
 }

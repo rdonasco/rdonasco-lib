@@ -153,6 +153,8 @@ public class CapabilityViewLayoutController implements
 
 			// link the two controllers
 			capabilityEditorViewController.setActionTableSource(actionEditorController.getControlledView().getEditorTable());
+			capabilityListPanelController.setCapabilityEditorViewController(capabilityEditorViewController);
+			capabilityEditorViewController.setCapabilityListPanelController(capabilityListPanelController);
 			capabilityListPanelController.getControlledView().getDataViewListTable().addListener(new Property.ValueChangeListener()
 			{
 				private static final long serialVersionUID = 1L;
