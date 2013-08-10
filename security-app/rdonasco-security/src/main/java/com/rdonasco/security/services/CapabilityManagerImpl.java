@@ -497,7 +497,9 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 			existingCapability.setDescription(capability.getDescription());
 			existingCapability.setTitle(capability.getTitle());
 			existingCapability.setResource(capability.getResource());
+			existingCapability.setApplication(capability.getApplication());
 
+			validate(existingCapability);
 			capabilityDAO.update(existingCapability);
 		}
 		catch (Exception e)

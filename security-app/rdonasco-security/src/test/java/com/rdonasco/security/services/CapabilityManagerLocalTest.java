@@ -174,11 +174,14 @@ public class CapabilityManagerLocalTest
 		capabilityVOtoUpdate.setDescription("updated description");
 		capabilityVOtoUpdate.setTitle("updated title");
 		capabilityManager.updateCapability(capabilityVOtoUpdate);
+		ApplicationVO applicationToTest = testUtility.createTestApplicationData("updated application for capability");
+		capabilityVOtoUpdate.setApplicationVO(applicationToTest);
 		CapabilityVO updatedCapabilityVO = capabilityManager.findCapabilityWithId(capabilityVOtoUpdate.getId());
 		assertEquals(capabilityVOtoUpdate.getId(), updatedCapabilityVO.getId());
 		assertEquals(capabilityVOtoUpdate.getDescription(), updatedCapabilityVO.getDescription());
 		assertEquals(capabilityVOtoUpdate.getTitle(), updatedCapabilityVO.getTitle());
 		assertEquals(capabilityVOtoUpdate.getActions().size(), updatedCapabilityVO.getActions().size());
+		assertEquals(applicationToTest,updatedCapabilityVO.getApplicationVO());
 	}
 
 	@Test

@@ -30,7 +30,7 @@ public class MandatoryCapabilityApplication extends CapabilityValidator
 	@Override
 	public boolean isValid(Capability capability)
 	{
-		return (capability.getApplication() != null);
+		return (capability.getApplication() != null && capability.getApplication().getId() != null);
 	}
 
 	@Override

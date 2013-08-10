@@ -94,11 +94,7 @@ public class CapabilityTestUtility
 			final String resourceName,
 			final String systemName) throws CapabilityManagerException, ApplicationManagerException
 	{
-		ApplicationVO applicationVO = new ApplicationVOBuilder()
-				.setName(systemName)
-				.setToken("hrSystemToken"+(KEY++))
-				.createApplicationVO();
-		ApplicationVO createdApplication = applicationManager.createNewApplication(applicationVO);
+		ApplicationVO createdApplication = createTestApplicationData(systemName);
 		
 		ActionVO action = createTestDataActionNamed(actionName);
 		ResourceVO resource = createTestDataResourceNamed(resourceName);
@@ -149,5 +145,16 @@ public class CapabilityTestUtility
 					.createCapabilityActionVO();
 			capability.getActions().add(capabilityActionVO);
 		}
+	}
+
+	public ApplicationVO createTestApplicationData(final String systemName)
+			throws ApplicationManagerException
+	{
+		ApplicationVO applicationVO = new ApplicationVOBuilder()
+				.setName(systemName)
+				.setToken("hrSystemToken"+(KEY++))
+				.createApplicationVO();
+		ApplicationVO createdApplication = applicationManager.createNewApplication(applicationVO);
+		return createdApplication;
 	}
 }
