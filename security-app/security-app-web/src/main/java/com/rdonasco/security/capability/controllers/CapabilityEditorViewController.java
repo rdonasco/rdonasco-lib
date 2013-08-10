@@ -13,7 +13,6 @@ import com.rdonasco.datamanager.controller.DataManagerContainer;
 import com.rdonasco.datamanager.controller.DataRetrieveListStrategy;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
-import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.authentication.services.SessionSecurityChecker;
 import com.rdonasco.security.capability.utils.CapabilityConstants;
 import com.rdonasco.security.capability.utils.IconHelper;
@@ -25,7 +24,9 @@ import com.rdonasco.security.capability.vo.ResourceItemVO;
 import com.rdonasco.security.common.utils.ActionConstants;
 import com.rdonasco.security.common.views.ListItemIconCellStyleGenerator;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
+import com.rdonasco.security.services.ApplicationManagerLocal;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.ResourceVO;
 import com.vaadin.Application;
 import com.vaadin.data.Buffered;
@@ -53,6 +54,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.inject.Inject;
 import org.vaadin.addon.formbinder.ViewBoundForm;
 
@@ -92,12 +94,16 @@ public class CapabilityEditorViewController implements
 
 	@Inject
 	private CapabilityDataManagerDecorator capabilityDataManager;
+	
+	@EJB
+	private ApplicationManagerLocal applicationManager;
 
 	private BeanItemContainer<ActionItemVO> actionsContainer = new BeanItemContainer<ActionItemVO>(ActionItemVO.class);
 
 	private BeanItem<CapabilityItemVO> currentItem;
 
 	private DataManagerContainer<ResourceVO> resourceComboboxDataContainer = new DataManagerContainer<ResourceVO>(ResourceVO.class);
+	private DataManagerContainer<ApplicationVO> applicationComboboxDataContainer = new DataManagerContainer<ApplicationVO>(ApplicationVO.class);
 
 	private Table actionTableSource;
 
@@ -112,6 +118,7 @@ public class CapabilityEditorViewController implements
 		{
 			editorView.initWidget();
 			configureResourceComboBox();
+			configureApplicationComboBox();
 			configureActionTable();
 			configureForm();
 			configureButtons();
@@ -239,6 +246,25 @@ public class CapabilityEditorViewController implements
 		});
 		resourceComboboxDataContainer.refresh();
 		editorView.getResourceField().setContainerDataSource(resourceComboboxDataContainer);
+	}
+	
+	private void configureApplicationComboBox() throws DataAccessException
+	{
+		applicationComboboxDataContainer.setDataRetrieveListStrategy(new DataRetrieveListStrategy<ApplicationVO>() {
+
+			@Override
+			public List<ApplicationVO> retrieve() throws DataAccessException
+			{
+				try
+				{
+					return applicationManager.retrieveAllApplication();
+				}
+				catch (Exception e)
+				{
+					throw new DataAccessException(e);
+				}
+			}
+		});
 	}
 
 	public void setCurrentItem(BeanItem<CapabilityItemVO> currentItem)

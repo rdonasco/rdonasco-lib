@@ -38,6 +38,7 @@ public class CapabilityEditorView extends VerticalLayout implements
 	private TextField titleField = new TextField(I18NResource.localize("Title"));
 	private TextArea descriptionField = new TextArea(I18NResource.localize("Description"));
 	private ComboBox resourceField = new ComboBox(I18NResource.localize("Resource"));
+	private ComboBox applicationField = new ComboBox(I18NResource.localize("Application"));
 	private Table actionsTable = new Table();
 	private Form editorForm;
 	private DragAndDropWrapper resourceDragAndDropWrapper;
@@ -92,6 +93,11 @@ public class CapabilityEditorView extends VerticalLayout implements
 		return titleField;
 	}
 
+	public ComboBox getApplicationField()
+	{
+		return applicationField;
+	}
+
 	public ComboBox getResourceField()
 	{
 		return resourceField;
@@ -110,6 +116,7 @@ public class CapabilityEditorView extends VerticalLayout implements
 		titleField.setWidth(300f, UNITS_PIXELS);
 		fieldLayout.addComponent(titleField);
 		descriptionField.setWidth(300f, UNITS_PIXELS);
+		fieldLayout.addComponent(applicationField);
 		fieldLayout.addComponent(resourceField);
 		fieldLayout.addComponent(descriptionField);
 		fieldLayout.setSpacing(true);
@@ -118,6 +125,7 @@ public class CapabilityEditorView extends VerticalLayout implements
 		titleField.setReadOnly(true);
 		descriptionField.setReadOnly(true);
 		resourceField.setReadOnly(true);
+		applicationField.setReadOnly(true);
 	}
 
 	private void configureCapabilityActionFields()
