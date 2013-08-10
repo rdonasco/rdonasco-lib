@@ -43,18 +43,13 @@ public class SystemSecurityManagerLocalTest
 {
 
 	private static final Logger LOG = Logger.getLogger(SystemSecurityManagerLocalTest.class.getName());
-
 	private static final String CONSTANT_ADMIN = "admin";
-
 	@EJB
 	private SystemSecurityManagerLocal systemSecurityManager;
-
 	@EJB
 	private CapabilityManagerLocal capabilityManager;
-
 	@EJB
 	private SystemSecurityInitializerLocal systemSecurityInitializerLocal;
-
 	private UserSecurityProfileTestUtility userSecurityProfileTestUtility;
 
 	@Deployment
@@ -191,6 +186,23 @@ public class SystemSecurityManagerLocalTest
 			throw e;
 		}
 	}
+
+//	@Test(expected = ApplicationNotTrustedException.class)
+//	public void testCheckAccessRightsWithoutApplicationt() throws Exception
+//	{
+//		System.out.println("CheckAccessRightsWithoutApplication");
+//		UserSecurityProfileVO createdUser = userSecurityProfileTestUtility.createNewUserSecurityProfileWithCapability();
+//		CapabilityVO additionalCapability = userSecurityProfileTestUtility.createTestDataCapabilityWithActionAndResourceName("fire", "employee");
+//		systemSecurityManager.addCapabilityForUser(createdUser, additionalCapability);
+//		String actionName = "doit";
+//		AccessRightsVO accessRights = new AccessRightsVOBuilder()
+//				.setActionAsString(actionName)
+//				.setResourceAsString(additionalCapability.getResource().getName())
+//				.setUserProfileVO(createdUser)
+//				.createAccessRightsVO();
+//		systemSecurityManager.checkAccessRights(accessRights);
+//
+//	}
 
 	@Test
 	public void testCheckAccessRightsOnNonRestrictedResourceToCreateDefaultCapability()
