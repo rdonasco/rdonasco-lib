@@ -79,6 +79,17 @@ public class CapabilityVO implements Serializable
 		this.description = description;
 	}
 
+	public ApplicationVO getApplicationVO()
+	{
+		return applicationVO;
+	}
+
+	public void setApplicationVO(ApplicationVO applicationVO)
+	{
+		this.applicationVO = applicationVO;
+	}
+
+	
 	public ResourceVO getResource()
 	{
 		return resource;
