@@ -173,9 +173,9 @@ public class CapabilityManagerLocalTest
 		CapabilityVO capabilityVOtoUpdate = testUtility.createTestDataCapabilityWithActionAndResourceNameOnSystem(actionName, resourceName,"HR System"+ (KEY++));
 		capabilityVOtoUpdate.setDescription("updated description");
 		capabilityVOtoUpdate.setTitle("updated title");
-		capabilityManager.updateCapability(capabilityVOtoUpdate);
 		ApplicationVO applicationToTest = testUtility.createTestApplicationData("updated application for capability");
 		capabilityVOtoUpdate.setApplicationVO(applicationToTest);
+		capabilityManager.updateCapability(capabilityVOtoUpdate);		
 		CapabilityVO updatedCapabilityVO = capabilityManager.findCapabilityWithId(capabilityVOtoUpdate.getId());
 		assertEquals(capabilityVOtoUpdate.getId(), updatedCapabilityVO.getId());
 		assertEquals(capabilityVOtoUpdate.getDescription(), updatedCapabilityVO.getDescription());
