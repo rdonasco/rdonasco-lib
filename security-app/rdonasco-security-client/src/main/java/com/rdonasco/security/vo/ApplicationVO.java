@@ -116,6 +116,6 @@ public class ApplicationVO implements Serializable
 	@Override
 	public String toString()
 	{
-		return "ApplicationVO{" + "id=" + id + ", name=" + name + '}';
+		return getName();
 	}
 }
