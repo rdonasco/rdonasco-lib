@@ -5,6 +5,7 @@ import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.common.utils.CollectionsUtility;
 import com.rdonasco.security.dao.ActionDAO;
 import com.rdonasco.security.model.Action;
+import com.rdonasco.security.services.validators.CapabilityValidator;
 import com.rdonasco.security.utils.CapabilityTestUtility;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityActionVO;
@@ -23,6 +24,8 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import com.rdonasco.security.utils.ArchiveCreator;
+import com.rdonasco.security.vo.ApplicationVO;
+import com.rdonasco.security.vo.ApplicationVOBuilder;
 import static org.junit.Assert.*;
 import org.junit.Before;
 
@@ -56,6 +59,7 @@ public class CapabilityManagerLocalTest
 				.addPackage(SystemSecurityManagerRemote.class.getPackage())
 				.addPackage(ActionVO.class.getPackage())
 				.addPackage(Action.class.getPackage())
+				.addPackage(CapabilityValidator.class.getPackage())
 				.addClass(CollectionsUtility.class)
 				.addClass(CollectionsUtility.CollectionItemDeleteStrategy.class)
 				.addClass(CollectionMergeException.class);
@@ -246,10 +250,16 @@ public class CapabilityManagerLocalTest
 	{
 		System.out.println("UpdateCapabilityClearAndRemoveSameActions");
 		ResourceVO resourceVO = testUtility.createTestDataResourceNamed("station");
+		ApplicationVO applicationVO = new ApplicationVOBuilder()
+				.setName("new application for capability" + (KEY++))
+				.setToken("token")
+				.createApplicationVO();
+		ApplicationVO createdApplication = applicationManager.createNewApplication(applicationVO);
 		CapabilityVO capability = new CapabilityVOBuilder()
 				.setTitle("manage station")
 				.setDescription("manage Station")
 				.setResource(resourceVO)
+				.setApplication(createdApplication)
 				.createCapabilityVO();
 		capability = capabilityManager.createNewCapability(capability);
 		List<ActionVO> actions = testUtility.createTestDataActions("add" + (KEY++), "edit" + (KEY++), "delete" + (KEY++));

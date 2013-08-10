@@ -162,6 +162,10 @@ public class SecurityEntityValueObjectConverter
 		{
 			capability.setResource(toResource(capabilityVO.getResource()));
 		}
+		if(null != capabilityVO.getApplicationVO())
+		{
+			capability.setApplication(toApplication(capabilityVO.getApplicationVO()));
+		}
 		capability.setTitle(capabilityVO.getTitle());
 		if (capabilityVO.getActions() != null)
 		{

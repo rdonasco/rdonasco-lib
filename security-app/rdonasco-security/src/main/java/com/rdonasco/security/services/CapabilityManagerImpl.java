@@ -11,6 +11,7 @@ import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.common.utils.CollectionsUtility;
 import com.rdonasco.common.utils.CollectionsUtility.CollectionItemDeleteStrategy;
 import com.rdonasco.common.utils.CollectionsUtility.CollectionItemUpdateStrategy;
+import com.rdonasco.common.validator.InvalidValueException;
 import com.rdonasco.security.dao.ActionDAO;
 import com.rdonasco.security.dao.CapabilityActionDAO;
 import com.rdonasco.security.dao.CapabilityDAO;
@@ -21,6 +22,7 @@ import com.rdonasco.security.model.Action;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.CapabilityAction;
 import com.rdonasco.security.model.Resource;
+import com.rdonasco.security.services.validators.CapabilityValidator;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.vo.ActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
@@ -37,6 +39,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 /**
@@ -57,9 +60,17 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 	private ResourceDAO resourceDAO;
 	@Inject
 	private ActionDAO actionDAO;
+	
+	private Instance<CapabilityValidator> validators;
 
 	@EJB
 	private UserSecurityProfileManagerLocal userSecurityProfileManager;
+	
+	@Inject
+	public void setCapabilityValidators(Instance<CapabilityValidator> validators)
+	{
+		this.validators = validators;
+	}
 
 	public void setActionDAO(ActionDAO actionDAO)
 	{
@@ -395,6 +406,7 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 		try
 		{
 			Capability capability = SecurityEntityValueObjectConverter.toCapability(capabilityToCreate);
+			validate(capability);
 			capabilityDAO.create(capability);
 			createdCapabilityVO = SecurityEntityValueObjectConverter.toCapabilityVO(capability);
 			LOG.log(Level.FINE, "capability {0} created", createdCapabilityVO);
@@ -595,6 +607,14 @@ public class CapabilityManagerImpl implements CapabilityManagerRemote,
 		catch (Exception e)
 		{
 			throw new CapabilityManagerException(e);
+		}
+	}
+
+	private void validate(Capability capability) throws InvalidValueException
+	{
+		for(CapabilityValidator validator : validators)
+		{
+			validator.validate(capability);
 		}
 	}
 }
