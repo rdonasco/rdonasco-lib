@@ -155,12 +155,13 @@ public class CapabilityManagerLocalTest
 	{
 		System.out.println("addCapabilityWithApplication");
 				
-		final String actionName = "add"+ (KEY++);;
-		final String resourceName = "hr.employee"+ (KEY++);;
+		final String actionName = "add"+ (KEY++);
+		final String resourceName = "hr.employee"+ (KEY++);
 		final String applicationName = "hrjSystem" + (KEY++);
 		CapabilityVO savedCapabilityVO = testUtility.createTestDataCapabilityWithActionAndResourceNameOnSystem(actionName, resourceName, applicationName);
 		assertNotNull(savedCapabilityVO);
 		assertNotNull(savedCapabilityVO.getId());		
+		assertNotNull("application was not saved",savedCapabilityVO.getApplicationVO());
 	}
 
 	@Test

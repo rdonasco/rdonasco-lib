@@ -132,6 +132,10 @@ public class SecurityEntityValueObjectConverter
 			{
 				capabilityVOBuilder.setResource(toResourceVO(capability.getResource()));
 			}
+			if(null != capability.getApplication())
+			{
+				capabilityVOBuilder.setApplication(toApplicationVO(capability.getApplication()));
+			}
 			if (capability.getActions() != null)
 			{
 				List<CapabilityActionVO> actionVOList = new ArrayList<CapabilityActionVO>(capability.getActions().size());

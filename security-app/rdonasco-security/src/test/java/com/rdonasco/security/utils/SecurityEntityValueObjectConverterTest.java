@@ -150,6 +150,7 @@ public class SecurityEntityValueObjectConverterTest
 		assertEquals("description did not match", expResult.getDescription(), result.getDescription());
 		assertEquals("title did not match", expResult.getTitle(), result.getTitle());
 		assertNotNull("resource not set", result.getResource());
+		assertNotNull("application not set", result.getApplicationVO());
 	}
 
 	@Test
@@ -168,6 +169,7 @@ public class SecurityEntityValueObjectConverterTest
 		assertEquals("description did not match", expResult.getDescription(), result.getDescription());
 		assertEquals("title did not match", expResult.getTitle(), result.getTitle());
 		assertNotNull("resource not set", result.getResource());
+		assertNotNull("application not set", result.getApplication());
 		for (CapabilityAction action : result.getActions())
 		{
 			assertNotNull(action.getId());

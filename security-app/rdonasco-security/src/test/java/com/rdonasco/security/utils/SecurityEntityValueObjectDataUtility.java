@@ -5,6 +5,7 @@
 package com.rdonasco.security.utils;
 
 import com.rdonasco.security.model.Action;
+import com.rdonasco.security.model.Application;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.CapabilityAction;
 import com.rdonasco.security.model.Resource;
@@ -13,6 +14,8 @@ import com.rdonasco.security.model.RoleCapability;
 import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.ApplicationVO;
+import com.rdonasco.security.vo.ApplicationVOBuilder;
 import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityActionVOBuilder;
 import com.rdonasco.security.vo.CapabilityVO;
@@ -241,6 +244,7 @@ public class SecurityEntityValueObjectDataUtility
 		CapabilityVO capability = createTestCapabilityVOWithResourceActionAndTitle(resourceVO, actionVO, capabilityTitle);
 		List<CapabilityActionVO> capabilityActions = createTestDataCapabilityActionVOsFor(capability);
 		capability.setActions(capabilityActions);
+		capability.setApplicationVO(createTestDataApplicationVO());
 		return capability;
 	}
 
@@ -309,6 +313,7 @@ public class SecurityEntityValueObjectDataUtility
 
 		Resource resource = createTestDataResource(resourceName);
 		capability.setResource(resource);
+		capability.setApplication(createTestDataApplication("application-" + resourceName));
 
 		return capability;
 	}
@@ -351,6 +356,14 @@ public class SecurityEntityValueObjectDataUtility
 		resource.setName(resourceName == null ? "test resource" : resourceName);
 		return resource;
 	}
+	
+	public static Application createTestDataApplication(String applicationName)
+	{
+		Application application = new Application();
+		application.setId(generateRandomID());
+		application.setName(applicationName == null ? "test application" : applicationName);
+		return application;
+	}
 
 	public static ResourceVO createTestDataResourceVO()
 	{
@@ -359,6 +372,16 @@ public class SecurityEntityValueObjectDataUtility
 				.setName("test resourceVO")
 				.createResourceVO();
 		return resourceVO;
+	}
+	
+	public static ApplicationVO createTestDataApplicationVO()
+	{
+		ApplicationVO applicationVO = new ApplicationVOBuilder()
+				.setId(generateRandomID())
+				.setName("test applicationVO")
+				.setToken("test token")
+				.createApplicationVO();
+		return applicationVO;
 	}
 
 	public static List<Action> createTestDataActions()
