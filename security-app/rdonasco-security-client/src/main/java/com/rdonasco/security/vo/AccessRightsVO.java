@@ -28,21 +28,21 @@ public class AccessRightsVO implements Serializable
 	private static final long serialVersionUID = 1L;
 
 	private ResourceVO resource;
-
 	private UserSecurityProfileVO userProfile;
-
 	private ActionVO action;
-
 	private String resourceName;
-
 	private String actionName;
+	private String applicationToken;
+	private Long applicationID;
 
-	AccessRightsVO(ResourceVO resource,
-			UserSecurityProfileVO userProfile, ActionVO action)
+	AccessRightsVO(Long applicationID, String applicationToken,
+			ResourceVO resource,UserSecurityProfileVO userProfile, ActionVO action)
 	{
 		setResource(resource);
 		setUserProfile(userProfile);
 		setAction(action);
+		setApplicationID(applicationID);
+		setApplicationToken(applicationToken);
 	}
 
 	private void setResource(ResourceVO resource)
@@ -67,6 +67,27 @@ public class AccessRightsVO implements Serializable
 			actionName = action.getName().toLowerCase();
 		}
 	}
+
+	private void setApplicationToken(String applicationToken)
+	{
+		this.applicationToken = applicationToken;
+	}
+
+	private void setApplicationID(Long applicationID)
+	{
+		this.applicationID = applicationID;
+	}
+
+	public String getApplicationToken()
+	{
+		return applicationToken;
+	}
+
+	public Long getApplicationID()
+	{
+		return applicationID;
+	}	
+		
 
 	public ResourceVO getResource()
 	{

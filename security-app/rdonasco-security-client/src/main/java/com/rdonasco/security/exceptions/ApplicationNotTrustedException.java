@@ -8,7 +8,7 @@ package com.rdonasco.security.exceptions;
  *
  * @author Roy F. Donasco
  */
-public class ApplicationNotTrustedException extends RuntimeException
+public class ApplicationNotTrustedException extends SecurityAuthorizationException
 {
 	private static final long serialVersionUID = 1L;
 

@@ -24,6 +24,7 @@ import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
+import com.rdonasco.security.model.Application;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility;
@@ -160,7 +161,7 @@ public class UserBasedCapabilityTest
 				.createAccessRightsVO();
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
 		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
-		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getCapabilityOnAddingUser());
+		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(any(UserSecurityProfile.class),any(Application.class))).thenReturn(getCapabilityOnAddingUser());
 		instance.checkAccessRights(accessRights);
 	}
 
@@ -180,7 +181,7 @@ public class UserBasedCapabilityTest
 
 			SystemSecurityManagerImpl instance = prepareSecurityManagerInstanceToTest();
 
-			when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getCapabilityOnAddingUser());
+			when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(any(UserSecurityProfile.class),any(Application.class))).thenReturn(getCapabilityOnAddingUser());
 			instance.checkAccessRights(accessRights);
 		}
 		catch (SecurityException e)
@@ -204,7 +205,7 @@ public class UserBasedCapabilityTest
 				.setUserProfileVO(userSecurityProfileVOMock)
 				.createAccessRightsVO();
 		List<Capability> emptyCapability = new ArrayList<Capability>();
-		when(userCapabilityDAOMock.loadCapabilitiesOf(userSecurityProfileMock)).thenReturn(emptyCapability);
+		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(userSecurityProfileMock,any(Application.class))).thenReturn(emptyCapability);
 
 		ActionVO actionVOtoReturn = new ActionVO();
 		actionVOtoReturn.setId(Long.MIN_VALUE);
@@ -243,7 +244,7 @@ public class UserBasedCapabilityTest
 				.setUserProfileVO(userSecurityProfileVOMock)
 				.createAccessRightsVO();
 		List<Capability> emptyCapability = new ArrayList<Capability>();
-		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(emptyCapability);
+		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(any(UserSecurityProfile.class),any(Application.class))).thenReturn(emptyCapability);
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
 		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
 		ActionVO actionVOtoReturn = new ActionVO();
@@ -270,7 +271,7 @@ public class UserBasedCapabilityTest
 				.setResourceID(Long.MIN_VALUE)
 				.setUserProfileVO(userSecurityProfileVOMock)
 				.createAccessRightsVO();
-		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getCapabilityOnAddingUser());
+		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(any(UserSecurityProfile.class),any(Application.class))).thenReturn(getCapabilityOnAddingUser());
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
 		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
 		ActionVO actionVOtoReturn = new ActionVO();
@@ -299,7 +300,7 @@ public class UserBasedCapabilityTest
 
 		SystemSecurityManagerImpl instance = prepareSecurityManagerInstanceToTest();
 
-		when(userCapabilityDAOMock.loadCapabilitiesOf(userSecurityProfile)).thenReturn(getCapabilityOnEditingUser());
+		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(userSecurityProfile,any(Application.class))).thenReturn(getCapabilityOnEditingUser());
 
 		instance.checkAccessRights(accessRights);
 	}

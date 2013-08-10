@@ -18,6 +18,7 @@ package com.rdonasco.security.dao;
 
 import com.rdonasco.common.dao.DataAccess;
 import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.security.model.Application;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.UserSecurityProfile;
@@ -30,6 +31,6 @@ import java.util.List;
 public interface UserCapabilityDAO extends DataAccess<UserCapability>
 {
 
-	List<Capability> loadCapabilitiesOf(UserSecurityProfile user) throws
+	List<Capability> loadCapabilitiesOnApplicationOf(UserSecurityProfile user, Application application) throws
 			DataAccessException;
 }

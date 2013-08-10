@@ -18,6 +18,7 @@
 package com.rdonasco.security.dao;
 
 import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.security.model.Application;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.UserCapability;
 import com.rdonasco.security.model.UserSecurityProfile;
@@ -42,12 +43,13 @@ public class UserCapabilityDAOJPAImpl extends AbstractSecurityDAO<UserCapability
 	}
 
 	@Override
-	public List<Capability> loadCapabilitiesOf(UserSecurityProfile user) throws
+	public List<Capability> loadCapabilitiesOnApplicationOf(UserSecurityProfile user, Application application) throws
 			DataAccessException
 	{
 		Map<String, Object> parameters = new HashMap<String, Object>(1);
 		parameters.put(UserCapability.QUERY_PARAM_USER, user);
-		List<UserCapability> userCapabilities = findAllDataUsingNamedQuery(UserCapability.NAMED_QUERY_FIND_CAPABILITY_BY_USER, parameters);
+		parameters.put(UserCapability.QUERY_PARAM_APPLICATION_ID,application.getId());
+		List<UserCapability> userCapabilities = findAllDataUsingNamedQuery(UserCapability.NAMED_QUERY_FIND_CAPABILITY_BY_USER_ON_APPLICATION, parameters);
 		List<Capability> capabilties = new ArrayList<Capability>(userCapabilities.size());
 		for (UserCapability userCapability : userCapabilities)
 		{

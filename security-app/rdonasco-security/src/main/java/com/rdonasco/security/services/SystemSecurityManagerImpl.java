@@ -18,6 +18,7 @@ package com.rdonasco.security.services;
 
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.common.i18.I18NResource;
+import com.rdonasco.security.exceptions.ApplicationNotTrustedException;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.exceptions.DefaultAdminSecurityProfileAlreadyExist;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
@@ -27,6 +28,7 @@ import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.utils.EncryptionUtil;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
+import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
@@ -57,6 +59,9 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 
 	@EJB
 	private UserSecurityProfileManagerLocal userSecurityProfileManager;
+	
+	@EJB
+	private ApplicationManagerLocal applicationManager;
 
 	public void setUserSecurityProfileManager(
 			UserSecurityProfileManagerLocal userSecurityProfileManager)
@@ -78,6 +83,20 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		}
 		try
 		{
+			// TODO: check that the application token is valid
+			if(null == requestedAccessRight.getApplicationID() || null == requestedAccessRight.getApplicationToken()
+					|| requestedAccessRight.getApplicationToken().isEmpty())
+			{
+				LOG.log(Level.FINE, "requestedAccessRight.getApplicationID() = {0}", requestedAccessRight.getApplicationID());
+				LOG.log(Level.FINE, "requestedAccessRight.getApplicationToken() = {0}", requestedAccessRight.getApplicationToken());
+				throw new ApplicationNotTrustedException();
+			}
+			ApplicationVO trustedApplication = applicationManager.loadApplicationWithID(requestedAccessRight.getApplicationID());
+			if(null == trustedApplication || !trustedApplication.getToken().equals(requestedAccessRight.getApplicationToken()))
+			{
+				LOG.log(Level.FINE, "token mismatch");
+				throw new ApplicationNotTrustedException();
+			}
 			List<CapabilityVO> capabilities = userSecurityProfileManager.retrieveCapabilitiesOfUser(requestedAccessRight);
 			List<CapabilityVO> roleCapabilities = userSecurityProfileManager.retrieveCapabilitiesOfUserBasedOnRoles(requestedAccessRight);
 			List<CapabilityVO> groupCapabilities = userSecurityProfileManager.retrieveCapabilitiesOfUserBasedOnGroups(requestedAccessRight);
@@ -119,6 +138,11 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		{
 			LOG.warning(e.getMessage());
 			createDefaultCapabilityBasedOnRequestedAccessRight(requestedAccessRight);
+		}
+		catch(SecurityAuthorizationException e)
+		{
+			LOG.log(Level.FINER, e.getMessage(), e);
+			throw e;
 		}
 		catch (Exception e)
 		{

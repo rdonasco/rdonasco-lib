@@ -23,6 +23,7 @@ import com.rdonasco.security.dao.UserRoleDAO;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.model.Action;
+import com.rdonasco.security.model.Application;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.CapabilityAction;
 import com.rdonasco.security.model.Resource;
@@ -236,7 +237,7 @@ public class UserGroupBasedCapabilityTest
 		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
 		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
-		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getEmptyUserCapabilities());
+		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(any(UserSecurityProfile.class),any(Application.class))).thenReturn(getEmptyUserCapabilities());
 		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessRights.getResource().getName())).thenReturn(resourceVO);
 		when(userRoleDAOmock.loadRolesOf(any(UserSecurityProfile.class))).thenReturn(getEmptyUserRoles());
 		when(userGroupDAOMock.loadGroupsOf(any(UserSecurityProfile.class))).thenReturn(getUserGroupsThatCanDoThisToAUser("add", "edit", "delete"));
@@ -257,7 +258,7 @@ public class UserGroupBasedCapabilityTest
 		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
 		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
-		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getEmptyUserCapabilities());
+		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(any(UserSecurityProfile.class),any(Application.class))).thenReturn(getEmptyUserCapabilities());
 		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessrightsToAdd.getResource().getName())).thenReturn(resourceVO);
 		when(userRoleDAOmock.loadRolesOf(any(UserSecurityProfile.class))).thenReturn(getUserRolesThatCanDoThisToAUser("edit", "delete"));
 		when(userGroupDAOMock.loadGroupsOf(any(UserSecurityProfile.class))).thenReturn(getUserGroupsThatCanDoThisToAUser("add"));
@@ -280,7 +281,7 @@ public class UserGroupBasedCapabilityTest
 		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
 		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
-		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getEmptyUserCapabilities());
+		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(any(UserSecurityProfile.class),any(Application.class))).thenReturn(getEmptyUserCapabilities());
 		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessrightsToAdd.getResource().getName())).thenReturn(resourceVO);
 		when(userRoleDAOmock.loadRolesOf(any(UserSecurityProfile.class))).thenReturn(getUserRolesThatCanDoThisToAUser("edit"));
 		when(userGroupDAOMock.loadGroupsOf(any(UserSecurityProfile.class))).thenReturn(getUserGroupsThatCanDoThisToAUser("add"));
@@ -301,7 +302,7 @@ public class UserGroupBasedCapabilityTest
 		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
 		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
-		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class)))
+		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(any(UserSecurityProfile.class),any(Application.class)))
 				.thenReturn(getUserCapabilityThatCanDoThisToAUser("delete"));
 		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessrightsToAdd.getResource().getName())).thenReturn(resourceVO);
 		when(userRoleDAOmock.loadRolesOf(any(UserSecurityProfile.class))).thenReturn(getUserRolesThatCanDoThisToAUser("edit"));

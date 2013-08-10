@@ -23,6 +23,7 @@ import com.rdonasco.security.dao.UserRoleDAO;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.model.Action;
+import com.rdonasco.security.model.Application;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.CapabilityAction;
 import com.rdonasco.security.model.Resource;
@@ -196,7 +197,7 @@ public class UserRoleBasedCapabilityTest
 		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
 		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
-		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getEmptyUserCapabilities());
+		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(any(UserSecurityProfile.class),any(Application.class))).thenReturn(getEmptyUserCapabilities());
 		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessRights.getResource().getName())).thenReturn(resourceVO);
 		when(userRoleDAOmock.loadRolesOf(any(UserSecurityProfile.class))).thenReturn(getUserRolesThatCanDoThisToAUser(addAction));
 		instance.checkAccessRights(accessRights);
@@ -220,7 +221,7 @@ public class UserRoleBasedCapabilityTest
 		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
 		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
-		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getEmptyUserCapabilities());
+		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(any(UserSecurityProfile.class),any(Application.class))).thenReturn(getEmptyUserCapabilities());
 		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessRights.getResource().getName())).thenReturn(resourceVO);
 		when(userRoleDAOmock.loadRolesOf(any(UserSecurityProfile.class))).thenReturn(getUserRolesThatCanDoThisToAUser("Edit"));
 		instance.checkAccessRights(accessRights);
