@@ -29,6 +29,7 @@ import org.junit.runner.RunWith;
 import com.rdonasco.security.utils.ArchiveCreator;
 import com.rdonasco.security.utils.EncryptionUtil;
 import com.rdonasco.security.utils.UserSecurityProfileTestUtility;
+import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -169,6 +170,29 @@ public class SystemSecurityManagerLocalTest
 				.createAccessRightsVO();
 		systemSecurityManager.checkAccessRights(accessRights);
 	}
+	
+	@Test(expected = SecurityAuthorizationException.class)
+	public void testCheckInvalidApplication() throws Throwable
+	{
+		System.out.println("CheckInvalidApplication");
+		UserSecurityProfileVO createdUser = userSecurityProfileTestUtility.createNewUserSecurityProfileWithCapability();
+		CapabilityVO additionalCapability = userSecurityProfileTestUtility.createTestDataCapabilityWithActionAndResourceName("fire", "employee");
+		ApplicationVO applicationVO = userSecurityProfileTestUtility.createApplicationNamed("invalid application");
+		systemSecurityManager.addCapabilityForUser(createdUser, additionalCapability);
+		String actionName = null;
+		for (CapabilityActionVO action : additionalCapability.getActions())
+		{
+			actionName = action.getActionVO().getName();
+		}
+		AccessRightsVO accessRights = new AccessRightsVOBuilder()
+				.setActionAsString(actionName)
+				.setResourceAsString(additionalCapability.getResource().getName())
+				.setApplicationID(applicationVO.getId())
+				.setApplicationToken(applicationVO.getToken())
+				.setUserProfileVO(createdUser)
+				.createAccessRightsVO();
+		checkAccessAndThrowRealCause(accessRights);
+	}	
 
 	@Test(expected = SecurityAuthorizationException.class)
 	public void testCheckUnAuthorisedAccess() throws Throwable

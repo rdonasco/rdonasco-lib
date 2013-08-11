@@ -137,7 +137,7 @@ public class UserSecurityProfileTestUtility
 		return createdUser;
 	}
 
-	private ApplicationVO createApplicationNamed(String name) throws ApplicationManagerException
+	public ApplicationVO createApplicationNamed(String name) throws ApplicationManagerException
 	{
 		return applicationManager.createNewApplication(new ApplicationVOBuilder()
 				.setName(name)
