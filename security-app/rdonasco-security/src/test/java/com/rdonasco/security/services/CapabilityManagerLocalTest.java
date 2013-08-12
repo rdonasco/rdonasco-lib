@@ -3,6 +3,12 @@ package com.rdonasco.security.services;
 import com.rdonasco.common.exceptions.CollectionMergeException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.common.utils.CollectionsUtility;
+import com.rdonasco.config.dao.ConfigElementDAO;
+import com.rdonasco.config.data.ConfigElement;
+import com.rdonasco.config.parsers.ValueParser;
+import com.rdonasco.config.services.ConfigDataManagerLocal;
+import com.rdonasco.config.util.ConfigDataValueObjectConverter;
+import com.rdonasco.config.vo.ConfigAttributeVO;
 import com.rdonasco.security.dao.ActionDAO;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.services.validators.CapabilityValidator;
@@ -24,6 +30,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import com.rdonasco.security.utils.ArchiveCreator;
+import com.rdonasco.security.utils.SecurityConstants;
 import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.ApplicationVOBuilder;
 import static org.junit.Assert.*;
@@ -60,10 +67,17 @@ public class CapabilityManagerLocalTest
 				.addPackage(ActionVO.class.getPackage())
 				.addPackage(Action.class.getPackage())
 				.addPackage(CapabilityValidator.class.getPackage())
+				.addPackage(ConfigElementDAO.class.getPackage())
+				.addPackage(ValueParser.class.getPackage())
+				.addPackage(ConfigElement.class.getPackage())
+				.addPackage(ConfigDataManagerLocal.class.getPackage())
+				.addPackage(ConfigAttributeVO.class.getPackage())
+				.addPackage(ConfigDataValueObjectConverter.class.getPackage())				
 				.addClass(CollectionsUtility.class)
+				.addClass(SecurityConstants.class)
 				.addClass(CollectionsUtility.CollectionItemDeleteStrategy.class)
 				.addClass(CollectionMergeException.class);
-
+		
 		return archive;
 	}
 

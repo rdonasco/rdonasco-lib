@@ -106,7 +106,8 @@ public class SystemSecurityInitializerLocalTest
 		{
 			CapabilityVO capability = capabilityManager.findCapabilityWithTitle(
 					capabilityArray[SystemSecurityInitializerLocal.ELEMENT_CAPABILITY_TITLE]);
-			assertNotNull(capability);
+			assertNotNull("default capability not created",capability);
+			assertNotNull("capability not associated with an application",capability.getApplicationVO());
 			for(int i = SystemSecurityInitializerLocal.ELEMENT_RESOURCE+1; i < capabilityArray.length; i++)
 			{
 				String action = capabilityArray[i];
@@ -119,29 +120,6 @@ public class SystemSecurityInitializerLocalTest
 		}
 	}
 
-	/*
-	 @Test
-	 public void testInitializeDefaultSystemAccessCapabilities() throws Exception
-	 {
-	 System.out.println("initializeDefaultSystemAccessCapabilities");
-	 systemSecurityInitializer.initializeDefaultSystemAccessCapabilities();
-	 String title;
-	 String resourceName;
-	 String action;
-	 for (String[] capabilityInitString : SystemSecurityInitializerLocal.DEFAULT_CAPABILITY_ELEMENTS)
-	 {
-	 title = capabilityInitString[SystemSecurityInitializerLocal.ELEMENT_CAPABILITY_TITLE];
-	 CapabilityVO capability = capabilityManager.findCapabilityWithTitle(title);
-	 assertNotNull("capability" + title + " not found",capability);
-	 //			resourceName = capabilityInitString[SystemSecurityInitializerLocal.ELEMENT_RESOURCE];
-	 //			for (int i = SystemSecurityInitializerLocal.ELEMENT_RESOURCE + 1; i < capabilityInitString.length; i++)
-	 //			{
-	 //				action = capabilityInitString[i];
-	 //			}
-	 }
-
-	 }
-	 */
 	// ------ utility methods below here ------ //
 	private ActionVO createTestDataActionNamed(String name) throws
 			CapabilityManagerException

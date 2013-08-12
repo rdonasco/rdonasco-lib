@@ -16,11 +16,15 @@
  */
 package com.rdonasco.security.utils;
 
+import com.rdonasco.security.exceptions.ApplicationManagerException;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
+import com.rdonasco.security.services.ApplicationManagerLocal;
 import com.rdonasco.security.services.CapabilityManagerLocal;
 import com.rdonasco.security.services.SystemSecurityManagerLocal;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.ApplicationVO;
+import com.rdonasco.security.vo.ApplicationVOBuilder;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
@@ -40,13 +44,16 @@ public class UserSecurityProfileTestUtility
 	private CapabilityManagerLocal capabilityManager;
 
 	private SystemSecurityManagerLocal systemSecurityManager;
+	
+	private ApplicationManagerLocal applicationManager;
 
 	public UserSecurityProfileTestUtility(
 			CapabilityManagerLocal capabilityManager,
-			SystemSecurityManagerLocal systemSecurityManager)
+			SystemSecurityManagerLocal systemSecurityManager,ApplicationManagerLocal applicationManager)
 	{
 		this.capabilityManager = capabilityManager;
 		this.systemSecurityManager = systemSecurityManager;
+		this.applicationManager = applicationManager;
 	}
 
 	public ActionVO createTestDataActionNamed(String name) throws
@@ -69,7 +76,8 @@ public class UserSecurityProfileTestUtility
 
 	public CapabilityVO createTestDataCapabilityWithActionAndResourceName(
 			final String actionName,
-			final String resourceName) throws CapabilityManagerException
+			final String resourceName) throws CapabilityManagerException,
+			ApplicationManagerException
 	{
 		ActionVO action = createTestDataActionNamed(actionName);
 		ResourceVO resource = createTestDataResourceNamed(resourceName + SecurityEntityValueObjectDataUtility.generateRandomID());
@@ -79,6 +87,7 @@ public class UserSecurityProfileTestUtility
 				.setResource(resource)
 				.setTitle(capabilityTitle)
 				.setDescription(capabilityTitle + " description")
+				.setApplication(createApplicationNamed("app"+resource.getName()))
 				.createCapabilityVO();
 		CapabilityVO savedCapabilityVO = capabilityManager.createNewCapability(capabilityVO);
 		return savedCapabilityVO;
@@ -94,7 +103,7 @@ public class UserSecurityProfileTestUtility
 	}
 
 	public UserSecurityProfileVO createTestDataUserProfileWithCapability()
-			throws CapabilityManagerException
+			throws CapabilityManagerException, ApplicationManagerException
 	{
 		UserSecurityProfileVO userProfile = createTestDataWithoutCapability();
 		CapabilityVO capabilityVO = createTestDataCapabilityWithActionAndResourceName("edit", "pets");
@@ -121,10 +130,18 @@ public class UserSecurityProfileTestUtility
 	}
 
 	public UserSecurityProfileVO createNewUserSecurityProfileWithCapability()
-			throws SecurityManagerException, CapabilityManagerException
+			throws SecurityManagerException, CapabilityManagerException, ApplicationManagerException
 	{
 		UserSecurityProfileVO userProfile = createTestDataUserProfileWithCapability();
 		UserSecurityProfileVO createdUser = systemSecurityManager.createNewSecurityProfile(userProfile);
 		return createdUser;
+	}
+
+	public ApplicationVO createApplicationNamed(String name) throws ApplicationManagerException
+	{
+		return applicationManager.createNewApplication(new ApplicationVOBuilder()
+				.setName(name)
+				.setToken("token-"+name)
+				.createApplicationVO());
 	}
 }

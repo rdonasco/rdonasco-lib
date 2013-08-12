@@ -89,7 +89,7 @@ public class UserSecurityProfileManagerTest
 
 	@EJB
 	private UserSecurityProfileManagerLocal userSecurityProfileManager;
-
+	
 	public UserSecurityProfileManagerTest()
 	{
 	}
@@ -128,7 +128,7 @@ public class UserSecurityProfileManagerTest
 		capabilityTestUtility = new CapabilityTestUtility(capabilityManager,applicationManager);
 		roleTestUtility = new RoleTestUtility(userRoleManager);
 		groupTestUtility = new GroupTestUtility(securityGroupDataManager);
-		userSecurityProfileTestUtility = new UserSecurityProfileTestUtility(capabilityManager, systemSecurityManager);
+		userSecurityProfileTestUtility = new UserSecurityProfileTestUtility(capabilityManager, systemSecurityManager,applicationManager);
 	}
 
 	@After

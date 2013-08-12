@@ -7,8 +7,10 @@ import com.rdonasco.config.services.ConfigDataManagerLocal;
 import com.rdonasco.config.util.ConfigDataValueObjectConverter;
 import com.rdonasco.config.vo.ConfigAttributeVO;
 import com.rdonasco.security.dao.ActionDAO;
+import com.rdonasco.security.exceptions.ApplicationNotTrustedException;
 import com.rdonasco.security.exceptions.DefaultAdminSecurityProfileAlreadyExist;
 import com.rdonasco.security.exceptions.SecurityAuthenticationException;
+import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.vo.AccessRightsVO;
@@ -26,7 +28,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import com.rdonasco.security.utils.ArchiveCreator;
 import com.rdonasco.security.utils.EncryptionUtil;
+import com.rdonasco.security.utils.SecurityConstants;
 import com.rdonasco.security.utils.UserSecurityProfileTestUtility;
+import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -50,6 +54,10 @@ public class SystemSecurityManagerLocalTest
 	private CapabilityManagerLocal capabilityManager;
 	@EJB
 	private SystemSecurityInitializerLocal systemSecurityInitializerLocal;
+	@EJB
+	private ApplicationManagerLocal applicationManager;
+	@EJB
+	private ConfigDataManagerLocal configDataManager;
 	private UserSecurityProfileTestUtility userSecurityProfileTestUtility;
 
 	@Deployment
@@ -73,7 +81,7 @@ public class SystemSecurityManagerLocalTest
 	@Before
 	public void setUp()
 	{
-		userSecurityProfileTestUtility = new UserSecurityProfileTestUtility(capabilityManager, systemSecurityManager);
+		userSecurityProfileTestUtility = new UserSecurityProfileTestUtility(capabilityManager, systemSecurityManager, applicationManager);
 	}
 
 	@Test
@@ -159,15 +167,58 @@ public class SystemSecurityManagerLocalTest
 		AccessRightsVO accessRights = new AccessRightsVOBuilder()
 				.setActionAsString(actionName)
 				.setResourceAsString(additionalCapability.getResource().getName())
+				.setApplicationID(additionalCapability.getApplicationVO().getId())
+				.setApplicationToken(additionalCapability.getApplicationVO().getToken())
 				.setUserProfileVO(createdUser)
 				.createAccessRightsVO();
 		systemSecurityManager.checkAccessRights(accessRights);
 	}
-
-	@Test(expected = Exception.class)
-	public void testCheckAccessRights() throws Exception
+	
+	@Test(expected = SecurityAuthorizationException.class)
+	public void testCheckInvalidApplication() throws Throwable
 	{
-		System.out.println("CheckAccessRights");
+		System.out.println("CheckInvalidApplication");
+		UserSecurityProfileVO createdUser = userSecurityProfileTestUtility.createNewUserSecurityProfileWithCapability();
+		CapabilityVO additionalCapability = userSecurityProfileTestUtility.createTestDataCapabilityWithActionAndResourceName("fire", "employee");
+		ApplicationVO applicationVO = userSecurityProfileTestUtility.createApplicationNamed("invalid application");
+		systemSecurityManager.addCapabilityForUser(createdUser, additionalCapability);
+		String actionName = null;
+		for (CapabilityActionVO action : additionalCapability.getActions())
+		{
+			actionName = action.getActionVO().getName();
+		}
+		AccessRightsVO accessRights = new AccessRightsVOBuilder()
+				.setActionAsString(actionName)
+				.setResourceAsString(additionalCapability.getResource().getName())
+				.setApplicationID(applicationVO.getId())
+				.setApplicationToken(applicationVO.getToken())
+				.setUserProfileVO(createdUser)
+				.createAccessRightsVO();
+		checkAccessAndThrowRealCause(accessRights);
+	}	
+
+	@Test(expected = SecurityAuthorizationException.class)
+	public void testCheckUnAuthorisedAccess() throws Throwable
+	{
+		System.out.println("CheckUnAuthorisedAccess");
+		UserSecurityProfileVO createdUser = userSecurityProfileTestUtility.createNewUserSecurityProfileWithCapability();
+		CapabilityVO additionalCapability = userSecurityProfileTestUtility.createTestDataCapabilityWithActionAndResourceName("fire", "employee");
+		systemSecurityManager.addCapabilityForUser(createdUser, additionalCapability);
+		String actionName = "doit";
+		AccessRightsVO accessRights = new AccessRightsVOBuilder()
+				.setActionAsString(actionName)
+				.setResourceAsString(additionalCapability.getResource().getName())
+				.setUserProfileVO(createdUser)
+				.setApplicationID(additionalCapability.getApplicationVO().getId())
+				.setApplicationToken(additionalCapability.getApplicationVO().getToken())				
+				.createAccessRightsVO();
+		checkAccessAndThrowRealCause(accessRights);
+	}
+
+	@Test(expected = ApplicationNotTrustedException.class)
+	public void testCheckAccessRightsWithoutApplicationID() throws Throwable
+	{
+		System.out.println("CheckAccessRightsWithoutApplicationID");
 		UserSecurityProfileVO createdUser = userSecurityProfileTestUtility.createNewUserSecurityProfileWithCapability();
 		CapabilityVO additionalCapability = userSecurityProfileTestUtility.createTestDataCapabilityWithActionAndResourceName("fire", "employee");
 		systemSecurityManager.addCapabilityForUser(createdUser, additionalCapability);
@@ -177,32 +228,43 @@ public class SystemSecurityManagerLocalTest
 				.setResourceAsString(additionalCapability.getResource().getName())
 				.setUserProfileVO(createdUser)
 				.createAccessRightsVO();
-		try
-		{
-			systemSecurityManager.checkAccessRights(accessRights);
-		}
-		catch (Exception e)
-		{
-			throw e;
-		}
+		checkAccessAndThrowRealCause(accessRights);
 	}
-
-//	@Test(expected = ApplicationNotTrustedException.class)
-//	public void testCheckAccessRightsWithoutApplicationt() throws Exception
-//	{
-//		System.out.println("CheckAccessRightsWithoutApplication");
-//		UserSecurityProfileVO createdUser = userSecurityProfileTestUtility.createNewUserSecurityProfileWithCapability();
-//		CapabilityVO additionalCapability = userSecurityProfileTestUtility.createTestDataCapabilityWithActionAndResourceName("fire", "employee");
-//		systemSecurityManager.addCapabilityForUser(createdUser, additionalCapability);
-//		String actionName = "doit";
-//		AccessRightsVO accessRights = new AccessRightsVOBuilder()
-//				.setActionAsString(actionName)
-//				.setResourceAsString(additionalCapability.getResource().getName())
-//				.setUserProfileVO(createdUser)
-//				.createAccessRightsVO();
-//		systemSecurityManager.checkAccessRights(accessRights);
-//
-//	}
+	
+	@Test(expected = ApplicationNotTrustedException.class)
+	public void testCheckAccessRightsWithoutApplicationToken() throws Throwable
+	{
+		System.out.println("CheckAccessRightsWithoutApplicationToken");
+		UserSecurityProfileVO createdUser = userSecurityProfileTestUtility.createNewUserSecurityProfileWithCapability();
+		CapabilityVO additionalCapability = userSecurityProfileTestUtility.createTestDataCapabilityWithActionAndResourceName("fire", "employee");
+		systemSecurityManager.addCapabilityForUser(createdUser, additionalCapability);
+		String actionName = "doit";
+		AccessRightsVO accessRights = new AccessRightsVOBuilder()
+				.setActionAsString(actionName)
+				.setResourceAsString(additionalCapability.getResource().getName())
+				.setUserProfileVO(createdUser)
+				.setApplicationID(additionalCapability.getApplicationVO().getId())
+				.createAccessRightsVO();
+		checkAccessAndThrowRealCause(accessRights);
+	}	
+	
+	@Test(expected = ApplicationNotTrustedException.class)
+	public void testCheckAccessRightsWithMismatchedToken() throws Throwable
+	{
+		System.out.println("CheckAccessRightsWithMismatchedToken");
+		UserSecurityProfileVO createdUser = userSecurityProfileTestUtility.createNewUserSecurityProfileWithCapability();
+		CapabilityVO additionalCapability = userSecurityProfileTestUtility.createTestDataCapabilityWithActionAndResourceName("fire", "employee");
+		systemSecurityManager.addCapabilityForUser(createdUser, additionalCapability);
+		String actionName = "doit";
+		AccessRightsVO accessRights = new AccessRightsVOBuilder()
+				.setActionAsString(actionName)
+				.setResourceAsString(additionalCapability.getResource().getName())
+				.setUserProfileVO(createdUser)
+				.setApplicationID(additionalCapability.getApplicationVO().getId())
+				.setApplicationToken("bla bla bla")
+				.createAccessRightsVO();
+		checkAccessAndThrowRealCause(accessRights);
+	}		
 
 	@Test
 	public void testCheckAccessRightsOnNonRestrictedResourceToCreateDefaultCapability()
@@ -210,6 +272,7 @@ public class SystemSecurityManagerLocalTest
 	{
 		System.out.println("CheckAccessRightsOnNonRestrictedResourceToCreateDefaultCapability");
 		UserSecurityProfileVO createdUser = userSecurityProfileTestUtility.createNewUserSecurityProfileWithCapability();
+		ApplicationVO nonRestrictedApp = userSecurityProfileTestUtility.createApplicationNamed("non-restricted-app");
 		String actionName = "do";
 		String resourceName = "her";
 		String capabilityTitle = "do her";
@@ -217,6 +280,8 @@ public class SystemSecurityManagerLocalTest
 				.setActionAsString(actionName)
 				.setResourceAsString(resourceName)
 				.setUserProfileVO(createdUser)
+				.setApplicationID(nonRestrictedApp.getId())
+				.setApplicationToken(nonRestrictedApp.getToken())
 				.createAccessRightsVO();
 
 		systemSecurityManager.checkAccessRights(accessRights);
@@ -235,10 +300,13 @@ public class SystemSecurityManagerLocalTest
 		String actionName = "enter";
 		String resourceName = "the dragon";
 		String capabilityTitle = String.format("%1s %2s", actionName, resourceName);
+		ApplicationVO nonRestrictedApp = userSecurityProfileTestUtility.createApplicationNamed("non-restricted-app-resource");
 		AccessRightsVO accessRights = new AccessRightsVOBuilder()
 				.setActionAsString(actionName)
 				.setResourceAsString(resourceName)
 				.setUserProfileVO(createdUser)
+				.setApplicationID(nonRestrictedApp.getId())
+				.setApplicationToken(nonRestrictedApp.getToken())				
 				.createAccessRightsVO();
 
 		systemSecurityManager.checkAccessRights(accessRights);
@@ -274,10 +342,15 @@ public class SystemSecurityManagerLocalTest
 		systemSecurityInitializerLocal.initializeDefaultSystemAccessCapabilities();
 		UserSecurityProfileVO createdUser = userSecurityProfileTestUtility.createNewUserSecurityProfileWithCapability();
 		systemSecurityManager.setupDefaultCapabilitiesForUser(createdUser);
+		Long applicationID = configDataManager.loadValue(SecurityConstants.CONFIG_SYSTEM_APPLICATION_ID, Long.class);
+		ApplicationVO applicationVO = applicationManager.loadApplicationWithID(applicationID);
+		
 		AccessRightsVO accessRights = new AccessRightsVOBuilder()
 				.setActionAsString("logon")
 				.setResourceAsString("system")
 				.setUserProfileVO(createdUser)
+				.setApplicationID(applicationVO.getId())
+				.setApplicationToken(applicationVO.getToken())
 				.createAccessRightsVO();
 
 		systemSecurityManager.checkAccessRights(accessRights);
@@ -299,5 +372,25 @@ public class SystemSecurityManagerLocalTest
 		System.out.println("FindSecurityProfileWithLogonIDandWrongPassword");
 		UserSecurityProfileVO newUser = userSecurityProfileTestUtility.createNewUserSecurityProfile();
 		systemSecurityManager.findSecurityProfileWithLogonIDandPassword(newUser.getLogonId(), "xrdonasco");
+	}
+
+	void checkAccessAndThrowRealCause(AccessRightsVO accessRights) throws
+			Throwable
+	{
+		try
+		{
+			systemSecurityManager.checkAccessRights(accessRights);
+		}
+		catch (Exception e)
+		{
+			if(e.getCause() != null)
+			{
+				throw e.getCause();
+			}
+			else
+			{
+				throw e;
+			}
+		}
 	}
 }

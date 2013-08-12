@@ -16,8 +16,11 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.common.i18.I18NResource;
+import com.rdonasco.security.exceptions.ApplicationManagerException;
+import com.rdonasco.security.exceptions.ApplicationNotTrustedException;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.exceptions.DefaultAdminSecurityProfileAlreadyExist;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
@@ -27,6 +30,7 @@ import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.utils.EncryptionUtil;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
+import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
@@ -51,22 +55,27 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 {
 
 	private static final Logger LOG = Logger.getLogger(SystemSecurityManagerImpl.class.getName());
-
-	@EJB
 	private CapabilityManagerLocal capabilityManager;
+	private UserSecurityProfileManagerLocal userSecurityProfileManager;
+	private ApplicationManagerLocal applicationManager;
 
 	@EJB
-	private UserSecurityProfileManagerLocal userSecurityProfileManager;
-
 	public void setUserSecurityProfileManager(
 			UserSecurityProfileManagerLocal userSecurityProfileManager)
 	{
 		this.userSecurityProfileManager = userSecurityProfileManager;
 	}
 
+	@EJB
 	public void setCapabilityManager(CapabilityManagerLocal capabilityManager)
 	{
 		this.capabilityManager = capabilityManager;
+	}
+
+	@EJB
+	public void setApplicationManager(ApplicationManagerLocal applicationManager)
+	{
+		this.applicationManager = applicationManager;
 	}
 
 	@Override
@@ -78,17 +87,13 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		}
 		try
 		{
-			List<CapabilityVO> capabilities = userSecurityProfileManager.retrieveCapabilitiesOfUser(requestedAccessRight);
-			List<CapabilityVO> roleCapabilities = userSecurityProfileManager.retrieveCapabilitiesOfUserBasedOnRoles(requestedAccessRight);
-			List<CapabilityVO> groupCapabilities = userSecurityProfileManager.retrieveCapabilitiesOfUserBasedOnGroups(requestedAccessRight);
-			capabilities.addAll(roleCapabilities);
-			capabilities.addAll(groupCapabilities);
-			Set<AccessRightsVO> accessRightsSet = new HashSet<AccessRightsVO>();
+			ApplicationVO trustedApplication = ensureRequestedApplicationIsTrusted(requestedAccessRight);
+			List<CapabilityVO> capabilities = retrieveAndConsolidateUserCapabilities(requestedAccessRight);
 			boolean capabilitiesNotFound = capabilities.isEmpty();
 			capabilityManager.findOrAddActionNamedAs(requestedAccessRight.getAction().getName());
-			ResourceVO securedResourceVO = ensureThatResourceExistsAndIsSecured(requestedAccessRight.getResource().getName());
 			if (capabilitiesNotFound)
 			{
+				ResourceVO securedResourceVO = ensureThatResourceExistsAndIsSecured(requestedAccessRight.getResource().getName());
 				if (null != securedResourceVO)
 				{
 					throwSecurityAuthorizationExceptionFor(requestedAccessRight);
@@ -96,17 +101,8 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			}
 			else
 			{
-				for (CapabilityVO capability : capabilities)
-				{
-					for (CapabilityActionVO action : capability.getActions())
-					{
-						AccessRightsVO rights = new AccessRightsVOBuilder()
-								.setActionVO(action.getActionVO())
-								.setResourceVO(capability.getResource())
-								.setUserProfileVO(requestedAccessRight.getUserProfile()).createAccessRightsVO();
-						accessRightsSet.add(rights);
-					}
-				}
+				Set<AccessRightsVO> accessRightsSet = consolidateAccessRightsFromAllCapabilities(capabilities, trustedApplication
+						, requestedAccessRight.getUserProfile());
 				if (!accessRightsSet.contains(requestedAccessRight))
 				{
 					logAccessRights(accessRightsSet);
@@ -119,6 +115,11 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		{
 			LOG.warning(e.getMessage());
 			createDefaultCapabilityBasedOnRequestedAccessRight(requestedAccessRight);
+		}
+		catch (SecurityAuthorizationException e)
+		{
+			LOG.log(Level.FINER, e.getMessage(), e);
+			throw e;
 		}
 		catch (Exception e)
 		{
@@ -304,26 +305,80 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	private void verifyPassword(UserSecurityProfileVO userSecurityProfileVO,
 			String password) throws SecurityManagerException
 	{
-			if (null != userSecurityProfileVO)
+		if (null != userSecurityProfileVO)
+		{
+			String encrypted = null;
+			try
 			{
-				String encrypted = null;
-				try
-				{
-					encrypted = EncryptionUtil.encryptWithPassword(password, password);
-				}
-				catch (Exception ex)
-				{
-					LOG.log(Level.WARNING, ex.getMessage(), ex);
-				}
-				if (!userSecurityProfileVO.getPassword().equals(encrypted))
-				{
-					throw new SecurityAuthenticationException("Invalid Credentials");
-				}
+				encrypted = EncryptionUtil.encryptWithPassword(password, password);
 			}
-			else
+			catch (Exception ex)
+			{
+				LOG.log(Level.WARNING, ex.getMessage(), ex);
+			}
+			if (!userSecurityProfileVO.getPassword().equals(encrypted))
 			{
 				throw new SecurityAuthenticationException("Invalid Credentials");
+			}
+		}
+		else
+		{
+			throw new SecurityAuthenticationException("Invalid Credentials");
 		}
 
+	}
+
+	private ApplicationVO ensureRequestedApplicationIsTrusted(
+			final AccessRightsVO requestedAccessRight) throws
+			ApplicationNotTrustedException, ApplicationManagerException
+	{
+		if (null == requestedAccessRight.getApplicationID() || null == requestedAccessRight.getApplicationToken()
+				|| requestedAccessRight.getApplicationToken().isEmpty())
+		{
+			LOG.log(Level.FINE, "requestedAccessRight.getApplicationID() = {0}", requestedAccessRight.getApplicationID());
+			LOG.log(Level.FINE, "requestedAccessRight.getApplicationToken() = {0}", requestedAccessRight.getApplicationToken());
+			throw new ApplicationNotTrustedException();
+		}
+		ApplicationVO trustedApplication = applicationManager.loadApplicationWithID(requestedAccessRight.getApplicationID());
+		if (null == trustedApplication || !trustedApplication.getToken().equals(requestedAccessRight.getApplicationToken()))
+		{
+			LOG.log(Level.FINE, "token mismatch");
+			throw new ApplicationNotTrustedException();
+		}
+		return trustedApplication;
+	}
+
+	private List<CapabilityVO> retrieveAndConsolidateUserCapabilities(
+			final AccessRightsVO requestedAccessRight) throws
+			DataAccessException
+	{
+		List<CapabilityVO> capabilities = userSecurityProfileManager.retrieveCapabilitiesOfUser(requestedAccessRight);
+		List<CapabilityVO> roleCapabilities = userSecurityProfileManager.retrieveCapabilitiesOfUserBasedOnRoles(requestedAccessRight);
+		List<CapabilityVO> groupCapabilities = userSecurityProfileManager.retrieveCapabilitiesOfUserBasedOnGroups(requestedAccessRight);
+		capabilities.addAll(roleCapabilities);
+		capabilities.addAll(groupCapabilities);
+		return capabilities;
+	}
+
+	private Set<AccessRightsVO> consolidateAccessRightsFromAllCapabilities(
+			List<CapabilityVO> capabilities, ApplicationVO trustedApplication,
+			final UserSecurityProfileVO userProfile)
+	{
+		final Set<AccessRightsVO> accessRightsSet = new HashSet<AccessRightsVO>();
+		for (CapabilityVO capability : capabilities)
+		{
+			if (trustedApplication.equals(capability.getApplicationVO()))
+			{
+				for (CapabilityActionVO action : capability.getActions())
+				{
+					AccessRightsVO rights = new AccessRightsVOBuilder()
+							.setActionVO(action.getActionVO())
+							.setResourceVO(capability.getResource())
+							.setUserProfileVO(userProfile).createAccessRightsVO();
+					accessRightsSet.add(rights);
+				}
+			}
+		}
+		return accessRightsSet;
 	}
 }

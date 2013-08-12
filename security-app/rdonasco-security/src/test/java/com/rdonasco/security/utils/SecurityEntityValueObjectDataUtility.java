@@ -109,7 +109,7 @@ public class SecurityEntityValueObjectDataUtility
 			String resource)
 	{
 		UserSecurityProfile userSecurityProfile = new UserSecurityProfile();
-		Capability capability = createTestDataCapabilityOnResourceAndAction(resource, action);
+		Capability capability = createTestDataCapabilityOnApplicationResourceAndAction(resource, action);
 		UserCapability userCapability = new UserCapability();
 		userCapability.setCapability(capability);
 		List<UserCapability> capabilities = new ArrayList<UserCapability>();
@@ -192,7 +192,7 @@ public class SecurityEntityValueObjectDataUtility
 	{
 		RoleCapability roleCapability = new RoleCapability();
 		roleCapability.setId(generateRandomID());
-		roleCapability.setCapability(createTestDataCapabilityOnResourceAndAction("employee", "edit"));
+		roleCapability.setCapability(createTestDataCapabilityOnApplicationResourceAndAction("employee", "edit"));
 		roleCapability.setRole(role);
 		role.getCapabilities().add(roleCapability);
 		return roleCapability;
@@ -292,7 +292,7 @@ public class SecurityEntityValueObjectDataUtility
 		return userSecurityProfileVO;
 	}
 
-	public static Capability createTestDataCapabilityOnResourceAndAction(
+	public static Capability createTestDataCapabilityOnApplicationResourceAndAction(
 			String resourceName,
 			String actionName)
 	{
