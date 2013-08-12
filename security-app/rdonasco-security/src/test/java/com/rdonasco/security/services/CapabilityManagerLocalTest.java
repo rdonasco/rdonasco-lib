@@ -24,6 +24,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import com.rdonasco.security.utils.ArchiveCreator;
+import com.rdonasco.security.utils.SecurityConstants;
 import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.ApplicationVOBuilder;
 import static org.junit.Assert.*;
@@ -61,6 +62,7 @@ public class CapabilityManagerLocalTest
 				.addPackage(Action.class.getPackage())
 				.addPackage(CapabilityValidator.class.getPackage())
 				.addClass(CollectionsUtility.class)
+				.addClass(SecurityConstants.class)
 				.addClass(CollectionsUtility.CollectionItemDeleteStrategy.class)
 				.addClass(CollectionMergeException.class);
 
