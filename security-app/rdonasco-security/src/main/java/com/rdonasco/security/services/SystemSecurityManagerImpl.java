@@ -88,9 +88,9 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		try
 		{
 			ApplicationVO trustedApplication = ensureRequestedApplicationIsTrusted(requestedAccessRight);
-			List<CapabilityVO> capabilities = retrieveAndConsolidateUserCapabilities(requestedAccessRight);			
+			List<CapabilityVO> capabilities = retrieveAndConsolidateUserCapabilities(requestedAccessRight);
 			boolean capabilitiesNotFound = capabilities.isEmpty();
-			capabilityManager.findOrAddActionNamedAs(requestedAccessRight.getAction().getName());			
+			capabilityManager.findOrAddActionNamedAs(requestedAccessRight.getAction().getName());
 			if (capabilitiesNotFound)
 			{
 				ResourceVO securedResourceVO = ensureThatResourceExistsAndIsSecured(requestedAccessRight.getResource().getName());
@@ -101,21 +101,8 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			}
 			else
 			{
-				Set<AccessRightsVO> accessRightsSet = new HashSet<AccessRightsVO>();
-				for (CapabilityVO capability : capabilities)
-				{
-					if (trustedApplication.equals(capability.getApplicationVO()))
-					{
-						for (CapabilityActionVO action : capability.getActions())
-						{
-							AccessRightsVO rights = new AccessRightsVOBuilder()
-									.setActionVO(action.getActionVO())
-									.setResourceVO(capability.getResource())
-									.setUserProfileVO(requestedAccessRight.getUserProfile()).createAccessRightsVO();
-							accessRightsSet.add(rights);
-						}
-					}
-				}
+				Set<AccessRightsVO> accessRightsSet = consolidateAccessRightsFromAllCapabilities(capabilities, trustedApplication
+						, requestedAccessRight.getUserProfile());
 				if (!accessRightsSet.contains(requestedAccessRight))
 				{
 					logAccessRights(accessRightsSet);
@@ -371,5 +358,27 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		capabilities.addAll(roleCapabilities);
 		capabilities.addAll(groupCapabilities);
 		return capabilities;
+	}
+
+	private Set<AccessRightsVO> consolidateAccessRightsFromAllCapabilities(
+			List<CapabilityVO> capabilities, ApplicationVO trustedApplication,
+			final UserSecurityProfileVO userProfile)
+	{
+		final Set<AccessRightsVO> accessRightsSet = new HashSet<AccessRightsVO>();
+		for (CapabilityVO capability : capabilities)
+		{
+			if (trustedApplication.equals(capability.getApplicationVO()))
+			{
+				for (CapabilityActionVO action : capability.getActions())
+				{
+					AccessRightsVO rights = new AccessRightsVOBuilder()
+							.setActionVO(action.getActionVO())
+							.setResourceVO(capability.getResource())
+							.setUserProfileVO(userProfile).createAccessRightsVO();
+					accessRightsSet.add(rights);
+				}
+			}
+		}
+		return accessRightsSet;
 	}
 }
