@@ -18,6 +18,7 @@ package com.rdonasco.security.services;
 
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.common.i18.I18NResource;
+import com.rdonasco.security.exceptions.ApplicationManagerException;
 import com.rdonasco.security.exceptions.ApplicationNotTrustedException;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.exceptions.DefaultAdminSecurityProfileAlreadyExist;
@@ -85,20 +86,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		}
 		try
 		{
-			// TODO: check that the application token is valid
-			if (null == requestedAccessRight.getApplicationID() || null == requestedAccessRight.getApplicationToken()
-					|| requestedAccessRight.getApplicationToken().isEmpty())
-			{
-				LOG.log(Level.FINE, "requestedAccessRight.getApplicationID() = {0}", requestedAccessRight.getApplicationID());
-				LOG.log(Level.FINE, "requestedAccessRight.getApplicationToken() = {0}", requestedAccessRight.getApplicationToken());
-				throw new ApplicationNotTrustedException();
-			}
-			ApplicationVO trustedApplication = applicationManager.loadApplicationWithID(requestedAccessRight.getApplicationID());
-			if (null == trustedApplication || !trustedApplication.getToken().equals(requestedAccessRight.getApplicationToken()))
-			{
-				LOG.log(Level.FINE, "token mismatch");
-				throw new ApplicationNotTrustedException();
-			}
+			ApplicationVO trustedApplication = ensureRequestedApplicationIsTrusted(requestedAccessRight);
 			List<CapabilityVO> capabilities = userSecurityProfileManager.retrieveCapabilitiesOfUser(requestedAccessRight);
 			List<CapabilityVO> roleCapabilities = userSecurityProfileManager.retrieveCapabilitiesOfUserBasedOnRoles(requestedAccessRight);
 			List<CapabilityVO> groupCapabilities = userSecurityProfileManager.retrieveCapabilitiesOfUserBasedOnGroups(requestedAccessRight);
@@ -354,5 +342,25 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			throw new SecurityAuthenticationException("Invalid Credentials");
 		}
 
+	}
+
+	private ApplicationVO ensureRequestedApplicationIsTrusted(
+			final AccessRightsVO requestedAccessRight) throws
+			ApplicationNotTrustedException, ApplicationManagerException
+	{
+		if (null == requestedAccessRight.getApplicationID() || null == requestedAccessRight.getApplicationToken()
+				|| requestedAccessRight.getApplicationToken().isEmpty())
+		{
+			LOG.log(Level.FINE, "requestedAccessRight.getApplicationID() = {0}", requestedAccessRight.getApplicationID());
+			LOG.log(Level.FINE, "requestedAccessRight.getApplicationToken() = {0}", requestedAccessRight.getApplicationToken());
+			throw new ApplicationNotTrustedException();
+		}
+		ApplicationVO trustedApplication = applicationManager.loadApplicationWithID(requestedAccessRight.getApplicationID());
+		if (null == trustedApplication || !trustedApplication.getToken().equals(requestedAccessRight.getApplicationToken()))
+		{
+			LOG.log(Level.FINE, "token mismatch");
+			throw new ApplicationNotTrustedException();
+		}
+		return trustedApplication;
 	}
 }
