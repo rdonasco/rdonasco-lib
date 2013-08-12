@@ -112,6 +112,7 @@ public class UserGroupBasedCapabilityTest
 					.setName("rdonasco-security")
 					.setToken("rdonasco-token")
 					.createApplicationVO();
+			// TODO: add hosts on the application
 		}
 		catch (Exception ex)
 		{
@@ -157,6 +158,10 @@ public class UserGroupBasedCapabilityTest
 		{
 			Role role = new Role();
 			Capability capability = new Capability();
+			capability.setApplication(new Application());
+			capability.getApplication().setId(applicationVoMock.getId());
+			capability.getApplication().setName(applicationVoMock.getName());
+			capability.getApplication().setToken(applicationVoMock.getToken());
 			capability.setId(getNextID());
 			Action action = new Action();
 			action.setId(getNextID());
@@ -181,6 +186,26 @@ public class UserGroupBasedCapabilityTest
 		}
 		return roles;
 	}
+	
+	private List<Capability> getUserCapabilityThatCanDoThisToAUser(
+			String... actions)
+	{
+		List<Capability> capabilities = new ArrayList<Capability>();
+		for (String action : actions)
+		{
+			final Capability capability = SecurityEntityValueObjectDataUtility
+								 .createTestDataCapabilityOnApplicationResourceAndAction("User", action);
+			// TODO: figure out a way to consolidate data creation on SecurityEntityValueObjectDataUtility
+			final Application application = new Application();
+			application.setId(applicationVoMock.getId());
+			application.setName(applicationVoMock.getName());
+			application.setToken(applicationVoMock.getToken());
+			capability.setApplication(application);
+			capabilities.add(capability);
+		}
+		return capabilities;
+	}	
+	
 
 	private List<SecurityGroup> getUserGroupsThatCanDoThisToAUser(
 			String... actions)
@@ -200,7 +225,7 @@ public class UserGroupBasedCapabilityTest
 		securityGroups.add(group);
 		return securityGroups;
 	}
-
+	
 	private SystemSecurityManagerImpl prepareSecurityManagerInstanceToTest()
 	{
 		userSecurityProfileManager = new UserSecurityProfileManager();
@@ -326,15 +351,5 @@ public class UserGroupBasedCapabilityTest
 		return accessRights;
 	}
 
-	private List<Capability> getUserCapabilityThatCanDoThisToAUser(
-			String... actions)
-	{
-		List<Capability> capabilities = new ArrayList<Capability>();
-		for (String action : actions)
-		{
-			capabilities.add(SecurityEntityValueObjectDataUtility
-					.createTestDataCapabilityOnApplicationResourceAndAction("User", action));
-		}
-		return capabilities;
-	}
+
 }

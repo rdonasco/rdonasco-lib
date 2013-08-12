@@ -54,7 +54,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 
 	private static final Logger LOG = Logger.getLogger(SystemSecurityManagerImpl.class.getName());
 	private CapabilityManagerLocal capabilityManager;
-	private UserSecurityProfileManagerLocal userSecurityProfileManager;	
+	private UserSecurityProfileManagerLocal userSecurityProfileManager;
 	private ApplicationManagerLocal applicationManager;
 
 	@EJB
@@ -119,13 +119,16 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			{
 				for (CapabilityVO capability : capabilities)
 				{
-					for (CapabilityActionVO action : capability.getActions())
+					if (trustedApplication.equals(capability.getApplicationVO()))
 					{
-						AccessRightsVO rights = new AccessRightsVOBuilder()
-								.setActionVO(action.getActionVO())
-								.setResourceVO(capability.getResource())
-								.setUserProfileVO(requestedAccessRight.getUserProfile()).createAccessRightsVO();
-						accessRightsSet.add(rights);
+						for (CapabilityActionVO action : capability.getActions())
+						{
+							AccessRightsVO rights = new AccessRightsVOBuilder()
+									.setActionVO(action.getActionVO())
+									.setResourceVO(capability.getResource())
+									.setUserProfileVO(requestedAccessRight.getUserProfile()).createAccessRightsVO();
+							accessRightsSet.add(rights);
+						}
 					}
 				}
 				if (!accessRightsSet.contains(requestedAccessRight))

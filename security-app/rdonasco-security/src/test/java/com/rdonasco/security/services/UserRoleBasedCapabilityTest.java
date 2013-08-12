@@ -158,6 +158,11 @@ public class UserRoleBasedCapabilityTest
 		List<Role> roles = new ArrayList<Role>();
 		Role role = new Role();
 		Capability capability = new Capability();
+		Application application = new Application();
+		application.setId(applicationVoMock.getId());
+		application.setName(applicationVoMock.getName());
+		application.setToken(applicationVoMock.getToken());
+		capability.setApplication(application);
 		Action action = new Action();
 		action.setId(Long.MIN_VALUE);
 		action.setName(actionName);
@@ -220,7 +225,7 @@ public class UserRoleBasedCapabilityTest
 				.setResourceID(Long.MIN_VALUE)
 				.setUserProfileVO(userSecurityProfileVOMock)
 				.setApplicationID(applicationVoMock.getId())
-				.setApplicationToken(applicationVoMock.getToken())				
+				.setApplicationToken(applicationVoMock.getToken())
 				.createAccessRightsVO();
 
 		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
