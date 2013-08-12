@@ -185,7 +185,7 @@ public class SystemSecurityInitializer implements SystemSecurityInitializerLocal
 	}
 
 	ApplicationVO loadOrCreateApplicationInfo() throws
-			ApplicationManagerException, DataAccessException, ConfigXPathException
+			ApplicationManagerException, DataAccessException
 	{
 		Long applicationID;
 		try
@@ -195,7 +195,14 @@ public class SystemSecurityInitializer implements SystemSecurityInitializerLocal
 		catch (LoadValueException ex)
 		{
 			LOG.log(Level.WARNING, "Application ID not set, probably not yet created. Creating application", ex);
-			applicationID = createDefaultApplication().getId();
+			try
+			{
+				applicationID = createDefaultApplication().getId();
+			}
+			catch (ConfigXPathException e)
+			{
+				throw new DataAccessException(e);
+			}
 		}
 		ApplicationVO applicationVO = applicationManager.loadApplicationWithID(applicationID);
 		return applicationVO;

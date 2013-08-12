@@ -8,11 +8,15 @@ import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.view.utils.NotificationHelper;
+import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.home.controllers.HomeFrameViewController;
 import com.rdonasco.security.authorization.interceptors.SecurityExceptionHandler;
 import com.rdonasco.security.authentication.services.LoggedOnSession;
 import com.rdonasco.security.authentication.services.LoggedOnSessionProvider;
+import com.rdonasco.security.services.SystemSecurityInitializerRemote;
+import com.rdonasco.security.utils.SecurityConstants;
+import com.rdonasco.security.vo.ApplicationVO;
 import com.vaadin.Application;
 import com.vaadin.terminal.gwt.server.WebApplicationContext;
 import com.vaadin.ui.VerticalLayout;
@@ -20,6 +24,7 @@ import com.vaadin.ui.Window;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PreDestroy;
+import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
@@ -47,6 +52,11 @@ public class SecurityApplication extends Application implements
 
 	@Inject
 	private LoggedOnSession loggedOnSession;
+	
+	@EJB
+	private ConfigDataManagerVODecoratorRemote configDataManager;	
+	@EJB
+	private SystemSecurityInitializerRemote systemSecurityInitializer;
 
 	@Override
 	public void init()
@@ -138,6 +148,18 @@ public class SecurityApplication extends Application implements
 	@Override
 	public LoggedOnSession getLoggedOnSession()
 	{
+		if(loggedOnSession.getApplicationID() == null)
+		{
+			try
+			{
+				loggedOnSession.setApplicationID(configDataManager.loadValue(SecurityConstants.CONFIG_SYSTEM_APPLICATION_ID, Long.class, null));
+				loggedOnSession.setApplicationToken(configDataManager.loadValue(SecurityConstants.CONFIG_SYSTEM_APPLICATION_TOKEN, String.class, null));
+			}
+			catch (Exception ex)
+			{
+				popUpWarningException(ex);
+			}
+		}
 		return loggedOnSession;
 	}
 

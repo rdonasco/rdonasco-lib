@@ -31,11 +31,33 @@ public class LoggedOnSession implements Serializable
 
 	private static final long serialVersionUID = 1L;
 	private UserSecurityProfileVO loggedOnuser;
+	private Long applicationID;
+	private String applicationToken;
 
 	public boolean isLoggedOn()
 	{
 		return (null != loggedOnuser);
 	}
+
+	public Long getApplicationID()
+	{
+		return applicationID;
+	}
+
+	public void setApplicationID(Long applicationID)
+	{
+		this.applicationID = applicationID;
+	}
+
+	public String getApplicationToken()
+	{
+		return applicationToken;
+	}
+
+	public void setApplicationToken(String applicationToken)
+	{
+		this.applicationToken = applicationToken;
+	}	
 	
 	public void setLoggedOnUser(UserSecurityProfileVO loggedOnUser)
 	{

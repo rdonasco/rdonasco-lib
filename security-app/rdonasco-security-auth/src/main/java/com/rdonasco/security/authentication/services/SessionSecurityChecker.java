@@ -65,11 +65,14 @@ public class SessionSecurityChecker implements Serializable
 		});
 		if (null != getLoggedOnSessionProvider())
 		{
-			UserSecurityProfileVO userSecurityProfileVO = getLoggedOnSessionProvider().getLoggedOnSession().getLoggedOnUser();
+			final LoggedOnSession loggedOnSession = getLoggedOnSessionProvider().getLoggedOnSession();
+			UserSecurityProfileVO userSecurityProfileVO = loggedOnSession.getLoggedOnUser();
 			AccessRightsVO accessRights = new AccessRightsVOBuilder()
 					.setActionAsString(action)
 					.setResourceAsString(resource)
 					.setUserProfileVO(userSecurityProfileVO)
+					.setApplicationID(loggedOnSession.getApplicationID())
+					.setApplicationToken(loggedOnSession.getApplicationToken())
 					.createAccessRightsVO();
 			securityManager.checkAccessRights(accessRights);
 		}
