@@ -33,6 +33,8 @@ import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
+import com.rdonasco.security.vo.ApplicationVO;
+import com.rdonasco.security.vo.ApplicationVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
@@ -56,30 +58,21 @@ public class UserRoleBasedCapabilityTest
 {
 
 	private static final Logger LOG = Logger.getLogger(UserRoleBasedCapabilityTest.class.getName());
-
 	private static UserSecurityProfileVO userSecurityProfileVOMock;
-
 	private static UserSecurityProfile userSecurityProfileMock;
-
 	private static UserSecurityProfileDAO userSecurityProfileDAOMock;
-
 	private static CapabilityManagerLocal capabilityManagerMock;
-
 	private static UserCapabilityDAO userCapabilityDAOMock;
-
 	private static UserSecurityProfileManager userSecurityProfileManager;
-
 	private static RoleDAO roleDAOmock;
-
 	private static UserRoleDAO userRoleDAOmock;
-
 	private static UserGroupDAO userGroupDAOMock;
-
 	private static String resourceName = "User";
-
 	private static ResourceVO resourceVO;
-
 	private static Resource resource;
+	private static ApplicationManagerLocal applicationManagerMock;
+	private static ApplicationVO applicationVoMock;
+	private static long ID_GEN;
 
 	public UserRoleBasedCapabilityTest()
 	{
@@ -102,6 +95,12 @@ public class UserRoleBasedCapabilityTest
 					.setId(Long.MIN_VALUE)
 					.setName(resourceName)
 					.createResourceVO();
+			applicationManagerMock = mock(ApplicationManagerLocal.class);
+			applicationVoMock = new ApplicationVOBuilder()
+					.setId(ID_GEN++)
+					.setName("rdonasco-security")
+					.setToken("rdonasco-token")
+					.createApplicationVO();
 
 			resource = SecurityEntityValueObjectConverter.toResource(resourceVO);
 		}
@@ -145,6 +144,7 @@ public class UserRoleBasedCapabilityTest
 		SystemSecurityManagerImpl systemSecurityManager = new SystemSecurityManagerImpl();
 		systemSecurityManager.setCapabilityManager(capabilityManagerMock);
 		systemSecurityManager.setUserSecurityProfileManager(userSecurityProfileManager);
+		systemSecurityManager.setApplicationManager(applicationManagerMock);
 		return systemSecurityManager;
 	}
 
@@ -192,14 +192,17 @@ public class UserRoleBasedCapabilityTest
 				.setResourceAsString(resourceName)
 				.setResourceID(Long.MIN_VALUE)
 				.setUserProfileVO(userSecurityProfileVOMock)
+				.setApplicationID(applicationVoMock.getId())
+				.setApplicationToken(applicationVoMock.getToken())
 				.createAccessRightsVO();
 
 		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
 		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
-		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(any(UserSecurityProfile.class),any(Application.class))).thenReturn(getEmptyUserCapabilities());
+		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(any(UserSecurityProfile.class), any(Application.class))).thenReturn(getEmptyUserCapabilities());
 		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessRights.getResource().getName())).thenReturn(resourceVO);
 		when(userRoleDAOmock.loadRolesOf(any(UserSecurityProfile.class))).thenReturn(getUserRolesThatCanDoThisToAUser(addAction));
+		when(applicationManagerMock.loadApplicationWithID(applicationVoMock.getId())).thenReturn(applicationVoMock);
 		instance.checkAccessRights(accessRights);
 		verify(userRoleDAOmock, times(1)).loadRolesOf(any(UserSecurityProfile.class));
 	}
@@ -216,14 +219,17 @@ public class UserRoleBasedCapabilityTest
 				.setResourceAsString(resourceName)
 				.setResourceID(Long.MIN_VALUE)
 				.setUserProfileVO(userSecurityProfileVOMock)
+				.setApplicationID(applicationVoMock.getId())
+				.setApplicationToken(applicationVoMock.getToken())				
 				.createAccessRightsVO();
 
 		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
 		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
-		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(any(UserSecurityProfile.class),any(Application.class))).thenReturn(getEmptyUserCapabilities());
+		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(any(UserSecurityProfile.class), any(Application.class))).thenReturn(getEmptyUserCapabilities());
 		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessRights.getResource().getName())).thenReturn(resourceVO);
 		when(userRoleDAOmock.loadRolesOf(any(UserSecurityProfile.class))).thenReturn(getUserRolesThatCanDoThisToAUser("Edit"));
+		when(applicationManagerMock.loadApplicationWithID(applicationVoMock.getId())).thenReturn(applicationVoMock);
 		instance.checkAccessRights(accessRights);
 		verify(userRoleDAOmock, times(1)).loadRolesOf(any(UserSecurityProfile.class));
 	}
