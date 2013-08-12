@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import com.rdonasco.security.utils.ArchiveCreator;
 import com.rdonasco.security.utils.EncryptionUtil;
+import com.rdonasco.security.utils.SecurityConstants;
 import com.rdonasco.security.utils.UserSecurityProfileTestUtility;
 import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
@@ -55,6 +56,8 @@ public class SystemSecurityManagerLocalTest
 	private SystemSecurityInitializerLocal systemSecurityInitializerLocal;
 	@EJB
 	private ApplicationManagerLocal applicationManager;
+	@EJB
+	private ConfigDataManagerLocal configDataManager;
 	private UserSecurityProfileTestUtility userSecurityProfileTestUtility;
 
 	@Deployment
@@ -269,6 +272,7 @@ public class SystemSecurityManagerLocalTest
 	{
 		System.out.println("CheckAccessRightsOnNonRestrictedResourceToCreateDefaultCapability");
 		UserSecurityProfileVO createdUser = userSecurityProfileTestUtility.createNewUserSecurityProfileWithCapability();
+		ApplicationVO nonRestrictedApp = userSecurityProfileTestUtility.createApplicationNamed("non-restricted-app");
 		String actionName = "do";
 		String resourceName = "her";
 		String capabilityTitle = "do her";
@@ -276,6 +280,8 @@ public class SystemSecurityManagerLocalTest
 				.setActionAsString(actionName)
 				.setResourceAsString(resourceName)
 				.setUserProfileVO(createdUser)
+				.setApplicationID(nonRestrictedApp.getId())
+				.setApplicationToken(nonRestrictedApp.getToken())
 				.createAccessRightsVO();
 
 		systemSecurityManager.checkAccessRights(accessRights);
@@ -294,10 +300,13 @@ public class SystemSecurityManagerLocalTest
 		String actionName = "enter";
 		String resourceName = "the dragon";
 		String capabilityTitle = String.format("%1s %2s", actionName, resourceName);
+		ApplicationVO nonRestrictedApp = userSecurityProfileTestUtility.createApplicationNamed("non-restricted-app-resource");
 		AccessRightsVO accessRights = new AccessRightsVOBuilder()
 				.setActionAsString(actionName)
 				.setResourceAsString(resourceName)
 				.setUserProfileVO(createdUser)
+				.setApplicationID(nonRestrictedApp.getId())
+				.setApplicationToken(nonRestrictedApp.getToken())				
 				.createAccessRightsVO();
 
 		systemSecurityManager.checkAccessRights(accessRights);
@@ -333,10 +342,15 @@ public class SystemSecurityManagerLocalTest
 		systemSecurityInitializerLocal.initializeDefaultSystemAccessCapabilities();
 		UserSecurityProfileVO createdUser = userSecurityProfileTestUtility.createNewUserSecurityProfileWithCapability();
 		systemSecurityManager.setupDefaultCapabilitiesForUser(createdUser);
+		Long applicationID = configDataManager.loadValue(SecurityConstants.CONFIG_SYSTEM_APPLICATION_ID, Long.class);
+		ApplicationVO applicationVO = applicationManager.loadApplicationWithID(applicationID);
+		
 		AccessRightsVO accessRights = new AccessRightsVOBuilder()
 				.setActionAsString("logon")
 				.setResourceAsString("system")
 				.setUserProfileVO(createdUser)
+				.setApplicationID(applicationVO.getId())
+				.setApplicationToken(applicationVO.getToken())
 				.createAccessRightsVO();
 
 		systemSecurityManager.checkAccessRights(accessRights);

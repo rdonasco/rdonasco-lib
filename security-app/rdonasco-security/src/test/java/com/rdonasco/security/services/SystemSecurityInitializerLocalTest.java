@@ -106,7 +106,8 @@ public class SystemSecurityInitializerLocalTest
 		{
 			CapabilityVO capability = capabilityManager.findCapabilityWithTitle(
 					capabilityArray[SystemSecurityInitializerLocal.ELEMENT_CAPABILITY_TITLE]);
-			assertNotNull(capability);
+			assertNotNull("default capability not created",capability);
+			assertNotNull("capability not associated with an application",capability.getApplicationVO());
 			for(int i = SystemSecurityInitializerLocal.ELEMENT_RESOURCE+1; i < capabilityArray.length; i++)
 			{
 				String action = capabilityArray[i];

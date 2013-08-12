@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.rdonasco.security.utils;
 
 /**
@@ -23,5 +22,10 @@ package com.rdonasco.security.utils;
  */
 public final class SecurityConstants
 {
+
 	public static final String TABLE_SEQUENCE = "SECURITY_SEQUENCE";
+	public static final String CONFIG_SYSTEM_APPLICATION_ID = "/system/rdonasco security integration/applicationID";
+	public static final String CONFIG_SYSTEM_APPLICATION_TOKEN = "/system/rdonasco security integration/applicationToken";
+	public static final String APPLICATION_NAME = "rdonasco security";
+	public static final String APPLICATION_DEFAULT_TOKEN = "willBeAGoodBoy";
 }
