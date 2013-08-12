@@ -16,6 +16,7 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.security.exceptions.ApplicationManagerException;
@@ -87,17 +88,12 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		try
 		{
 			ApplicationVO trustedApplication = ensureRequestedApplicationIsTrusted(requestedAccessRight);
-			List<CapabilityVO> capabilities = userSecurityProfileManager.retrieveCapabilitiesOfUser(requestedAccessRight);
-			List<CapabilityVO> roleCapabilities = userSecurityProfileManager.retrieveCapabilitiesOfUserBasedOnRoles(requestedAccessRight);
-			List<CapabilityVO> groupCapabilities = userSecurityProfileManager.retrieveCapabilitiesOfUserBasedOnGroups(requestedAccessRight);
-			capabilities.addAll(roleCapabilities);
-			capabilities.addAll(groupCapabilities);
-			Set<AccessRightsVO> accessRightsSet = new HashSet<AccessRightsVO>();
+			List<CapabilityVO> capabilities = retrieveAndConsolidateUserCapabilities(requestedAccessRight);			
 			boolean capabilitiesNotFound = capabilities.isEmpty();
-			capabilityManager.findOrAddActionNamedAs(requestedAccessRight.getAction().getName());
-			ResourceVO securedResourceVO = ensureThatResourceExistsAndIsSecured(requestedAccessRight.getResource().getName());
+			capabilityManager.findOrAddActionNamedAs(requestedAccessRight.getAction().getName());			
 			if (capabilitiesNotFound)
 			{
+				ResourceVO securedResourceVO = ensureThatResourceExistsAndIsSecured(requestedAccessRight.getResource().getName());
 				if (null != securedResourceVO)
 				{
 					throwSecurityAuthorizationExceptionFor(requestedAccessRight);
@@ -105,6 +101,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			}
 			else
 			{
+				Set<AccessRightsVO> accessRightsSet = new HashSet<AccessRightsVO>();
 				for (CapabilityVO capability : capabilities)
 				{
 					if (trustedApplication.equals(capability.getApplicationVO()))
@@ -362,5 +359,17 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			throw new ApplicationNotTrustedException();
 		}
 		return trustedApplication;
+	}
+
+	private List<CapabilityVO> retrieveAndConsolidateUserCapabilities(
+			final AccessRightsVO requestedAccessRight) throws
+			DataAccessException
+	{
+		List<CapabilityVO> capabilities = userSecurityProfileManager.retrieveCapabilitiesOfUser(requestedAccessRight);
+		List<CapabilityVO> roleCapabilities = userSecurityProfileManager.retrieveCapabilitiesOfUserBasedOnRoles(requestedAccessRight);
+		List<CapabilityVO> groupCapabilities = userSecurityProfileManager.retrieveCapabilitiesOfUserBasedOnGroups(requestedAccessRight);
+		capabilities.addAll(roleCapabilities);
+		capabilities.addAll(groupCapabilities);
+		return capabilities;
 	}
 }
