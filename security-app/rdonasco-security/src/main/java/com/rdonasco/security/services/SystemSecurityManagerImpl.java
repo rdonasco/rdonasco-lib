@@ -345,6 +345,8 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			LOG.log(Level.FINE, "token mismatch");
 			throw new ApplicationNotTrustedException();
 		}
+		// TODO: ensure that requestedAccessRight has the host information
+		// TODO: ensure that the host is trusted by the application
 		return trustedApplication;
 	}
 
