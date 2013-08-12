@@ -152,7 +152,7 @@ public class CapabilityManagerImplTest
 	private List<Capability> getCapabilityOnEditingUser()
 	{
 		List<Capability> capabilities = new ArrayList<Capability>();
-		capabilities.add(SecurityEntityValueObjectDataUtility.createTestDataCapabilityOnResourceAndAction("User", "Edit"));
+		capabilities.add(SecurityEntityValueObjectDataUtility.createTestDataCapabilityOnApplicationResourceAndAction("User", "Edit"));
 		return capabilities;
 	}
 

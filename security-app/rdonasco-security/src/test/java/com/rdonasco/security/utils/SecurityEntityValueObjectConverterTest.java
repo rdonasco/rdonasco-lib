@@ -136,7 +136,7 @@ public class SecurityEntityValueObjectConverterTest
 	{
 		System.out.println("toCapabilityVO");
 		int size = 3;
-		Capability testCapability = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataCapabilityOnResourceAndAction("User", "Add");
+		Capability testCapability = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataCapabilityOnApplicationResourceAndAction("User", "Add");
 		List<CapabilityAction> actions = com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility.createTestDataCapabilityActionsForWithSize(testCapability, size);
 		testCapability.setActions(actions);
 		CapabilityVO expResult = new CapabilityVOBuilder()
@@ -253,7 +253,7 @@ public class SecurityEntityValueObjectConverterTest
 	{
 		System.out.println("toCapabilityActionVO");
 
-		Capability capability = SecurityEntityValueObjectDataUtility.createTestDataCapabilityOnResourceAndAction("cab", "edit");
+		Capability capability = SecurityEntityValueObjectDataUtility.createTestDataCapabilityOnApplicationResourceAndAction("cab", "edit");
 
 		for (CapabilityAction capabilityAction : capability.getActions())
 		{

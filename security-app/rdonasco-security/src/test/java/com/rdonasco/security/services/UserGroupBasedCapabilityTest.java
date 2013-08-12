@@ -329,7 +329,7 @@ public class UserGroupBasedCapabilityTest
 		for (String action : actions)
 		{
 			capabilities.add(SecurityEntityValueObjectDataUtility
-					.createTestDataCapabilityOnResourceAndAction("User", action));
+					.createTestDataCapabilityOnApplicationResourceAndAction("User", action));
 		}
 		return capabilities;
 	}

@@ -53,25 +53,27 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 {
 
 	private static final Logger LOG = Logger.getLogger(SystemSecurityManagerImpl.class.getName());
-
-	@EJB
 	private CapabilityManagerLocal capabilityManager;
-
-	@EJB
-	private UserSecurityProfileManagerLocal userSecurityProfileManager;
-	
-	@EJB
+	private UserSecurityProfileManagerLocal userSecurityProfileManager;	
 	private ApplicationManagerLocal applicationManager;
 
+	@EJB
 	public void setUserSecurityProfileManager(
 			UserSecurityProfileManagerLocal userSecurityProfileManager)
 	{
 		this.userSecurityProfileManager = userSecurityProfileManager;
 	}
 
+	@EJB
 	public void setCapabilityManager(CapabilityManagerLocal capabilityManager)
 	{
 		this.capabilityManager = capabilityManager;
+	}
+
+	@EJB
+	public void setApplicationManager(ApplicationManagerLocal applicationManager)
+	{
+		this.applicationManager = applicationManager;
 	}
 
 	@Override
@@ -84,7 +86,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		try
 		{
 			// TODO: check that the application token is valid
-			if(null == requestedAccessRight.getApplicationID() || null == requestedAccessRight.getApplicationToken()
+			if (null == requestedAccessRight.getApplicationID() || null == requestedAccessRight.getApplicationToken()
 					|| requestedAccessRight.getApplicationToken().isEmpty())
 			{
 				LOG.log(Level.FINE, "requestedAccessRight.getApplicationID() = {0}", requestedAccessRight.getApplicationID());
@@ -92,7 +94,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 				throw new ApplicationNotTrustedException();
 			}
 			ApplicationVO trustedApplication = applicationManager.loadApplicationWithID(requestedAccessRight.getApplicationID());
-			if(null == trustedApplication || !trustedApplication.getToken().equals(requestedAccessRight.getApplicationToken()))
+			if (null == trustedApplication || !trustedApplication.getToken().equals(requestedAccessRight.getApplicationToken()))
 			{
 				LOG.log(Level.FINE, "token mismatch");
 				throw new ApplicationNotTrustedException();
@@ -139,7 +141,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			LOG.warning(e.getMessage());
 			createDefaultCapabilityBasedOnRequestedAccessRight(requestedAccessRight);
 		}
-		catch(SecurityAuthorizationException e)
+		catch (SecurityAuthorizationException e)
 		{
 			LOG.log(Level.FINER, e.getMessage(), e);
 			throw e;
@@ -328,25 +330,25 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	private void verifyPassword(UserSecurityProfileVO userSecurityProfileVO,
 			String password) throws SecurityManagerException
 	{
-			if (null != userSecurityProfileVO)
+		if (null != userSecurityProfileVO)
+		{
+			String encrypted = null;
+			try
 			{
-				String encrypted = null;
-				try
-				{
-					encrypted = EncryptionUtil.encryptWithPassword(password, password);
-				}
-				catch (Exception ex)
-				{
-					LOG.log(Level.WARNING, ex.getMessage(), ex);
-				}
-				if (!userSecurityProfileVO.getPassword().equals(encrypted))
-				{
-					throw new SecurityAuthenticationException("Invalid Credentials");
-				}
+				encrypted = EncryptionUtil.encryptWithPassword(password, password);
 			}
-			else
+			catch (Exception ex)
+			{
+				LOG.log(Level.WARNING, ex.getMessage(), ex);
+			}
+			if (!userSecurityProfileVO.getPassword().equals(encrypted))
 			{
 				throw new SecurityAuthenticationException("Invalid Credentials");
+			}
+		}
+		else
+		{
+			throw new SecurityAuthenticationException("Invalid Credentials");
 		}
 
 	}
