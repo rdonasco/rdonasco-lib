@@ -25,7 +25,7 @@ import java.util.List;
  *
  * @author Roy F. Donasco
  */
-public class ApplicationVO implements Serializable
+public class ApplicationVO implements Serializable, Comparable<ApplicationVO>
 {
 	private static final long serialVersionUID = 1L;
 
@@ -118,4 +118,25 @@ public class ApplicationVO implements Serializable
 	{
 		return getName();
 	}
+
+	@Override
+	public int compareTo(ApplicationVO o)
+	{
+		int compareValue;
+		if(null == o)
+		{
+			compareValue = 1;
+		}
+		else if(getName() == null || o.getName() == null) 
+		{
+			compareValue = 0;
+		}
+		else
+		{
+			compareValue = getName().compareTo(o.getName());
+		}
+		return compareValue;
+	}
+
+
 }
