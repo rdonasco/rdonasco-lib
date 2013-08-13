@@ -31,6 +31,7 @@ import com.rdonasco.security.utils.EncryptionUtil;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
 import com.rdonasco.security.vo.ApplicationVO;
+import com.rdonasco.security.vo.ApplicationVOBuilder;
 import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.CapabilityVOBuilder;
@@ -91,9 +92,9 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			List<CapabilityVO> capabilities = retrieveAndConsolidateUserCapabilities(requestedAccessRight);
 			boolean capabilitiesNotFound = capabilities.isEmpty();
 			capabilityManager.findOrAddActionNamedAs(requestedAccessRight.getAction().getName());
+			ResourceVO securedResourceVO = ensureThatResourceExistsAndIsSecured(requestedAccessRight.getResource().getName());
 			if (capabilitiesNotFound)
 			{
-				ResourceVO securedResourceVO = ensureThatResourceExistsAndIsSecured(requestedAccessRight.getResource().getName());
 				if (null != securedResourceVO)
 				{
 					throwSecurityAuthorizationExceptionFor(requestedAccessRight);
@@ -101,8 +102,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			}
 			else
 			{
-				Set<AccessRightsVO> accessRightsSet = consolidateAccessRightsFromAllCapabilities(capabilities, trustedApplication
-						, requestedAccessRight.getUserProfile());
+				Set<AccessRightsVO> accessRightsSet = consolidateAccessRightsFromAllCapabilities(capabilities, trustedApplication, requestedAccessRight.getUserProfile());
 				if (!accessRightsSet.contains(requestedAccessRight))
 				{
 					logAccessRights(accessRightsSet);
@@ -256,28 +256,36 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	private void createDefaultCapabilityBasedOnRequestedAccessRight(
 			AccessRightsVO requestedAccessRight)
 	{
+		String capabilityTitleOrDescription =
+				String.format("%1$s %2$s",
+				requestedAccessRight.getAction().getName(),
+				requestedAccessRight.getResource().getName());
 		try
 		{
-			String capabilityTitleOrDescription =
-					String.format("%1$s %2$s",
-					requestedAccessRight.getAction().getName(),
-					requestedAccessRight.getResource().getName());
 			try
 			{
+				// TODO: need to add application as part of the parameter to ensure that capability is found for a specific application
+				LOG.log(Level.FINE, "Finding Capability [{0}]...", capabilityTitleOrDescription);
 				capabilityManager.findCapabilityWithTitle(capabilityTitleOrDescription);
+				LOG.log(Level.FINE, "Capability [{0}] found.", capabilityTitleOrDescription);
 			}
 			catch (NonExistentEntityException e)
 			{
 				LOG.log(Level.INFO, "Capability [{0}] not found. Creating...", capabilityTitleOrDescription);
+				ApplicationVO applicationVO = new ApplicationVOBuilder()
+						.setId(requestedAccessRight.getApplicationID())
+						.createApplicationVO();
 				CapabilityVO capabilityVO = new CapabilityVOBuilder()
 						.setTitle(capabilityTitleOrDescription)
 						.setDescription(capabilityTitleOrDescription)
+						.setApplication(applicationVO)
 						.createCapabilityVO();
 				capabilityManager.createNewCapability(capabilityVO);
 			}
 		}
 		catch (CapabilityManagerException ex)
 		{
+			LOG.log(Level.WARNING, "Capability [{0}] not found. Failed to create it...", capabilityTitleOrDescription);
 			LOG.log(Level.WARNING, ex.getMessage(), ex);
 		}
 	}
