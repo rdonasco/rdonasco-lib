@@ -213,7 +213,7 @@ public class CapabilityDataManagerDecorator implements
 				{
 					final ApplicationVO applicationVO1 = capability1.getApplicationVO();
 					final ApplicationVO applicationVO2 = capability2.getApplicationVO();
-					LOG.log(Level.FINE, "comparing {0} and {1}", new ApplicationVO[]
+					LOG.log(Level.FINEST, "comparing {0} and {1}", new ApplicationVO[]
 					{
 						applicationVO1, applicationVO2
 					});
