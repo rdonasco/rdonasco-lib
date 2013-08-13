@@ -335,8 +335,8 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		if (null == requestedAccessRight.getApplicationID() || null == requestedAccessRight.getApplicationToken()
 				|| requestedAccessRight.getApplicationToken().isEmpty())
 		{
-			LOG.log(Level.FINE, "requestedAccessRight.getApplicationID() = {0}", requestedAccessRight.getApplicationID());
-			LOG.log(Level.FINE, "requestedAccessRight.getApplicationToken() = {0}", requestedAccessRight.getApplicationToken());
+			LOG.log(Level.WARNING, "requestedAccessRight.getApplicationID() = {0}", requestedAccessRight.getApplicationID());
+			LOG.log(Level.WARNING, "requestedAccessRight.getApplicationToken() = {0}", requestedAccessRight.getApplicationToken());
 			throw new ApplicationNotTrustedException();
 		}
 		ApplicationVO trustedApplication = applicationManager.loadApplicationWithID(requestedAccessRight.getApplicationID());

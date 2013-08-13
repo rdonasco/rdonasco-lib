@@ -27,11 +27,11 @@ public final class ApplicationConstants
 {
 	public static final String[] TABLE_VISIBLE_COLUMNS =
 	{
-		"icon", "name"
+		"icon","id", "name"
 	};
 	public static final String[] TABLE_VISIBLE_HEADERS =
 	{
-		"", I18NResource.localize("application name")
+		"", I18NResource.localize("id"), I18NResource.localize("application name")
 	};
 
 	public static final String XPATH_DEFAULT_TOKEN_LENGTH = "/application/token/default/length";

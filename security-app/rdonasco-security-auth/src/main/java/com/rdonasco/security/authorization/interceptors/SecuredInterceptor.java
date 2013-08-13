@@ -17,6 +17,7 @@
 package com.rdonasco.security.authorization.interceptors;
 
 import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
+import com.rdonasco.security.authentication.services.LoggedOnSession;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.authentication.services.LoggedOnSessionProvider;
@@ -225,11 +226,14 @@ public class SecuredInterceptor
 			{
 				throw new SecurityAuthorizationException("User is not logged on");
 			}
-			UserSecurityProfileVO userSecurityProfileVO = loggedOnSessionProvider.getLoggedOnSession().getLoggedOnUser();
+			final LoggedOnSession loggedOnSession = loggedOnSessionProvider.getLoggedOnSession();
+			UserSecurityProfileVO userSecurityProfileVO = loggedOnSession.getLoggedOnUser();
 			AccessRightsVO accessRights = new AccessRightsVOBuilder()
 					.setActionAsString(action)
 					.setResourceAsString(resource)
 					.setUserProfileVO(userSecurityProfileVO)
+					.setApplicationID(loggedOnSession.getApplicationID())
+					.setApplicationToken(loggedOnSession.getApplicationToken())
 					.createAccessRightsVO();
 			systemSecurityManager.checkAccessRights(accessRights);
 		}
