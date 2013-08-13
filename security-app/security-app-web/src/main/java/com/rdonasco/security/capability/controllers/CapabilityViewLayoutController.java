@@ -172,6 +172,9 @@ public class CapabilityViewLayoutController implements
 
 				}
 			});
+			
+			// adjust left panel width
+			capabilityViewLayout.setLeftPanelWidth(400,ThreeColumnFlexibleCenterViewLayout.UNITS_PIXELS);
 
 		}
 		catch (WidgetInitalizeException ex)

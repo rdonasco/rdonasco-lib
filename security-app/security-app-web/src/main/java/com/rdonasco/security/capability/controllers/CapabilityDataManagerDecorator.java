@@ -14,12 +14,17 @@ import com.rdonasco.security.capability.vo.CapabilityItemVOBuilder;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.services.CapabilityManagerLocal;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.ResourceVO;
 import com.vaadin.ui.Embedded;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ejb.EJB;
 
 /**
@@ -30,6 +35,7 @@ public class CapabilityDataManagerDecorator implements
 		DataManager<CapabilityItemVO>, Serializable
 {
 
+	private static final Logger LOG = Logger.getLogger(CapabilityDataManagerDecorator.class.getName());
 	private static final long serialVersionUID = 1L;
 	@EJB
 	private CapabilityManagerLocal capabilityManager;
@@ -73,6 +79,8 @@ public class CapabilityDataManagerDecorator implements
 		try
 		{
 			List<CapabilityVO> capabilities = capabilityManager.findAllCapabilities();
+			sortCapabilitiesByApplication(capabilities);
+
 			capabilityItems = new ArrayList<CapabilityItemVO>(capabilities.size());
 			for (CapabilityVO capability : capabilities)
 			{
@@ -188,5 +196,38 @@ public class CapabilityDataManagerDecorator implements
 			CapabilityManagerException
 	{
 		capabilityManager.removeAction(actionToRemove);
+	}
+
+	private void sortCapabilitiesByApplication(
+			List<CapabilityVO> capabilities)
+	{
+		Comparator<CapabilityVO> comparator = new Comparator<CapabilityVO>()
+		{
+			@Override
+			public int compare(CapabilityVO capability1,
+					CapabilityVO capability2)
+			{
+				int compareValue;
+
+				try
+				{
+					final ApplicationVO applicationVO1 = capability1.getApplicationVO();
+					final ApplicationVO applicationVO2 = capability2.getApplicationVO();
+					LOG.log(Level.FINE, "comparing {0} and {1}", new ApplicationVO[]
+					{
+						applicationVO1, applicationVO2
+					});
+					
+					compareValue = applicationVO1.compareTo(applicationVO2);
+				}
+				catch (NullPointerException e)
+				{
+					compareValue = -1;
+				}
+
+				return compareValue;
+			}
+		};
+		Collections.sort(capabilities, comparator);
 	}
 }

@@ -39,7 +39,7 @@ public class CapabilityVO implements Serializable
 
 	public CapabilityVO(Long id, String title, String description,
 			ResourceVO resource,
-			Collection<CapabilityActionVO> actions,ApplicationVO applicationVO)
+			Collection<CapabilityActionVO> actions, ApplicationVO applicationVO)
 	{
 		this.id = id;
 		this.title = title;
@@ -89,7 +89,6 @@ public class CapabilityVO implements Serializable
 		this.applicationVO = applicationVO;
 	}
 
-	
 	public ResourceVO getResource()
 	{
 		return resource;
@@ -151,7 +150,7 @@ public class CapabilityVO implements Serializable
 	@Override
 	public String toString()
 	{
-		return "CapabilityVO{" + "id=" + id + ", title=" + title + '}';
+		return "CapabilityVO{" + "id=" + id + ", applicationVO=" + applicationVO + ", title=" + title + '}';
 	}
 
 	void populateActionMap()
