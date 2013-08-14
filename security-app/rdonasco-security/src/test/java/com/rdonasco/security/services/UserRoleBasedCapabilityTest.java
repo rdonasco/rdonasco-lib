@@ -33,6 +33,7 @@ import com.rdonasco.security.model.UserSecurityProfile;
 import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
+import com.rdonasco.security.vo.ApplicationHostVO;
 import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.ApplicationVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
@@ -71,6 +72,7 @@ public class UserRoleBasedCapabilityTest
 	private static ResourceVO resourceVO;
 	private static Resource resource;
 	private static ApplicationManagerLocal applicationManagerMock;
+	private static final ApplicationHostVO applicationHostVOMock = new ApplicationHostVO();
 	private static ApplicationVO applicationVoMock;
 	private static long ID_GEN;
 
@@ -101,6 +103,8 @@ public class UserRoleBasedCapabilityTest
 					.setName("rdonasco-security")
 					.setToken("rdonasco-token")
 					.createApplicationVO();
+			applicationHostVOMock.setHostNameOrIpAddress("test.host.com");
+			applicationVoMock.getHosts().add(applicationHostVOMock);			
 
 			resource = SecurityEntityValueObjectConverter.toResource(resourceVO);
 		}
@@ -199,6 +203,7 @@ public class UserRoleBasedCapabilityTest
 				.setUserProfileVO(userSecurityProfileVOMock)
 				.setApplicationID(applicationVoMock.getId())
 				.setApplicationToken(applicationVoMock.getToken())
+				.setHostNameOrIpAddress(applicationHostVOMock.getHostNameOrIpAddress())
 				.createAccessRightsVO();
 
 		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
@@ -226,6 +231,7 @@ public class UserRoleBasedCapabilityTest
 				.setUserProfileVO(userSecurityProfileVOMock)
 				.setApplicationID(applicationVoMock.getId())
 				.setApplicationToken(applicationVoMock.getToken())
+				.setHostNameOrIpAddress(applicationHostVOMock.getHostNameOrIpAddress())
 				.createAccessRightsVO();
 
 		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
