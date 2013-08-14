@@ -36,6 +36,7 @@ import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
+import com.rdonasco.security.vo.ApplicationHostVO;
 import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.ApplicationVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
@@ -78,6 +79,7 @@ public class UserGroupBasedCapabilityTest
 	private static String resourceName = "User";
 	private static ResourceVO resourceVO;
 	private static Resource resource;
+	private static final ApplicationHostVO applicationHostVOMock = new ApplicationHostVO();
 	private static ApplicationManagerLocal applicationManagerMock;
 	private static ApplicationVO applicationVoMock;
 	private static long ID_SEED = 1L;
@@ -112,7 +114,8 @@ public class UserGroupBasedCapabilityTest
 					.setName("rdonasco-security")
 					.setToken("rdonasco-token")
 					.createApplicationVO();
-			// TODO: add hosts on the application
+			applicationHostVOMock.setHostNameOrIpAddress("test.host.com");
+			applicationVoMock.getHosts().add(applicationHostVOMock);
 		}
 		catch (Exception ex)
 		{
@@ -186,7 +189,7 @@ public class UserGroupBasedCapabilityTest
 		}
 		return roles;
 	}
-	
+
 	private List<Capability> getUserCapabilityThatCanDoThisToAUser(
 			String... actions)
 	{
@@ -194,7 +197,7 @@ public class UserGroupBasedCapabilityTest
 		for (String action : actions)
 		{
 			final Capability capability = SecurityEntityValueObjectDataUtility
-								 .createTestDataCapabilityOnApplicationResourceAndAction("User", action);
+					.createTestDataCapabilityOnApplicationResourceAndAction("User", action);
 			// TODO: figure out a way to consolidate data creation on SecurityEntityValueObjectDataUtility
 			final Application application = new Application();
 			application.setId(applicationVoMock.getId());
@@ -204,8 +207,7 @@ public class UserGroupBasedCapabilityTest
 			capabilities.add(capability);
 		}
 		return capabilities;
-	}	
-	
+	}
 
 	private List<SecurityGroup> getUserGroupsThatCanDoThisToAUser(
 			String... actions)
@@ -225,7 +227,7 @@ public class UserGroupBasedCapabilityTest
 		securityGroups.add(group);
 		return securityGroups;
 	}
-	
+
 	private SystemSecurityManagerImpl prepareSecurityManagerInstanceToTest()
 	{
 		userSecurityProfileManager = new UserSecurityProfileManager();
@@ -347,9 +349,8 @@ public class UserGroupBasedCapabilityTest
 				.setUserProfileVO(userSecurityProfileVOMock)
 				.setApplicationID(applicationVoMock.getId())
 				.setApplicationToken(applicationVoMock.getToken())
+				.setHostNameOrIpAddress(applicationHostVOMock.getHostNameOrIpAddress())
 				.createAccessRightsVO();
 		return accessRights;
 	}
-
-
 }
