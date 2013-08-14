@@ -108,6 +108,8 @@ public class SystemSecurityInitializerLocalTest
 					capabilityArray[SystemSecurityInitializerLocal.ELEMENT_CAPABILITY_TITLE]);
 			assertNotNull("default capability not created",capability);
 			assertNotNull("capability not associated with an application",capability.getApplicationVO());
+			assertNotNull("hosts not set for the default application of capability",capability.getApplicationVO().getHosts());
+			assertFalse("hosts is empty for the default application of capability",capability.getApplicationVO().getHosts().isEmpty());
 			for(int i = SystemSecurityInitializerLocal.ELEMENT_RESOURCE+1; i < capabilityArray.length; i++)
 			{
 				String action = capabilityArray[i];

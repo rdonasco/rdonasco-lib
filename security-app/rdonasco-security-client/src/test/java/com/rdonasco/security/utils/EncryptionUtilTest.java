@@ -94,4 +94,14 @@ public class EncryptionUtilTest
 		System.out.println("result = " + result);
 		assertEquals(expResult, result);
 	}
+	
+	@Test
+	public void testEncryptAdminPassword() throws Exception
+	{
+		System.out.println("encryptAdminPassword");
+		String password = "admin";
+		String wordToEncrypt = "admin";
+		String encryptedWord = EncryptionUtil.encryptWithPassword(wordToEncrypt, password);
+		System.out.println("encryptedWord = " + encryptedWord);
+	}
 }

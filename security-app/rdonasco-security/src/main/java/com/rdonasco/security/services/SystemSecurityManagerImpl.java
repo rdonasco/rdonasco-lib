@@ -148,11 +148,11 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			List<UserSecurityProfileVO> allProfiles = userSecurityProfileManager.findAllProfiles();
 			if (allProfiles == null || allProfiles.isEmpty())
 			{
-				String defaultPassword = "admin";
 				defaultAdminSecurityProfile = userSecurityProfileManager.createNewUserSecurityProfile(new UserSecurityProfileVOBuilder()
 						.setLoginId("admin")
-						.setPassword(EncryptionUtil.encryptWithPassword(defaultPassword, defaultPassword))
+						.setPassword("admin")
 						.createUserSecurityProfileVO());
+				userSecurityProfileManager.setupDefaultCapabilitiesForUser(defaultAdminSecurityProfile);
 			}
 			else
 			{
@@ -401,9 +401,9 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		applicationHostVO.setHostNameOrIpAddress(requestedAccessRight.getHostNameOrIpAddress());
 		try
 		{
-			if(trustedApplication.getHosts().contains(applicationHostVO))
+			if (trustedApplication.getHosts().contains(applicationHostVO))
 			{
-				LOG.log(Level.FINE, "host {0} is trusted",requestedAccessRight.getHostNameOrIpAddress());
+				LOG.log(Level.FINE, "host {0} is trusted", requestedAccessRight.getHostNameOrIpAddress());
 			}
 			else
 			{
