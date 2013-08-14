@@ -33,6 +33,7 @@ public class LoggedOnSession implements Serializable
 	private UserSecurityProfileVO loggedOnuser;
 	private Long applicationID;
 	private String applicationToken;
+	private String hostNameOrIpAddress;
 
 	public boolean isLoggedOn()
 	{
@@ -73,5 +74,15 @@ public class LoggedOnSession implements Serializable
 	public void clear()
 	{
 		loggedOnuser = null;
+	}
+
+	public String getHostNameOrIpAddress()
+	{
+		return hostNameOrIpAddress;
+	}
+
+	public void setHostNameOrIpAddress(String hostNameOrIpAddress)
+	{
+		this.hostNameOrIpAddress = hostNameOrIpAddress;
 	}
 }

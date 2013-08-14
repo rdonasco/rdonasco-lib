@@ -21,6 +21,7 @@ import com.vaadin.Application;
 import com.vaadin.terminal.gwt.server.WebApplicationContext;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import java.net.InetAddress;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PreDestroy;
@@ -154,6 +155,7 @@ public class SecurityApplication extends Application implements
 			{
 				loggedOnSession.setApplicationID(configDataManager.loadValue(SecurityConstants.CONFIG_SYSTEM_APPLICATION_ID, Long.class, null));
 				loggedOnSession.setApplicationToken(configDataManager.loadValue(SecurityConstants.CONFIG_SYSTEM_APPLICATION_TOKEN, String.class, null));
+				loggedOnSession.setHostNameOrIpAddress(InetAddress.getLocalHost().getHostName());
 			}
 			catch (Exception ex)
 			{

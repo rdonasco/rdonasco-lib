@@ -234,6 +234,7 @@ public class SecuredInterceptor
 					.setUserProfileVO(userSecurityProfileVO)
 					.setApplicationID(loggedOnSession.getApplicationID())
 					.setApplicationToken(loggedOnSession.getApplicationToken())
+					.setHostNameOrIpAddress(loggedOnSession.getHostNameOrIpAddress())
 					.createAccessRightsVO();
 			systemSecurityManager.checkAccessRights(accessRights);
 		}

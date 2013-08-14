@@ -73,6 +73,7 @@ public class SessionSecurityChecker implements Serializable
 					.setUserProfileVO(userSecurityProfileVO)
 					.setApplicationID(loggedOnSession.getApplicationID())
 					.setApplicationToken(loggedOnSession.getApplicationToken())
+					.setHostNameOrIpAddress(loggedOnSession.getHostNameOrIpAddress())
 					.createAccessRightsVO();
 			securityManager.checkAccessRights(accessRights);
 		}
