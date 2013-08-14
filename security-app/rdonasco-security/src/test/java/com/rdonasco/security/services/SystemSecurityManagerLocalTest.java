@@ -30,6 +30,7 @@ import com.rdonasco.security.utils.ArchiveCreator;
 import com.rdonasco.security.utils.EncryptionUtil;
 import com.rdonasco.security.utils.SecurityConstants;
 import com.rdonasco.security.utils.UserSecurityProfileTestUtility;
+import com.rdonasco.security.vo.ApplicationHostVO;
 import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import java.util.ArrayList;
@@ -47,7 +48,8 @@ public class SystemSecurityManagerLocalTest
 {
 
 	private static final Logger LOG = Logger.getLogger(SystemSecurityManagerLocalTest.class.getName());
-	private static final String CONSTANT_ADMIN = "admin";
+	private static final String CONSTANT_ADMIN = "admin";	
+	private static ApplicationHostVO applicationHostMock;
 	@EJB
 	private SystemSecurityManagerLocal systemSecurityManager;
 	@EJB
@@ -82,6 +84,8 @@ public class SystemSecurityManagerLocalTest
 	public void setUp()
 	{
 		userSecurityProfileTestUtility = new UserSecurityProfileTestUtility(capabilityManager, systemSecurityManager, applicationManager);
+		applicationHostMock = new ApplicationHostVO();
+		applicationHostMock.setHostNameOrIpAddress("test.host.com");		
 	}
 
 	@Test
@@ -157,7 +161,8 @@ public class SystemSecurityManagerLocalTest
 	{
 		System.out.println("addCapability");
 		UserSecurityProfileVO createdUser = userSecurityProfileTestUtility.createNewUserSecurityProfileWithCapability();
-		CapabilityVO additionalCapability = userSecurityProfileTestUtility.createTestDataCapabilityWithActionAndResourceName("fire", "employee");
+		CapabilityVO additionalCapability = userSecurityProfileTestUtility.createTestDataCapabilityWithActionAndResourceName("fire", "employee",
+				"xappToAddCapabilityWithHosts",applicationHostMock.getHostNameOrIpAddress());
 		systemSecurityManager.addCapabilityForUser(createdUser, additionalCapability);
 		String actionName = null;
 		for (CapabilityActionVO action : additionalCapability.getActions())
@@ -170,6 +175,7 @@ public class SystemSecurityManagerLocalTest
 				.setApplicationID(additionalCapability.getApplicationVO().getId())
 				.setApplicationToken(additionalCapability.getApplicationVO().getToken())
 				.setUserProfileVO(createdUser)
+				.setHostNameOrIpAddress(applicationHostMock.getHostNameOrIpAddress())
 				.createAccessRightsVO();
 		systemSecurityManager.checkAccessRights(accessRights);
 	}

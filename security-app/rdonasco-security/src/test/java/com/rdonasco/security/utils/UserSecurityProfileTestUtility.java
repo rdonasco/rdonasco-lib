@@ -23,6 +23,7 @@ import com.rdonasco.security.services.ApplicationManagerLocal;
 import com.rdonasco.security.services.CapabilityManagerLocal;
 import com.rdonasco.security.services.SystemSecurityManagerLocal;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.ApplicationHostVO;
 import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.ApplicationVOBuilder;
 import com.rdonasco.security.vo.CapabilityVO;
@@ -33,6 +34,8 @@ import com.rdonasco.security.vo.UserCapabilityVO;
 import com.rdonasco.security.vo.UserCapabilityVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -40,7 +43,7 @@ import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
  */
 public class UserSecurityProfileTestUtility
 {
-
+	private static int KEY_GEN = 0;
 	private CapabilityManagerLocal capabilityManager;
 
 	private SystemSecurityManagerLocal systemSecurityManager;
@@ -74,9 +77,21 @@ public class UserSecurityProfileTestUtility
 		return resourceAdded;
 	}
 
+	
 	public CapabilityVO createTestDataCapabilityWithActionAndResourceName(
 			final String actionName,
 			final String resourceName) throws CapabilityManagerException,
+			ApplicationManagerException
+	{
+		String[] hosts = null;
+		return createTestDataCapabilityWithActionAndResourceName(actionName, resourceName,"app."+resourceName,hosts);
+	}
+	
+	public CapabilityVO createTestDataCapabilityWithActionAndResourceName(
+			final String actionName,
+			final String resourceName,
+			final String applicationName,
+			final String...hostNames) throws CapabilityManagerException,
 			ApplicationManagerException
 	{
 		ActionVO action = createTestDataActionNamed(actionName);
@@ -87,7 +102,7 @@ public class UserSecurityProfileTestUtility
 				.setResource(resource)
 				.setTitle(capabilityTitle)
 				.setDescription(capabilityTitle + " description")
-				.setApplication(createApplicationNamed("app"+resource.getName()))
+				.setApplication(createApplicationNamed(applicationName,hostNames))
 				.createCapabilityVO();
 		CapabilityVO savedCapabilityVO = capabilityManager.createNewCapability(capabilityVO);
 		return savedCapabilityVO;
@@ -106,7 +121,7 @@ public class UserSecurityProfileTestUtility
 			throws CapabilityManagerException, ApplicationManagerException
 	{
 		UserSecurityProfileVO userProfile = createTestDataWithoutCapability();
-		CapabilityVO capabilityVO = createTestDataCapabilityWithActionAndResourceName("edit", "pets");
+		CapabilityVO capabilityVO = createTestDataCapabilityWithActionAndResourceName("edit", "pets" + (KEY_GEN++));
 		UserCapabilityVO userCapabilityVO = createTestDataUserCapabilityVO(capabilityVO);
 		userProfile.addCapbility(userCapabilityVO);
 		return userProfile;
@@ -139,9 +154,27 @@ public class UserSecurityProfileTestUtility
 
 	public ApplicationVO createApplicationNamed(String name) throws ApplicationManagerException
 	{
-		return applicationManager.createNewApplication(new ApplicationVOBuilder()
+		String[] hosts = null;
+		return createApplicationNamed(name,hosts);
+	}
+	
+	public ApplicationVO createApplicationNamed(String name, String...hosts) throws ApplicationManagerException
+	{
+		 ApplicationVO applicationVO = new ApplicationVOBuilder()
 				.setName(name)
 				.setToken("token-"+name)
-				.createApplicationVO());
+				.createApplicationVO();
+		 if(null != hosts)
+		 {
+			 List<ApplicationHostVO> hostsVO = new ArrayList<ApplicationHostVO>();
+			 for(String host : hosts)
+			 {
+				 ApplicationHostVO applicationHostVO  = new ApplicationHostVO();
+				 applicationHostVO.setHostNameOrIpAddress(host);
+				 hostsVO.add(applicationHostVO);
+			 }
+			 applicationVO.setHosts(hostsVO);
+		 }
+		return applicationManager.createNewApplication(applicationVO);
 	}
 }

@@ -23,6 +23,7 @@ import com.rdonasco.security.exceptions.ApplicationManagerException;
 import com.rdonasco.security.exceptions.ApplicationNotTrustedException;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.exceptions.DefaultAdminSecurityProfileAlreadyExist;
+import com.rdonasco.security.exceptions.HostNotTrustedException;
 import com.rdonasco.security.exceptions.NotSecuredResourceException;
 import com.rdonasco.security.exceptions.SecurityAuthenticationException;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
@@ -30,6 +31,7 @@ import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.utils.EncryptionUtil;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
+import com.rdonasco.security.vo.ApplicationHostVO;
 import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.ApplicationVOBuilder;
 import com.rdonasco.security.vo.CapabilityActionVO;
@@ -338,7 +340,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 
 	private ApplicationVO ensureRequestedApplicationIsTrusted(
 			final AccessRightsVO requestedAccessRight) throws
-			ApplicationNotTrustedException, ApplicationManagerException
+			ApplicationManagerException
 	{
 		if (null == requestedAccessRight.getApplicationID() || null == requestedAccessRight.getApplicationToken()
 				|| requestedAccessRight.getApplicationToken().isEmpty())
@@ -353,8 +355,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			LOG.log(Level.FINE, "token mismatch");
 			throw new ApplicationNotTrustedException();
 		}
-		// TODO: ensure that requestedAccessRight has the host information
-		// TODO: ensure that the host is trusted by the application
+		ensureThatHostIsTrusted(requestedAccessRight, trustedApplication);
 		return trustedApplication;
 	}
 
@@ -390,5 +391,28 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			}
 		}
 		return accessRightsSet;
+	}
+
+	private void ensureThatHostIsTrusted(
+			final AccessRightsVO requestedAccessRight,
+			ApplicationVO trustedApplication) throws HostNotTrustedException
+	{
+		ApplicationHostVO applicationHostVO = new ApplicationHostVO();
+		applicationHostVO.setHostNameOrIpAddress(requestedAccessRight.getHostNameOrIpAddress());
+		try
+		{
+			if(trustedApplication.getHosts().contains(applicationHostVO))
+			{
+				LOG.log(Level.FINE, "host {0} is trusted",requestedAccessRight.getHostNameOrIpAddress());
+			}
+			else
+			{
+				throw new HostNotTrustedException(new StringBuilder("host [").append(requestedAccessRight.getHostNameOrIpAddress()).append("] is not trusted").toString());
+			}
+		}
+		catch (Exception e)
+		{
+			throw new HostNotTrustedException(e);
+		}
 	}
 }

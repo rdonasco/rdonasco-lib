@@ -23,8 +23,10 @@ public abstract class AbstractValidator<T> implements Validator<T>
 		return invalidValueMessage;
 	}
 	
+	@Override
 	public abstract boolean isValid(T valueToValidate);
 
+	@Override
 	public void validate(T valueToValidate) throws InvalidValueException
 	{
 		setInvalidValueMessage("Invalid value {0}".replace("{0}", String.valueOf(valueToValidate)));

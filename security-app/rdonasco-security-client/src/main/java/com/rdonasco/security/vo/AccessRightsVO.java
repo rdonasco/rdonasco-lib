@@ -34,8 +34,9 @@ public class AccessRightsVO implements Serializable
 	private String actionName;
 	private String applicationToken;
 	private Long applicationID;
+	private String hostNameOrIpAddress;
 
-	AccessRightsVO(Long applicationID, String applicationToken,
+	AccessRightsVO(Long applicationID, String applicationToken, String hostNameOrIpAddress,
 			ResourceVO resource,UserSecurityProfileVO userProfile, ActionVO action)
 	{
 		setResource(resource);
@@ -43,6 +44,7 @@ public class AccessRightsVO implements Serializable
 		setAction(action);
 		setApplicationID(applicationID);
 		setApplicationToken(applicationToken);
+		setHostNameOrIpAddress(hostNameOrIpAddress);
 	}
 
 	private void setResource(ResourceVO resource)
@@ -94,6 +96,17 @@ public class AccessRightsVO implements Serializable
 		return resource;
 	}
 
+	public String getHostNameOrIpAddress()
+	{
+		return hostNameOrIpAddress;
+	}
+
+	private void setHostNameOrIpAddress(String hostNameOrIpAddress)
+	{
+		this.hostNameOrIpAddress = hostNameOrIpAddress;
+	}
+
+	
 	public static long getSerialVersionUID()
 	{
 		return serialVersionUID;

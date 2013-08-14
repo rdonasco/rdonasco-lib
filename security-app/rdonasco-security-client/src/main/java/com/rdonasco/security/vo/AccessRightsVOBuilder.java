@@ -27,6 +27,7 @@ public class AccessRightsVOBuilder
 	private ActionVO action;
 	private Long applicationID;
 	private String applicationToken;
+	private String hostNameOrIpAddress;
 
 	public AccessRightsVOBuilder()
 	{
@@ -105,9 +106,15 @@ public class AccessRightsVOBuilder
 		this.applicationToken = applicationToken;
 		return this;
 	}
+	
+	public AccessRightsVOBuilder setHostNameOrIpAddress(String hostNameOrIpAddress)
+	{
+		this.hostNameOrIpAddress = hostNameOrIpAddress;
+		return this;
+	}	
 
 	public AccessRightsVO createAccessRightsVO()
 	{
-		return new AccessRightsVO(applicationID, applicationToken, resource, userProfile, action);
+		return new AccessRightsVO(applicationID, applicationToken, hostNameOrIpAddress, resource, userProfile, action);
 	}
 }
