@@ -31,6 +31,7 @@ import com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.ApplicationHostVO;
 import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.ApplicationVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
@@ -69,6 +70,7 @@ public class UserBasedCapabilityTest
 			.setId(Long.MIN_VALUE)
 			.setToken("token")
 			.createApplicationVO();
+	private static final ApplicationHostVO applicationHostVOMock = new ApplicationHostVO();
 	private static Application applicationMock;
 	private static ApplicationManagerLocal applicationManageMock;
 
@@ -86,7 +88,9 @@ public class UserBasedCapabilityTest
 		userCapabilityDAOMock = mock(UserCapabilityDAO.class);
 		userRoleDAOMock = mock(UserRoleDAO.class);
 		userGroupDAOMock = mock(UserGroupDAO.class);
-		roleDAO = mock(RoleDAO.class);
+		roleDAO = mock(RoleDAO.class);		
+		applicationHostVOMock.setHostNameOrIpAddress("test.host.com");
+		applicationVOMock.getHosts().add(applicationHostVOMock);
 		applicationManageMock = mock(ApplicationManagerLocal.class);
 		applicationMock = SecurityEntityValueObjectConverter.toApplication(applicationVOMock);
 	}
@@ -166,6 +170,7 @@ public class UserBasedCapabilityTest
 				.setResourceID(Long.MIN_VALUE)
 				.setApplicationID(applicationVOMock.getId())
 				.setApplicationToken(applicationVOMock.getToken())
+				.setHostNameOrIpAddress(applicationHostVOMock.getHostNameOrIpAddress())
 				.setUserProfileVO(userSecurityProfileVOMock)
 				.createAccessRightsVO();
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
@@ -215,6 +220,7 @@ public class UserBasedCapabilityTest
 				.setUserProfileVO(userSecurityProfileVOMock)
 				.setApplicationID(applicationVOMock.getId())
 				.setApplicationToken(applicationVOMock.getToken())
+				.setHostNameOrIpAddress(applicationHostVOMock.getHostNameOrIpAddress())
 				.createAccessRightsVO();
 		List<Capability> emptyCapability = new ArrayList<Capability>();
 		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(userSecurityProfileMock, applicationMock)).thenReturn(emptyCapability);
@@ -255,7 +261,8 @@ public class UserBasedCapabilityTest
 				.setResourceID(Long.MIN_VALUE)
 				.setUserProfileVO(userSecurityProfileVOMock)
 				.setApplicationID(applicationVOMock.getId())
-				.setApplicationToken(applicationVOMock.getToken())				
+				.setApplicationToken(applicationVOMock.getToken())
+				.setHostNameOrIpAddress(applicationHostVOMock.getHostNameOrIpAddress())
 				.createAccessRightsVO();
 		List<Capability> emptyCapability = new ArrayList<Capability>();
 		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(userSecurityProfileMock, applicationMock)).thenReturn(emptyCapability);
@@ -286,7 +293,8 @@ public class UserBasedCapabilityTest
 				.setResourceID(Long.MIN_VALUE)
 				.setUserProfileVO(userSecurityProfileVOMock)
 				.setApplicationID(applicationVOMock.getId())
-				.setApplicationToken(applicationVOMock.getToken())				
+				.setApplicationToken(applicationVOMock.getToken())	
+				.setHostNameOrIpAddress(applicationHostVOMock.getHostNameOrIpAddress())
 				.createAccessRightsVO();
 		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(userSecurityProfileMock, applicationMock)).thenReturn(getCapabilityOnAddingUser());
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
@@ -318,7 +326,8 @@ public class UserBasedCapabilityTest
 				.setResourceID(Long.MIN_VALUE)
 				.setUserProfileVO(userSecurityProfileVO)
 				.setApplicationID(applicationVOMock.getId())
-				.setApplicationToken(applicationVOMock.getToken())								
+				.setApplicationToken(applicationVOMock.getToken())
+				.setHostNameOrIpAddress(applicationHostVOMock.getHostNameOrIpAddress())
 				.createAccessRightsVO();
 
 		SystemSecurityManagerImpl instance = prepareSecurityManagerInstanceToTest();

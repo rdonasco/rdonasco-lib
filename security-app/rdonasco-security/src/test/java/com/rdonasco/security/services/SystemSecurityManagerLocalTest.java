@@ -13,6 +13,7 @@ import com.rdonasco.security.exceptions.ApplicationNotTrustedException;
 import com.rdonasco.security.exceptions.DefaultAdminSecurityProfileAlreadyExist;
 import com.rdonasco.security.exceptions.SecurityAuthenticationException;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
+import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
 import com.rdonasco.security.model.Action;
 import com.rdonasco.security.vo.AccessRightsVO;
@@ -38,6 +39,7 @@ import com.rdonasco.security.vo.UserSecurityProfileVOBuilder;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.inject.Inject;
@@ -121,16 +123,17 @@ public class SystemSecurityManagerLocalTest
 		systemSecurityInitializerLocal.initializeDefaultSystemAccessCapabilities();
 		String encryptedPassword = EncryptionUtil.encryptWithPassword(CONSTANT_ADMIN, CONSTANT_ADMIN);
 		System.out.println("encryptedPassword = " + encryptedPassword);
-		UserSecurityProfileVO newAdminProfile = null;
 		try
 		{
-			newAdminProfile = systemSecurityManager.createDefaultAdminSecurityProfile();
+			removeAllProfiles();
+			systemSecurityManager.createDefaultAdminSecurityProfile();					
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
-			System.out.println("e.getMessage() = " + e.getMessage());
+			System.out.println("e.getMessage() = " + e.getMessage());			
 		}
-		assertEquals("password mismatch",encryptedPassword, newAdminProfile.getPassword());
+		UserSecurityProfileVO newAdminProfile = systemSecurityManager.findSecurityProfileWithLogonID("admin");
+		assertEquals("password mismatch", encryptedPassword, newAdminProfile.getPassword());	
 		AccessRightsVO accessRequest = createAccessRequestForLogonToTheSystem(newAdminProfile);
 		systemSecurityManager.checkAccessRights(accessRequest);
 	}
@@ -435,6 +438,15 @@ public class SystemSecurityManagerLocalTest
 			{
 				throw e;
 			}
+		}
+	}
+
+	private void removeAllProfiles() throws SecurityManagerException
+	{
+		List<UserSecurityProfileVO> allProfiles = systemSecurityManager.findAllProfiles();
+		for(UserSecurityProfileVO profile : allProfiles)
+		{
+			systemSecurityManager.removeSecurityProfile(profile);
 		}
 	}
 }
