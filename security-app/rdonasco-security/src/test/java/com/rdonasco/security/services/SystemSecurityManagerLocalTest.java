@@ -121,7 +121,15 @@ public class SystemSecurityManagerLocalTest
 		systemSecurityInitializerLocal.initializeDefaultSystemAccessCapabilities();
 		String encryptedPassword = EncryptionUtil.encryptWithPassword(CONSTANT_ADMIN, CONSTANT_ADMIN);
 		System.out.println("encryptedPassword = " + encryptedPassword);
-		UserSecurityProfileVO newAdminProfile = systemSecurityManager.createDefaultAdminSecurityProfile();
+		UserSecurityProfileVO newAdminProfile = null;
+		try
+		{
+			newAdminProfile = systemSecurityManager.createDefaultAdminSecurityProfile();
+		}
+		catch(Exception e)
+		{
+			System.out.println("e.getMessage() = " + e.getMessage());
+		}
 		assertEquals("password mismatch",encryptedPassword, newAdminProfile.getPassword());
 		AccessRightsVO accessRequest = createAccessRequestForLogonToTheSystem(newAdminProfile);
 		systemSecurityManager.checkAccessRights(accessRequest);
