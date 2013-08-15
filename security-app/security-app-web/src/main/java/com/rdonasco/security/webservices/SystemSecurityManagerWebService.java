@@ -56,7 +56,9 @@ public class SystemSecurityManagerWebService
 	public void checkCapabilityOfUserTo(
 			@WebParam(name = "profile") UserSecurityProfileVO userSecurityProfileVO,
 			@WebParam(name = "action") String action,
-			@WebParam(name = "resource") String resource) throws
+			@WebParam(name = "resource") String resource,
+			@WebParam(name="applicationID") Long applicationID,
+			@WebParam(name="applicationToken") String applicationToken) throws
 			SecurityAuthenticationException
 	{
 		try
@@ -67,12 +69,15 @@ public class SystemSecurityManagerWebService
 					.setActionAsString(action)
 					.setResourceAsString(resource)
 					.setUserProfileVO(userSecurityProfileVO)
+					.setApplicationID(applicationID)
+					.setApplicationToken(applicationToken)
+					.setHostNameOrIpAddress(getRemoteAddress())
 					.createAccessRightsVO();
 			securityManager.checkAccessRights(accessRights);
 		}
 		catch (Exception e)
 		{
-			throw new SecurityAuthenticationException(e);
+			throw new SecurityAuthenticationException(e.getCause().getMessage());
 		}
 	}
 
@@ -82,7 +87,9 @@ public class SystemSecurityManagerWebService
 	@WebMethod(operationName = "logon")
 	public UserSecurityProfileVO logon(
 			@WebParam(name = "logonID") String logonID,
-			@WebParam(name = "password") String password) throws
+			@WebParam(name = "password") String password,
+			@WebParam(name="applicationID") Long applicationID,
+			@WebParam(name="applicationToken") String applicationToken) throws
 			SecurityAuthenticationException
 	{
 		UserSecurityProfileVO userSecurityProfile = null;
@@ -101,7 +108,7 @@ public class SystemSecurityManagerWebService
 			{
 				throw new SecurityAuthenticationException("Authentication failed for user with logon ID:" + logonID);
 			}
-			checkCapabilityOfUserTo(userSecurityProfile, AuthConstants.ACTION_LOGON, AuthConstants.RESOURCE_SYSTEM);
+			checkCapabilityOfUserTo(userSecurityProfile, AuthConstants.ACTION_LOGON, AuthConstants.RESOURCE_SYSTEM, applicationID, applicationToken);
 		}
 		catch (SecurityAuthenticationException ex)
 		{

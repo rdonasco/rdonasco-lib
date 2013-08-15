@@ -12,11 +12,14 @@ public class App
 {
 
 	private static final Logger LOG = Logger.getLogger(App.class.getName());
+	private static final Long APP_ID = 402L;
 
 	private class WebServiceClient implements Runnable
 	{
-		private static final String ADMIN = "admin";
 
+		private static final String ADMIN = "admin";
+		private static final String APP_TOKEN = "NImn7NzZxlTNQISPUqJ3GfnMuQ2ZD7p7";
+		
 		private int maxCallCount;
 
 		public WebServiceClient(int maxCallCount)
@@ -52,8 +55,8 @@ public class App
 			{
 				try
 				{
-					UserSecurityProfileVO userSecurityProfileVO = port.logon(ADMIN, ADMIN);
-					port.checkUserCapability(userSecurityProfileVO, action, resource);
+					UserSecurityProfileVO userSecurityProfileVO = port.logon(ADMIN, ADMIN, APP_ID, APP_TOKEN);
+					port.checkUserCapability(userSecurityProfileVO, action, resource, APP_ID, APP_TOKEN);
 					LOG.log(Level.INFO, "access allowed");
 				}
 				catch (Exception e)
@@ -74,7 +77,7 @@ public class App
 				java.lang.String logonID = ADMIN;
 				java.lang.String password = ADMIN;
 				// TODO process result here
-				com.rdonasco.security.webservices.UserSecurityProfileVO result = port.logon(logonID, password);
+				com.rdonasco.security.webservices.UserSecurityProfileVO result = port.logon(logonID, password,APP_ID,APP_TOKEN);
 				System.out.println("Result = " + result);
 			}
 			catch (Exception e)

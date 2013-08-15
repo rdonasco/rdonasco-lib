@@ -15,6 +15,8 @@
 <xs:element name="profile" type="tns:userSecurityProfileVO" minOccurs="0"/>
 <xs:element name="action" type="xs:string" minOccurs="0"/>
 <xs:element name="resource" type="xs:string" minOccurs="0"/>
+<xs:element name="applicationID" type="xs:long" minOccurs="0"/>
+<xs:element name="applicationToken" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -42,6 +44,7 @@
 <xs:complexType name="capabilityVO">
 <xs:sequence>
 <xs:element name="actions" type="tns:capabilityActionVO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="applicationVO" type="tns:applicationVO" minOccurs="0"/>
 <xs:element name="description" type="xs:string" minOccurs="0"/>
 <xs:element name="id" type="xs:long" minOccurs="0"/>
 <xs:element name="resource" type="tns:resourceVO" minOccurs="0"/>
@@ -61,6 +64,22 @@
 <xs:sequence>
 <xs:element name="id" type="xs:long" minOccurs="0"/>
 <xs:element name="name" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="applicationVO">
+<xs:sequence>
+<xs:element name="hosts" type="tns:applicationHostVO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="id" type="xs:long" minOccurs="0"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+<xs:element name="token" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="applicationHostVO">
+<xs:sequence>
+<xs:element name="hostNameOrIpAddress" type="xs:string" minOccurs="0"/>
+<xs:element name="id" type="xs:long" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -129,6 +148,8 @@
 <xs:sequence>
 <xs:element name="logonID" type="xs:string" minOccurs="0"/>
 <xs:element name="password" type="xs:string" minOccurs="0"/>
+<xs:element name="applicationID" type="xs:long" minOccurs="0"/>
+<xs:element name="applicationToken" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
