@@ -98,7 +98,10 @@ public class DefaultContentViewController implements
 			loggedOnContentView.initWidget();
 			for (HomeViewButtonController<FeatureHomeButton> buttonController : buttonControllersProviders)
 			{
-				loggedOnContentView.addComponent((Component) buttonController.getControlledView());
+				if(buttonController.isActivated())
+				{
+					loggedOnContentView.addComponent((Component) buttonController.getControlledView());
+				}
 			}
 			loggedOutContentView.initWidget();
 			loggedOutContentView.getLogonForm().addListener(new LoginForm.LoginListener()

@@ -122,4 +122,11 @@ public class SettingsHomeButtonController implements
 		panel.addComponent(getConfigView());
 		return panel;
 	}
+
+	@Override
+	public boolean isActivated()
+	{
+		return true;
+	}
+	
 }

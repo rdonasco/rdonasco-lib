@@ -7,14 +7,18 @@ package com.rdonasco.security.home.controllers;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
+import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.capability.controllers.CapabilityViewLayoutController;
+import static com.rdonasco.security.home.controllers.HomeViewButtonController.CONFIG_IS_ACTIVE;
+import static com.rdonasco.security.home.controllers.HomeViewButtonController.CONFIG_PREFIX;
 import com.rdonasco.security.home.views.FeatureHomeButton;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -38,6 +42,8 @@ public class CapabilityManagerHomeButtonController implements
 	@Inject
 	private Instance<CapabilityViewLayoutController> viewLayoutProvider;
 	private CapabilityViewLayoutController capabilityViewLayoutController;
+	@EJB
+	private ConfigDataManagerVODecoratorRemote configDataManager;
 
 	@PostConstruct
 	@Override
@@ -107,4 +113,11 @@ public class CapabilityManagerHomeButtonController implements
 		}
 		return capabilityViewLayoutController;
 	}
+@Override
+	public boolean isActivated()
+	{
+		return configDataManager.loadValue(new StringBuilder(CONFIG_PREFIX)
+				.append("capabilityManager").append(CONFIG_IS_ACTIVE).toString()
+				, Boolean.class, true);
+	}	
 }

@@ -7,13 +7,14 @@ package com.rdonasco.security.home.controllers;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
-import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
+import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.home.views.FeatureHomeButton;
 import com.rdonasco.security.user.controllers.UserViewLayoutController;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
@@ -35,6 +36,8 @@ public class UserManagerHomeButtonController implements
 	private UserViewLayoutController userViewLayoutController;
 	@Inject
 	private Instance<HomeFrameViewController> homeFrameViewControllers;
+	@EJB
+	private ConfigDataManagerVODecoratorRemote configDataManager;
 
 	@PostConstruct
 	@Override
@@ -92,4 +95,14 @@ public class UserManagerHomeButtonController implements
 	{
 		refreshView();
 	}
+
+	@Override
+	public boolean isActivated()
+	{
+		return configDataManager.loadValue(new StringBuilder(CONFIG_PREFIX)
+				.append("userManager").append(CONFIG_IS_ACTIVE).toString()
+				, Boolean.class, true);
+	}
+	
+	
 }
