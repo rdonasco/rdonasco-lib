@@ -1,6 +1,6 @@
 /*
  * Copyright 2013 Roy F. Donasco.
- * File Created on: 04-Apr-2013
+ * File Created on: 31-Jul-2013
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.rdonasco.common.vaadin.controller;
 
-package com.rdonasco.security.utils;
+import com.rdonasco.common.vaadin.view.ControlledView;
+import com.vaadin.data.util.BeanItem;
 
 /**
  *
  * @author Roy F. Donasco
  */
-public final class SecurityConstants
+public interface DataEditorViewController<T extends ControlledView, D> extends
+		ViewController<T>
 {
-	public static final String TABLE_SEQUENCE = "SECURITY_SEQUENCE";
+	void setCurrentItem(
+			BeanItem<D> currentItem);
+
+	BeanItem<D> getCurrentItem();
+
+	void configureButtonListeners();
+
+	void changeViewToEditMode();
+
+	void changeViewToDisplayMode();
+
+	void discardChanges();
+
+	void saveChanges();
+
+	void configureInitialButtonState();
 }

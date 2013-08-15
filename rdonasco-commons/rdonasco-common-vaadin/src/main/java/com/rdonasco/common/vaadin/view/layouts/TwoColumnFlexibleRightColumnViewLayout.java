@@ -22,11 +22,13 @@ import com.rdonasco.common.vaadin.view.ControlledView;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
+import javax.enterprise.context.Dependent;
 
 /**
  *
  * @author Roy F. Donasco
  */
+@Dependent
 public class TwoColumnFlexibleRightColumnViewLayout extends HorizontalLayout implements ControlledView
 {
 
@@ -51,6 +53,11 @@ public class TwoColumnFlexibleRightColumnViewLayout extends HorizontalLayout imp
 		addComponent(leftPanel);
 		addComponent(centerPanel);
 		setExpandRatio(centerPanel, 1);
+	}
+
+	public void setLeftPanelWidth(float width, int unit)
+	{
+		leftPanel.setWidth(width, unit);
 	}
 
 	public void setLeftPanelContent(Component leftComponent)

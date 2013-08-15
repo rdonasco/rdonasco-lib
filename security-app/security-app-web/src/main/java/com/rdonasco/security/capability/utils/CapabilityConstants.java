@@ -15,12 +15,11 @@ public interface CapabilityConstants
 
 	public static final Object[] TABLE_VISIBLE_COLUMNS = new Object[]
 	{
-		"icon", "title"
+		"icon","application", "title"
 	};
 	public static final String[] TABLE_VISIBLE_HEADERS = new String[]
 	{
-		"",
-		I18NResource.localize("Title")
+		"", I18NResource.localize("Application"),I18NResource.localize("Title")
 	};
 	public static final String RESOURCE_CAPABILITY = "capability";
 	public static final String RESOURCE_CAPABILITY_ACTION = "capabilityAction";

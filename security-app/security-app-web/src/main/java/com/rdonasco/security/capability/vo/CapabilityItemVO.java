@@ -6,6 +6,7 @@ package com.rdonasco.security.capability.vo;
 
 import com.rdonasco.datamanager.listeditor.view.ListEditorItem;
 import com.rdonasco.security.vo.ActionVO;
+import com.rdonasco.security.vo.ApplicationVO;
 import com.rdonasco.security.vo.CapabilityActionVO;
 import com.rdonasco.security.vo.CapabilityActionVOBuilder;
 import com.rdonasco.security.vo.CapabilityVO;
@@ -85,6 +86,16 @@ public class CapabilityItemVO implements Serializable, ListEditorItem
 		capabilityVO.setDescription(description);
 	}
 
+	public ApplicationVO getApplication()
+	{
+		return capabilityVO.getApplicationVO();
+	}
+
+	public void setApplication(ApplicationVO applicationVO)
+	{
+		capabilityVO.setApplicationVO(applicationVO);
+	}	
+	
 	public ResourceVO getResource()
 	{
 		return capabilityVO.getResource();

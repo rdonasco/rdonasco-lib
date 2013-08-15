@@ -55,6 +55,16 @@ public class ThreeColumnFlexibleCenterViewLayout extends HorizontalLayout implem
 
 	}
 
+	public void setLeftPanelWidth(float width, int unit)
+	{
+		leftPanel.setWidth(width, unit);
+	}
+
+	public void setRightPanelWidth(float width, int unit)
+	{
+		rightPanel.setWidth(width, unit);
+	}
+
 	public void setLeftPanelContent(Component leftComponent)
 	{
 		leftPanel.removeAllComponents();

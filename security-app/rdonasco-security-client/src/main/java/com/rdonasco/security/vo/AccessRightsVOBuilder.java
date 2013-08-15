@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.rdonasco.security.vo;
 
 import java.util.logging.Logger;
 
-
-public class AccessRightsVOBuilder 
+public class AccessRightsVOBuilder
 {
+
 	private static final Logger LOG = Logger.getLogger(AccessRightsVOBuilder.class.getName());
-	
-	
 	private ResourceVO resource;
 	private UserSecurityProfileVO userProfile;
 	private ActionVO action;
+	private Long applicationID;
+	private String applicationToken;
+	private String hostNameOrIpAddress;
 
 	public AccessRightsVOBuilder()
 	{
@@ -38,7 +38,7 @@ public class AccessRightsVOBuilder
 		this.resource = resource;
 		return this;
 	}
-	
+
 	public AccessRightsVOBuilder setResourceAsString(String stringResource)
 	{
 		ResourceVO securedResource = new ResourceVOBuilder()
@@ -47,10 +47,10 @@ public class AccessRightsVOBuilder
 		this.resource = securedResource;
 		return this;
 	}
-	
+
 	public AccessRightsVOBuilder setResourceID(Long resourceID)
 	{
-		if(null == resource)
+		if (null == resource)
 		{
 			LOG.warning("resource not set, ignoring resourceID parameter.");
 		}
@@ -61,7 +61,8 @@ public class AccessRightsVOBuilder
 		return this;
 	}
 
-	public AccessRightsVOBuilder setUserProfileVO(UserSecurityProfileVO userProfile)
+	public AccessRightsVOBuilder setUserProfileVO(
+			UserSecurityProfileVO userProfile)
 	{
 		this.userProfile = userProfile;
 		return this;
@@ -72,7 +73,7 @@ public class AccessRightsVOBuilder
 		this.action = action;
 		return this;
 	}
-	
+
 	public AccessRightsVOBuilder setActionAsString(String action)
 	{
 		ActionVO newAction = ActionVO.createWithName(action);
@@ -80,10 +81,10 @@ public class AccessRightsVOBuilder
 		this.action = newAction;
 		return this;
 	}
-	
+
 	public AccessRightsVOBuilder setActionID(Long actionID)
 	{
-		if(action == null)
+		if (action == null)
 		{
 			LOG.warning("Action not set, ignoring actionID parameter");
 		}
@@ -92,11 +93,28 @@ public class AccessRightsVOBuilder
 			action.setId(actionID);
 		}
 		return this;
+	}
+
+	public AccessRightsVOBuilder setApplicationID(Long applicationID)
+	{
+		this.applicationID = applicationID;
+		return this;
+	}
+
+	public AccessRightsVOBuilder setApplicationToken(String applicationToken)
+	{
+		this.applicationToken = applicationToken;
+		return this;
+	}
+	
+	public AccessRightsVOBuilder setHostNameOrIpAddress(String hostNameOrIpAddress)
+	{
+		this.hostNameOrIpAddress = hostNameOrIpAddress;
+		return this;
 	}	
 
 	public AccessRightsVO createAccessRightsVO()
 	{
-		return new AccessRightsVO(resource, userProfile, action);
+		return new AccessRightsVO(applicationID, applicationToken, hostNameOrIpAddress, resource, userProfile, action);
 	}
-
 }

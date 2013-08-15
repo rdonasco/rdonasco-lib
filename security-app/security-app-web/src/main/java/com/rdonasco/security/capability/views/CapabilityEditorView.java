@@ -38,6 +38,7 @@ public class CapabilityEditorView extends VerticalLayout implements
 	private TextField titleField = new TextField(I18NResource.localize("Title"));
 	private TextArea descriptionField = new TextArea(I18NResource.localize("Description"));
 	private ComboBox resourceField = new ComboBox(I18NResource.localize("Resource"));
+	private ComboBox applicationField = new ComboBox(I18NResource.localize("Application"));
 	private Table actionsTable = new Table();
 	private Form editorForm;
 	private DragAndDropWrapper resourceDragAndDropWrapper;
@@ -92,6 +93,11 @@ public class CapabilityEditorView extends VerticalLayout implements
 		return titleField;
 	}
 
+	public ComboBox getApplicationField()
+	{
+		return applicationField;
+	}
+
 	public ComboBox getResourceField()
 	{
 		return resourceField;
@@ -107,16 +113,19 @@ public class CapabilityEditorView extends VerticalLayout implements
 		capabilityDetailPanel.setCaption(I18NResource.localize("Capability Editor"));
 		capabilityDetailPanel.setStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
 		VerticalLayout fieldLayout = new VerticalLayout();
+		titleField.setWidth(300f, UNITS_PIXELS);
 		fieldLayout.addComponent(titleField);
 		descriptionField.setWidth(300f, UNITS_PIXELS);
-		fieldLayout.addComponent(descriptionField);
+		fieldLayout.addComponent(applicationField);
 		fieldLayout.addComponent(resourceField);
+		fieldLayout.addComponent(descriptionField);
 		fieldLayout.setSpacing(true);
 		resourceDragAndDropWrapper = new DragAndDropWrapper(fieldLayout);
 		capabilityDetailPanel.addComponent(resourceDragAndDropWrapper);
 		titleField.setReadOnly(true);
 		descriptionField.setReadOnly(true);
 		resourceField.setReadOnly(true);
+		applicationField.setReadOnly(true);
 	}
 
 	private void configureCapabilityActionFields()
@@ -133,11 +142,11 @@ public class CapabilityEditorView extends VerticalLayout implements
 	private void configureEditorButtons()
 	{
 		editButton.setCaption(I18NResource.localize("Edit"));
-		editButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_EDIT));
+		editButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_EDIT));
 		saveButton.setCaption(I18NResource.localize("Save"));
-		saveButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_SAVE));
+		saveButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_SAVE));
 		cancelButton.setCaption(I18NResource.localize("Cancel"));
-		cancelButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_CANCEL));
+		cancelButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_CANCEL));
 
 		saveButton.addStyleName(SecurityDefaultTheme.CSS_BUTTON_DEFAULT);
 		buttonLayout.addComponent(editButton);

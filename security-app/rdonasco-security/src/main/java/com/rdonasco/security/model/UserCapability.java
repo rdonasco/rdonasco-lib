@@ -46,8 +46,8 @@ import javax.persistence.UniqueConstraint;
 })
 @NamedQueries(
 {
-	@NamedQuery(name = UserCapability.NAMED_QUERY_FIND_CAPABILITY_BY_USER,
-			query = "SELECT uc from UserCapability uc where uc.userProfile = :user"),
+	@NamedQuery(name = UserCapability.NAMED_QUERY_FIND_CAPABILITY_BY_USER_ON_APPLICATION,
+			query = "SELECT uc from UserCapability uc where uc.userProfile = :user AND uc.capability.application.id = :applicationID"),
 	@NamedQuery(name = UserCapability.NAMED_QUERY_DELETE_CAPABILITY_WITH_ID,
 			query = "DELETE from UserCapability uc where uc.capability.id = :capabilityID")
 })
@@ -58,13 +58,14 @@ public class UserCapability implements Serializable
 
 	private static final String GENERATOR_KEY = "USER_CAPABILITY_IDGEN";
 
-	public static final String NAMED_QUERY_FIND_CAPABILITY_BY_USER = "UserCapability.findCapabilityByUser";
+	public static final String NAMED_QUERY_FIND_CAPABILITY_BY_USER_ON_APPLICATION = "UserCapability.findCapabilityByUser";
 
 	public static final String NAMED_QUERY_DELETE_CAPABILITY_WITH_ID = "UserCapability.deleteCapabilityByID";
 
 	public static final String QUERY_PARAM_CAPABILITY_ID = "capabilityID";
 
 	public static final String QUERY_PARAM_USER = "user";
+	public static final String QUERY_PARAM_APPLICATION_ID = "applicationID";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = GENERATOR_KEY)

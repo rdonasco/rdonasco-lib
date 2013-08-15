@@ -39,5 +39,5 @@ public interface SystemSecurityInitializerLocal
 	};
 	
 	void initializeDefaultSystemAccessCapabilities() throws SystemSecurityInitializationException;
-	
+
 }

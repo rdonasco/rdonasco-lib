@@ -17,6 +17,12 @@
 package com.rdonasco.security.services;
 
 import com.rdonasco.common.exceptions.DataAccessException;
+import com.rdonasco.config.dao.ConfigElementDAO;
+import com.rdonasco.config.data.ConfigElement;
+import com.rdonasco.config.parsers.ValueParser;
+import com.rdonasco.config.services.ConfigDataManagerLocal;
+import com.rdonasco.config.util.ConfigDataValueObjectConverter;
+import com.rdonasco.config.vo.ConfigAttributeVO;
 import com.rdonasco.security.dao.SecurityGroupDAO;
 import com.rdonasco.security.model.SecurityGroup;
 import com.rdonasco.security.model.SecurityGroupRole;
@@ -68,6 +74,12 @@ public class SecurityGroupDataManagerLocalTest
 				.addPackage(SecurityGroupDataManagerLocal.class.getPackage())
 				.addPackage(SecurityGroupDAO.class.getPackage())
 				.addPackage(SecurityGroupVO.class.getPackage())
+				.addPackage(ConfigElementDAO.class.getPackage())
+				.addPackage(ValueParser.class.getPackage())
+				.addPackage(ConfigElement.class.getPackage())
+				.addPackage(ConfigDataManagerLocal.class.getPackage())
+				.addPackage(ConfigAttributeVO.class.getPackage())
+				.addPackage(ConfigDataValueObjectConverter.class.getPackage())				
 				.addClass(SecurityEntityValueObjectConverter.class);
 
 		return archive;

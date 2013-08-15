@@ -5,8 +5,10 @@
 
 package com.rdonasco.security.app.controllers;
 
+import com.rdonasco.security.services.SystemSecurityInitializerRemote;
 import com.vaadin.Application;
 import com.vaadin.terminal.gwt.server.AbstractApplicationServlet;
+import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -25,6 +27,10 @@ public class SecurityApplicationServlet extends AbstractApplicationServlet
 	private static final long serialVersionUID = 1L;
 	@Inject
 	private SecurityApplication application;
+	
+	@EJB
+	private SystemSecurityInitializerRemote securityInitializerRemote;
+	
 	@Override
 	protected Application getNewApplication(HttpServletRequest request) throws
 			ServletException
@@ -36,6 +42,7 @@ public class SecurityApplicationServlet extends AbstractApplicationServlet
 	protected Class<? extends Application> getApplicationClass() throws
 			ClassNotFoundException
 	{
+		securityInitializerRemote.initializeDefaultSystemAccessCapabilities();
 		return SecurityApplication.class;
 	}
 }

@@ -27,6 +27,8 @@ import com.rdonasco.security.vo.CapabilityVOBuilder;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Table;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Instance;
@@ -40,6 +42,7 @@ import javax.inject.Inject;
 public class CapabilityListPanelController implements
 		ViewController<CapabilityListPanel>
 {
+	private static final Logger LOG = Logger.getLogger(CapabilityListPanelController.class.getName());
 
 	private static final long serialVersionUID = 1L;
 
@@ -67,6 +70,8 @@ public class CapabilityListPanelController implements
 	private DataManagerContainer<CapabilityItemVO> capabilityItemTableContainer = new DataManagerContainer(CapabilityItemVO.class);
 
 	private final Table capabilityListTable = new Table();
+	
+	private CapabilityEditorViewController capabilityEditorViewController;
 
 	@PostConstruct
 	@Override
@@ -119,6 +124,12 @@ public class CapabilityListPanelController implements
 		}
 	}
 
+	public void setCapabilityEditorViewController(
+			CapabilityEditorViewController capabilityEditorViewController)
+	{
+		this.capabilityEditorViewController = capabilityEditorViewController;
+	}	
+
 	@Override
 	public CapabilityListPanel getControlledView()
 	{
@@ -164,16 +175,17 @@ public class CapabilityListPanelController implements
 				.createCapabilityVO();
 		try
 		{
+			LOG.log(Level.FINE, "Adding new capability");
 			sessionSecurityChecker.checkCapabilityTo(ActionConstants.ADD, CapabilityConstants.RESOURCE_CAPABILITY);
 			CapabilityItemVO newItemVO = new CapabilityItemVOBuilder()
 					.setCapabilityVO(newCapabilityVO)
 					.createCapabilityItemVO();
-			BeanItem<CapabilityItemVO> newItemAdded = capabilityItemTableContainer.addItem(newItemVO);
-			capabilityListTable.setCurrentPageFirstItemId(newItemAdded.getBean());
-			capabilityListTable.select(newItemAdded.getBean());
+			capabilityEditorViewController.setCurrentItem(new BeanItem<CapabilityItemVO>(newItemVO));
+			capabilityEditorViewController.setViewToEditMode();
 		}
 		catch (RuntimeException e)
 		{
+			LOG.log(Level.FINE, e.getMessage(), e);
 			getPopupProvider().popUpError(I18NResource.localizeWithParameter(MessageKeys.UNABLE_TO_ADD_NEW_CAPABILITY, newCapabilityVO.getTitle()));
 		}
 	}
@@ -197,6 +209,7 @@ public class CapabilityListPanelController implements
 				{
 					sessionSecurityChecker.checkCapabilityTo(ActionConstants.DELETE, CapabilityConstants.RESOURCE_CAPABILITY);
 					capabilityItemTableContainer.removeItem(itemToDelete);
+					capabilityEditorViewController.setCurrentItem(null);
 					getPopupProvider().popUpInfo(I18NResource.localize(MessageKeys.CAPABILITY_DELETED));
 				}
 				catch (Exception e)
@@ -207,5 +220,12 @@ public class CapabilityListPanelController implements
 		})
 				.createClickListenerProvider();
 		dataManager.setClickListenerProvider(deleteClickBuilder);
+	}
+
+	void addNewItem(CapabilityItemVO newItemVO)
+	{
+		BeanItem<CapabilityItemVO> newItemAdded = capabilityItemTableContainer.addItem(newItemVO);
+		capabilityListTable.setCurrentPageFirstItemId(newItemAdded.getBean());
+		capabilityListTable.select(newItemAdded.getBean());
 	}
 }

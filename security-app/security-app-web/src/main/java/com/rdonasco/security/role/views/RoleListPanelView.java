@@ -53,10 +53,10 @@ public class RoleListPanelView extends Panel implements
 		this.roleListTable.addStyleName(SecurityDefaultTheme.CSS_TABLE_BORDERLESS);
 		this.addRoleButton = new Button(I18NResource.localize("Add new role"));
 		this.refreshButton = new Button(I18NResource.localize("Refresh"));
-		addRoleButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_ADD));
+		addRoleButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_ADD));
 		addRoleButton.setWidth(100, UNITS_PERCENTAGE);
 		addRoleButton.addStyleName(SecurityDefaultTheme.CSS_SMALL);
-		refreshButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_REFRESH));
+		refreshButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_REFRESH));
 		refreshButton.addStyleName(SecurityDefaultTheme.CSS_SMALL);
 	}
 

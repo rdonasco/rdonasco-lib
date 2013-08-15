@@ -33,18 +33,20 @@ public class CapabilityVO implements Serializable
 	private String title;
 	private String description;
 	private ResourceVO resource;
+	private ApplicationVO applicationVO;
 	private Collection<CapabilityActionVO> actions;
 	private Map<String, CapabilityActionVO> actionsMap = new HashMap<String, CapabilityActionVO>();
 
 	public CapabilityVO(Long id, String title, String description,
 			ResourceVO resource,
-			Collection<CapabilityActionVO> actions)
+			Collection<CapabilityActionVO> actions, ApplicationVO applicationVO)
 	{
 		this.id = id;
 		this.title = title;
 		this.description = description;
 		this.resource = resource;
 		this.actions = actions;
+		this.applicationVO = applicationVO;
 	}
 
 	public Long getId()
@@ -75,6 +77,16 @@ public class CapabilityVO implements Serializable
 	public void setDescription(String description)
 	{
 		this.description = description;
+	}
+
+	public ApplicationVO getApplicationVO()
+	{
+		return applicationVO;
+	}
+
+	public void setApplicationVO(ApplicationVO applicationVO)
+	{
+		this.applicationVO = applicationVO;
 	}
 
 	public ResourceVO getResource()
@@ -138,7 +150,7 @@ public class CapabilityVO implements Serializable
 	@Override
 	public String toString()
 	{
-		return "CapabilityVO{" + "id=" + id + ", title=" + title + '}';
+		return "CapabilityVO{" + "id=" + id + ", applicationVO=" + applicationVO + ", title=" + title + '}';
 	}
 
 	void populateActionMap()

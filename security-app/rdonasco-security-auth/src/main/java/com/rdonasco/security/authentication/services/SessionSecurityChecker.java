@@ -37,15 +37,26 @@ public class SessionSecurityChecker implements Serializable
 	private static final Logger LOG = Logger.getLogger(SessionSecurityChecker.class.getName());
 
 	private static final long serialVersionUID = 1L;
-
-	@Inject
+	
 	private Instance<LoggedOnSessionProvider> loggedOnSessionInstances;
 
 	private LoggedOnSessionProvider loggedOnSessionProvider;
 
-	@Inject
 	private SystemSecurityManagerDecorator securityManager;
 
+	@Inject
+	public void setLoggedOnSessionInstances(
+			Instance<LoggedOnSessionProvider> loggedOnSessionInstances)
+	{
+		this.loggedOnSessionInstances = loggedOnSessionInstances;
+	}
+	
+	@Inject
+	public void setSecurityManager(
+			SystemSecurityManagerDecorator securityManager)
+	{
+		this.securityManager = securityManager;
+	}
 	public void checkCapabilityTo(String action, String resource)
 	{
 		LOG.log(Level.INFO, "executing checkCapabilityTo(action = {0}, resource= {1})", new Object[]
@@ -54,11 +65,15 @@ public class SessionSecurityChecker implements Serializable
 		});
 		if (null != getLoggedOnSessionProvider())
 		{
-			UserSecurityProfileVO userSecurityProfileVO = getLoggedOnSessionProvider().getLoggedOnSession().getLoggedOnUser();
+			final LoggedOnSession loggedOnSession = getLoggedOnSessionProvider().getLoggedOnSession();
+			UserSecurityProfileVO userSecurityProfileVO = loggedOnSession.getLoggedOnUser();
 			AccessRightsVO accessRights = new AccessRightsVOBuilder()
 					.setActionAsString(action)
 					.setResourceAsString(resource)
 					.setUserProfileVO(userSecurityProfileVO)
+					.setApplicationID(loggedOnSession.getApplicationID())
+					.setApplicationToken(loggedOnSession.getApplicationToken())
+					.setHostNameOrIpAddress(loggedOnSession.getHostNameOrIpAddress())
 					.createAccessRightsVO();
 			securityManager.checkAccessRights(accessRights);
 		}

@@ -23,6 +23,7 @@ import com.rdonasco.security.dao.UserRoleDAO;
 import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.model.Action;
+import com.rdonasco.security.model.Application;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.CapabilityAction;
 import com.rdonasco.security.model.Resource;
@@ -35,6 +36,9 @@ import com.rdonasco.security.utils.SecurityEntityValueObjectConverter;
 import com.rdonasco.security.utils.SecurityEntityValueObjectDataUtility;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
+import com.rdonasco.security.vo.ApplicationHostVO;
+import com.rdonasco.security.vo.ApplicationVO;
+import com.rdonasco.security.vo.ApplicationVOBuilder;
 import com.rdonasco.security.vo.ResourceVO;
 import com.rdonasco.security.vo.ResourceVOBuilder;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
@@ -48,7 +52,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -64,31 +67,21 @@ public class UserGroupBasedCapabilityTest
 {
 
 	private static final Logger LOG = Logger.getLogger(UserGroupBasedCapabilityTest.class.getName());
-
 	private static UserSecurityProfileVO userSecurityProfileVOMock;
-
 	private static UserSecurityProfile userSecurityProfileMock;
-
 	private static UserSecurityProfileDAO userSecurityProfileDAOMock;
-
 	private static CapabilityManagerLocal capabilityManagerMock;
-
 	private static UserCapabilityDAO userCapabilityDAOMock;
-
 	private static UserSecurityProfileManager userSecurityProfileManager;
-
 	private static RoleDAO roleDAOmock;
-
 	private static UserRoleDAO userRoleDAOmock;
-
 	private static UserGroupDAO userGroupDAOMock;
-
 	private static String resourceName = "User";
-
 	private static ResourceVO resourceVO;
-
 	private static Resource resource;
-
+	private static final ApplicationHostVO applicationHostVOMock = new ApplicationHostVO();
+	private static ApplicationManagerLocal applicationManagerMock;
+	private static ApplicationVO applicationVoMock;
 	private static long ID_SEED = 1L;
 
 	public UserGroupBasedCapabilityTest()
@@ -108,6 +101,7 @@ public class UserGroupBasedCapabilityTest
 			userRoleDAOmock = mock(UserRoleDAO.class);
 			roleDAOmock = mock(RoleDAO.class);
 			userGroupDAOMock = mock(UserGroupDAO.class);
+			applicationManagerMock = mock(ApplicationManagerLocal.class);
 
 			resourceVO = new ResourceVOBuilder()
 					.setId(Long.MIN_VALUE)
@@ -115,6 +109,13 @@ public class UserGroupBasedCapabilityTest
 					.createResourceVO();
 
 			resource = SecurityEntityValueObjectConverter.toResource(resourceVO);
+			applicationVoMock = new ApplicationVOBuilder()
+					.setId(getNextID())
+					.setName("rdonasco-security")
+					.setToken("rdonasco-token")
+					.createApplicationVO();
+			applicationHostVOMock.setHostNameOrIpAddress("test.host.com");
+			applicationVoMock.getHosts().add(applicationHostVOMock);
 		}
 		catch (Exception ex)
 		{
@@ -138,6 +139,7 @@ public class UserGroupBasedCapabilityTest
 		reset(userRoleDAOmock);
 		reset(roleDAOmock);
 		reset(userGroupDAOMock);
+		reset(applicationManagerMock);
 		when(userSecurityProfileVOMock.getLogonId()).thenReturn("dummyUser");
 	}
 
@@ -146,7 +148,7 @@ public class UserGroupBasedCapabilityTest
 	{
 	}
 
-	private long getNextID()
+	private static long getNextID()
 	{
 		return ID_SEED++;
 	}
@@ -159,6 +161,10 @@ public class UserGroupBasedCapabilityTest
 		{
 			Role role = new Role();
 			Capability capability = new Capability();
+			capability.setApplication(new Application());
+			capability.getApplication().setId(applicationVoMock.getId());
+			capability.getApplication().setName(applicationVoMock.getName());
+			capability.getApplication().setToken(applicationVoMock.getToken());
 			capability.setId(getNextID());
 			Action action = new Action();
 			action.setId(getNextID());
@@ -182,6 +188,25 @@ public class UserGroupBasedCapabilityTest
 			roles.add(role);
 		}
 		return roles;
+	}
+
+	private List<Capability> getUserCapabilityThatCanDoThisToAUser(
+			String... actions)
+	{
+		List<Capability> capabilities = new ArrayList<Capability>();
+		for (String action : actions)
+		{
+			final Capability capability = SecurityEntityValueObjectDataUtility
+					.createTestDataCapabilityOnApplicationResourceAndAction("User", action);
+			// TODO: figure out a way to consolidate data creation on SecurityEntityValueObjectDataUtility
+			final Application application = new Application();
+			application.setId(applicationVoMock.getId());
+			application.setName(applicationVoMock.getName());
+			application.setToken(applicationVoMock.getToken());
+			capability.setApplication(application);
+			capabilities.add(capability);
+		}
+		return capabilities;
 	}
 
 	private List<SecurityGroup> getUserGroupsThatCanDoThisToAUser(
@@ -213,6 +238,7 @@ public class UserGroupBasedCapabilityTest
 		SystemSecurityManagerImpl systemSecurityManager = new SystemSecurityManagerImpl();
 		systemSecurityManager.setCapabilityManager(capabilityManagerMock);
 		systemSecurityManager.setUserSecurityProfileManager(userSecurityProfileManager);
+		systemSecurityManager.setApplicationManager(applicationManagerMock);
 		return systemSecurityManager;
 	}
 
@@ -236,10 +262,11 @@ public class UserGroupBasedCapabilityTest
 		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
 		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
-		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getEmptyUserCapabilities());
+		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(any(UserSecurityProfile.class), any(Application.class))).thenReturn(getEmptyUserCapabilities());
 		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessRights.getResource().getName())).thenReturn(resourceVO);
 		when(userRoleDAOmock.loadRolesOf(any(UserSecurityProfile.class))).thenReturn(getEmptyUserRoles());
 		when(userGroupDAOMock.loadGroupsOf(any(UserSecurityProfile.class))).thenReturn(getUserGroupsThatCanDoThisToAUser("add", "edit", "delete"));
+		when(applicationManagerMock.loadApplicationWithID(applicationVoMock.getId())).thenReturn(applicationVoMock);
 		instance.checkAccessRights(accessRights);
 		verify(userRoleDAOmock, times(1)).loadRolesOf(any(UserSecurityProfile.class));
 	}
@@ -257,10 +284,11 @@ public class UserGroupBasedCapabilityTest
 		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
 		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
-		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getEmptyUserCapabilities());
+		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(any(UserSecurityProfile.class), any(Application.class))).thenReturn(getEmptyUserCapabilities());
 		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessrightsToAdd.getResource().getName())).thenReturn(resourceVO);
 		when(userRoleDAOmock.loadRolesOf(any(UserSecurityProfile.class))).thenReturn(getUserRolesThatCanDoThisToAUser("edit", "delete"));
 		when(userGroupDAOMock.loadGroupsOf(any(UserSecurityProfile.class))).thenReturn(getUserGroupsThatCanDoThisToAUser("add"));
+		when(applicationManagerMock.loadApplicationWithID(applicationVoMock.getId())).thenReturn(applicationVoMock);
 		instance.checkAccessRights(accessrightsToAdd);
 		instance.checkAccessRights(accessrightsToEdit);
 		instance.checkAccessRights(accessrightsToDelete);
@@ -280,10 +308,11 @@ public class UserGroupBasedCapabilityTest
 		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
 		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
-		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class))).thenReturn(getEmptyUserCapabilities());
+		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(any(UserSecurityProfile.class), any(Application.class))).thenReturn(getEmptyUserCapabilities());
 		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessrightsToAdd.getResource().getName())).thenReturn(resourceVO);
 		when(userRoleDAOmock.loadRolesOf(any(UserSecurityProfile.class))).thenReturn(getUserRolesThatCanDoThisToAUser("edit"));
 		when(userGroupDAOMock.loadGroupsOf(any(UserSecurityProfile.class))).thenReturn(getUserGroupsThatCanDoThisToAUser("add"));
+		when(applicationManagerMock.loadApplicationWithID(applicationVoMock.getId())).thenReturn(applicationVoMock);
 		instance.checkAccessRights(accessrightsToAdd);
 		instance.checkAccessRights(accessrightsToEdit);
 		instance.checkAccessRights(accessrightsToDelete);
@@ -301,11 +330,12 @@ public class UserGroupBasedCapabilityTest
 		when(userSecurityProfileVOMock.getId()).thenReturn(Long.MIN_VALUE);
 		when(userSecurityProfileVOMock.getRegistrationToken()).thenReturn("token");
 		when(userSecurityProfileVOMock.getRegistrationTokenExpiration()).thenReturn(new Date());
-		when(userCapabilityDAOMock.loadCapabilitiesOf(any(UserSecurityProfile.class)))
+		when(userCapabilityDAOMock.loadCapabilitiesOnApplicationOf(any(UserSecurityProfile.class), any(Application.class)))
 				.thenReturn(getUserCapabilityThatCanDoThisToAUser("delete"));
 		when(capabilityManagerMock.findOrAddSecuredResourceNamedAs(accessrightsToAdd.getResource().getName())).thenReturn(resourceVO);
 		when(userRoleDAOmock.loadRolesOf(any(UserSecurityProfile.class))).thenReturn(getUserRolesThatCanDoThisToAUser("edit"));
 		when(userGroupDAOMock.loadGroupsOf(any(UserSecurityProfile.class))).thenReturn(getUserGroupsThatCanDoThisToAUser("add"));
+		when(applicationManagerMock.loadApplicationWithID(applicationVoMock.getId())).thenReturn(applicationVoMock);
 		instance.checkAccessRights(accessrightsToAdd);
 		instance.checkAccessRights(accessrightsToEdit);
 		instance.checkAccessRights(accessrightsToDelete);
@@ -317,19 +347,10 @@ public class UserGroupBasedCapabilityTest
 				.setActionAsString(action)
 				.setResourceAsString(resourceName)
 				.setUserProfileVO(userSecurityProfileVOMock)
+				.setApplicationID(applicationVoMock.getId())
+				.setApplicationToken(applicationVoMock.getToken())
+				.setHostNameOrIpAddress(applicationHostVOMock.getHostNameOrIpAddress())
 				.createAccessRightsVO();
 		return accessRights;
-	}
-
-	private List<Capability> getUserCapabilityThatCanDoThisToAUser(
-			String... actions)
-	{
-		List<Capability> capabilities = new ArrayList<Capability>();
-		for (String action : actions)
-		{
-			capabilities.add(SecurityEntityValueObjectDataUtility
-					.createTestDataCapabilityOnResourceAndAction("User", action));
-		}
-		return capabilities;
 	}
 }

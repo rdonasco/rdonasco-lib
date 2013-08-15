@@ -45,7 +45,7 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 {
 
 	private static final long serialVersionUID = 1L;
-	private Panel employeeDetailPanel;
+	private Panel userDetailPanel;
 	private TextField logonIdField;
 	private PasswordField passwordField;
 	private PasswordField retypedPasswordField;
@@ -72,7 +72,7 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 		this.registrationTokenField = new TextField();
 		this.registrationTokenExpirationField = new DateField();
 
-		this.employeeDetailPanel = new Panel();
+		this.userDetailPanel = new Panel();
 		this.otherDetailTab = new TabSheet();
 		this.capabilitiesLayout = new HorizontalLayout();
 		this.rolesLayout = new HorizontalLayout();
@@ -147,21 +147,10 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 
 		Tab groupsTab = otherDetailTab.addTab(groupsLayout, I18NResource.localize("Groups"), new ThemeResource(SecurityDefaultTheme.ICON_16x16_GROUPS));
 		groupsTab.getComponent().setSizeFull();
-
-		editButton.setCaption(I18NResource.localize("Edit"));
-		editButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_EDIT));
-		saveButton.setCaption(I18NResource.localize("Save"));
-		saveButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_SAVE));
-		cancelButton.setCaption(I18NResource.localize("Cancel"));
-		cancelButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICONS_16x16_CANCEL));
-
-		buttonsLayout.setSpacing(true);
-		buttonsLayout.addComponent(editButton);
-		buttonsLayout.addComponent(saveButton);
-		buttonsLayout.addComponent(cancelButton);
+		configureEditorButtons();
 
 		setSpacing(true);
-		addComponent(employeeDetailPanel);
+		addComponent(userDetailPanel);
 		addComponent(otherDetailTab);
 		addComponent(buttonsLayout);
 		getForm().setReadOnly(true);
@@ -170,9 +159,9 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 
 	private void configureUserDetailFields()
 	{
-		((VerticalLayout) employeeDetailPanel.getContent()).setSpacing(true);
-		employeeDetailPanel.setCaption(I18NResource.localize("User Editor"));
-		employeeDetailPanel.addStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
+		((VerticalLayout) userDetailPanel.getContent()).setSpacing(true);
+		userDetailPanel.setCaption(I18NResource.localize("User Editor"));
+		userDetailPanel.addStyleName(SecurityDefaultTheme.CSS_PANEL_BUBBLE);
 		logonIdField.setCaption(I18NResource.localize("Logon ID"));
 		logonIdField.setRequired(true);
 		logonIdField.setRequiredError(I18NResource.localize("Logon ID is required"));
@@ -189,11 +178,11 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 		registrationTokenExpirationField.setCaption(I18NResource.localize("Registration Token Expiry"));
 		registrationTokenExpirationField.setResolution(DateField.RESOLUTION_MIN);
 
-		employeeDetailPanel.addComponent(logonIdField);
-		employeeDetailPanel.addComponent(passwordField);
-		employeeDetailPanel.addComponent(retypedPasswordField);
-		employeeDetailPanel.addComponent(registrationTokenField);
-		employeeDetailPanel.addComponent(registrationTokenExpirationField);
+		userDetailPanel.addComponent(logonIdField);
+		userDetailPanel.addComponent(passwordField);
+		userDetailPanel.addComponent(retypedPasswordField);
+		userDetailPanel.addComponent(registrationTokenField);
+		userDetailPanel.addComponent(registrationTokenExpirationField);
 		setReadOnly(true);
 	}
 
@@ -234,5 +223,20 @@ public class UserEditorView extends VerticalLayout implements ControlledView
 		{
 			getOnAttachStrategy().onAttachOf(this);
 		}
+	}
+
+	private void configureEditorButtons()
+	{
+		editButton.setCaption(I18NResource.localize("Edit"));
+		editButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_EDIT));
+		saveButton.setCaption(I18NResource.localize("Save"));
+		saveButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_SAVE));
+		cancelButton.setCaption(I18NResource.localize("Cancel"));
+		cancelButton.setIcon(new ThemeResource(SecurityDefaultTheme.ICON_16x16_CANCEL));
+
+		buttonsLayout.setSpacing(true);
+		buttonsLayout.addComponent(editButton);
+		buttonsLayout.addComponent(saveButton);
+		buttonsLayout.addComponent(cancelButton);
 	}
 }

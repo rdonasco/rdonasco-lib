@@ -87,7 +87,11 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 				if (event.isDoubleClick())
 				{
 					TextField textField = getFieldFromCache(event.getItemId(), event.getPropertyId());
-					if (null != textField)
+					if (null == textField)
+					{
+						LOG.log(Level.WARNING, "field not found, editing not possible");
+					}
+					else
 					{
 						textField.setReadOnly(false);
 						textField.focus();
@@ -292,6 +296,7 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 				}
 				textField.setReadOnly(true);
 				textField.setWriteThrough(true);
+				textField.setWidth(100f, TextField.UNITS_PERCENTAGE);
 				addFieldToFieldCache(itemId, columnId, textField);
 				textField.addListener(new FieldEvents.BlurListener()
 				{
@@ -300,21 +305,31 @@ public abstract class ListEditorViewPanelController<VO extends ListEditorItem>
 					@Override
 					public void blur(FieldEvents.BlurEvent event)
 					{
-						try
+						if (!textField.isReadOnly())
 						{
-							BeanItem<VO> itemToUpdate = (BeanItem) source.getItem(itemId);
-							textField.commit();
-							dataContainer.updateItem(itemToUpdate.getBean());
-							textField.setReadOnly(true);
-						}
-						catch (Exception ex)
-						{
-							LOG.log(Level.SEVERE, ex.getMessage(), ex);
-							getPopupProvider().popUpError(I18NResource
-									.localizeWithParameter("unable.to.update.record._", getItemName()));
-							textField.focus();
-							textField.selectAll();
+							try
+							{
+								BeanItem<VO> itemToUpdate = (BeanItem) source.getItem(itemId);
+								textField.commit();
+								if (null != itemToUpdate)
+								{
+									dataContainer.updateItem(itemToUpdate.getBean());
+								}
+								else
+								{
+									LOG.log(Level.FINER, "warning, itemToUpdate is null");
+								}
+								textField.setReadOnly(true);
+							}
+							catch (Exception ex)
+							{
+								LOG.log(Level.SEVERE, ex.getMessage(), ex);
+								getPopupProvider().popUpError(I18NResource
+										.localizeWithParameter("unable.to.update.record._", getItemName()));
+								textField.focus();
+								textField.selectAll();
 
+							}
 						}
 					}
 				});

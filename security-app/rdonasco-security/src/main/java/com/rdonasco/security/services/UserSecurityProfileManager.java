@@ -27,6 +27,7 @@ import com.rdonasco.security.dao.UserSecurityProfileDAO;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.exceptions.SecurityProfileNotFoundException;
+import com.rdonasco.security.model.Application;
 import com.rdonasco.security.model.Capability;
 import com.rdonasco.security.model.Role;
 import com.rdonasco.security.model.RoleCapability;
@@ -145,8 +146,11 @@ public class UserSecurityProfileManager implements
 		{
 
 			UserSecurityProfile userProfile = SecurityEntityValueObjectConverter.toUserProfile(accessRights.getUserProfile());
+			Application application = new Application();
+			application.setId(accessRights.getApplicationID());
+			application.setToken(accessRights.getApplicationToken());
 			List<Capability> capabilities = userCapabilityDAO
-					.loadCapabilitiesOf(userProfile);
+					.loadCapabilitiesOnApplicationOf(userProfile,application);
 			capabilityVOList = new ArrayList<CapabilityVO>(capabilities.size());
 			CapabilityVO capabilityVO;
 			for (Capability capability : capabilities)
