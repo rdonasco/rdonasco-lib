@@ -40,3 +40,8 @@ security-sample-usage-app/security-sample-usage-app-ear/target
 security-sample-usage-app/security-sample-usage-app-ejb/target
 security-sample-usage-app/security-sample-usage-app-web/target
 security-sample-usage-app/security-sample-usage-ejb-client/target
+pom.xml.versionsBackup
+rdonasco-commons/pom.xml.versionsBackup
+rdonasco-config-app/pom.xml.versionsBackup
+rdonasco-datamanager/pom.xml.versionsBackup
+security-app/pom.xml.versionsBackup
