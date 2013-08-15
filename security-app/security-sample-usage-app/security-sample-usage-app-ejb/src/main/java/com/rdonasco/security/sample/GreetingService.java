@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
-import javax.interceptor.Interceptor;
 import javax.interceptor.Interceptors;
 
 /**
