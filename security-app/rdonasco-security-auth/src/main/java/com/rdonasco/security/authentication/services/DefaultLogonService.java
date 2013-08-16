@@ -80,7 +80,7 @@ public class DefaultLogonService implements LogonService
 				throw new SecurityProfileNotFoundException("Security Profile not found");
 			}
 			loggedOnSessionProvider.getLoggedOnSession().setLoggedOnUser(userSecurityProfile);
-			sessionSecurityChecker.checkCapabilityTo(AuthConstants.ACTION_LOGON, AuthConstants.RESOURCE_SYSTEM);
+			sessionSecurityChecker.checkCapabilityOnSecuritySystemTo(AuthConstants.ACTION_LOGON, AuthConstants.RESOURCE_SYSTEM);
 		}
 		catch (SecurityAuthenticationException ex)
 		{

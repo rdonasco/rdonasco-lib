@@ -65,22 +65,30 @@ public class SessionSecurityChecker implements Serializable
 		});
 		if (null != getLoggedOnSessionProvider())
 		{
-			final LoggedOnSession loggedOnSession = getLoggedOnSessionProvider().getLoggedOnSession();
-			UserSecurityProfileVO userSecurityProfileVO = loggedOnSession.getLoggedOnUser();
-			AccessRightsVO accessRights = new AccessRightsVOBuilder()
-					.setActionAsString(action)
-					.setResourceAsString(resource)
-					.setUserProfileVO(userSecurityProfileVO)
-					.setApplicationID(loggedOnSession.getApplicationID())
-					.setApplicationToken(loggedOnSession.getApplicationToken())
-					.setHostNameOrIpAddress(loggedOnSession.getHostNameOrIpAddress())
-					.createAccessRightsVO();
+			AccessRightsVO accessRights = prepareAccessRightsRequest(action, resource);
 			securityManager.checkAccessRights(accessRights);
 		}
 		else
 		{
 			throw new SecurityAuthorizationException(I18NResource.localize("User not logged on"));
 		}
+	}
+	
+	public void checkCapabilityOnSecuritySystemTo(String action, String resource)
+	{
+		LOG.log(Level.INFO, "executing checkCapabilityTo(action = {0}, resource= {1})", new Object[]
+		{
+			action, resource
+		});
+		if (null != getLoggedOnSessionProvider())
+		{
+			AccessRightsVO accessRights = prepareAccessRightsRequest(action, resource);
+			securityManager.checkAccessRightsOnSecuritySystem(accessRights);
+		}
+		else
+		{
+			throw new SecurityAuthorizationException(I18NResource.localize("User not logged on"));
+		}		
 	}
 
 	public boolean hasTheCapabilityTo(String action, String resource)
@@ -105,5 +113,21 @@ public class SessionSecurityChecker implements Serializable
 			loggedOnSessionProvider = loggedOnSessionInstances.get();
 		}
 		return loggedOnSessionProvider;
+	}
+
+	private AccessRightsVO prepareAccessRightsRequest(String action,
+			String resource)
+	{
+		final LoggedOnSession loggedOnSession = getLoggedOnSessionProvider().getLoggedOnSession();
+		UserSecurityProfileVO userSecurityProfileVO = loggedOnSession.getLoggedOnUser();
+		AccessRightsVO accessRights = new AccessRightsVOBuilder()
+				.setActionAsString(action)
+				.setResourceAsString(resource)
+				.setUserProfileVO(userSecurityProfileVO)
+				.setApplicationID(loggedOnSession.getApplicationID())
+				.setApplicationToken(loggedOnSession.getApplicationToken())
+				.setHostNameOrIpAddress(loggedOnSession.getHostNameOrIpAddress())
+				.createAccessRightsVO();
+		return accessRights;
 	}
 }

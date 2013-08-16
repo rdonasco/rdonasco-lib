@@ -143,4 +143,11 @@ public class SystemSecurityManagerDecorator implements SystemSecurityManager
 	{
 		return systemSecurityManager.createDefaultAdminSecurityProfile();
 	}
+
+	public void checkAccessRightsOnSecuritySystem(AccessRightsVO accessRights)
+	{
+		systemSecurityManager.checkAccessRightsOnSecuritySystem(accessRights);
+	}
+	
+	
 }
