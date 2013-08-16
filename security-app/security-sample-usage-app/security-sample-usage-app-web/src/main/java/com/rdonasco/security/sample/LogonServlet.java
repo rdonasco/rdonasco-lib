@@ -13,6 +13,7 @@ import com.rdonasco.security.vo.UserSecurityProfileVO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -138,13 +139,13 @@ public class LogonServlet extends HttpServlet
 		{
 			String userID = request.getParameter("userID");
 			String password = request.getParameter("password");
-			loggedOnSessionProvider.getLoggedOnSession().setApplicationID(451L);
-			loggedOnSessionProvider.getLoggedOnSession().setApplicationToken("EH1yeGZgmSXWaYom9giytW2KoZvso6HB");
-			loggedOnSessionProvider.getLoggedOnSession().setHostNameOrIpAddress(InetAddress.getLocalHost().getHostName());
+			setApplicationInfoOnLoggedOnSession();
 			UserSecurityProfileVO profile = logonServiceFactory.createLogonService(configDataManager.loadValue("/security/logonService", String.class, DefaultLogonService.SERVICE_ID))
 					.logon(new LogonVO(userID, password));
 			message = "logged on profile = " + profile.getLogonId();
 			loggedOnSessionProvider.getLoggedOnSession().setLoggedOnUser(profile);
+			// reset the application information on the new logged on user session.
+			setApplicationInfoOnLoggedOnSession();						
 		}
 		catch (Exception e)
 		{
@@ -152,5 +153,13 @@ public class LogonServlet extends HttpServlet
 			LOG.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return message;
+	}
+
+	private void setApplicationInfoOnLoggedOnSession() throws
+			UnknownHostException
+	{
+		loggedOnSessionProvider.getLoggedOnSession().setApplicationID(451L);
+		loggedOnSessionProvider.getLoggedOnSession().setApplicationToken("EH1yeGZgmSXWaYom9giytW2KoZvso6HB");
+		loggedOnSessionProvider.getLoggedOnSession().setHostNameOrIpAddress(InetAddress.getLocalHost().getHostName());
 	}
 }

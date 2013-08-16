@@ -8,14 +8,12 @@ import com.rdonasco.security.authorization.interceptors.Secured;
 import com.rdonasco.security.authorization.interceptors.SecuredCapability;
 import java.io.Serializable;
 import javax.ejb.EJB;
-import javax.interceptor.Interceptors;
 
 /**
  *
  * @author Roy F. Donasco
  */
 @Secured
-@Interceptors(MethodCallLogInterceptor.class)
 public class GreetingServiceWrapperImpl implements GreetingServiceWrapper,
 		Serializable
 {
