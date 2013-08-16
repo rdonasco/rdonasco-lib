@@ -19,6 +19,9 @@ package com.rdonasco.security.services;
 import com.rdonasco.common.exceptions.DataAccessException;
 import com.rdonasco.common.exceptions.NonExistentEntityException;
 import com.rdonasco.common.i18.I18NResource;
+import com.rdonasco.config.exceptions.LoadValueException;
+import com.rdonasco.config.services.ConfigDataManagerLocal;
+import com.rdonasco.config.services.ConfigDataManagerVODecorator;
 import com.rdonasco.security.exceptions.ApplicationManagerException;
 import com.rdonasco.security.exceptions.ApplicationNotTrustedException;
 import com.rdonasco.security.exceptions.CapabilityManagerException;
@@ -29,6 +32,7 @@ import com.rdonasco.security.exceptions.SecurityAuthenticationException;
 import com.rdonasco.security.exceptions.SecurityAuthorizationException;
 import com.rdonasco.security.exceptions.SecurityManagerException;
 import com.rdonasco.security.utils.EncryptionUtil;
+import com.rdonasco.security.utils.SecurityConstants;
 import com.rdonasco.security.vo.AccessRightsVO;
 import com.rdonasco.security.vo.AccessRightsVOBuilder;
 import com.rdonasco.security.vo.ApplicationHostVO;
@@ -61,6 +65,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	private CapabilityManagerLocal capabilityManager;
 	private UserSecurityProfileManagerLocal userSecurityProfileManager;
 	private ApplicationManagerLocal applicationManager;
+	private ConfigDataManagerLocal configDataManager;
 
 	@EJB
 	public void setUserSecurityProfileManager(
@@ -80,7 +85,38 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	{
 		this.applicationManager = applicationManager;
 	}
+	
+	@EJB
+	public void setConfigDataManager(ConfigDataManagerLocal configDataManager)
+	{
+		this.configDataManager = configDataManager;
+	}
 
+	@Override
+	public void checkAccessRightsOnSecuritySystem(AccessRightsVO accessRights)
+	{
+		Long applicationID = null;
+		String applicationToken = null;
+		try
+		{
+			applicationID = configDataManager.loadValue(SecurityConstants.CONFIG_SYSTEM_APPLICATION_ID, Long.class);
+			applicationToken = configDataManager.loadValue(SecurityConstants.CONFIG_SYSTEM_APPLICATION_TOKEN, String.class);
+		}
+		catch (LoadValueException ex)
+		{
+			throw new ApplicationNotTrustedException(ex);
+		}
+		AccessRightsVO accessRightsOnSecuritySystem = new AccessRightsVOBuilder()
+				.setActionVO(accessRights.getAction())
+				.setResourceVO(accessRights.getResource())
+				.setUserProfileVO(accessRights.getUserProfile())
+				.setApplicationID(applicationID)
+				.setApplicationToken(applicationToken)
+				.setHostNameOrIpAddress(accessRights.getHostNameOrIpAddress())
+				.createAccessRightsVO();		
+		checkAccessRights(accessRightsOnSecuritySystem);
+	}
+	
 	@Override
 	public void checkAccessRights(final AccessRightsVO requestedAccessRight)
 	{
