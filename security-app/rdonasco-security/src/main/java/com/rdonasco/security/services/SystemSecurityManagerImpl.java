@@ -124,9 +124,10 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		{
 			throw new SecurityException("accessRights is null. Please provide valid access rights to check");
 		}
+		ApplicationVO trustedApplication = null;
 		try
 		{
-			ApplicationVO trustedApplication = ensureRequestedApplicationIsTrusted(requestedAccessRight);
+			trustedApplication = ensureRequestedApplicationIsTrusted(requestedAccessRight);
 			List<CapabilityVO> capabilities = retrieveAndConsolidateUserCapabilities(requestedAccessRight);
 			boolean capabilitiesNotFound = capabilities.isEmpty();
 			capabilityManager.findOrAddActionNamedAs(requestedAccessRight.getAction().getName());
@@ -152,7 +153,7 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		catch (NotSecuredResourceException e)
 		{
 			LOG.warning(e.getMessage());
-			createDefaultCapabilityBasedOnRequestedAccessRight(requestedAccessRight);
+			createDefaultCapabilityBasedOnRequestedAccessRight(requestedAccessRight,trustedApplication);
 		}
 		catch (SecurityAuthorizationException e)
 		{
@@ -292,12 +293,13 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 	}
 
 	private void createDefaultCapabilityBasedOnRequestedAccessRight(
-			AccessRightsVO requestedAccessRight)
+			AccessRightsVO requestedAccessRight, ApplicationVO application)
 	{
 		String capabilityTitleOrDescription =
-				String.format("%1$s %2$s",
+				String.format("%1$s %2$s on %3$s",
 				requestedAccessRight.getAction().getName(),
-				requestedAccessRight.getResource().getName());
+				requestedAccessRight.getResource().getName(),
+				application.getName());
 		try
 		{
 			try
@@ -310,13 +312,13 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			catch (NonExistentEntityException e)
 			{
 				LOG.log(Level.INFO, "Capability [{0}] not found. Creating...", capabilityTitleOrDescription);
-				ApplicationVO applicationVO = new ApplicationVOBuilder()
-						.setId(requestedAccessRight.getApplicationID())
-						.createApplicationVO();
+//				ApplicationVO applicationVO = new ApplicationVOBuilder()
+//						.setId(requestedAccessRight.getApplicationID())
+//						.createApplicationVO();
 				CapabilityVO capabilityVO = new CapabilityVOBuilder()
 						.setTitle(capabilityTitleOrDescription)
 						.setDescription(capabilityTitleOrDescription)
-						.setApplication(applicationVO)
+						.setApplication(application)
 						.createCapabilityVO();
 				capabilityManager.createNewCapability(capabilityVO);
 			}
