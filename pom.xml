@@ -6,6 +6,9 @@
 	<version>1.3.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>rdonasco</name>
+	<scm>
+		<developerConnection>scm:hg:https://rdonasco@bitbucket.org/rdonasco/rdonasco-lib</developerConnection>
+	</scm>
 	<build>
 		<plugins>
 			<plugin>
