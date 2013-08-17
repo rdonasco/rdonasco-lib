@@ -7,12 +7,16 @@ package com.rdonasco.security.home.controllers;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
+import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.application.controllers.ApplicationViewLayoutController;
+import static com.rdonasco.security.home.controllers.HomeViewButtonController.CONFIG_IS_ACTIVE;
+import static com.rdonasco.security.home.controllers.HomeViewButtonController.CONFIG_PREFIX;
 import com.rdonasco.security.home.views.FeatureHomeButton;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -25,7 +29,6 @@ import javax.inject.Inject;
 public class ApplicationManagerHomeButtonController implements
 		HomeViewButtonController
 {
-
 	private static final long serialVersionUID = 1L;
 	@Inject
 	private FeatureHomeButton featureButton;
@@ -37,6 +40,8 @@ public class ApplicationManagerHomeButtonController implements
 	private Instance<ApplicationViewLayoutController> applicationViewLayoutControllers;
 	private ApplicationViewLayoutController applicationViewLayoutController;
 	private HomeFrameViewController homeFrameViewController;
+	@EJB
+	private ConfigDataManagerVODecoratorRemote configDataManager;
 
 	@PostConstruct
 	@Override
@@ -103,5 +108,12 @@ public class ApplicationManagerHomeButtonController implements
 			homeFrameViewController = homeFrameViewControllers.get();
 		}
 		return homeFrameViewController;
+	}
+
+	@Override
+	public boolean isActivated()
+	{
+		return configDataManager.loadValue(new StringBuilder(CONFIG_PREFIX)
+				.append("applicationManager").append(CONFIG_IS_ACTIVE).toString(), Boolean.class, true);
 	}
 }

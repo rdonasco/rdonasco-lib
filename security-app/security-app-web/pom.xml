@@ -4,12 +4,12 @@
 	<parent>
 		<artifactId>security-app</artifactId>
 		<groupId>com.rdonasco</groupId>
-		<version>1.0.0</version>
+		<version>1.3.0</version>
 	</parent>
 	<!-- comment -->
 	<groupId>com.rdonasco</groupId>
 	<artifactId>security-app-web</artifactId>
-	<version>1.0.0</version>
+	<version>1.3.0</version>
 	<packaging>war</packaging>
 	<name>security-app-web</name>
 	<properties>
@@ -34,14 +34,14 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>security-app-ejb</artifactId>
-			<version>${project.version}</version>
+			<version>${secureAppVersion}</version>
 			<scope>provided</scope>
 			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>rdonasco-datamanager</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
+			<version>${dataManagerVersion}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -52,12 +52,12 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>rdonasco-security-auth</artifactId>
-			<version>${project.version}</version>
+			<version>${secureAppVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>rdonasco-config-view</artifactId>
-			<version>${project.version}</version>
+			<version>${configAppVersion}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>rdonasco-common-vaadin</artifactId>
@@ -68,7 +68,7 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>rdonasco-security</artifactId>
-			<version>${project.version}</version>
+			<version>${secureAppVersion}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

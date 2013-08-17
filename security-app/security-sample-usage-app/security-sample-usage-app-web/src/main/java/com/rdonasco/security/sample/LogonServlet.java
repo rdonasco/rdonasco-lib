@@ -12,6 +12,8 @@ import com.rdonasco.security.vo.LogonVO;
 import com.rdonasco.security.vo.UserSecurityProfileVO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -72,8 +74,9 @@ public class LogonServlet extends HttpServlet
 			out.println("<title>Servlet LogonServlet</title>");
 			out.println("</head>");
 			out.println("<body>");
-			out.println(logon());
+			out.println(logon(request));
 			out.println("<h1>Servlet LogonServlet at " + request.getContextPath() + "</h1>");
+			out.println("<a href='"+request.getContextPath()+"'>Home</a>");
 			out.println("</body>");
 			out.println("</html>");
 		}
@@ -129,20 +132,34 @@ public class LogonServlet extends HttpServlet
 		return "Short description";
 	}// </editor-fold>
 
-	private String logon()
+	private String logon(HttpServletRequest request)
 	{
 		String message = "not logged on";
 		try
 		{
+			String userID = request.getParameter("userID");
+			String password = request.getParameter("password");
+			setApplicationInfoOnLoggedOnSession();
 			UserSecurityProfileVO profile = logonServiceFactory.createLogonService(configDataManager.loadValue("/security/logonService", String.class, DefaultLogonService.SERVICE_ID))
-					.logon(new LogonVO("admin", "admin"));
+					.logon(new LogonVO(userID, password));
 			message = "logged on profile = " + profile.getLogonId();
 			loggedOnSessionProvider.getLoggedOnSession().setLoggedOnUser(profile);
+			// reset the application information on the new logged on user session.
+			setApplicationInfoOnLoggedOnSession();						
 		}
 		catch (Exception e)
 		{
+			message = e.getMessage();
 			LOG.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return message;
+	}
+
+	private void setApplicationInfoOnLoggedOnSession() throws
+			UnknownHostException
+	{
+		loggedOnSessionProvider.getLoggedOnSession().setApplicationID(451L);
+		loggedOnSessionProvider.getLoggedOnSession().setApplicationToken("EH1yeGZgmSXWaYom9giytW2KoZvso6HB");
+		loggedOnSessionProvider.getLoggedOnSession().setHostNameOrIpAddress(InetAddress.getLocalHost().getHostName());
 	}
 }

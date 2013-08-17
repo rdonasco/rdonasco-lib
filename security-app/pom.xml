@@ -4,21 +4,21 @@
 	<parent>
 		<artifactId>rdonasco</artifactId>
 		<groupId>com.rdonasco</groupId>
-		<version>1.3.0-SNAPSHOT</version>
+		<version>1.3.0</version>
 	</parent>
 	<groupId>com.rdonasco</groupId>
 	<artifactId>security-app</artifactId>
-	<version>1.0.0</version>
+	<version>1.3.0</version>
 	<packaging>pom</packaging>
 	<name>security-app</name>
 	<modules>
 		<module>security-app-ear</module>
 		<module>security-app-web</module>
 		<module>security-app-ejb</module>
-    <module>security-ws-client</module>
-	<module>rdonasco-security</module>
-	<module>rdonasco-security-auth</module>
-	<module>rdonasco-security-client</module>
-	<module>security-sample-usage-app</module>
+		<module>security-ws-client</module>
+		<module>rdonasco-security</module>
+		<module>rdonasco-security-auth</module>
+		<module>rdonasco-security-client</module>
+		<module>security-sample-usage-app</module>
 	</modules>
 </project>

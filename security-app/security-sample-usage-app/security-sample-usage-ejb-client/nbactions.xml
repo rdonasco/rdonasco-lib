@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-versions:use-latest-snapshots</actionName>
+            <displayName>versions:use-latest-snapshots</displayName>
+            <goals>
+                <goal>versions:use-latest-snapshots</goal>
+            </goals>
+        </action>
+    </actions>

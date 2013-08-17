@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <actions>
-        <action>
-            <actionName>CUSTOM-update-versions</actionName>
-            <displayName>update-versions</displayName>
-            <goals>
-                <goal>release:update-versions</goal>
-            </goals>
-            <properties>
-				<autoVersionSubmodules>true</autoVersionSubmodules>
-				<developmentVersion>1.2.0-SNAPSHOT</developmentVersion>
-            </properties>
-        </action>
-    </actions>
+	<action>
+		<actionName>CUSTOM-update-versions</actionName>
+		<displayName>update-versions</displayName>
+		<goals>
+			<goal>release:update-versions</goal>
+		</goals>
+		<properties>
+			<autoVersionSubmodules>true</autoVersionSubmodules>
+		</properties>
+	</action>
+</actions>

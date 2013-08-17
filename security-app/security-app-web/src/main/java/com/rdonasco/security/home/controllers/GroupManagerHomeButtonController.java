@@ -3,12 +3,16 @@ package com.rdonasco.security.home.controllers;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
+import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.group.controllers.GroupViewLayoutController;
+import static com.rdonasco.security.home.controllers.HomeViewButtonController.CONFIG_IS_ACTIVE;
+import static com.rdonasco.security.home.controllers.HomeViewButtonController.CONFIG_PREFIX;
 import com.rdonasco.security.home.views.FeatureHomeButton;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
@@ -19,20 +23,19 @@ import javax.inject.Inject;
 public class GroupManagerHomeButtonController implements
 		HomeViewButtonController
 {
-	private static final long serialVersionUID = 1L;
 
+	private static final long serialVersionUID = 1L;
 	@Inject
 	private FeatureHomeButton featureButton;
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
-
 	@Inject
 	private Instance<HomeFrameViewController> homeFrameViewControllers;
-
 	@Inject
 	private Instance<GroupViewLayoutController> viewLayoutProvider;
-
 	private GroupViewLayoutController groupViewLayoutController;
+	@EJB
+	private ConfigDataManagerVODecoratorRemote configDataManager;
 
 	public GroupViewLayoutController getGroupViewLayoutController()
 	{
@@ -42,7 +45,6 @@ public class GroupManagerHomeButtonController implements
 		}
 		return groupViewLayoutController;
 	}
-
 
 	@PostConstruct
 	@Override
@@ -89,5 +91,12 @@ public class GroupManagerHomeButtonController implements
 	private void doTheRefresh() throws WidgetException
 	{
 		refreshView();
+	}
+
+	@Override
+	public boolean isActivated()
+	{
+		return configDataManager.loadValue(new StringBuilder(CONFIG_PREFIX)
+				.append("groupManager").append(CONFIG_IS_ACTIVE).toString(), Boolean.class, true);
 	}
 }

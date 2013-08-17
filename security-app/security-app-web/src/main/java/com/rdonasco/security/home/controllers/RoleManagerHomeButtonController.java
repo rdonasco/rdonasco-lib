@@ -3,14 +3,18 @@ package com.rdonasco.security.home.controllers;
 import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
+import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
 import com.rdonasco.security.authorization.interceptors.Secured;
 import com.rdonasco.security.authorization.interceptors.SecuredCapability;
+import static com.rdonasco.security.home.controllers.HomeViewButtonController.CONFIG_IS_ACTIVE;
+import static com.rdonasco.security.home.controllers.HomeViewButtonController.CONFIG_PREFIX;
 import com.rdonasco.security.home.views.FeatureHomeButton;
 import com.rdonasco.security.role.controllers.RoleViewLayoutController;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
@@ -38,6 +42,9 @@ public class RoleManagerHomeButtonController implements
 
 	@Inject
 	private ApplicationExceptionPopupProvider applicationExceptionPopupProvider;
+	
+	@EJB
+	private ConfigDataManagerVODecoratorRemote configDataManager;	
 
 	private RoleViewLayoutController roleViewLayoutController;
 
@@ -98,4 +105,13 @@ public class RoleManagerHomeButtonController implements
 	{
 		refreshView();
 	}
+
+		@Override
+	public boolean isActivated()
+	{
+		return configDataManager.loadValue(new StringBuilder(CONFIG_PREFIX)
+				.append("roleManager").append(CONFIG_IS_ACTIVE).toString()
+				, Boolean.class, true);
+	}
+		
 }

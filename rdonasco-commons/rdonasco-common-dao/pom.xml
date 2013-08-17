@@ -1,15 +1,14 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.rdonasco</groupId>
 	<artifactId>rdonasco-commons</artifactId>
-	<version>1.0.0</version>
+	<version>1.3.0</version>
   </parent>
   <groupId>com.rdonasco</groupId>
   <artifactId>rdonasco-common-dao</artifactId>
-  <version>1.0.0</version>
+  <version>1.3.0</version>
   <name>rdonasco-common-dao</name>
   <url>http://maven.apache.org</url>
   <properties>
@@ -25,12 +24,12 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>rdonasco-common</artifactId>
-      <version>${project.version}</version>
+      <version>${commonsVersion}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>rdonasco-common-i18</artifactId>
-      <version>${project.version}</version>
+      <version>${commonsVersion}</version>
     </dependency>
   </dependencies>
 </project>

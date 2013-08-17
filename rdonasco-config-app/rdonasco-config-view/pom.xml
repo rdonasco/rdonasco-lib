@@ -1,15 +1,14 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.rdonasco</groupId>
 		<artifactId>rdonasco-config-app</artifactId>
-		<version>1.0.0</version>
+		<version>1.3.0</version>
 	</parent>
 	<groupId>com.rdonasco</groupId>
 	<artifactId>rdonasco-config-view</artifactId>
-	<version>1.0.0</version>
+	<version>1.3.0</version>
 	<name>rdonasco-config-view</name>
 	<url>http://maven.apache.org</url>
 	<properties>
@@ -25,12 +24,12 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>rdonasco-common-vaadin</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
+			<version>${commonsVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>rdonasco-config-client</artifactId>
-			<version>1.0.0</version>
+			<version>${configAppVersion}</version>
 		</dependency>
 	</dependencies>
 </project>

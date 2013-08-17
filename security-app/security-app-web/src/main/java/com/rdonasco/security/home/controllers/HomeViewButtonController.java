@@ -14,4 +14,7 @@ import com.rdonasco.security.home.views.FeatureHomeButton;
 public interface HomeViewButtonController<T extends FeatureHomeButton> extends
 		ViewController<T>
 {
+	String CONFIG_PREFIX = "/home/buttons/";
+	String CONFIG_IS_ACTIVE = "/active";
+	boolean isActivated();
 }

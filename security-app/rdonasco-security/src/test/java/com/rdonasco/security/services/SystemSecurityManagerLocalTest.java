@@ -126,14 +126,14 @@ public class SystemSecurityManagerLocalTest
 		try
 		{
 			removeAllProfiles();
-			systemSecurityManager.createDefaultAdminSecurityProfile();					
+			systemSecurityManager.createDefaultAdminSecurityProfile();
 		}
 		catch (Exception e)
 		{
-			System.out.println("e.getMessage() = " + e.getMessage());			
+			System.out.println("e.getMessage() = " + e.getMessage());
 		}
 		UserSecurityProfileVO newAdminProfile = systemSecurityManager.findSecurityProfileWithLogonID("admin");
-		assertEquals("password mismatch", encryptedPassword, newAdminProfile.getPassword());	
+		assertEquals("password mismatch", encryptedPassword, newAdminProfile.getPassword());
 		AccessRightsVO accessRequest = createAccessRequestForLogonToTheSystem(newAdminProfile);
 		systemSecurityManager.checkAccessRights(accessRequest);
 	}
@@ -311,7 +311,7 @@ public class SystemSecurityManagerLocalTest
 		ApplicationVO nonRestrictedApp = userSecurityProfileTestUtility.createApplicationNamed("non-restricted-app", applicationHostMock.getHostNameOrIpAddress());
 		String actionName = "do";
 		String resourceName = "her";
-		String capabilityTitle = "do her";
+		String capabilityTitle = "do her on " + nonRestrictedApp.getName();
 		AccessRightsVO accessRights = new AccessRightsVOBuilder()
 				.setActionAsString(actionName)
 				.setResourceAsString(resourceName)
@@ -336,8 +336,8 @@ public class SystemSecurityManagerLocalTest
 		UserSecurityProfileVO createdUser = userSecurityProfileTestUtility.createNewUserSecurityProfileWithCapability();
 		String actionName = "enter";
 		String resourceName = "the dragon";
-		String capabilityTitle = String.format("%1s %2s", actionName, resourceName);
 		ApplicationVO nonRestrictedApp = userSecurityProfileTestUtility.createApplicationNamed("non-restricted-app-resource", applicationHostMock.getHostNameOrIpAddress());
+		String capabilityTitle = String.format("%1s %2s on %3s", actionName, resourceName, nonRestrictedApp.getName());
 		AccessRightsVO accessRights = new AccessRightsVOBuilder()
 				.setActionAsString(actionName)
 				.setResourceAsString(resourceName)
@@ -444,7 +444,7 @@ public class SystemSecurityManagerLocalTest
 	private void removeAllProfiles() throws SecurityManagerException
 	{
 		List<UserSecurityProfileVO> allProfiles = systemSecurityManager.findAllProfiles();
-		for(UserSecurityProfileVO profile : allProfiles)
+		for (UserSecurityProfileVO profile : allProfiles)
 		{
 			systemSecurityManager.removeSecurityProfile(profile);
 		}

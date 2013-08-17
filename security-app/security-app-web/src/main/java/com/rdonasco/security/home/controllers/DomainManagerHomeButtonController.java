@@ -8,11 +8,15 @@ import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.common.i18.I18NResource;
 import com.rdonasco.common.vaadin.controller.ApplicationExceptionPopupProvider;
 import com.rdonasco.common.vaadin.controller.ApplicationPopupProvider;
+import com.rdonasco.config.services.ConfigDataManagerVODecoratorRemote;
 import com.rdonasco.security.app.themes.SecurityDefaultTheme;
+import static com.rdonasco.security.home.controllers.HomeViewButtonController.CONFIG_IS_ACTIVE;
+import static com.rdonasco.security.home.controllers.HomeViewButtonController.CONFIG_PREFIX;
 import com.rdonasco.security.home.views.FeatureHomeButton;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.inject.Inject;
 
 /**
@@ -22,14 +26,16 @@ import javax.inject.Inject;
 public class DomainManagerHomeButtonController implements
 		HomeViewButtonController
 {
-	private static final long serialVersionUID = 1L;
 
+	private static final long serialVersionUID = 1L;
 	@Inject
 	private FeatureHomeButton featureButton;
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
 	@Inject
 	private ApplicationPopupProvider popupProvider;
+	@EJB
+	private ConfigDataManagerVODecoratorRemote configDataManager;
 
 	@PostConstruct
 	@Override
@@ -69,5 +75,12 @@ public class DomainManagerHomeButtonController implements
 	private void doTheRefresh() throws WidgetException
 	{
 		refreshView();
+	}
+
+	@Override
+	public boolean isActivated()
+	{
+		return configDataManager.loadValue(new StringBuilder(CONFIG_PREFIX)
+				.append("domainManager").append(CONFIG_IS_ACTIVE).toString(), Boolean.class, true);
 	}
 }

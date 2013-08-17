@@ -13,7 +13,6 @@
         <title>User Registration Form</title>
     </head>
     <body>
-
         <h1>User Registration Form</h1>
 		<form action="<c:url value="/register"/>" method="POST">
 			Login Id:<input type="text" name="loginId" value="" /><br/>

@@ -4,6 +4,7 @@
  */
 package com.rdonasco.security.services;
 
+import com.rdonasco.security.vo.AccessRightsVO;
 import javax.ejb.Remote;
 
 /**
@@ -14,5 +15,6 @@ import javax.ejb.Remote;
 public interface SystemSecurityManagerRemote extends SystemSecurityManager
 {
 
+		void checkAccessRightsOnSecuritySystem(AccessRightsVO accessRights);
 
 }
