@@ -43,5 +43,6 @@
 		<commonsVersion>1.3.0-SNAPSHOT</commonsVersion>
 		<dataManagerVersion>1.3.0-SNAPSHOT</dataManagerVersion>
 		<configAppVersion>1.3.0-SNAPSHOT</configAppVersion>
+		<secureAppVersion>1.3.0-SNAPSHOT</secureAppVersion>
 	</properties>
 </project>
