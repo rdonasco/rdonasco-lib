@@ -39,5 +39,9 @@
 	</modules>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<applicationVersion>1.3.0-SNAPSHOT</applicationVersion>
+		<commonsVersion>1.3.0-SNAPSHOT</commonsVersion>
+		<dataManagerVersion>1.3.0-SNAPSHOT</dataManagerVersion>
+		<configAppVersion>1.3.0-SNAPSHOT</configAppVersion>
 	</properties>
 </project>

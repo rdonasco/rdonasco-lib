@@ -9,11 +9,11 @@
 	</parent>
 	<groupId>com.rdonasco</groupId>
 	<artifactId>rdonasco-datamanager</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>${dataManagerVersion}</version>
 	<name>rdonasco-datamanager</name>
 	<url>http://maven.apache.org</url>
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>		
 	</properties>
 	<dependencies>
 		<dependency>
@@ -25,7 +25,7 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>rdonasco-common</artifactId>
-			<version>1.0.0</version>
+			<version>${commonsVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.vaadin.addons</groupId>
@@ -40,7 +40,7 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>rdonasco-common-vaadin</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
+			<version>${commonsVersion}</version>
 		</dependency>
 	</dependencies>
 	<repositories>
