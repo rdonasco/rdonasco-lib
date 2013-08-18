@@ -153,13 +153,13 @@ public class SecurityApplication extends Application implements
 		{
 			try
 			{
-				loggedOnSession.setApplicationID(configDataManager.loadValue(SecurityConstants.CONFIG_SYSTEM_APPLICATION_ID, Long.class, null));
-				loggedOnSession.setApplicationToken(configDataManager.loadValue(SecurityConstants.CONFIG_SYSTEM_APPLICATION_TOKEN, String.class, null));
+				loggedOnSession.setApplicationID(configDataManager.loadValue(SecurityConstants.CONFIG_SYSTEM_APPLICATION_ID, Long.class));
+				loggedOnSession.setApplicationToken(configDataManager.loadValue(SecurityConstants.CONFIG_SYSTEM_APPLICATION_TOKEN, String.class));
 				loggedOnSession.setHostNameOrIpAddress(InetAddress.getLocalHost().getHostName());
 			}
 			catch (Exception ex)
 			{
-				popUpWarningException(ex);
+				popUpWarning(I18NResource.localize("Failed to initialize application"));
 			}
 		}
 		return loggedOnSession;

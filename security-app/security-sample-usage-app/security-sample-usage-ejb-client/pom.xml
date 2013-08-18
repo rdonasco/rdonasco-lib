@@ -4,11 +4,11 @@
   <parent>
     <groupId>com.rdonasco</groupId>
     <artifactId>security-sample-usage-app</artifactId>
-    <version>1.3.0</version>
+    <version>1.3.1</version>
   </parent>
   <groupId>com.rdonasco</groupId>
   <artifactId>security-sample-usage-ejb-client</artifactId>
-  <version>1.3.0</version>
+  <version>1.3.1</version>
   <name>security-sample-usage-ejb-client</name>
   <url>http://maven.apache.org</url>
   <properties>
