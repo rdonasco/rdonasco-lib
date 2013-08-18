@@ -4,11 +4,11 @@
 	<parent>
 		<artifactId>security-app</artifactId>
 		<groupId>com.rdonasco</groupId>
-		<version>1.3.0</version>
+		<version>1.3.1-SNAPSHOT</version>
 	</parent>
 	<groupId>com.rdonasco</groupId>
 	<artifactId>rdonasco-security-auth</artifactId>
-	<version>1.3.0</version>
+	<version>1.3.1-SNAPSHOT</version>
 	<name>rdonasco-security-auth</name>
 	<url>http://maven.apache.org</url>
 	<properties>
