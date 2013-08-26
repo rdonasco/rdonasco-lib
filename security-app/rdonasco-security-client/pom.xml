@@ -49,12 +49,6 @@
 			<type>jar</type>
 		</dependency>
         <dependency>
-            <groupId>com.tunnelvisionlabs</groupId>
-            <artifactId>antlr4</artifactId>
-            <version>4.1</version>
-            <classifier>complete-sources</classifier>
-        </dependency>
-        <dependency>
 			<groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <version>6.0</version>

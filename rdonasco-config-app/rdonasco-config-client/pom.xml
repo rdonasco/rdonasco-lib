@@ -23,8 +23,8 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>rdonasco-datamanager</artifactId>
-			<version>${dataManagerVersion}</version>
+			<artifactId>rdonasco-common</artifactId>
+			<version>${commonsVersion}</version>
 		</dependency>
 	</dependencies>
 </project>

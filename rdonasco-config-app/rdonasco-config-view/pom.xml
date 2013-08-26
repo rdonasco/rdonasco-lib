@@ -31,5 +31,10 @@
 			<artifactId>rdonasco-config-client</artifactId>
 			<version>${configAppVersion}</version>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>rdonasco-datamanager</artifactId>
+			<version>${dataManagerVersion}</version>
+		</dependency>
 	</dependencies>
 </project>
