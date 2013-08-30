@@ -87,12 +87,15 @@ public class Capability implements Serializable
 	@ManyToOne(optional = false, fetch = FetchType.EAGER)
 	 
 	private Application application;
+	// TODO: implement orphan removal to true
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "capability", fetch = FetchType.EAGER)
 	private Collection<CapabilityAction> actions;
 
+	// TODO: implement orphan removal to true
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "capability", fetch = FetchType.LAZY)
 	private Collection<RoleCapability> rolesWithThisCapability;
 	
+	// TODO: implement orphan removal to true
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "capability", fetch = FetchType.LAZY)
 	private Collection<UserCapability> usersWithThisCapability;
 

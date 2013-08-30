@@ -37,6 +37,7 @@ import com.rdonasco.security.vo.CapabilityVO;
 import com.rdonasco.security.vo.RoleCapabilityVO;
 import com.rdonasco.security.vo.RoleCapabilityVOBuilder;
 import com.vaadin.data.Buffered;
+import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.DataBoundTransferable;
@@ -65,29 +66,19 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 {
 
 	private static final Logger LOG = Logger.getLogger(RoleEditorViewController.class.getName());
-
 	private static final long serialVersionUID = 1L;
-
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
-
 	@Inject
 	private ApplicationPopupProvider popupProvider;
-
 	@Inject
 	private RoleEditorView roleEditorView;
-
 	@Inject
 	private SessionSecurityChecker sessionSecurityChecker;
-
 	private BeanItem<RoleItemVO> currentItem;
-
 	private DataManagerContainer<RoleItemVO> roleItemTableDataManagerContainer;
-
 	private BeanItemContainer<RoleCapabilityItemVO> roleCapabilitiesContainer = new BeanItemContainer<RoleCapabilityItemVO>(RoleCapabilityItemVO.class);
-
 	private DropHandler roleCapabilitiesDropHandler;
-
 	private Button.ClickListener cancelClickListener = new Button.ClickListener()
 	{
 		private static final long serialVersionUID = 1L;
@@ -98,7 +89,6 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 			discardChanges();
 		}
 	};
-
 	private Button.ClickListener editClickListener = new Button.ClickListener()
 	{
 		private static final long serialVersionUID = 1L;
@@ -109,7 +99,6 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 			changeViewToEditMode();
 		}
 	};
-
 	private Button.ClickListener saveClickListener = new Button.ClickListener()
 	{
 		private static final long serialVersionUID = 1L;
@@ -122,12 +111,10 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 
 		}
 	};
-
 	private int[] keyModifiers = new int[]
 	{
 		ShortcutAction.ModifierKey.CTRL
 	};
-
 	private ShortcutListener controlSListener = new ShortcutListener(null,
 			ShortcutAction.KeyCode.S, keyModifiers)
 	{
@@ -137,7 +124,6 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 			saveChanges();
 		}
 	};
-
 	private ShortcutListener controlEListener = new ShortcutListener(null,
 			ShortcutAction.KeyCode.E, keyModifiers)
 	{
@@ -147,7 +133,6 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 			changeViewToEditMode();
 		}
 	};
-
 	private ShortcutListener escListener = new ShortcutListener(null,
 			ShortcutAction.KeyCode.ESCAPE, null)
 	{
@@ -157,29 +142,23 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 			discardChanges();
 		}
 	};
-
 	private static final String CAPABILITY_TITLE = "capability.title";
-
 	private static final String[] EDITABLE_COLUMNS = new String[]
 	{
 		"icon", CAPABILITY_TITLE
 	};
-
 	private static final String[] NON_EDITABLE_COLUMNS = new String[]
 	{
 		CAPABILITY_TITLE
 	};
-
 	private final String[] EDITABLE_HEADERS = new String[]
 	{
 		"", I18NResource.localize("Title")
 	};
-
 	private final String[] NON_EDITABLE_HEADERS = new String[]
 	{
 		I18NResource.localize("Title")
 	};
-
 	private Table.CellStyleGenerator CELL_STYLE_GENERATOR = new Table.CellStyleGenerator()
 	{
 		private static final long serialVersionUID = 1L;
@@ -199,6 +178,7 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 			return style;
 		}
 	};
+	private Table availableCapabilitiesTableSource;
 
 	@PostConstruct
 	@Override
@@ -356,15 +336,20 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 			public void drop(DragAndDropEvent dropEvent)
 			{
 				final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
-				if (null != transferredData && transferredData.getItemId() instanceof CapabilityItemVO)
+				final Container sourceContainer = transferredData.getSourceContainer();
+				if (transferredData.getItemId() instanceof CapabilityItemVO)
 				{
 					sessionSecurityChecker.checkCapabilityTo(ActionConstants.ADD, RoleConstants.RESOURCES_ROLE_CAPABILITY);
 					LOG.log(Level.FINE, "drop allowed at role capability panel");
 					final CapabilityItemVO droppedCapabilityItemVO = (CapabilityItemVO) transferredData.getItemId();
-
-					final RoleCapabilityItemVO newRoleCapability = createRoleCapabilityItemVO(droppedCapabilityItemVO.getCapabilityVO());
-					BeanItem<RoleCapabilityItemVO> addedItem = roleCapabilitiesContainer.addItem(newRoleCapability);
-					LOG.log(Level.FINE, "addedItem = {0}", addedItem);
+					addDroppedCapabilityVO(droppedCapabilityItemVO);
+					for (Object capabilityItem : sourceContainer.getItemIds())
+					{
+						if (getAvailableCapabilitiesTableSource().isSelected(capabilityItem))
+						{
+							addDroppedCapabilityVO((CapabilityItemVO) capabilityItem);
+						}
+					}
 
 				}
 				else
@@ -377,6 +362,14 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 			public AcceptCriterion getAcceptCriterion()
 			{
 				return AcceptAll.get();
+			}
+
+			private void addDroppedCapabilityVO(
+					final CapabilityItemVO droppedCapabilityItemVO)
+			{
+				final RoleCapabilityItemVO newRoleCapability = createRoleCapabilityItemVO(droppedCapabilityItemVO.getCapabilityVO());
+				BeanItem<RoleCapabilityItemVO> addedItem = roleCapabilitiesContainer.addItem(newRoleCapability);
+				LOG.log(Level.FINE, "addedItem = {0}", addedItem);
 			}
 		};
 		getControlledView().getRoleCapabilitiesTable().setDropHandler(roleCapabilitiesDropHandler);
@@ -418,5 +411,16 @@ public class RoleEditorViewController implements ViewController<RoleEditorView>
 			}
 		});
 		return newRoleCapability;
+	}
+
+	void setAvailableCapabilitiesTableSource(
+			Table availableCapabilitiesTableSource)
+	{
+		this.availableCapabilitiesTableSource = availableCapabilitiesTableSource;
+	}
+
+	public Table getAvailableCapabilitiesTableSource()
+	{
+		return availableCapabilitiesTableSource;
 	}
 }

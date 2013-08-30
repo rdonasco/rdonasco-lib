@@ -159,6 +159,7 @@ public class UserRolesViewController implements
 			{
 				try
 				{
+					// TODO: Enable adding multiple dragged items
 					final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
 					if (null != transferredData && transferredData.getItemId() instanceof RoleItemVO)
 					{

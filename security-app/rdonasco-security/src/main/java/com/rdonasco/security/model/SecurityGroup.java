@@ -55,9 +55,11 @@ public class SecurityGroup implements Serializable
 	@Column(name = "name", nullable = false, length = 256, unique = true)
 	private String name;
 
+	// TODO: implement orphan removal to true
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "securityGroup", fetch = FetchType.LAZY)
 	private Collection<SecurityGroupRole> groupRoles;
 
+	// TODO: implement orphan removal to true
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "group", fetch = FetchType.LAZY)
 	private Collection<UserGroup> userGroups;
 

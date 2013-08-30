@@ -55,12 +55,15 @@ public class Role implements Serializable
 	@Column(name = "name", nullable = false, length = 256, unique = true)
 	private String name;
 
+	// TODO: implement orphan removal to true
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "role", fetch = FetchType.EAGER)
 	private Collection<RoleCapability> capabilities = new ArrayList<RoleCapability>();
 
+	// TODO: implement orphan removal to true
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "role", fetch = FetchType.EAGER)
 	private Collection<SecurityGroupRole> groupsWithThisRole = new ArrayList<SecurityGroupRole>();
 
+	// TODO: implement orphan removal to true
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "role", fetch = FetchType.EAGER)
 	private Collection<UserRole> usersWithThisRole = new ArrayList<UserRole>();
 

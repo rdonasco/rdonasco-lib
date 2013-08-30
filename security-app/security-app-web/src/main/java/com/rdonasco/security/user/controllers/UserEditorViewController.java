@@ -42,7 +42,10 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.event.ShortcutListener;
 import com.vaadin.event.dd.acceptcriteria.SourceIs;
 import com.vaadin.terminal.Sizeable;
+import com.vaadin.ui.AbstractComponent;
+import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -56,43 +59,29 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 {
 
 	private static final Logger LOG = Logger.getLogger(UserEditorViewController.class.getName());
-
 	private static final long serialVersionUID = 1L;
-
 	@Inject
 	private UserEditorView editorView;
-
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
-
 	@Inject
 	private ApplicationPopupProvider popupProvider;
-
 	private DataManagerContainer<UserSecurityProfileItemVO> userItemTableContainer;
-
 	@Inject
 	private UserCapabilitiesViewController userCapabilitiesViewController;
-
 	@Inject
 	private UserRolesViewController userRolesViewController;
-
 	@Inject
 	private UserGroupsViewController userGroupsViewController;
-
 	@Inject
 	private AvailableCapabilitiesViewControllerBuilder availableCapabilitiesViewControllerBuilder;
-
 	@Inject
 	private AvailableGroupsViewControllerBuilder availableGroupsViewControllerBuilder;
-
 	@Inject
 	private AvailableRolesViewControllerBuilder availableRolesViewControllerBuilder;
-
 	@Inject
 	private SessionSecurityChecker sessionSecurityChecker;
-
 	private BeanItem<UserSecurityProfileItemVO> currentItem;
-
 	private Button.ClickListener cancelClickListener = new Button.ClickListener()
 	{
 		private static final long serialVersionUID = 1L;
@@ -162,9 +151,7 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	@Override
 	public void refreshView() throws WidgetException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method refreshView
-		throw new UnsupportedOperationException("Not supported yet.");
+		throw new UnsupportedOperationException("Not supported intentionally.");
 	}
 
 	private void configureFieldValidators()
@@ -326,44 +313,36 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 
 	private void configureCapabilitiesTab()
 	{
-		getControlledView().getCapabilitiesLayout().setSpacing(true);
-		getControlledView().getCapabilitiesLayout().setMargin(true, true, true, true);
-
-		getControlledView().getCapabilitiesLayout()
-				.addComponent(userCapabilitiesViewController.getControlledView());
-		getControlledView().getCapabilitiesLayout()
-				.addComponent(getAvailableCapabilitiesViewController().getControlledView());
-		getControlledView().getCapabilitiesLayout()
-				.setExpandRatio(userCapabilitiesViewController.getControlledView(), 0.5f);
-		getControlledView().getCapabilitiesLayout()
-				.setExpandRatio(getAvailableCapabilitiesViewController().getControlledView(), 0.5f);
-
-		// fix the size of the panels
-		float panelHeight = 300;
-		userCapabilitiesViewController.getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
-		getAvailableCapabilitiesViewController().getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
-
+		configureTabContentLayout(getControlledView().getCapabilitiesLayout(), userCapabilitiesViewController.getControlledView(),
+				getAvailableCapabilitiesViewController().getControlledView());
 		// configure drag and drop of capabilities
 		userCapabilitiesViewController.setValidDraggedObjectSource(new SourceIs(getAvailableCapabilitiesViewController().getControlledView().getEditorTable()));
 
 	}
 
-	private void configureRolesTab()
+	private void configureTabContentLayout(HorizontalLayout container,
+			AbstractComponent leftContent, AbstractComponent rightContent)
 	{
-		getControlledView().getRolesLayout().setSpacing(true);
-		getControlledView().getRolesLayout().setMargin(true, true, true, true);
-		getControlledView().getRolesLayout()
-				.addComponent(userRolesViewController.getControlledView());
-		getControlledView().getRolesLayout()
-				.addComponent(getAvailableRolesViewController().getControlledView());
-		getControlledView().getRolesLayout()
-				.setExpandRatio(userRolesViewController.getControlledView(), 0.5f);
-		getControlledView().getRolesLayout()
-				.setExpandRatio(getAvailableRolesViewController().getControlledView(), 0.5f);
+		container.setSpacing(true);
+		container.setMargin(true, true, true, true);
+
+		container.addComponent(leftContent);
+		container.addComponent(rightContent);
+		leftContent.setWidth(100f, Sizeable.UNITS_PERCENTAGE);
+		container.setExpandRatio(leftContent, 1f);
+		container.setExpandRatio(rightContent, 0.25f);
+
 		// fix the size of the panels
 		float panelHeight = 300;
-		userRolesViewController.getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
-		getAvailableRolesViewController().getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
+		leftContent.setHeight(panelHeight, Sizeable.UNITS_PIXELS);
+		rightContent.setHeight(panelHeight, Sizeable.UNITS_PIXELS);
+	}
+
+	private void configureRolesTab()
+	{
+		configureTabContentLayout(getControlledView().getRolesLayout(), 
+				userRolesViewController.getControlledView(), 
+				getAvailableRolesViewController().getControlledView());
 		// Configure drag and drop of roles
 		userRolesViewController.setValidDraggedObjectSource(new SourceIs(getAvailableRolesViewController().getControlledView().getEditorTable()));
 
@@ -371,20 +350,9 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 
 	private void configureGroupsTab()
 	{
-		getControlledView().getGroupsLayout().setSpacing(true);
-		getControlledView().getGroupsLayout().setMargin(true, true, true, true);
-		getControlledView().getGroupsLayout()
-				.addComponent(userGroupsViewController.getControlledView());
-		getControlledView().getGroupsLayout()
-				.addComponent(getAvailableGroupsViewController().getControlledView());
-		getControlledView().getGroupsLayout()
-				.setExpandRatio(userGroupsViewController.getControlledView(), 0.5f);
-		getControlledView().getGroupsLayout()
-				.setExpandRatio(getAvailableGroupsViewController().getControlledView(), 0.5f);
-		// fix the size of the panels
-		float panelHeight = 300;
-		userGroupsViewController.getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
-		getAvailableGroupsViewController().getControlledView().setHeight(panelHeight, Sizeable.UNITS_PIXELS);
+		configureTabContentLayout(getControlledView().getGroupsLayout(), 
+				userGroupsViewController.getControlledView(),
+				getAvailableGroupsViewController().getControlledView());
 		// Configure drag and drop of roles
 		userGroupsViewController.setValidDraggedObjectSource(new SourceIs(getAvailableGroupsViewController().getControlledView().getEditorTable()));
 
@@ -402,9 +370,14 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 		getControlledView().getSaveButton().setReadOnly(readOnly);
 		getControlledView().getCancelButton().setReadOnly(readOnly);
 		getControlledView().getEditButton().setReadOnly(!readOnly);
+
 		getAvailableCapabilitiesViewController().donotAllowDraggingAnyRow();
 		getAvailableRolesViewController().donotAllowDraggingAnyRow();
 		getAvailableGroupsViewController().donotAllowDraggingAnyRow();
+
+		hide(getAvailableCapabilitiesViewController().getControlledView(),
+				getAvailableRolesViewController().getControlledView(),
+				getAvailableGroupsViewController().getControlledView());
 	}
 
 	public void changeViewToEditMode()
@@ -426,6 +399,9 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 			getAvailableCapabilitiesViewController().allowDraggingMultipleRows();
 			getAvailableRolesViewController().allowDraggingMultipleRows();
 			getAvailableGroupsViewController().allowDraggingMultipleRows();
+			show(getAvailableCapabilitiesViewController().getControlledView(),
+					getAvailableRolesViewController().getControlledView(),
+					getAvailableGroupsViewController().getControlledView());
 		}
 		catch (Exception e)
 		{
@@ -462,5 +438,21 @@ public class UserEditorViewController implements ViewController<UserEditorView>
 	protected AvailableGroupsViewController getAvailableGroupsViewController()
 	{
 		return availableGroupsViewControllerBuilder.build();
+	}
+
+	private void hide(AbstractComponent... components)
+	{
+		for (AbstractComponent component : components)
+		{
+			component.setVisible(false);
+		}
+	}
+
+	private void show(AbstractComponent... components)
+	{
+		for (AbstractComponent component : components)
+		{
+			component.setVisible(true);
+		}
 	}
 }

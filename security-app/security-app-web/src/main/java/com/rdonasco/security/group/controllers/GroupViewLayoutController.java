@@ -87,6 +87,7 @@ public class GroupViewLayoutController implements
 			final AvailableRolesViewController availableRolesViewController = availableRolesViewControllerBuilder.build();
 			groupViewLayout.addRightPanelContent(availableRolesViewController.getControlledView());
 			availableRolesViewController.allowDraggingMultipleRows();
+			groupEditorViewController.setAvailableRolesTableSource(availableRolesViewController.getControlledView().getEditorTable());
 
 		}
 		catch (Exception e)

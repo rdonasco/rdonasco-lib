@@ -52,9 +52,7 @@ public class AvailableGroupsViewController extends ListEditorViewPanelController
 	@Override
 	public RoleItemVO createNewListEditorItem()
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method createNewListEditorItem
-		throw new UnsupportedOperationException("Not supported yet.");
+		throw new UnsupportedOperationException("Not supported intentionally.");
 	}
 
 	@Override
