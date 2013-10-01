@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @WebServlet(name = "ConfigServlet", urlPatterns =
 {
-	"/VAADIN/*"
+	"/VAADIN/*","/config/*"
 },loadOnStartup = 1,asyncSupported = true)
 public class ConfigServlet extends AbstractApplicationServlet
 {
