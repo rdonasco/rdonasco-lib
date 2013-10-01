@@ -16,6 +16,7 @@
  */
 package com.rdonasco.config.web;
 
+import com.rdonasco.common.exceptions.WidgetException;
 import com.rdonasco.config.view.ConfigDataView;
 import com.rdonasco.config.view.ConfigDataViewController;
 import com.vaadin.Application;
@@ -25,6 +26,8 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import com.vaadin.terminal.gwt.server.WebApplicationContext;
 import com.vaadin.ui.Button;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -34,6 +37,7 @@ import javax.servlet.http.HttpSession;
 @SessionScoped
 public class ConfigApplication extends Application
 {
+	private static final Logger LOG = Logger.getLogger(ConfigApplication.class.getName());
 
 	private static final long serialVersionUID = 1L;
 	private ConfigDataViewController configDataViewController;
@@ -58,7 +62,7 @@ public class ConfigApplication extends Application
 		final ConfigDataView controlledView = getConfigDataViewController().getControlledView();
 //		controlledView.setSizeFull();
 		final VerticalLayout mainWindowLayout = (VerticalLayout) mainWindow.getContent();
-		Button logoutButton = new Button("logout");
+		Button logoutButton = new Button("Refresh");
 		logoutButton.addListener(new Button.ClickListener()
 		{
 			private static final long serialVersionUID = 1L;
@@ -66,7 +70,14 @@ public class ConfigApplication extends Application
 			@Override
 			public void buttonClick(Button.ClickEvent event)
 			{
-				logout();
+				try
+				{
+					getConfigDataViewController().refreshView();
+				}
+				catch (WidgetException ex)
+				{
+					LOG.log(Level.WARNING, ex.getMessage(), ex);
+				}
 			}
 		});
 		setTheme("config");
@@ -78,17 +89,5 @@ public class ConfigApplication extends Application
 		mainWindowLayout.addComponent(logoutButton);
 		mainWindowLayout.addComponent(controlledView);
 		mainWindowLayout.setExpandRatio(controlledView, 1);				
-	}
-
-	public HttpSession getSession()
-	{
-		WebApplicationContext context = (WebApplicationContext) getContext();
-		return context.getHttpSession();
-	}
-
-	private void logout()
-	{
-		close();
-		getSession().invalidate();
 	}
 }
