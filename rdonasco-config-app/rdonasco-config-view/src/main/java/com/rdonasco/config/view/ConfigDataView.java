@@ -93,6 +93,7 @@ public class ConfigDataView extends VerticalLayout implements ControlledView
 
 		configureTreeTableListener();
 		configureTreeTableActionHandlers();
+		setSizeFull();
 	}
 
 	private void configureTreeTableEditableFields()

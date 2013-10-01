@@ -1,0 +1,31 @@
+@import "blueChameleon.css";
+
+/* overriden styles */
+.v-captiontext
+{
+	font-weight: bold;
+	font-size: small;
+}
+
+/* START of customized style */
+.mainWindow
+{
+	
+}
+.i18nParameter
+{
+	font-weight: bold;
+	font-style: italic;
+}
+
+/*config screen*/
+.configCellName
+{
+
+}
+.configCellValue
+{
+	width: 100%;
+}
+
+/* Custom Styles - END */
