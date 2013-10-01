@@ -34,7 +34,13 @@ public class ConfigDataViewController implements ViewController<ConfigDataView>
 {
 	private static final long serialVersionUID = 1L;
 
-	@Inject Application application;
+	private Application application;
+	@Inject
+	public void setApplication(Application application)
+	{
+		this.application = application;
+	}
+	
 	@Inject
 	private ConfigDataView configDataView;
 	
