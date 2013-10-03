@@ -4,11 +4,11 @@
 	<parent>
 		<artifactId>rdonasco</artifactId>
 		<groupId>com.rdonasco</groupId>
-		<version>1.3.2-SNAPSHOT</version>
+		<version>1.3.2</version>
 	</parent>
 	<groupId>com.rdonasco</groupId>
 	<artifactId>security-app</artifactId>
-	<version>1.3.2-SNAPSHOT</version>
+	<version>1.3.2</version>
 	<packaging>pom</packaging>
 	<name>security-app</name>
 	<modules>
