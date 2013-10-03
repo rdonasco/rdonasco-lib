@@ -52,8 +52,6 @@ public class AvailableCapabilitiesViewController extends ListEditorViewPanelCont
 	@Override
 	public CapabilityItemVO createNewListEditorItem()
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method createNewListEditorItem
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 

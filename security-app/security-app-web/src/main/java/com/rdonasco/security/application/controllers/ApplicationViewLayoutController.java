@@ -89,8 +89,6 @@ public class ApplicationViewLayoutController implements
 	@Override
 	public void refreshView() throws WidgetException
 	{
-		// To change body of generated methods, choose Tools | Templates.
-		// TODO: Complete code for method refreshView
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 }

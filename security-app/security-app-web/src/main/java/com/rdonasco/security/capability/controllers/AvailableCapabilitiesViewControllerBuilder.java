@@ -64,16 +64,14 @@ public class AvailableCapabilitiesViewControllerBuilder
 			public void deleteData(CapabilityItemVO data) throws
 					DataAccessException
 			{
-				LOG.log(Level.FINE, "deleteData not supported");
+				LOG.log(Level.FINE, "deleteData not supported intentionally");
 			}
 
 			@Override
 			public CapabilityItemVO loadData(CapabilityItemVO data) throws
 					DataAccessException
 			{
-				// To change body of generated methods, choose Tools | Templates.
-				// TODO: Complete code for method loadData
-				throw new UnsupportedOperationException("Not supported yet.");
+				throw new UnsupportedOperationException("Not supported intentionally.");
 			}
 
 			@Override
@@ -87,18 +85,14 @@ public class AvailableCapabilitiesViewControllerBuilder
 			public CapabilityItemVO saveData(CapabilityItemVO data) throws
 					DataAccessException
 			{
-				// To change body of generated methods, choose Tools | Templates.
-				// TODO: Complete code for method saveData
-				throw new UnsupportedOperationException("Not supported yet.");
+				throw new UnsupportedOperationException("Not supported intentionally.");
 			}
 
 			@Override
 			public void updateData(CapabilityItemVO data) throws
 					DataAccessException
 			{
-				// To change body of generated methods, choose Tools | Templates.
-				// TODO: Complete code for method updateData
-				throw new UnsupportedOperationException("Not supported yet.");
+				throw new UnsupportedOperationException("Not supported intentionally.");
 			}
 		};
 	}

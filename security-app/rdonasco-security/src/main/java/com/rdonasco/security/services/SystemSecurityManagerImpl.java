@@ -304,7 +304,6 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 		{
 			try
 			{
-				// TODO: need to add application as part of the parameter to ensure that capability is found for a specific application
 				LOG.log(Level.FINE, "Finding Capability [{0}]...", capabilityTitleOrDescription);
 				capabilityManager.findCapabilityWithTitle(capabilityTitleOrDescription);
 				LOG.log(Level.FINE, "Capability [{0}] found.", capabilityTitleOrDescription);
@@ -312,9 +311,6 @@ public class SystemSecurityManagerImpl implements SystemSecurityManagerRemote,
 			catch (NonExistentEntityException e)
 			{
 				LOG.log(Level.INFO, "Capability [{0}] not found. Creating...", capabilityTitleOrDescription);
-//				ApplicationVO applicationVO = new ApplicationVOBuilder()
-//						.setId(requestedAccessRight.getApplicationID())
-//						.createApplicationVO();
 				CapabilityVO capabilityVO = new CapabilityVOBuilder()
 						.setTitle(capabilityTitleOrDescription)
 						.setDescription(capabilityTitleOrDescription)

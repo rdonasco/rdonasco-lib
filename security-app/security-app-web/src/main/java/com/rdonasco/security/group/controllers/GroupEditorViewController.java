@@ -40,6 +40,7 @@ import com.rdonasco.security.vo.RoleVO;
 import com.rdonasco.security.vo.SecurityGroupRoleVO;
 import com.rdonasco.security.vo.SecurityGroupRoleVOBuilder;
 import com.vaadin.data.Buffered;
+import com.vaadin.data.Container;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.DataBoundTransferable;
@@ -50,6 +51,9 @@ import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
+import com.vaadin.event.dd.acceptcriteria.And;
+import com.vaadin.event.dd.acceptcriteria.ClientSideCriterion;
+import com.vaadin.event.dd.acceptcriteria.SourceIs;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Table;
@@ -69,29 +73,19 @@ public class GroupEditorViewController implements
 {
 
 	private static final Logger LOG = Logger.getLogger(RoleEditorViewController.class.getName());
-
 	private static final long serialVersionUID = 1L;
-
 	@Inject
 	private ApplicationExceptionPopupProvider exceptionPopupProvider;
-
 	@Inject
 	private ApplicationPopupProvider popupProvider;
-
 	@Inject
 	private GroupEditorView groupEditorView;
-
 	@Inject
 	private SessionSecurityChecker sessionSecurityChecker;
-
 	private BeanItem<GroupItemVO> currentItem;
-
 	private DataManagerContainer<GroupItemVO> groupItemTableDataManagerContainer;
-
 	private BeanItemContainer<GroupRoleItemVO> groupRolesContainer = new BeanItemContainer<GroupRoleItemVO>(GroupRoleItemVO.class);
-
 	private DropHandler groupRolesDropHandler;
-
 	private Button.ClickListener cancelClickListener = new Button.ClickListener()
 	{
 		private static final long serialVersionUID = 1L;
@@ -102,7 +96,6 @@ public class GroupEditorViewController implements
 			discardChanges();
 		}
 	};
-
 	private Button.ClickListener editClickListener = new Button.ClickListener()
 	{
 		private static final long serialVersionUID = 1L;
@@ -113,7 +106,6 @@ public class GroupEditorViewController implements
 			changeViewToEditMode();
 		}
 	};
-
 	private Button.ClickListener saveClickListener = new Button.ClickListener()
 	{
 		private static final long serialVersionUID = 1L;
@@ -126,12 +118,10 @@ public class GroupEditorViewController implements
 
 		}
 	};
-
 	private int[] keyModifiers = new int[]
 	{
 		ShortcutAction.ModifierKey.CTRL
 	};
-
 	private ShortcutListener controlSListener = new ShortcutListener(null,
 			ShortcutAction.KeyCode.S, keyModifiers)
 	{
@@ -141,7 +131,6 @@ public class GroupEditorViewController implements
 			saveChanges();
 		}
 	};
-
 	private ShortcutListener controlEListener = new ShortcutListener(null,
 			ShortcutAction.KeyCode.E, keyModifiers)
 	{
@@ -151,7 +140,6 @@ public class GroupEditorViewController implements
 			changeViewToEditMode();
 		}
 	};
-
 	private ShortcutListener escListener = new ShortcutListener(null,
 			ShortcutAction.KeyCode.ESCAPE, null)
 	{
@@ -161,30 +149,25 @@ public class GroupEditorViewController implements
 			discardChanges();
 		}
 	};
-
 	private static final String ROLE_NAME = "roleName";
-
 	private static final String[] EDITABLE_COLUMNS = new String[]
 	{
 		"icon", ROLE_NAME
 	};
-
 	private static final String[] NON_EDITABLE_COLUMNS = new String[]
 	{
 		ROLE_NAME
 	};
-
 	private final String[] EDITABLE_HEADERS = new String[]
 	{
 		"", I18NResource.localize("Name")
 	};
-
 	private final String[] NON_EDITABLE_HEADERS = new String[]
 	{
 		I18NResource.localize("Name")
 	};
-
 	private Table.CellStyleGenerator CELL_STYLE_GENERATOR = new ListItemIconCellStyleGenerator();
+	private Table availableRolesTableSource;
 
 	@PostConstruct
 	@Override
@@ -342,15 +325,20 @@ public class GroupEditorViewController implements
 				try
 				{
 					final DataBoundTransferable transferredData = (DataBoundTransferable) dropEvent.getTransferable();
-					if (null != transferredData && transferredData.getItemId() instanceof RoleItemVO)
+					final Container sourceContainer = transferredData.getSourceContainer();
+					if (transferredData.getItemId() instanceof RoleItemVO)
 					{
 						sessionSecurityChecker.checkCapabilityTo(ActionConstants.ADD, GroupConstants.RESOURCE_GROUP_ROLES);
 						LOG.log(Level.FINE, "drop allowed at group role panel");
 						final RoleItemVO roleItemVO = (RoleItemVO) transferredData.getItemId();
-
-						final GroupRoleItemVO newGroupRoleItemVO = createGroupRoleItemVO(roleItemVO.getRoleVO());
-						BeanItem<GroupRoleItemVO> addedItem = groupRolesContainer.addItem(newGroupRoleItemVO);
-						LOG.log(Level.FINE, "addedItem = {0}", addedItem);
+						addDroppedRoleItemVO(roleItemVO);
+						for (Object object : sourceContainer.getItemIds())
+						{
+							if (getAvailableRolesTableSource().isSelected(object))
+							{
+								addDroppedRoleItemVO((RoleItemVO) object);
+							}
+						}
 
 					}
 					else
@@ -367,7 +355,15 @@ public class GroupEditorViewController implements
 			@Override
 			public AcceptCriterion getAcceptCriterion()
 			{
-				return AcceptAll.get();
+				ClientSideCriterion sourceCriterion = new SourceIs(getAvailableRolesTableSource());
+				return new And(sourceCriterion);
+			}
+
+			private void addDroppedRoleItemVO(final RoleItemVO roleItemVO)
+			{
+				final GroupRoleItemVO newGroupRoleItemVO = createGroupRoleItemVO(roleItemVO.getRoleVO());
+				BeanItem<GroupRoleItemVO> addedItem = groupRolesContainer.addItem(newGroupRoleItemVO);
+				LOG.log(Level.FINE, "addedItem = {0}", addedItem);
 			}
 		};
 		getControlledView().getGroupRolesTable().setDropHandler(groupRolesDropHandler);
@@ -409,5 +405,15 @@ public class GroupEditorViewController implements
 			}
 		});
 		return groupRoleItemVO;
+	}
+
+	void setAvailableRolesTableSource(Table editorTable)
+	{
+		this.availableRolesTableSource = editorTable;
+	}
+
+	public Table getAvailableRolesTableSource()
+	{
+		return availableRolesTableSource;
 	}
 }

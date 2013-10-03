@@ -70,9 +70,7 @@ public class AvailableRolesViewControllerBuilder
 			public RoleItemVO loadData(RoleItemVO data) throws
 					DataAccessException
 			{
-				// To change body of generated methods, choose Tools | Templates.
-				// TODO: Complete code for method loadData
-				throw new UnsupportedOperationException("Not supported yet.");
+				throw new UnsupportedOperationException("Not supported intentionally.");
 			}
 
 			@Override
@@ -86,18 +84,14 @@ public class AvailableRolesViewControllerBuilder
 			public RoleItemVO saveData(RoleItemVO data) throws
 					DataAccessException
 			{
-				// To change body of generated methods, choose Tools | Templates.
-				// TODO: Complete code for method saveData
-				throw new UnsupportedOperationException("Not supported yet.");
+				throw new UnsupportedOperationException("Not supported intentionally.");
 			}
 
 			@Override
 			public void updateData(RoleItemVO data) throws
 					DataAccessException
 			{
-				// To change body of generated methods, choose Tools | Templates.
-				// TODO: Complete code for method updateData
-				throw new UnsupportedOperationException("Not supported yet.");
+				throw new UnsupportedOperationException("Not supported intentionally.");
 			}
 		};
 	}

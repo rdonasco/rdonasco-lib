@@ -70,9 +70,7 @@ public class AvailableGroupsViewControllerBuilder
 			public GroupItemVO loadData(GroupItemVO data) throws
 					DataAccessException
 			{
-				// To change body of generated methods, choose Tools | Templates.
-				// TODO: Complete code for method loadData
-				throw new UnsupportedOperationException("Not supported yet.");
+				throw new UnsupportedOperationException("Not supported intentionally.");
 			}
 
 			@Override
@@ -86,18 +84,14 @@ public class AvailableGroupsViewControllerBuilder
 			public GroupItemVO saveData(GroupItemVO data) throws
 					DataAccessException
 			{
-				// To change body of generated methods, choose Tools | Templates.
-				// TODO: Complete code for method saveData
-				throw new UnsupportedOperationException("Not supported yet.");
+				throw new UnsupportedOperationException("Not supported intentionally.");
 			}
 
 			@Override
 			public void updateData(GroupItemVO data) throws
 					DataAccessException
 			{
-				// To change body of generated methods, choose Tools | Templates.
-				// TODO: Complete code for method updateData
-				throw new UnsupportedOperationException("Not supported yet.");
+				throw new UnsupportedOperationException("Not supported intentionally.");
 			}
 		};
 	}

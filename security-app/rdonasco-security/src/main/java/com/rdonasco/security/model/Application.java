@@ -72,6 +72,7 @@ public class Application implements Serializable
 	@Column(name = "token", nullable = false, length = 256)
 	private String token;
 
+	// TODO: implement orphan removal to true
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "application", fetch = FetchType.LAZY)
 	private Collection<ApplicationHost> hosts = new ArrayList<ApplicationHost>();
 

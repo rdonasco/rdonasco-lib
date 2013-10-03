@@ -82,12 +82,15 @@ public class UserSecurityProfile implements Serializable
 	@Column(name = "tokenExpiration")
 	private Date registrationTokenExpiration;
 
+	// TODO: implement orphan removal to true
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile", fetch = FetchType.EAGER)
 	private Collection<UserCapability> capabilities;
 
+	// TODO: implement orphan removal to true
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile", fetch = FetchType.EAGER)
 	private Collection<UserRole> roles;
 
+	// TODO: implement orphan removal to true
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "userProfile", fetch = FetchType.EAGER)
 	private Collection<UserGroup> groups;
 
