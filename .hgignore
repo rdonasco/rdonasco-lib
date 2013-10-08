@@ -43,3 +43,4 @@ security-sample-usage-app/security-sample-usage-ejb-client/target
 *.versionsBackup
 security-app/SimpleSecuredWeb01/target
 rdonasco-config-app/rdonasco-config-web/target
+target
