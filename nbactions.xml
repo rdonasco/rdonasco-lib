@@ -24,4 +24,11 @@
                 <autoVersionSubmodules>true</autoVersionSubmodules>
             </properties>
         </action>
+        <action>
+            <actionName>CUSTOM-javadoc-aggregate-jar</actionName>
+            <displayName>javadoc-aggregate-jar</displayName>
+            <goals>
+                <goal>javadoc:aggregate-jar</goal>
+            </goals>
+        </action>
     </actions>
