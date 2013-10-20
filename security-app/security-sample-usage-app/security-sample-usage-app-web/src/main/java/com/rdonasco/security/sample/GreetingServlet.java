@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -33,7 +35,7 @@ public class GreetingServlet extends HttpServlet implements
 	private static final Logger LOG = Logger.getLogger(GreetingServlet.class.getName());
 
 	private static final long serialVersionUID = 1L;
-
+	
 	@Inject
 	private SampleLoggedOnSessionProvider loggedOnSessionProvider;
 
@@ -79,8 +81,9 @@ public class GreetingServlet extends HttpServlet implements
 			out.println("</head>");
 			out.println("<body>");
 			out.println("<h1>Servlet GreetingServlet at " + request.getContextPath() + "</h1>");
-			out.println(printHello());
-			out.println(printHelloFromEJB());
+			out.println("printHello="+printHello());
+			out.print("<br/>");
+			out.println("printHelloFromEJB=" + printHelloFromEJB());
 			out.println("</body>");
 			out.println("</html>");
 		}
@@ -141,8 +144,10 @@ public class GreetingServlet extends HttpServlet implements
 		String message = "can't say it";
 		try
 		{
-			sessionSecurityChecker.hasTheCapabilityTo("print", "hello");
-			message = "hello " + loggedOnSessionProvider.getLoggedOnSession().getLoggedOnUser().getLogonId();
+			if(sessionSecurityChecker.hasTheCapabilityTo("print", "hello"))
+			{
+				message = "hello " + loggedOnSessionProvider.getLoggedOnSession().getLoggedOnUser().getLogonId();
+			}
 		}
 		catch (Exception e)
 		{
@@ -159,9 +164,10 @@ public class GreetingServlet extends HttpServlet implements
 		{
 			message = getGreetingServiceInstance().getGreetingMessage("ejbMessage");
 		}
-		catch (Exception e)
+		catch (Throwable e)
 		{
 			LOG.log(Level.WARNING, e.getMessage(), e);
+			message = "";
 		}
 		return message;
 	}

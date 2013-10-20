@@ -23,10 +23,9 @@ public class GreetingServiceWrapperImpl implements GreetingServiceWrapper,
 	private GreetingServiceLocal greetingServiceLocal;
 
 	@Override
-	@SecuredCapability(action = "get", resource = "greetingMessage")
+	@SecuredCapability(action = "get", resource = "greetingMessage", useExceptionHandler = false)
 	public String getGreetingMessage(String messageKey)
 	{
-//		sessionContext.getContextData().put("message", "duh");
 		return greetingServiceLocal.getGreetingMessage();
 	}
 }
